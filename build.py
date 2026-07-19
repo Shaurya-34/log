@@ -81,10 +81,16 @@ def page_head(title, desc, path, og_type="website", base=""):
     )
 
 
+WORDMARK_HTML = (
+    f'<span class="b-strike">B</span>LOG'
+)
+
+
 def page_header(base=""):
     return (
         '\n  <header class="site">\n'
-        f'    <a class="wordmark" href="{base}index.html">{SITE_NAME}</a>\n'
+        f'    <a class="wordmark" href="{base}index.html" '
+        f'aria-label="{SITE_NAME}">{WORDMARK_HTML}</a>\n'
         f'    <nav>\n      <a href="{base}about.html">About</a>\n    </nav>\n'
         '  </header>\n'
     )

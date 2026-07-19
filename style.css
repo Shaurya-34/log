@@ -61,6 +61,15 @@ header.site {
   text-decoration: none;
 }
 
+/* the "B" in "BLOG": faint and struck through, so the wordmark
+   reads as LOG at a glance while the blog pun stays legible */
+.wordmark .b-strike {
+  color: var(--faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--faint);
+  text-decoration-thickness: 1px;
+}
+
 header.site nav a {
   font-family: var(--mono);
   font-size: 0.75rem;
