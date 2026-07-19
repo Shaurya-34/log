@@ -62,12 +62,24 @@ header.site {
 }
 
 /* the "B" in "BLOG": faint and struck through, so the wordmark
-   reads as LOG at a glance while the blog pun stays legible */
+   reads as LOG at a glance while the blog pun stays legible.
+   text-decoration can only draw a horizontal line, so the slant
+   is a rotated pseudo-element instead. */
 .wordmark .b-strike {
+  position: relative;
+  display: inline-block;
   color: var(--faint);
-  text-decoration: line-through;
-  text-decoration-color: var(--faint);
-  text-decoration-thickness: 1px;
+}
+
+.wordmark .b-strike::after {
+  content: "";
+  position: absolute;
+  left: -0.1em;
+  right: -0.1em;
+  top: 50%;
+  height: 1px;
+  background: var(--faint);
+  transform: rotate(-25deg);
 }
 
 header.site nav a {
