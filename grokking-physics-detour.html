@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grokking, physics, and a two-month detour · Shaurya</title>
+  <meta name="description" content="Testing whether grokking finds the true physical law, and why weight decay turned out to be exactly the wrong tool for the job.">
+  <meta property="og:title" content="Grokking, physics, and a two-month detour · Shaurya">
+  <meta property="og:description" content="Testing whether grokking finds the true physical law, and why weight decay turned out to be exactly the wrong tool for the job.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sslog.dpdns.org/grokking-physics-detour.html">
+  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23faf9f7'/%3E%3Ctext x='32' y='46' font-family='Courier%20New,monospace' font-size='44' text-anchor='middle' fill='%23161513'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script src="site.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="b-strike">B</span>LOG</a>
+    <nav>
+      <a href="about.html">About</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
+    </nav>
+  </header>
+
+  <article class="post entry">
+    <h1>Grokking, physics, and a two-month detour</h1>
+    <p class="post-meta">
+      <time datetime="2026-07-20">July 20, 2026</time>
+      <span class="tags">research, machine learning, physics</span>
+    </p>
+
+<p>There's a strange thing neural networks sometimes do called grokking. You train a
+network on some task, and for a long time it looks basically done: the loss on
+its training data has already hit zero, and nothing seems to be happening. Then,
+often thousands of steps later, with no warning, its performance on data it
+hasn't seen suddenly jumps. It goes from failing to almost perfect, quickly, long
+after you'd have stopped watching.</p>
+<p>The question I got stuck on was: when that jump happens, has the network found
+the actual underlying rule, the real law behind the data? Or has it just found a
+slightly better guess that happens to work well near the examples it was trained
+on? Those sound similar but they're not. A model that found the real rule should
+work anywhere, even far outside the range it was trained on. A model that found
+a good local guess should fail once you move away from that range. Nobody
+seemed to have actually tested this directly, and it felt like a real gap: if
+grokking really does mean "found the true law," that's a big deal for any field
+where you can't just go measure the thing you're predicting (drug interactions
+you haven't run, materials that don't exist yet, physics at conditions no lab can
+reach). If it doesn't, that's worth knowing too.</p>
+<p>So that became the plan: pick something with an actual, known ground-truth law,
+grok a model on it, and then test whether it extrapolates. I called the project
+Wedge 1.</p>
+<h2>What I already had lying around</h2>
+<p>Before starting from scratch, I checked an older project of mine called
+catapult, which had spent a while reproducing grokking on the classic toy
+example: modular addition. Feed a network pairs of numbers and their sum modulo
+some prime, hold out a chunk of the pairs, and watch what happens as it trains.
+It turned out I'd already done a lot more with this than I remembered.</p>
+<figure>
+  <img src="images/wedge1/phase1_wd1_seed0.png" alt="Training and validation accuracy curves over training steps, with validation accuracy jumping sharply thousands of steps after training accuracy saturates.">
+  <figcaption>Modular addition, weight decay on. Training accuracy hits 100% almost immediately. Validation accuracy sits flat for thousands of steps, then jumps late. That gap, and the delayed jump, is grokking.</figcaption>
+</figure>
+
+<p>A few things from catapult turned out to matter a lot later. First, weight decay
+(a training setting that gently penalizes the network for having large internal
+numbers) wasn't optional here: turn it off and the jump in the figure above
+never happens at all. Second, I could actually look inside the grokked network
+and see what it was doing, not just that it worked.</p>
+<figure>
+  <img src="images/wedge1/phase3_fourier_spectrum.png" alt="Frequency spectrum of the trained embedding showing a small number of sharp spikes rather than a flat noisy spread.">
+  <figcaption>The grokked network's internal representation, broken into frequencies. A handful of sharp spikes, not noise. It's not memorizing input-output pairs, it's computing with a small set of frequencies, the same trick you'd use to do modular arithmetic with sine and cosine waves.</figcaption>
+</figure>
+
+<p>And when I compared a grokked network against one that had only memorized the
+training examples, the grokked one was just sturdier in every way I tried to
+break it.</p>
+<figure>
+  <img src="images/wedge1/phase4_pruning.png" alt="Bar chart comparing accuracy after pruning 30% of network weights, showing the grokked model near 97% and the memorizing model collapsed near zero.">
+  <figcaption>Cut the smallest 30% of the network's weights and the grokked model barely notices, still around 97% accurate. Do the same to a model that only memorized the training set and it falls apart. Whatever grokking builds is more redundant, more real, than what memorization leaves behind.</figcaption>
+</figure>
+
+<p>I even tried to break a grokked solution back down on purpose: crank up weight
+decay further, remove it entirely partway through, add noise to the labels. None
+of it worked.</p>
+<figure>
+  <img src="images/wedge1/antigrok_wd50.png" alt="Training curve showing accuracy staying high despite an aggressive attempt to undo grokking.">
+  <figcaption>Trying to unlearn a grokked solution, several different ways. Once the network finds the real algorithm for modular addition, it does not let go.</figcaption>
+</figure>
+
+<p>So going in, I had good reason to believe grokking finds something real and
+stable, at least for this kind of task. What I hadn't tested was the actual
+question: does that "something real" generalize to inputs way outside the
+training range. Modular arithmetic doesn't really have an "outside the range,"
+so I needed a different kind of problem to test that.</p>
+<h2>Building the actual test</h2>
+<p>For Wedge 1 I switched to physics: functions with a known, exact formula, where
+I could train a network on one range of inputs and then check its predictions
+somewhere it had never seen. Lennard-Jones potential was the main one (it
+describes how atoms attract and repel depending on distance), alongside a couple
+of others with different shapes, for variety.</p>
+<p>The plan was simple on paper: train a small neural network to predict the
+potential from the distance, using weight decay, wait for it to grok, then
+compare its predictions inside the training range against its predictions
+outside it. I set the outside-the-range boundaries in advance, before running
+anything, so I couldn't quietly move the goalposts later if the results looked
+bad.</p>
+<h2>Smooth functions don't grok</h2>
+<p>The first run didn't grok at all. Not "grokked slowly," not "grokked weakly."
+Nothing like the sudden jump from before ever showed up.</p>
+<p>The reason turned out to be almost embarrassingly simple. Grokking is
+interesting because there's a hard gap between "memorized the training
+examples" and "found the general rule," and the network sits stuck on the wrong
+side of that gap for a while before crossing it. Modular addition has that gap:
+you either know the rule or you're stuck guessing. A smooth physical curve
+doesn't. If I show a network sixty points sampled from a smooth curve, it can
+fit a curve that passes near all sixty points almost immediately, using nothing
+smarter than "connect the dots." There's no hard problem for weight decay to
+eventually solve, so there's no delayed jump. Training and validation error just
+went down together, smoothly, from the start, in every setting I tried.</p>
+<p>That also meant the plan itself was slightly wrong. I'd been asking "did this
+network grok yet," but for a smooth function that question doesn't really apply.
+The question that actually mattered was more direct: does the network's error
+on the far-outside-the-range points improve late, well after its error on the
+training range has already flattened out. That's the real signature I was
+actually looking for, and I hadn't been measuring it directly.</p>
+<h2>The long, noisy middle</h2>
+<p>Once I started tracking the outside-the-range error properly, I spent a good
+while chasing what looked like real signals that turned out to be measurement
+problems instead. A few examples, because I think the mistakes are more
+instructive than the parts that worked:</p>
+<p>One early "positive" result turned out to be driven by runs where weight decay
+was set to zero, which makes no sense since weight decay is the entire proposed
+mechanism. The actual cause was an unstable learning rate making the validation
+curve jump around, which was fooling a naive "did it improve" detector into
+counting noise as a signal.</p>
+<p>Another run seemed to show the effect appearing and then not appearing,
+depending on how I averaged two different failure regions together. Lennard-
+Jones has a smooth, learnable far tail and also a sharp, physically extreme wall
+close to zero. That near-wall region is essentially impossible to predict from
+training data that never showed anything like it. Averaging it in with the
+learnable far region was hiding whatever was actually going on in the part that
+should have been learnable.</p>
+<p>A later run gave a table where adding more training data made the results look
+worse, which is backwards. That one came down to using a ratio (error near the
+boundary divided by error inside the training range) instead of a plain error
+number. With more data, the inside-the-range error got so tiny that even a small
+outside-the-range error produced a huge ratio, just from the denominator
+shrinking. The model wasn't doing worse. The yardstick was broken.</p>
+<p>Each of these took real time to track down, and each time the fix was the same
+kind of lesson: measure the thing you actually care about, in units that don't
+lie to you, and don't trust a result until you've asked why it looks the way it
+does.</p>
+<h2>The real answer</h2>
+<p>Once the metric was fixed (comparing the network's outside-the-range error
+against how much that region's true values vary, essentially asking "did this
+beat just predicting the average"), the honest result was clear and not close.</p>
+<figure>
+  <img src="images/wedge1/mlp_ood_grid.png" alt="Grid of prediction curves for a neural network trained on Lennard-Jones potential data, showing accurate fits inside the training window and diverging or flat predictions outside it.">
+  <figcaption>A plain neural network trained on Lennard-Jones data, tested past its training window (shaded). Inside the window it tracks the true curve closely. A short distance outside it, the prediction goes flat or drifts off in a straight line while the real curve keeps bending.</figcaption>
+</figure>
+
+<p>Even in the best setting, the network's predictions outside the training range
+were roughly 190 times worse than simply guessing the region's average value.
+No amount of weight decay, however I tuned it, produced a network that had
+actually recovered the true underlying formula.</p>
+<p>The reason is almost mechanical rather than mysterious. A network built from
+ReLU activations can only ever draw straight-line segments, joined together at
+kinks. Inside its training window, it can fake a smooth curve by using enough
+tiny straight segments that you can't see the joints. Outside the window,
+though, there's no more data telling it where the next kink should go, so it
+just keeps going in whatever straight line it was already on. The true physical
+law keeps curving. The network structurally cannot. This isn't a training bug
+you can fix with a better recipe. It's a property of what that kind of network
+is.</p>
+<p>I did wonder whether a different activation function would sidestep this, and
+it wouldn't have, for the same underlying reason: smooth alternatives extrapolate
+as their own shape (flat, wavy, whatever their formula naturally does far from
+the data), not as the specific shape of Lennard-Jones or any other particular
+physical law. Fixing this needed a different kind of change entirely.</p>
+<h2>Changing the question</h2>
+<p>If the problem is that the network has to invent its own extrapolation shape,
+the fix is to stop making it invent one. Instead of a free-form network, I built
+a fixed menu of candidate ingredients, things like different powers of distance
+and different exponential decay rates, and let a plain linear model choose how
+much of each ingredient to use. The true Lennard-Jones formula is exactly two
+of those ingredients. Everything else on the menu is a decoy that only helps fit
+the training window without meaning anything.</p>
+<p>This turns "did the model find the true law" into a question you can actually
+answer cleanly: among every combination of ingredients that fits the training
+data equally well, does training push the model toward the two real ones and
+away from the decoys, or toward some messy mixture that only happens to work
+inside the window?</p>
+<p>The first result validated the whole idea. With the right ingredients available,
+the near-wall region (previously unlearnable) got recovered almost exactly, just
+because the model finally had access to the right shape. But there was a twist
+I didn't expect.</p>
+<figure>
+  <img src="images/wedge1/p2_basis.png" alt="Bar chart of learned coefficients across a menu of candidate physical terms, at increasing weight decay strengths, showing worse recovery of the true terms as weight decay increases.">
+  <figcaption>Same setup, but the model can only choose from a fixed menu of physics-shaped ingredients. Turning weight decay up, the exact ingredient behind grokking, made recovery of the true two terms worse, not better.</figcaption>
+</figure>
+
+<p>The true answer here needs two genuinely large numbers as its ingredients.
+Weight decay's entire job is to discourage large numbers. So the stronger I
+turned it up, the harder it pushed against the actual correct answer, shrinking
+the true terms and leaking their weight onto decoys instead. The mechanism that
+causes grokking on modular addition was actively fighting law-recovery here.</p>
+<h2>L1 versus L2</h2>
+<p>Weight decay is what's called an L2 penalty: it spreads a small tax evenly
+across every number in the model. There's a different kind of penalty, L1,
+that behaves completely differently: instead of taxing everything a little, it
+tends to push weak ingredients all the way to zero and leave a few strong ones
+alone. If the true answer really is "two ingredients, and nothing else
+matters," L1 seemed like the more honest tool for finding it. So I ran the
+direct comparison.</p>
+<figure>
+  <img src="images/wedge1/l1_vs_l2_weights.png" alt="Bar chart comparing learned coefficients under weak L1 regularization, which closely match the true two ingredients with everything else near zero, against L2 weight decay, which leaves nonzero weight spread across several decoy terms.">
+  <figcaption>Same test, L1 against L2. A light L1 penalty finds the true two ingredients almost exactly and zeroes out everything else. L2, the actual mechanism behind grokking, never gets there, and gets worse the harder it's pushed.</figcaption>
+</figure>
+
+<p>This was the clean result I'd been chasing, just not the one I expected. A weak
+L1 penalty recovered the true law almost perfectly. Weight decay, the specific
+ingredient responsible for grokking in the first place, did not, at any strength
+I tried. Push L1 too hard and it also failed, wiping out the true signal along
+with the decoys, so there's a real sweet spot rather than "more sparsity is
+always better." But within that sweet spot, sparsity worked and grokking's own
+mechanism didn't.</p>
+<h2>So, was it worth it</h2>
+<p>At some point I asked myself directly whether any of this was actually worth
+finishing, and I think the honest answer is no, not really, not as originally
+framed.</p>
+<p>The whole premise was "grokking might mean the model found the true law." But
+by the time I got a clean result, that premise had already quietly stopped
+being true two pivots earlier: grokking, at least as I'd studied it, is a
+phenomenon about matching your training distribution well, not about reaching
+beyond it. The smooth-function experiments never grokked in the first place.
+What I ended up with, stripped of the physics dressing, is close to a decades-
+old statistics result: L1 penalties (LASSO) find sparse answers better than L2
+penalties (ridge regression) when the true answer actually is sparse. That's
+real, but it's not new, and recovering a formula after handing the model its
+exact ingredients in advance isn't genuine scientific discovery either. Tools
+built specifically for that (symbolic regression methods that search for a
+formula without being told its shape ahead of time) already do the real version
+of this, and do it better.</p>
+<p>What I do think was worth keeping is the actual path there, and specifically
+the parts that were wrong at first. Overparameterizing a model isn't enough by
+itself to cause grokking. Grokking, at least in every case I tested it, is
+about generalizing within your training distribution, not about extrapolating
+past it. A ReLU network structurally cannot bend the way a real curved law
+bends outside its training data, no matter how you train it. And a metric that
+measures relative error can quietly lie to you the moment your target region is
+nearly flat. Those are small, useful things to actually know, and I wouldn't
+have known any of them without running into each one directly.</p>
+<p>One loose end, left exactly as it is: I'd written an improved version of the
+L1-versus-L2 comparison, with a cleaner error metric and a finer sweep around
+the sparsity sweet spot, but never got around to actually running it before
+deciding to close the project. The result above stands on the coarser run.
+That's a real gap, not a rounding error, and I'd rather say so than quietly
+smooth it over.</p>
+<p>Mostly, though, the useful part of this whole detour was just noticing the
+premise had failed, and stopping instead of grinding on. That's a less
+satisfying ending than a paper. It's still the right one.</p>
+  </article>
+
+  <nav class="post-nav">
+    <a class="older" href="log-not-blog.html">← On keeping a log instead of a blog</a>
+    <span></span>
+  </nav>
+
+  <footer class="site">
+    <span>Shaurya · 2026</span>
+    <a href="index.html">Index</a>
+  </footer>
+
+</div>
+</body>
+</html>
