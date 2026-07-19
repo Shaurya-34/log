@@ -67,7 +67,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 1.25rem;             /* 20px */
+  font-size: 1.125rem;            /* 18px */
   line-height: 1.6;
   font-feature-settings: "liga", "kern";
   text-rendering: optimizeLegibility;
@@ -526,7 +526,7 @@ article.post.entry::after {
 /* ---- small screens ----------------------------------------------- */
 
 @media (max-width: 540px) {
-  body { font-size: 1.1875rem; }
+  body { font-size: 1.0625rem; }
   header.site { padding-top: 2.25rem; }
   article.post { padding-top: 2.75rem; }
   article.post h1 { font-size: 2.375rem; }
