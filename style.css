@@ -1,0 +1,471 @@
+/* ------------------------------------------------------------------
+   A quiet, monochrome blog.
+   Typography: Space Mono for display (titles, wordmark, pull quotes),
+   Courier Prime (typewriter) for body text and metadata.
+   No colors, no shadows, no cards. Hairlines and whitespace only.
+------------------------------------------------------------------- */
+
+:root {
+  /* warm greys throughout: paper and ink, not a screen */
+  --ink: #161513;
+  --paper: #faf9f7;
+  --grey: #6f6a62;
+  --faint: #9c968c;
+  --hairline: #e7e3dc;
+  --code-bg: #f1eee8;
+
+  --display: "Space Mono", "Courier Prime", "Courier New", monospace;
+  --mono: "Courier Prime", ui-monospace, "Cascadia Mono", Menlo, Consolas,
+          "Courier New", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 1.25rem;             /* 20px */
+  line-height: 1.6;
+  font-feature-settings: "liga", "kern";
+  text-rendering: optimizeLegibility;
+}
+
+.wrap {
+  max-width: 41rem;               /* ~656px */
+  margin: 0 auto;
+  padding: 0 1.375rem;
+}
+
+/* ---- header ------------------------------------------------------ */
+
+header.site {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 3.5rem 0 1.25rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.wordmark {
+  font-family: var(--display);
+  font-size: 1.1875rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+header.site nav a {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grey);
+  text-decoration: none;
+  margin-left: 1.5rem;
+}
+
+header.site nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
+
+/* ---- links & motion ---------------------------------------------- */
+
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--faint);
+  text-underline-offset: 0.2em;
+}
+
+a:hover { text-decoration-color: var(--ink); }
+
+/* every interactive state eases in and out; nothing snaps */
+a, button {
+  transition: color 0.3s ease, text-decoration-color 0.3s ease,
+              opacity 0.3s ease, background-color 0.3s ease;
+}
+
+a:active, button:active { opacity: 0.55; }
+
+body {
+  animation: page-in 0.45s ease both;
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ---- motto ------------------------------------------------------- */
+
+.motto {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  margin: 1rem 0 0;
+}
+
+/* ---- "now" note -------------------------------------------------- */
+
+.now {
+  margin: 3.25rem 0 0.75rem;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--hairline);   /* reads as "pinned" */
+  color: var(--grey);
+  font-size: 1.125rem;
+}
+
+.now .label {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  display: block;
+  margin-bottom: 0.375rem;
+}
+
+/* ---- post list --------------------------------------------------- */
+
+.year {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  margin: 3.5rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* partial rule beside the year, for wayfinding while scanning */
+.year::after {
+  content: "";
+  height: 1px;
+  width: 6rem;
+  background: var(--hairline);
+}
+
+ul.posts {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+}
+
+ul.posts li {
+  padding: 1.375rem 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.post-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+.post-line a {
+  font-family: var(--display);
+  font-size: 1.3125rem;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.post-line a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+
+.post-line time {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.post-desc {
+  margin: 0.375rem 0 0;
+  color: var(--grey);
+  font-size: 1.125rem;
+}
+
+/* ---- post page --------------------------------------------------- */
+
+article.post { padding-top: 4rem; }
+
+article.post h1 {
+  font-family: var(--display);
+  font-size: 3.5rem;              /* 56px: scale does the work, not weight */
+  line-height: 1.08;
+  font-weight: 400;
+  letter-spacing: -0.04em;        /* Space Mono needs tighter tracking large */
+  margin: 0 0 1.5rem;
+}
+
+/* article.post p would out-rank .post-meta alone and flatten the margin */
+article.post .post-meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 4rem;
+}
+
+.post-meta .tags::before { content: "· "; }
+
+article.post h2 {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 2.75rem 0 0.875rem;
+}
+
+article.post h3 {
+  font-family: var(--display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  font-style: italic;
+  margin: 2.25rem 0 0.75rem;
+}
+
+article.post p { margin: 0 0 1.375rem; }
+
+article.post blockquote {
+  margin: 2rem 0;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--ink);
+  color: var(--grey);
+}
+
+article.post blockquote p { margin-bottom: 0.75rem; }
+article.post blockquote p:last-child { margin-bottom: 0; }
+
+/* opt-in pull quote: scale does the work, no rule, no quotation marks.
+   add class="pull" to a blockquote to trigger it */
+article.post blockquote.pull {
+  font-family: var(--display);
+  border-left: none;
+  padding-left: 0;
+  margin: 3.75rem 0;
+  font-size: 1.875rem;            /* 30px */
+  font-style: italic;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+@media (min-width: 760px) {
+  article.post blockquote.pull {
+    margin-left: -2.5rem;         /* bleeds slightly past the column edge */
+  }
+}
+
+article.post img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 2.5rem auto;
+  filter: grayscale(1);           /* keep the page strictly monochrome */
+}
+
+article.post figcaption {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  text-align: center;
+  margin-top: -1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+article.post hr {
+  border: none;
+  border-top: 1px solid var(--hairline);
+  margin: 3rem 0;
+}
+
+/* ---- code -------------------------------------------------------- */
+
+code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  padding: 0.125em 0.375em;
+  border-radius: 2px;
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 1.125rem 1.25rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+  line-height: 1.55;
+  border-radius: 2px;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+
+pre .cm { color: var(--faint); }   /* muted tone for comments, if wanted */
+
+/* ---- prev/next --------------------------------------------------- */
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+}
+
+.post-nav a {
+  color: var(--grey);
+  text-decoration: none;
+  max-width: 45%;
+}
+
+.post-nav .newer { text-align: right; }
+
+.post-nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
+
+/* ---- footer ------------------------------------------------------ */
+
+footer.site {
+  margin-top: 5rem;
+  padding: 1.5rem 0 3.5rem;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+footer.site a { color: var(--faint); text-decoration: none; }
+footer.site a:hover { color: var(--ink); }
+
+/* ---- details ----------------------------------------------------- */
+
+::selection {
+  background: #ded8cd;            /* warm grey, not browser blue */
+  color: var(--ink);
+}
+
+/* ghost scrollbar: hairline-thin, visible only while scrolling
+   (site.js toggles .scrolling on <html>) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.4s ease;
+}
+
+html.scrolling { scrollbar-color: var(--hairline) transparent; }
+html.scrolling:hover { scrollbar-color: var(--faint) transparent; }
+
+/* older engines without scrollbar-color: quiet static fallback */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--hairline); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
+}
+
+/* "pick up where you left off" line on posts (inserted by site.js) */
+.resume {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: -2.5rem 0 4rem;         /* sits inside the title-to-content gap */
+  animation: page-in 0.6s ease 0.2s both;
+}
+
+.resume a {
+  color: var(--grey);
+  text-decoration: none;
+}
+
+.resume a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
+
+/* "continue reading" line on the homepage (inserted by site.js) */
+.continue {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--hairline);
+  font-size: 1.0625rem;
+  animation: page-in 0.6s ease 0.2s both;
+}
+
+.continue .label {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  display: block;
+  margin-bottom: 0.375rem;
+}
+
+.continue a {
+  color: var(--grey);
+  text-decoration: none;
+}
+
+.continue a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
+
+/* end-of-post tombstone; generated posts carry class "entry" */
+article.post.entry::after {
+  content: "∎";
+  display: block;
+  margin-top: 3rem;
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  color: var(--grey);
+}
+
+@media print {
+  body { animation: none; font-size: 11pt; background: #fff; color: #000; }
+  header.site nav, footer.site, .now { display: none; }
+  a { text-decoration: none; color: #000; }
+  pre { background: none; border: 1px solid #ccc; white-space: pre-wrap; }
+  article.post h1 { font-size: 24pt; }
+}
+
+/* ---- small screens ----------------------------------------------- */
+
+@media (max-width: 540px) {
+  body { font-size: 1.1875rem; }
+  header.site { padding-top: 2.25rem; }
+  article.post { padding-top: 2.75rem; }
+  article.post h1 { font-size: 2.375rem; }
+  article.post blockquote.pull { font-size: 1.5rem; }
+
+  .post-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
