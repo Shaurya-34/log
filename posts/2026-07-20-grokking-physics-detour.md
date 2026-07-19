@@ -51,6 +51,20 @@ and see what it was doing, not just that it worked.
   <figcaption>The grokked network's internal representation, broken into frequencies. A handful of sharp spikes, not noise. It's not memorizing input-output pairs, it's computing with a small set of frequencies, the same trick you'd use to do modular arithmetic with sine and cosine waves.</figcaption>
 </figure>
 
+The trick itself is neat. Map each number onto an angle on a circle, and
+adding two numbers mod p turns into adding two angles. There's a plain
+trig identity for that:
+
+```
+cos(A + B) = cos(A)cos(B) - sin(A)sin(B)
+sin(A + B) = sin(A)cos(B) + cos(A)sin(B)
+```
+
+which a network can compute with nothing more exotic than multiplication
+and addition. Those sharp spikes in the spectrum are the fingerprint of a
+network that settled on a small handful of these angles, instead of
+memorizing every pair by hand.
+
 And when I compared a grokked network against one that had only memorized the
 training examples, the grokked one was just sturdier in every way I tried to
 break it.
@@ -79,9 +93,17 @@ so I needed a different kind of problem to test that.
 
 For Wedge 1 I switched to physics: functions with a known, exact formula, where
 I could train a network on one range of inputs and then check its predictions
-somewhere it had never seen. Lennard-Jones potential was the main one (it
-describes how atoms attract and repel depending on distance), alongside a couple
-of others with different shapes, for variety.
+somewhere it had never seen. Lennard-Jones potential was the main one, which
+describes how atoms attract and repel depending on distance:
+
+```
+V(r) = A / r^12  -  B / r^6
+```
+
+Two terms: one repulsive (`r^-12`, wins up close), one attractive (`r^-6`,
+wins further out), and two positive constants that just set the strength and
+scale. I also tried a couple of other shapes for variety, mostly to check
+that nothing I found was specific to this one formula.
 
 The plan was simple on paper: train a small neural network to predict the
 potential from the distance, using weight decay, wait for it to grok, then
@@ -184,9 +206,17 @@ If the problem is that the network has to invent its own extrapolation shape,
 the fix is to stop making it invent one. Instead of a free-form network, I built
 a fixed menu of candidate ingredients, things like different powers of distance
 and different exponential decay rates, and let a plain linear model choose how
-much of each ingredient to use. The true Lennard-Jones formula is exactly two
-of those ingredients. Everything else on the menu is a decoy that only helps fit
-the training window without meaning anything.
+much of each ingredient to use:
+
+```
+V(r) = w1*f1(r) + w2*f2(r) + ... + wn*fn(r)
+```
+
+Each `f` is one menu item (`r^-12`, `r^-6`, `r^-4`, `exp(-r)`, and so on), and
+each `w` is a weight the model is free to learn. The true Lennard-Jones
+formula is exactly two of those ingredients: nonzero weight on `r^-12` and
+`r^-6`, zero everywhere else. Everything else on the menu is a decoy that only
+helps fit the training window without meaning anything.
 
 This turns "did the model find the true law" into a question you can actually
 answer cleanly: among every combination of ingredients that fits the training
@@ -204,7 +234,7 @@ I didn't expect.
   <figcaption>Same setup, but the model can only choose from a fixed menu of physics-shaped ingredients. Turning weight decay up, the exact ingredient behind grokking, made recovery of the true two terms worse, not better.</figcaption>
 </figure>
 
-The true answer here needs two genuinely large numbers as its ingredients.
+The true answer here needs `w` on `r^-12` and `r^-6` to be genuinely large.
 Weight decay's entire job is to discourage large numbers. So the stronger I
 turned it up, the harder it pushed against the actual correct answer, shrinking
 the true terms and leaking their weight onto decoys instead. The mechanism that

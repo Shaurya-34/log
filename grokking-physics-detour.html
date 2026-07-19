@@ -76,6 +76,16 @@ and see what it was doing, not just that it worked.</p>
   <figcaption>The grokked network's internal representation, broken into frequencies. A handful of sharp spikes, not noise. It's not memorizing input-output pairs, it's computing with a small set of frequencies, the same trick you'd use to do modular arithmetic with sine and cosine waves.</figcaption>
 </figure>
 
+<p>The trick itself is neat. Map each number onto an angle on a circle, and
+adding two numbers mod p turns into adding two angles. There's a plain
+trig identity for that:</p>
+<pre><code>cos(A + B) = cos(A)cos(B) - sin(A)sin(B)
+sin(A + B) = sin(A)cos(B) + cos(A)sin(B)
+</code></pre>
+<p>which a network can compute with nothing more exotic than multiplication
+and addition. Those sharp spikes in the spectrum are the fingerprint of a
+network that settled on a small handful of these angles, instead of
+memorizing every pair by hand.</p>
 <p>And when I compared a grokked network against one that had only memorized the
 training examples, the grokked one was just sturdier in every way I tried to
 break it.</p>
@@ -100,9 +110,14 @@ so I needed a different kind of problem to test that.</p>
 <h2>Building the actual test</h2>
 <p>For Wedge 1 I switched to physics: functions with a known, exact formula, where
 I could train a network on one range of inputs and then check its predictions
-somewhere it had never seen. Lennard-Jones potential was the main one (it
-describes how atoms attract and repel depending on distance), alongside a couple
-of others with different shapes, for variety.</p>
+somewhere it had never seen. Lennard-Jones potential was the main one, which
+describes how atoms attract and repel depending on distance:</p>
+<pre><code>V(r) = A / r^12  -  B / r^6
+</code></pre>
+<p>Two terms: one repulsive (<code>r^-12</code>, wins up close), one attractive (<code>r^-6</code>,
+wins further out), and two positive constants that just set the strength and
+scale. I also tried a couple of other shapes for variety, mostly to check
+that nothing I found was specific to this one formula.</p>
 <p>The plan was simple on paper: train a small neural network to predict the
 potential from the distance, using weight decay, wait for it to grok, then
 compare its predictions inside the training range against its predictions
@@ -187,9 +202,14 @@ physical law. Fixing this needed a different kind of change entirely.</p>
 the fix is to stop making it invent one. Instead of a free-form network, I built
 a fixed menu of candidate ingredients, things like different powers of distance
 and different exponential decay rates, and let a plain linear model choose how
-much of each ingredient to use. The true Lennard-Jones formula is exactly two
-of those ingredients. Everything else on the menu is a decoy that only helps fit
-the training window without meaning anything.</p>
+much of each ingredient to use:</p>
+<pre><code>V(r) = w1*f1(r) + w2*f2(r) + ... + wn*fn(r)
+</code></pre>
+<p>Each <code>f</code> is one menu item (<code>r^-12</code>, <code>r^-6</code>, <code>r^-4</code>, <code>exp(-r)</code>, and so on), and
+each <code>w</code> is a weight the model is free to learn. The true Lennard-Jones
+formula is exactly two of those ingredients: nonzero weight on <code>r^-12</code> and
+<code>r^-6</code>, zero everywhere else. Everything else on the menu is a decoy that only
+helps fit the training window without meaning anything.</p>
 <p>This turns "did the model find the true law" into a question you can actually
 answer cleanly: among every combination of ingredients that fits the training
 data equally well, does training push the model toward the two real ones and
@@ -204,7 +224,7 @@ I didn't expect.</p>
   <figcaption>Same setup, but the model can only choose from a fixed menu of physics-shaped ingredients. Turning weight decay up, the exact ingredient behind grokking, made recovery of the true two terms worse, not better.</figcaption>
 </figure>
 
-<p>The true answer here needs two genuinely large numbers as its ingredients.
+<p>The true answer here needs <code>w</code> on <code>r^-12</code> and <code>r^-6</code> to be genuinely large.
 Weight decay's entire job is to discourage large numbers. So the stronger I
 turned it up, the harder it pushed against the actual correct answer, shrinking
 the true terms and leaking their weight onto decoys instead. The mechanism that
