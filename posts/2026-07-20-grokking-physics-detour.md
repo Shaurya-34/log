@@ -1,5 +1,5 @@
 ---
-title: Grokking, physics, and a two-month detour
+title: grok.....grok ?
 date: 2026-07-20
 tags: research, machine learning, physics
 description: Testing whether grokking finds the true physical law, and why weight decay turned out to be exactly the wrong tool for the job.
