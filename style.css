@@ -198,24 +198,14 @@ body {
   margin: 1rem 0 0;
 }
 
-/* ---- "now" note -------------------------------------------------- */
+/* ---- intro note ---------------------------------------------------- */
 
-.now {
+.intro {
   margin: 3.25rem 0 0.75rem;
   padding-left: 1.25rem;
   border-left: 1px solid var(--hairline);   /* reads as "pinned" */
   color: var(--grey);
   font-size: 1.125rem;
-}
-
-.now .label {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--faint);
-  display: block;
-  margin-bottom: 0.375rem;
 }
 
 /* ---- post list --------------------------------------------------- */

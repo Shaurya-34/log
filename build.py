@@ -37,9 +37,10 @@ SITE_DESC = "A personal activity log and curiosity journal."
 
 MOTTO = "honest · semi informative · personal"
 
-NOW_BLURB = (
-    "Building a multi-agent research TUI, reading about typography systems, "
-    "and slowly learning how compilers actually work."
+INTRO = (
+    "This is a personal activity log: a record of what I'm building, "
+    "reading, and puzzling over. Written for selfish reasons; if it's "
+    "useful to anyone else, that's a bonus."
 )
 
 FAVICON = (
@@ -216,13 +217,10 @@ def build_index(posts):
             + "\n".join(items) + "\n  </ul>\n"
         )
     motto = f'\n  <p class="motto">{MOTTO}</p>\n'
-    now = (
-        '\n  <p class="now">\n    <span class="label">Now</span>\n'
-        f'    {NOW_BLURB}\n  </p>\n'
-    )
+    intro = f'\n  <p class="intro">{INTRO}</p>\n'
     foot = page_foot('<a href="feed.xml">RSS</a>')
     head = page_head(SITE_TITLE, SITE_DESC, "")
-    return head + page_header() + motto + now + "".join(sections) + foot
+    return head + page_header() + motto + intro + "".join(sections) + foot
 
 
 def build_feed(posts):

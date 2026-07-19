@@ -118,7 +118,7 @@
       link.textContent = last.title;
       line.appendChild(label);
       line.appendChild(link);
-      document.querySelector(".now").after(line);
+      document.querySelector(".intro").after(line);
     }
   }
 })();
