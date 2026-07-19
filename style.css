@@ -13,10 +13,47 @@
   --faint: #9c968c;
   --hairline: #e7e3dc;
   --code-bg: #f1eee8;
+  --selection: #ded8cd;
 
   --display: "Space Mono", "Courier Prime", "Courier New", monospace;
   --mono: "Courier Prime", ui-monospace, "Cascadia Mono", Menlo, Consolas,
           "Courier New", monospace;
+}
+
+/* dark mode: same warm, strictly-monochrome palette, inverted.
+   Default follows the OS preference; an explicit choice made via the
+   header toggle (site.js sets data-theme, remembered in localStorage)
+   always wins over the OS setting. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #eae5db;
+    --paper: #17150f;
+    --grey: #a29c8f;
+    --faint: #6b665b;
+    --hairline: #2d2a23;
+    --code-bg: #201d17;
+    --selection: #3a352a;
+  }
+}
+
+:root[data-theme="light"] {
+  --ink: #161513;
+  --paper: #faf9f7;
+  --grey: #6f6a62;
+  --faint: #9c968c;
+  --hairline: #e7e3dc;
+  --code-bg: #f1eee8;
+  --selection: #ded8cd;
+}
+
+:root[data-theme="dark"] {
+  --ink: #eae5db;
+  --paper: #17150f;
+  --grey: #a29c8f;
+  --faint: #6b665b;
+  --hairline: #2d2a23;
+  --code-bg: #201d17;
+  --selection: #3a352a;
 }
 
 * { box-sizing: border-box; }
@@ -34,6 +71,7 @@ body {
   line-height: 1.6;
   font-feature-settings: "liga", "kern";
   text-rendering: optimizeLegibility;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .wrap {
@@ -93,6 +131,26 @@ header.site nav a {
 }
 
 header.site nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
+
+.theme-toggle {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grey);
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 1.5rem;
+  cursor: pointer;
+}
+
+.theme-toggle:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
+
+.theme-toggle:focus-visible {
+  outline: 1px solid var(--faint);
+  outline-offset: 3px;
+}
 
 /* ---- links & motion ---------------------------------------------- */
 
@@ -391,7 +449,7 @@ footer.site a:hover { color: var(--ink); }
 /* ---- details ----------------------------------------------------- */
 
 ::selection {
-  background: #ded8cd;            /* warm grey, not browser blue */
+  background: var(--selection);   /* warm grey, not browser blue */
   color: var(--ink);
 }
 

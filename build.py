@@ -91,7 +91,11 @@ def page_header(base=""):
         '\n  <header class="site">\n'
         f'    <a class="wordmark" href="{base}index.html" '
         f'aria-label="{SITE_NAME}">{WORDMARK_HTML}</a>\n'
-        f'    <nav>\n      <a href="{base}about.html">About</a>\n    </nav>\n'
+        '    <nav>\n'
+        f'      <a href="{base}about.html">About</a>\n'
+        '      <button type="button" class="theme-toggle" '
+        'aria-label="Toggle color theme">dark</button>\n'
+        '    </nav>\n'
         '  </header>\n'
     )
 

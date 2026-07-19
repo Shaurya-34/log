@@ -1,11 +1,39 @@
-/* The only JS on the site. Two quiet behaviors:
+/* The only JS on the site. Three quiet behaviors:
    1. ghost scrollbar: thumb visible only while scrolling
    2. reading memory: posts remember your place; the homepage offers
       to continue the last unfinished post
+   3. theme toggle: dark mode, remembered across visits
    Everything works without this file; it only adds. */
 (function () {
   var doc = document.documentElement;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- theme toggle ----
+     defaults to the OS preference (handled entirely in CSS); an
+     explicit click is remembered in localStorage and always wins. */
+  var storedTheme = localStorage.getItem("theme");
+  if (storedTheme === "dark" || storedTheme === "light") {
+    doc.setAttribute("data-theme", storedTheme);
+  }
+
+  var themeToggle = document.querySelector(".theme-toggle");
+  if (themeToggle) {
+    var currentTheme = function () {
+      var explicit = doc.getAttribute("data-theme");
+      if (explicit) return explicit;
+      return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    };
+    var paintToggle = function () {
+      themeToggle.textContent = currentTheme() === "dark" ? "light" : "dark";
+    };
+    themeToggle.addEventListener("click", function () {
+      var next = currentTheme() === "dark" ? "light" : "dark";
+      doc.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      paintToggle();
+    });
+    paintToggle();
+  }
 
   /* ---- ghost scrollbar ---- */
   var hideTimer;
