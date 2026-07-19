@@ -39,7 +39,7 @@ MOTTO = "honest · semi informative · personal"
 
 INTRO = (
     "This is a personal activity log: a record of what I'm building, "
-    "reading, and puzzling over. Written for selfish reasons; if it's "
+    "reading, and puzzling over. Written for an audience of one; if it's "
     "useful to anyone else, that's a bonus."
 )
 
