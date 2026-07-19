@@ -29,8 +29,8 @@ import markdown
 ROOT = Path(__file__).parent
 POSTS_DIR = ROOT / "posts"
 
-# no trailing slash; set to the real Pages URL before deploying
-SITE_URL = "https://shaurya-34.github.io/log"
+# no trailing slash
+SITE_URL = "https://sslog.dpdns.org"
 SITE_NAME = "Shaurya"
 SITE_TITLE = "Shaurya · Log"
 SITE_DESC = "A personal activity log and curiosity journal."
