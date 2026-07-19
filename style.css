@@ -54,9 +54,9 @@ header.site {
 
 .wordmark {
   font-family: var(--display);
-  font-size: 1.1875rem;
+  font-size: 1.75rem;
   font-weight: 400;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
   color: var(--ink);
   text-decoration: none;
 }
