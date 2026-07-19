@@ -30,7 +30,7 @@ ROOT = Path(__file__).parent
 POSTS_DIR = ROOT / "posts"
 
 # no trailing slash; set to the real Pages URL before deploying
-SITE_URL = "https://sshaurya595.github.io/blog"
+SITE_URL = "https://shaurya-34.github.io/log"
 SITE_NAME = "Shaurya"
 SITE_TITLE = "Shaurya · Log"
 SITE_DESC = "A personal activity log and curiosity journal."

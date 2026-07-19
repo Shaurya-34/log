@@ -2,40 +2,40 @@
 <rss version="2.0">
   <channel>
     <title>Shaurya · Log</title>
-    <link>https://sshaurya595.github.io/blog</link>
+    <link>https://shaurya-34.github.io/log</link>
     <description>A personal activity log and curiosity journal.</description>
     <item>
       <title>On keeping a log instead of a blog</title>
-      <link>https://sshaurya595.github.io/blog/log-not-blog.html</link>
-      <guid>https://sshaurya595.github.io/blog/log-not-blog.html</guid>
+      <link>https://shaurya-34.github.io/log/log-not-blog.html</link>
+      <guid>https://shaurya-34.github.io/log/log-not-blog.html</guid>
       <pubDate>Sun, 12 Jul 2026 00:00:00 GMT</pubDate>
       <description>Why lowering the bar for publishing raised the rate of thinking.</description>
     </item>
     <item>
       <title>Terminal UIs are underrated</title>
-      <link>https://sshaurya595.github.io/blog/terminal-uis.html</link>
-      <guid>https://sshaurya595.github.io/blog/terminal-uis.html</guid>
+      <link>https://shaurya-34.github.io/log/terminal-uis.html</link>
+      <guid>https://shaurya-34.github.io/log/terminal-uis.html</guid>
       <pubDate>Sun, 28 Jun 2026 00:00:00 GMT</pubDate>
       <description>Notes from building with Textual for three months.</description>
     </item>
     <item>
       <title>A week with no syntax highlighting</title>
-      <link>https://sshaurya595.github.io/blog/no-highlighting.html</link>
-      <guid>https://sshaurya595.github.io/blog/no-highlighting.html</guid>
+      <link>https://shaurya-34.github.io/log/no-highlighting.html</link>
+      <guid>https://shaurya-34.github.io/log/no-highlighting.html</guid>
       <pubDate>Sat, 09 May 2026 00:00:00 GMT</pubDate>
       <description>An experiment in reading code the way you read prose.</description>
     </item>
     <item>
       <title>Things I learned migrating two drives</title>
-      <link>https://sshaurya595.github.io/blog/drive-migration.html</link>
-      <guid>https://sshaurya595.github.io/blog/drive-migration.html</guid>
+      <link>https://shaurya-34.github.io/log/drive-migration.html</link>
+      <guid>https://shaurya-34.github.io/log/drive-migration.html</guid>
       <pubDate>Tue, 02 Dec 2025 00:00:00 GMT</pubDate>
       <description>File systems, regret, and the archaeology of old projects.</description>
     </item>
     <item>
       <title>Reading list, annotated</title>
-      <link>https://sshaurya595.github.io/blog/reading-list.html</link>
-      <guid>https://sshaurya595.github.io/blog/reading-list.html</guid>
+      <link>https://shaurya-34.github.io/log/reading-list.html</link>
+      <guid>https://shaurya-34.github.io/log/reading-list.html</guid>
       <pubDate>Fri, 17 Oct 2025 00:00:00 GMT</pubDate>
       <description>Short notes on everything I finished this year.</description>
     </item>
