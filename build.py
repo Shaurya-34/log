@@ -14,21 +14,13 @@ Post files are named YYYY-MM-DD-slug.md and start with front matter:
 Markdown extras:
   - a blockquote whose text starts with "!pull " becomes a pull quote
   - inside code blocks, lines starting with "#" are muted (span.cm)
-  - any external link (http/https) gets a hover-preview card, built from
-    the target page's own <title>/description, fetched once and cached
-    in link_cache.json. Link to a page's normal URL, not a raw PDF, since
-    PDFs rarely carry usable <title>/description tags (e.g. an arxiv
-    /abs/ page works; /pdf/ usually won't).
 
 Set SITE_URL before deploying; it is only used in feed.xml.
 """
 
 import hashlib
 import html
-import json
 import re
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
@@ -37,7 +29,6 @@ import markdown
 
 ROOT = Path(__file__).parent
 POSTS_DIR = ROOT / "posts"
-LINK_CACHE_FILE = ROOT / "link_cache.json"
 ABOUT_HTML_FILE = ROOT / "about.html"
 
 
@@ -156,75 +147,7 @@ def parse_post(path):
     }
 
 
-def load_link_cache():
-    if LINK_CACHE_FILE.exists():
-        return json.loads(LINK_CACHE_FILE.read_text(encoding="utf-8"))
-    return {}
-
-
-def save_link_cache(cache):
-    LINK_CACHE_FILE.write_text(json.dumps(cache, indent=2, sort_keys=True), encoding="utf-8")
-
-
-def fetch_link_preview(url):
-    """Fetch a page's own <title> and description. Returns None on any
-    failure (offline, blocked, no usable tags) rather than breaking the
-    build; the link just won't get a hover card."""
-    req = urllib.request.Request(
-        url, headers={"User-Agent": "Mozilla/5.0 (compatible; sslog-build/1.0)"}
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            raw = resp.read(200_000)
-    except (urllib.error.URLError, TimeoutError, OSError):
-        return None
-
-    text = raw.decode("utf-8", errors="ignore")
-    title_m = re.search(r"<title[^>]*>(.*?)</title>", text, re.I | re.S)
-    desc_m = re.search(
-        r'<meta[^>]+(?:name|property)=["\'](?:description|og:description)["\']'
-        r'[^>]+content=["\'](.*?)["\']',
-        text, re.I,
-    ) or re.search(
-        r'<meta[^>]+content=["\'](.*?)["\'][^>]+(?:name|property)=["\'](?:description|og:description)["\']',
-        text, re.I,
-    )
-    if not title_m:
-        return None
-
-    title = html.unescape(re.sub(r"\s+", " ", title_m.group(1))).strip()
-    desc = html.unescape(re.sub(r"\s+", " ", desc_m.group(1))).strip() if desc_m else ""
-    if not title:
-        return None
-    return {"title": title[:120], "description": desc[:200]}
-
-
-def get_link_preview(url, cache):
-    if url not in cache:
-        cache[url] = fetch_link_preview(url)
-        save_link_cache(cache)
-    return cache[url]
-
-
-def annotate_external_links(html_body, cache):
-    def add_preview(m):
-        url, rest = m.group(1), m.group(2)
-        preview = get_link_preview(url, cache)
-        attrs = ' target="_blank" rel="noopener"'
-        if preview:
-            site = urlparse(url).netloc
-            attrs += (
-                f' data-preview-site="{html.escape(site)}"'
-                f' data-preview-title="{html.escape(preview["title"])}"'
-            )
-            if preview["description"]:
-                attrs += f' data-preview-desc="{html.escape(preview["description"])}"'
-        return f'<a href="{url}"{rest}{attrs}>'
-
-    return re.sub(r'<a href="(https?://[^"]+)"([^>]*)>', add_preview, html_body)
-
-
-def render_body(body_md, link_cache):
+def render_body(body_md):
     out = markdown.markdown(body_md, extensions=["fenced_code"])
     # blockquote starting with "!pull " -> pull quote
     out = out.replace('<blockquote>\n<p>!pull ', '<blockquote class="pull">\n<p>')
@@ -235,11 +158,10 @@ def render_body(body_md, link_cache):
             for ln in block.group(2).split("\n")
         ]
         return block.group(1) + "\n".join(lines) + block.group(3)
-    out = re.sub(r"(<pre><code[^>]*>)(.*?)(</code></pre>)", mute, out, flags=re.DOTALL)
-    return annotate_external_links(out, link_cache)
+    return re.sub(r"(<pre><code[^>]*>)(.*?)(</code></pre>)", mute, out, flags=re.DOTALL)
 
 
-def build_post(post, newer, older, link_cache):
+def build_post(post, newer, older):
     tags = (
         f'\n      <span class="tags">{html.escape(", ".join(post["tags"]))}</span>'
         if post["tags"] else ""
@@ -250,7 +172,7 @@ def build_post(post, newer, older, link_cache):
         '    <p class="post-meta">\n'
         f'      <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%B %d, %Y}</time>'
         f'{tags}\n    </p>\n\n'
-        f'{render_body(post["body_md"], link_cache)}\n'
+        f'{render_body(post["body_md"])}\n'
         '  </article>\n'
     )
     old_link = (
@@ -356,12 +278,11 @@ def main():
         key=lambda p: p["date"],
         reverse=True,
     )
-    link_cache = load_link_cache()
     for i, post in enumerate(posts):
         newer = posts[i - 1] if i > 0 else None
         older = posts[i + 1] if i + 1 < len(posts) else None
         (ROOT / f"{post['slug']}.html").write_text(
-            build_post(post, newer, older, link_cache), encoding="utf-8"
+            build_post(post, newer, older), encoding="utf-8"
         )
     (ROOT / "index.html").write_text(build_index(posts), encoding="utf-8")
     (ROOT / "feed.xml").write_text(build_feed(posts), encoding="utf-8")

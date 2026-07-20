@@ -1,10 +1,8 @@
-/* The only JS on the site. Four quiet behaviors:
+/* The only JS on the site. Three quiet behaviors:
    1. ghost scrollbar: thumb visible only while scrolling
    2. reading memory: posts remember your place; the homepage offers
       to continue the last unfinished post
    3. theme toggle: dark mode, remembered across visits
-   4. link preview: hover/focus an external link to see a card built
-      from data baked in at build time (build.py); nothing fetched here
    Everything works without this file; it only adds.
 
    Each behavior is isolated in its own try/catch and all storage access
@@ -23,91 +21,6 @@
   };
 
   function run(fn) { try { fn(); } catch (e) {} }
-
-  /* ---- link preview cards ----
-     delegated on the document so it works no matter which line fragment
-     of a wrapped link you're actually over. Set up first so nothing else
-     can prevent it. */
-  run(function () {
-    var previewLinks = document.querySelectorAll("a[data-preview-title]");
-    if (!previewLinks.length) return;
-
-    var card = document.createElement("div");
-    card.className = "link-preview";
-    card.setAttribute("role", "tooltip");
-    document.body.appendChild(card);
-
-    var showTimer, hideTimer, activeLink = null;
-    var SEL = "a[data-preview-title]";
-
-    var positionCard = function (link) {
-      var r = link.getClientRects()[0] || link.getBoundingClientRect();
-      var top = r.bottom + 8;
-      if (top + card.offsetHeight > innerHeight - 8) {
-        top = r.top - card.offsetHeight - 8;
-      }
-      var left = Math.min(r.left, innerWidth - card.offsetWidth - 12);
-      card.style.top = Math.max(8, top) + "px";
-      card.style.left = Math.max(12, left) + "px";
-    };
-
-    var showCard = function (link) {
-      card.textContent = "";
-      var site = document.createElement("span");
-      site.className = "site";
-      site.textContent = link.getAttribute("data-preview-site") || "";
-      var title = document.createElement("span");
-      title.className = "title";
-      title.textContent = link.getAttribute("data-preview-title") || "";
-      card.appendChild(site);
-      card.appendChild(title);
-      var descText = link.getAttribute("data-preview-desc");
-      if (descText) {
-        var desc = document.createElement("span");
-        desc.className = "desc";
-        desc.textContent = descText;
-        card.appendChild(desc);
-      }
-      positionCard(link);
-      card.classList.add("visible");
-    };
-
-    var hideCard = function () {
-      activeLink = null;
-      card.classList.remove("visible");
-    };
-
-    var closestLink = function (el) {
-      while (el && el !== document) {
-        if (el.nodeType === 1 && el.hasAttribute("data-preview-title")) return el;
-        el = el.parentNode;
-      }
-      return null;
-    };
-
-    document.addEventListener("mouseover", function (e) {
-      var link = closestLink(e.target);
-      if (!link || link === activeLink) return;
-      activeLink = link;
-      clearTimeout(hideTimer);
-      clearTimeout(showTimer);
-      showTimer = setTimeout(function () { showCard(link); }, 120);
-    });
-
-    document.addEventListener("mouseout", function (e) {
-      if (!closestLink(e.target)) return;
-      if (closestLink(e.relatedTarget) === activeLink && activeLink) return;
-      clearTimeout(showTimer);
-      hideTimer = setTimeout(hideCard, 100);
-    });
-
-    for (var i = 0; i < previewLinks.length; i++) {
-      (function (link) {
-        link.addEventListener("focus", function () { showCard(link); });
-        link.addEventListener("blur", hideCard);
-      })(previewLinks[i]);
-    }
-  });
 
   /* ---- theme toggle ----
      defaults to the OS preference (handled entirely in CSS); an
