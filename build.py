@@ -23,6 +23,7 @@ Markdown extras:
 Set SITE_URL before deploying; it is only used in feed.xml.
 """
 
+import hashlib
 import html
 import json
 import re
@@ -37,6 +38,18 @@ import markdown
 ROOT = Path(__file__).parent
 POSTS_DIR = ROOT / "posts"
 LINK_CACHE_FILE = ROOT / "link_cache.json"
+ABOUT_HTML_FILE = ROOT / "about.html"
+
+
+def file_version(path):
+    """Short content hash, used to cache-bust style.css/site.js so a
+    browser that already cached the old file always fetches the new one
+    instead of needing a manual hard refresh."""
+    return hashlib.md5(path.read_bytes()).hexdigest()[:8]
+
+
+CSS_VERSION = file_version(ROOT / "style.css")
+JS_VERSION = file_version(ROOT / "site.js")
 
 # no trailing slash
 SITE_URL = "https://sslog.dpdns.org"
@@ -85,8 +98,8 @@ def page_head(title, desc, path, og_type="website", base=""):
         f'title="{html.escape(SITE_TITLE)}" href="{base}feed.xml">\n'
         f'  <link rel="icon" href="{FAVICON}">\n'
         f'{FONTS}\n'
-        f'  <link rel="stylesheet" href="{base}style.css">\n'
-        f'  <script src="{base}site.js" defer></script>\n'
+        f'  <link rel="stylesheet" href="{base}style.css?v={CSS_VERSION}">\n'
+        f'  <script src="{base}site.js?v={JS_VERSION}" defer></script>\n'
         '</head>\n<body>\n<div class="wrap">\n'
     )
 
@@ -326,6 +339,17 @@ def build_feed(posts):
     )
 
 
+def restamp_about_html():
+    """about.html is hand-authored (not generated), but its style.css/
+    site.js links still need fresh cache-busting versions on every build."""
+    text = ABOUT_HTML_FILE.read_text(encoding="utf-8")
+    text = re.sub(r'href="style\.css(?:\?v=[a-f0-9]+)?"',
+                  f'href="style.css?v={CSS_VERSION}"', text)
+    text = re.sub(r'src="site\.js(?:\?v=[a-f0-9]+)?"',
+                  f'src="site.js?v={JS_VERSION}"', text)
+    ABOUT_HTML_FILE.write_text(text, encoding="utf-8")
+
+
 def main():
     posts = sorted(
         (parse_post(p) for p in POSTS_DIR.glob("*.md")),
@@ -342,6 +366,7 @@ def main():
     (ROOT / "index.html").write_text(build_index(posts), encoding="utf-8")
     (ROOT / "feed.xml").write_text(build_feed(posts), encoding="utf-8")
     (ROOT / "404.html").write_text(build_404(), encoding="utf-8")
+    restamp_about_html()
     print(f"built {len(posts)} posts + index.html + feed.xml + 404.html")
 
 
