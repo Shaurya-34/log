@@ -505,6 +505,45 @@ html.scrolling:hover { scrollbar-color: var(--faint) transparent; }
 
 .continue a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
 
+/* link preview card: hover/focus on an external link with baked-in
+   preview data (site.js) shows the target page's own title/description.
+   nothing is fetched at runtime, so this is instant and never breaks. */
+.link-preview {
+  position: fixed;
+  max-width: 320px;
+  padding: 0.875rem 1rem;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.link-preview.visible { opacity: 1; transform: none; }
+
+.link-preview .site {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 0.375rem;
+}
+
+.link-preview .title {
+  display: block;
+  font-family: var(--display);
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+
+.link-preview .desc { display: block; color: var(--grey); }
+
 /* end-of-post tombstone; generated posts carry class "entry" */
 article.post.entry::after {
   content: "∎";

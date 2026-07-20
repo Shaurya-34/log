@@ -1,8 +1,10 @@
-/* The only JS on the site. Three quiet behaviors:
+/* The only JS on the site. Four quiet behaviors:
    1. ghost scrollbar: thumb visible only while scrolling
    2. reading memory: posts remember your place; the homepage offers
       to continue the last unfinished post
    3. theme toggle: dark mode, remembered across visits
+   4. link preview: hover/focus an external link to see a card built
+      from data baked in at build time (build.py); nothing fetched here
    Everything works without this file; it only adds. */
 (function () {
   var doc = document.documentElement;
@@ -33,6 +35,65 @@
       paintToggle();
     });
     paintToggle();
+  }
+
+  /* ---- link preview cards ---- */
+  var previewLinks = document.querySelectorAll("a[data-preview-title]");
+  if (previewLinks.length) {
+    var card = document.createElement("div");
+    card.className = "link-preview";
+    card.setAttribute("role", "tooltip");
+    document.body.appendChild(card);
+
+    var showTimer, hideTimer;
+
+    var positionCard = function (link) {
+      var r = link.getBoundingClientRect();
+      var top = r.bottom + 8;
+      if (top + card.offsetHeight > innerHeight - 8) {
+        top = r.top - card.offsetHeight - 8;
+      }
+      var left = Math.min(r.left, innerWidth - card.offsetWidth - 12);
+      card.style.top = Math.max(8, top) + "px";
+      card.style.left = Math.max(12, left) + "px";
+    };
+
+    var showCard = function (link) {
+      card.textContent = "";
+      var site = document.createElement("span");
+      site.className = "site";
+      site.textContent = link.dataset.previewSite || "";
+      var title = document.createElement("span");
+      title.className = "title";
+      title.textContent = link.dataset.previewTitle || "";
+      card.appendChild(site);
+      card.appendChild(title);
+      if (link.dataset.previewDesc) {
+        var desc = document.createElement("span");
+        desc.className = "desc";
+        desc.textContent = link.dataset.previewDesc;
+        card.appendChild(desc);
+      }
+      positionCard(link);
+      card.classList.add("visible");
+    };
+
+    var hideCard = function () {
+      card.classList.remove("visible");
+    };
+
+    previewLinks.forEach(function (link) {
+      link.addEventListener("mouseenter", function () {
+        clearTimeout(hideTimer);
+        showTimer = setTimeout(function () { showCard(link); }, 200);
+      });
+      link.addEventListener("mouseleave", function () {
+        clearTimeout(showTimer);
+        hideTimer = setTimeout(hideCard, 100);
+      });
+      link.addEventListener("focus", function () { showCard(link); });
+      link.addEventListener("blur", hideCard);
+    });
   }
 
   /* ---- ghost scrollbar ---- */

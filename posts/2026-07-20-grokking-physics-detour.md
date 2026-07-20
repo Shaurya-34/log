@@ -30,8 +30,10 @@ Wedge 1.
 ## What I already had lying around
 
 Before starting from scratch, I checked an older project of mine called
-catapult, which had spent a while reproducing grokking on the classic toy
-example: modular addition. Feed a network pairs of numbers and their sum modulo
+catapult (named after [gwern's LLM catapult hypothesis](https://gwern.net/llm-catapult),
+which is what got me interested in this whole area in the first place), which
+had spent a while reproducing grokking on the classic toy example: modular
+addition. Feed a network pairs of numbers and their sum modulo
 some prime, hold out a chunk of the pairs, and watch what happens as it trains.
 It turned out I'd already done a lot more with this than I remembered.
 
@@ -303,3 +305,8 @@ smooth it over.
 Mostly, though, the useful part of this whole detour was just noticing the
 premise had failed, and stopping instead of grinding on. That's a less
 satisfying ending than a paper. It's still the right one.
+
+## Further reading
+
+[gwern.net/llm-catapult](https://gwern.net/llm-catapult): the original
+hypothesis this whole detour, and catapult's name, borrows from.
