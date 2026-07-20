@@ -505,6 +505,14 @@ html.scrolling:hover { scrollbar-color: var(--faint) transparent; }
 
 .continue a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
 
+/* links carrying a hover preview get a dotted underline, hinting
+   there's more to see (and, handily, proving the new build loaded) */
+a[data-preview-title] {
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
 /* link preview card: hover/focus on an external link with baked-in
    preview data (site.js) shows the target page's own title/description.
    nothing is fetched at runtime, so this is instant and never breaks. */
