@@ -525,14 +525,18 @@ a[data-preview-title] {
   font-family: var(--mono);
   font-size: 0.8125rem;
   line-height: 1.5;
+  visibility: hidden;
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
   pointer-events: none;
   z-index: 50;
 }
 
-.link-preview.visible { opacity: 1; transform: none; }
+/* visible state is a plain opacity:1 with no transition or animation, so
+   it appears instantly and can never get stuck mid-fade in any renderer. */
+.link-preview.visible {
+  visibility: visible;
+  opacity: 1;
+}
 
 .link-preview .site {
   display: block;
