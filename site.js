@@ -37,7 +37,10 @@
     paintToggle();
   }
 
-  /* ---- link preview cards ---- */
+  /* ---- link preview cards ----
+     delegated on the document so it works no matter which line fragment
+     of a wrapped link you're actually over (per-link mouseenter can miss
+     the gap between lines on a two-line link). */
   var previewLinks = document.querySelectorAll("a[data-preview-title]");
   if (previewLinks.length) {
     var card = document.createElement("div");
@@ -45,10 +48,11 @@
     card.setAttribute("role", "tooltip");
     document.body.appendChild(card);
 
-    var showTimer, hideTimer;
+    var showTimer, hideTimer, activeLink = null;
+    var SEL = "a[data-preview-title]";
 
-    var positionCard = function (link) {
-      var r = link.getBoundingClientRect();
+    var positionCard = function (link, anchorRect) {
+      var r = anchorRect || link.getClientRects()[0] || link.getBoundingClientRect();
       var top = r.bottom + 8;
       if (top + card.offsetHeight > innerHeight - 8) {
         top = r.top - card.offsetHeight - 8;
@@ -58,7 +62,7 @@
       card.style.left = Math.max(12, left) + "px";
     };
 
-    var showCard = function (link) {
+    var showCard = function (link, anchorRect) {
       card.textContent = "";
       var site = document.createElement("span");
       site.className = "site";
@@ -74,23 +78,34 @@
         desc.textContent = link.dataset.previewDesc;
         card.appendChild(desc);
       }
-      positionCard(link);
+      positionCard(link, anchorRect);
       card.classList.add("visible");
     };
 
     var hideCard = function () {
+      activeLink = null;
       card.classList.remove("visible");
     };
 
+    document.addEventListener("mouseover", function (e) {
+      var link = e.target.closest && e.target.closest(SEL);
+      if (!link || link === activeLink) return;
+      activeLink = link;
+      clearTimeout(hideTimer);
+      clearTimeout(showTimer);
+      showTimer = setTimeout(function () { showCard(link); }, 120);
+    });
+
+    document.addEventListener("mouseout", function (e) {
+      var link = e.target.closest && e.target.closest(SEL);
+      if (!link) return;
+      var to = e.relatedTarget;
+      if (to && to.closest && to.closest(SEL) === link) return; // still on it
+      clearTimeout(showTimer);
+      hideTimer = setTimeout(hideCard, 100);
+    });
+
     previewLinks.forEach(function (link) {
-      link.addEventListener("mouseenter", function () {
-        clearTimeout(hideTimer);
-        showTimer = setTimeout(function () { showCard(link); }, 200);
-      });
-      link.addEventListener("mouseleave", function () {
-        clearTimeout(showTimer);
-        hideTimer = setTimeout(hideCard, 100);
-      });
       link.addEventListener("focus", function () { showCard(link); });
       link.addEventListener("blur", hideCard);
     });
