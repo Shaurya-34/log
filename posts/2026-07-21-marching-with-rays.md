@@ -158,6 +158,9 @@ stop when close enough, turned out to be the entire trick.
 
 ## Further reading
 
+The full source is on GitHub:
+[Shaurya-34/raymarcher](https://github.com/Shaurya-34/raymarcher).
+
 [iquilezles.org](https://iquilezles.org/) is where nearly everything
 above actually comes from: distance functions, the smooth minimum, and
 most of what the raymarching community still builds on today.
