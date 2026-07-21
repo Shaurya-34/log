@@ -51,8 +51,9 @@ SITE_DESC = "A personal activity log and curiosity journal."
 MOTTO = "honest · semi informative · personal"
 
 INTRO = (
-    "This is a personal activity log: a record of what I'm building, "
-    "reading, and puzzling over. Written for an audience of one; if it's "
+    "This is a log, not a blog: a blog is written for an audience; a log "
+    "just tracks what I did, and when. What's here is what I'm building, "
+    "reading, and puzzling over, written for an audience of one. If it's "
     "useful to anyone else, that's a bonus."
 )
 
