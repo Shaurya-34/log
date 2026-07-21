@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marching with rays · Shaurya</title>
+  <meta name="description" content="Build a raymarcher/raytracer from scratch, within 168 lines of Java.">
+  <meta property="og:title" content="Marching with rays · Shaurya">
+  <meta property="og:description" content="Build a raymarcher/raytracer from scratch, within 168 lines of Java.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sslog.dpdns.org/marching-with-rays.html">
+  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23faf9f7'/%3E%3Ctext x='32' y='46' font-family='Courier%20New,monospace' font-size='44' text-anchor='middle' fill='%23161513'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="style.css?v=332a0f1a">
+  <script src="site.js?v=b8a1baad" defer></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="b-strike">B</span>LOG</a>
+    <nav>
+      <a href="about.html">About</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
+    </nav>
+  </header>
+
+  <article class="post entry">
+    <h1>Marching with rays</h1>
+    <p class="post-meta">
+      <time datetime="2026-07-21">July 21, 2026</time>
+      <span class="tags">graphics, java</span>
+    </p>
+
+<p>I wanted to understand raymarching by actually building one, not by reading
+about it. No engine, no shader language, no graphics library. Just plain
+Java, a <code>BufferedImage</code>, and a function that answers one question: how far
+is this point from the nearest surface.</p>
+<p>That question turns out to be almost the whole renderer. The rest is
+walking toward the answer.</p>
+<h2>What a distance field actually is</h2>
+<p>A signed distance function takes a point in space and returns a single
+number: how far that point is from the nearest surface, negative if the
+point is inside the shape, positive if it's outside. For a sphere, that's
+about as simple as math gets:</p>
+<pre><code>sdSphere(p, center, radius) = length(p - center) - radius
+</code></pre>
+<p>A box is less obvious (the nearest surface depends on which side, edge, or
+corner you're closest to), but it's still just arithmetic, no
+triangles, no meshes. Inigo Quilez's
+<a href="https://iquilezles.org/articles/distfunctions/">list of distance functions</a>
+is where these formulas actually come from. Both my <code>sdSphere</code> and <code>sdBox</code>
+are his, translated line for line into Java.</p>
+<h2>Walking along the ray</h2>
+<p>Traditional raytracing solves for exact intersections between a ray and
+geometry. Raymarching cheats in a much lazier, much more general way,
+called sphere tracing: at every step, ask the distance field how far away
+the nearest surface is, then jump forward by exactly that much. Since
+nothing is closer than that distance, in any direction, the jump is always
+safe. Repeat until the distance is close enough to zero to call it a hit,
+or the ray has travelled so far it's clearly hit nothing.</p>
+<pre><code>distTravelled = 0
+repeat up to maxSteps:
+    p = rayOrigin + rayDir * distTravelled
+    d = scene(p)
+    distTravelled += d
+    if d &lt; surfaceThreshold or distTravelled &gt; maxDist: stop
+</code></pre>
+<p>Point a grid of these rays out of a virtual camera, one per pixel, shade
+whatever they hit, and there's an image. First real output, one sphere,
+one light:</p>
+<figure>
+  <img src="images/raymarcher/output.png" alt="A single shaded sphere on a dark background, rendered with a raymarcher.">
+  <figcaption>The first thing that rendered. One sphere, one point light, plain diffuse shading. Sphere tracing already works.</figcaption>
+</figure>
+
+<p>The shading itself needed one more piece: the surface normal at the hit
+point. There's no mesh to pull a normal from, so I estimated it by nudging
+the point slightly along each axis and checking how the distance value
+changes in response. That gradient points straight away from the surface,
+which is exactly the normal.</p>
+<h2>A second shape, and a seam</h2>
+<p>One shape gets old fast. Adding a box next to the sphere just means
+combining two distance fields into one scene function, and the simplest
+way to combine them is to take whichever is closer at any given point:</p>
+<pre><code>scene(p) = min(sdSphere(p), sdBox(p))
+</code></pre>
+<p>That works, technically. It also produces a hard, visible seam exactly
+where the two distance fields cross over:</p>
+<figure>
+  <img src="images/raymarcher/output1.png" alt="A sphere and a box rendered side by side, with a visible hard seam where the two shapes meet.">
+  <figcaption>Plain min() of two SDFs. Correct, and correctly ugly at the boundary.</figcaption>
+</figure>
+
+<h2>Blending shapes smoothly</h2>
+<p>The fix is a smooth minimum instead of a plain one: rather than snapping
+to whichever shape is closer, blend between them over some small zone
+around where they'd otherwise cross. Inigo Quilez's
+<a href="https://iquilezles.org/articles/smin/">smooth minimum article</a> is where I
+got this from, and the whole function is small enough to write out in
+full:</p>
+<pre><code>smin(a, b, k):
+    h = max(k - abs(a - b), 0) / k
+    return min(a, b) - h*h*k / 4
+</code></pre>
+<p>Swap <code>min</code> for <code>smin</code> in the scene function and the same two shapes merge
+into one continuous surface, like they were always a single piece of
+material:</p>
+<figure>
+  <img src="images/raymarcher/output2.png" alt="A sphere and a box merged into a single smooth, continuous surface.">
+  <figcaption>Same sphere, same box, smin() instead of min(). One organic blob instead of two shapes colliding.</figcaption>
+</figure>
+
+<p>There's still a faint crease near the top, right where the blend zone
+runs out of room, but it reads as a fold in the surface rather than a
+seam. That's the whole difference a few lines of arithmetic can make.</p>
+<h2>Jagged edges, then not</h2>
+<p>Zoomed in, the edges were rough. Each pixel was sampling the scene at
+exactly one point, so a curve crossing a pixel either counted as fully in
+or fully out, no in-between, which is what a staircase pattern along every
+edge looks like:</p>
+<figure>
+  <img src="images/raymarcher/rough_edges.png" alt="Extreme close-up of a rendered surface edge, showing a visible jagged staircase pattern.">
+  <figcaption>One sample per pixel. The curve is smooth; the pixels sampling it are not.</figcaption>
+</figure>
+
+<p>The fix is the oldest trick in rasterization: sample each pixel more than
+once, at slightly different sub-pixel offsets, and average the results
+before writing the final color.</p>
+<pre><code>for each of 4 sub-pixel offsets in a 2x2 grid:
+    trace a ray through that offset
+    accumulate its color
+write average(accumulated colors)
+</code></pre>
+<p>Four samples in a fixed quadrant pattern was enough to soften the
+staircase into a clean curve:</p>
+<figure>
+  <img src="images/raymarcher/after_anti_aliasing.png" alt="The same close-up edge as before, now smooth instead of jagged.">
+  <figcaption>Same edge, same camera, four samples per pixel instead of one. The steps are gone.</figcaption>
+</figure>
+
+<h2>What 168 lines gets you</h2>
+<p>Sphere tracing, two kinds of signed distance field, a smooth blend between
+them, surface normals estimated from the distance field itself, diffuse
+lighting, and antialiasing. No mesh ever entered this program. Every
+surface that shows up in these images is just a function, evaluated
+however many times the camera happened to ask.</p>
+<p>It's also obviously a starting point, not a renderer. There are no
+shadows (nothing stops a point from being lit even when something else is
+in the way), no reflections, and exactly two shapes. All of that is more
+distance functions and more math on top of the same loop, not a different
+approach. The loop itself, walk forward by the safe distance, ask again,
+stop when close enough, turned out to be the entire trick.</p>
+<h2>Further reading</h2>
+<p><a href="https://iquilezles.org/">iquilezles.org</a> is where nearly everything
+above actually comes from: distance functions, the smooth minimum, and
+most of what the raymarching community still builds on today.</p>
+  </article>
+
+  <nav class="post-nav">
+    <a class="older" href="grok-grok.html">← grok.....grok ?</a>
+    <span></span>
+  </nav>
+
+  <footer class="site">
+    <span>Shaurya · 2026</span>
+    <a href="index.html">Index</a>
+  </footer>
+
+</div>
+</body>
+</html>

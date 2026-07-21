@@ -5,6 +5,13 @@
     <link>https://sslog.dpdns.org</link>
     <description>A personal activity log and curiosity journal.</description>
     <item>
+      <title>Marching with rays</title>
+      <link>https://sslog.dpdns.org/marching-with-rays.html</link>
+      <guid>https://sslog.dpdns.org/marching-with-rays.html</guid>
+      <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
+      <description>Build a raymarcher/raytracer from scratch, within 168 lines of Java.</description>
+    </item>
+    <item>
       <title>grok.....grok ?</title>
       <link>https://sslog.dpdns.org/grok-grok.html</link>
       <guid>https://sslog.dpdns.org/grok-grok.html</guid>
