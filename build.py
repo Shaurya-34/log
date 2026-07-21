@@ -52,8 +52,8 @@ MOTTO = "honest · semi informative · personal"
 
 INTRO = (
     "I think of this less as a blog and more as a log: a running record "
-    "of what I'm building, reading, and puzzling over, written for an "
-    "audience of one. If it's useful to anyone else, that's a bonus."
+    "of what I'm building, reading, and puzzling over. If it's useful to "
+    "anyone else, that's a bonus."
 )
 
 FAVICON = (
