@@ -526,7 +526,7 @@ article.post.entry::after {
 /* ---- small screens ----------------------------------------------- */
 
 @media (max-width: 540px) {
-  body { font-size: 1.0625rem; }
+  body { font-size: 1.125rem; }
   header.site { padding-top: 2.25rem; }
   article.post { padding-top: 2.75rem; }
   article.post h1 { font-size: 2.375rem; }
@@ -537,4 +537,15 @@ article.post.entry::after {
     align-items: flex-start;
     gap: 0.25rem;
   }
+
+  /* code blocks: wrap instead of horizontal-scroll, since these are
+     short formula-style lines, not deeply indented multi-line code
+     where wrapping would break the structure */
+  pre {
+    padding: 0.875rem 1rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  pre code { font-size: 0.75rem; }
 }
