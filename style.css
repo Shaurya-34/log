@@ -343,6 +343,12 @@ article.post blockquote.pull {
   }
 }
 
+/* browsers default <figure> to margin: 1em 40px, which silently narrows
+   every image by 80px; figures should span the full column instead */
+article.post figure {
+  margin: 0;
+}
+
 article.post img {
   max-width: 100%;
   height: auto;

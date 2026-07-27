@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Never repeating, never leaving · Shaurya</title>
+  <meta name="description" content="Four chaotic systems, one Python framework, and the one that refused to fit it.">
+  <meta property="og:title" content="Never repeating, never leaving · Shaurya">
+  <meta property="og:description" content="Four chaotic systems, one Python framework, and the one that refused to fit it.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sslog.dpdns.org/never-repeating-never-leaving.html">
+  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23faf9f7'/%3E%3Ctext x='32' y='46' font-family='Courier%20New,monospace' font-size='44' text-anchor='middle' fill='%23161513'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="style.css?v=d792c38a">
+  <script src="site.js?v=b8a1baad" defer></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="b-strike">B</span>LOG</a>
+    <nav>
+      <a href="about.html">About</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
+    </nav>
+  </header>
+
+  <article class="post entry">
+    <h1>Never repeating, never leaving</h1>
+    <p class="post-meta">
+      <time datetime="2026-07-24">July 24, 2026</time>
+      <span class="tags">chaos, python, visualization</span>
+    </p>
+
+<p>A strange attractor is what you get when a system is chaotic but still
+bounded. It never settles down to a fixed point, never falls into a
+repeating loop, and never flies off to infinity either. It just keeps
+wandering forever inside a contained region of space, tracing out a shape
+that has structure at every scale you zoom into.</p>
+<p>The part that took me a while to actually believe: there is no randomness
+anywhere in these systems. The equations are completely deterministic. Run
+them twice from the exact same starting point and you get the exact same
+path, every time. The chaos comes entirely from sensitivity to where you
+started. Move the initial point by a millionth and the two trajectories
+stay close for a while, then diverge completely. Same rules, same
+determinism, wildly different outcome.</p>
+<p>Edward Lorenz found the canonical example in 1963 while modeling
+atmospheric convection. Three coupled differential equations, nothing
+exotic:</p>
+<pre><code>dx/dt = sigma * (y - x)
+dy/dt = x * (rho - z) - y
+dz/dt = x * y - beta * z
+</code></pre>
+<p>With the usual constants (sigma=10, rho=28, beta=8/3), that produces
+output that looks like structured noise, and a shape people ended up
+calling the butterfly.</p>
+<h2>Not building it by hand this time</h2>
+<p>The last graphics thing I built was a raymarcher in plain Java, no
+libraries, on purpose. This project I did the opposite and reached
+straight for Python and a plotting library, also on purpose.</p>
+<p>The difference is what each project was actually for. With the raymarcher,
+the whole point was understanding the machinery, so writing my own vector
+math was the work, not a detour. Here, the machinery is four lines of
+arithmetic per system. What I actually wanted was to try a parameter, look
+at it, change it, and look again, fast. Writing my own 3D renderer would
+have been procrastination dressed up as rigor.</p>
+<h2>Getting the first one on screen</h2>
+<p>The build order was deliberately boring. Before touching any real math I
+plotted a throwaway spiral, just to confirm the 3D plotting pipeline
+worked at all. Then the Lorenz step function, sanity checked by hand on a
+single point. Then the integration loop, which is about as simple as
+numerical integration gets:</p>
+<pre><code>p = starting point
+repeat n_steps times:
+    dx, dy, dz = step(p)
+    p = p + (dx, dy, dz) * dt
+    record p
+</code></pre>
+<p>That is Euler integration: take the derivative at where you are, take a
+small step in that direction, repeat. It accumulates error over time and
+there are much better methods, but for drawing a picture of an attractor
+it is completely fine.</p>
+<p>The butterfly showed up on the first real attempt, which felt suspicious
+but turned out to be true.</p>
+<h2>The four bugs</h2>
+<p>Animating it is where the actual time went. Four separate bugs, each one
+silent in its own way:</p>
+<p><strong>Axis ranges being ignored.</strong> I set the axis ranges to stop the plot from
+rescaling itself, and nothing happened. In 3D figures the <code>xaxis</code>,
+<code>yaxis</code>, and <code>zaxis</code> settings have to be nested inside a <code>scene</code> object,
+not passed at the top level like they are for 2D. Passed at the top level
+they are silently discarded. No warning, no error, just no effect.</p>
+<p><strong>A redraw flag that only matters in 3D.</strong> Animation frames have a
+<code>redraw</code> option that you can safely turn off for 2D scatter plots as a
+performance win. In a 3D scene, turning it off silently breaks the
+animation's progression instead. It had to be on.</p>
+<p><strong>A vanishing loop.</strong> Across a few rounds of restructuring the script, the
+loop that actually built the trajectory kept getting lost in copy-paste.
+The symptom was an <code>IndexError</code> that made no sense until I checked and
+found my coordinate lists had exactly one point in them. The animation was
+faithfully trying to animate a single dot.</p>
+<p><strong>Frames from two attractors in one figure.</strong> After adding a second
+attractor, I reused the same <code>frames</code> list without clearing it. Lorenz
+frames and the new attractor's frames got concatenated into one sequence,
+so the animation played one attractor and then abruptly cut to a
+completely different one in the same box.</p>
+<p>None of these threw a useful error. Every one of them just quietly did
+something other than what I meant.</p>
+<h2>A second system</h2>
+<p>Rössler was next. Same three-equation, same-integration-loop pattern,
+different arithmetic:</p>
+<pre><code>dx/dt = -y - z
+dy/dt = x + a*y
+dz/dt = b + z*(x - c)
+</code></pre>
+<p>With a=0.2, b=0.2, c=5.7 it produces something visually very different
+from Lorenz: a single flat spiral band that winds outward, then
+periodically kicks up out of the plane and folds back into the middle.
+Lorenz has two lobes and a rough symmetry; Rössler has one band and a
+fold.</p>
+<p>It also needed different numbers to look right. A different step size, and
+roughly twice as many total steps before the folding structure becomes
+visible at all. That was the first hint that "how long do I run this for"
+is a per-system property, not a global setting.</p>
+<h2>Making the second one boring</h2>
+<p>At this point the script had two nearly identical blocks of code, one per
+attractor, and I was about to add a third. So I stopped and pulled out two
+functions.</p>
+<p>The first takes any step function at all and integrates it:</p>
+<pre><code>integrate(step_fn, initial, dt, n_steps)
+</code></pre>
+<p>The second takes a list of finished trajectories and renders them into one
+synchronized animation, side by side:</p>
+<pre><code>animate_side_by_side([(positions, title, speed), ...])
+</code></pre>
+<p>The <code>speed</code> value there exists because the attractors need different step
+counts, but they share one animation clock. It scales how fast each one
+draws relative to the others, so a system that needs 40,000 steps and one
+that needs 10,000 can still finish at roughly the same moment.</p>
+<p>The payoff was immediate. Adding Aizawa, which is a genuinely more
+complicated system with six parameters and a cubic term:</p>
+<pre><code>dx/dt = (z - b)*x - d*y
+dy/dt = d*x + (z - b)*y
+dz/dt = c + a*z - z^3/3 - (x^2 + y^2)*(1 + e*z) + f*z*x^3
+</code></pre>
+<p>took one new step function and one new line in a list. Zero changes to
+anything structural. It produces a layered, shell-like spiral that looks
+like something turned on a lathe.</p>
+<figure>
+  <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form.">
+  <figcaption>Four systems, one framework, one animation clock. Lorenz, Rössler, Aizawa, Thomas.</figcaption>
+</figure>
+
+<h2>Then one of them refused to fit</h2>
+<p>Clifford is where the framework stopped working, and understanding why was
+the most interesting part of the whole project.</p>
+<p>Everything so far has been a continuous system. There is a smooth path
+through space, and consecutive points along it are close together. That is
+exactly why animating a dot tracing a connected line makes sense as a way
+to show it, and why <code>dt</code> means anything at all.</p>
+<p>Clifford is a discrete map:</p>
+<pre><code>x' = sin(a*y) + c*cos(a*x)
+y' = sin(b*x) + d*cos(b*y)
+</code></pre>
+<p>There is no derivative here and no time step. You take a point, apply the
+formula, and get the next point, which can land anywhere in the plane.
+Consecutive points are not neighbours. There is no path. Drawing a line
+between them would be drawing a relationship that does not exist.</p>
+<p>So the attractor's shape does not emerge from following a trajectory. It
+emerges statistically, from plotting hundreds of thousands of points and
+seeing where they pile up. Some regions get visited constantly and go
+dense, others almost never. I rendered half a million iterations as a
+single static scatter, coloured by iteration order:</p>
+<figure>
+  <img src="images/attractors/clifford.png" alt="A dense static scatter plot of the Clifford attractor, forming sweeping curved bands and lobes that look like folded ribbons.">
+  <figcaption>The Clifford attractor. No animation, no path, no dt. Half a million points, and the shape is what the density does.</figcaption>
+</figure>
+
+<p>Same word, "attractor", genuinely different object. It needed its own
+render path, and no amount of framework design would have prevented that,
+because the difference is mathematical, not architectural.</p>
+<h2>Coda</h2>
+<p>Thomas' cyclically symmetric attractor went in last, and it went back to
+being boring in the good way. One parameter, and unusually for this group,
+it is built from trigonometric functions rather than polynomials:</p>
+<pre><code>dx/dt = sin(y) - b*x
+dy/dt = sin(z) - b*y
+dz/dt = sin(x) - b*z
+</code></pre>
+<p>With b=0.208186 it gives a softer, more rounded kind of chaos than the
+others. It also evolves much more slowly, so it needed a step size five
+times larger than Lorenz's and about four times as many steps. Two numbers
+and one line, no structural changes.</p>
+<p>One practical thing worth writing down: going from three panels to four
+made rendering the animation noticeably slower, in a way the interactive
+version never was. Once you export to a GIF, every frame has to be
+rasterized and encoded up front, so frame count is a direct multiplier on
+render time. The lever for that is how many simulation steps you skip
+between captured frames. Playback speed is set separately, so skipping
+more does not make the result look choppier, it just means fewer frames to
+build. Going from four panels back down to a reasonable render time was a
+one-number change.</p>
+<p>The whole thing is about 130 lines now, and adding a fifth continuous
+attractor would be maybe six of them.</p>
+<h2>Further reading</h2>
+<p>The source is on GitHub:
+<a href="https://github.com/Shaurya-34/strange_attractors">Shaurya-34/strange_attractors</a>.</p>
+  </article>
+
+  <nav class="post-nav">
+    <a class="older" href="marching-with-rays.html">← Marching with rays</a>
+    <span></span>
+  </nav>
+
+  <footer class="site">
+    <span>Shaurya · 2026</span>
+    <a href="index.html">Index</a>
+  </footer>
+
+</div>
+</body>
+</html>
