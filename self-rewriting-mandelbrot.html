@@ -111,50 +111,122 @@ startup - the cache <em>is</em> the startup state.</p>
 <p>Once the colormap pipeline was in place, testing it meant rendering the same
 view through every Matplotlib colormap worth trying. It's the same escape-time
 matrix underneath each one - only the last step of the pipeline changes.</p>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_inferno.png" alt="The Mandelbrot set rendered with the inferno colormap: dark background with bright orange and yellow escape bands.">
-  <figcaption>inferno - the default.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_viridis.png" alt="The Mandelbrot set rendered with the viridis colormap: dark blue-purple background with green and yellow escape bands.">
-  <figcaption>viridis.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_magma.png" alt="The Mandelbrot set rendered with the magma colormap: dark purple-black background with pink and pale yellow escape bands.">
-  <figcaption>magma.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_plasma.png" alt="The Mandelbrot set rendered with the plasma colormap: dark violet background with hot pink and yellow escape bands.">
-  <figcaption>plasma.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_cividis.png" alt="The Mandelbrot set rendered with the cividis colormap: muted blue-to-yellow gradient.">
-  <figcaption>cividis.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_twilight.png" alt="The Mandelbrot set rendered with the twilight colormap: cyclic pale purple and blue bands.">
-  <figcaption>twilight.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_turbo.png" alt="The Mandelbrot set rendered with the turbo colormap: bright rainbow bands from blue through red.">
-  <figcaption>turbo.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_jet.png" alt="The Mandelbrot set rendered with the jet colormap: classic blue-to-red rainbow bands.">
-  <figcaption>jet.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_rainbow.png" alt="The Mandelbrot set rendered with the rainbow colormap: saturated rainbow escape bands.">
-  <figcaption>rainbow.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_gist_rainbow.png" alt="The Mandelbrot set rendered with the gist_rainbow colormap: high-contrast rainbow escape bands.">
-  <figcaption>gist_rainbow.</figcaption>
-</figure>
-<figure class="color">
-  <img class="color" src="images/mandelbrot/mandelbrot_nipy_spectral.png" alt="The Mandelbrot set rendered with the nipy_spectral colormap: dense spectral escape bands from black through violet.">
-  <figcaption>nipy_spectral - my favorite of the set, mostly because it looks the least like a default.</figcaption>
-</figure>
+<div class="colormap-carousel">
+  <div class="colormap-track">
+    <figure class="colormap-slide" id="cm-inferno">
+      <img class="color" src="images/mandelbrot/mandelbrot_inferno.png" alt="The Mandelbrot set rendered with the inferno colormap: dark background with bright orange and yellow escape bands.">
+      <figcaption>inferno - the default.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-viridis">
+      <img class="color" src="images/mandelbrot/mandelbrot_viridis.png" alt="The Mandelbrot set rendered with the viridis colormap: dark blue-purple background with green and yellow escape bands.">
+      <figcaption>viridis.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-magma">
+      <img class="color" src="images/mandelbrot/mandelbrot_magma.png" alt="The Mandelbrot set rendered with the magma colormap: dark purple-black background with pink and pale yellow escape bands.">
+      <figcaption>magma.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-plasma">
+      <img class="color" src="images/mandelbrot/mandelbrot_plasma.png" alt="The Mandelbrot set rendered with the plasma colormap: dark violet background with hot pink and yellow escape bands.">
+      <figcaption>plasma.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-cividis">
+      <img class="color" src="images/mandelbrot/mandelbrot_cividis.png" alt="The Mandelbrot set rendered with the cividis colormap: muted blue-to-yellow gradient.">
+      <figcaption>cividis.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-twilight">
+      <img class="color" src="images/mandelbrot/mandelbrot_twilight.png" alt="The Mandelbrot set rendered with the twilight colormap: cyclic pale purple and blue bands.">
+      <figcaption>twilight.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-turbo">
+      <img class="color" src="images/mandelbrot/mandelbrot_turbo.png" alt="The Mandelbrot set rendered with the turbo colormap: bright rainbow bands from blue through red.">
+      <figcaption>turbo.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-jet">
+      <img class="color" src="images/mandelbrot/mandelbrot_jet.png" alt="The Mandelbrot set rendered with the jet colormap: classic blue-to-red rainbow bands.">
+      <figcaption>jet.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-rainbow">
+      <img class="color" src="images/mandelbrot/mandelbrot_rainbow.png" alt="The Mandelbrot set rendered with the rainbow colormap: saturated rainbow escape bands.">
+      <figcaption>rainbow.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-gist-rainbow">
+      <img class="color" src="images/mandelbrot/mandelbrot_gist_rainbow.png" alt="The Mandelbrot set rendered with the gist_rainbow colormap: high-contrast rainbow escape bands.">
+      <figcaption>gist_rainbow.</figcaption>
+    </figure>
+    <figure class="colormap-slide" id="cm-nipy-spectral">
+      <img class="color" src="images/mandelbrot/mandelbrot_nipy_spectral.png" alt="The Mandelbrot set rendered with the nipy_spectral colormap: dense spectral escape bands from black through violet.">
+      <figcaption>nipy_spectral - my favorite of the set, mostly because it looks the least like a default.</figcaption>
+    </figure>
+  </div>
+  <div class="colormap-dots">
+    <a href="#cm-inferno" aria-label="inferno">●</a>
+    <a href="#cm-viridis" aria-label="viridis">●</a>
+    <a href="#cm-magma" aria-label="magma">●</a>
+    <a href="#cm-plasma" aria-label="plasma">●</a>
+    <a href="#cm-cividis" aria-label="cividis">●</a>
+    <a href="#cm-twilight" aria-label="twilight">●</a>
+    <a href="#cm-turbo" aria-label="turbo">●</a>
+    <a href="#cm-jet" aria-label="jet">●</a>
+    <a href="#cm-rainbow" aria-label="rainbow">●</a>
+    <a href="#cm-gist-rainbow" aria-label="gist_rainbow">●</a>
+    <a href="#cm-nipy-spectral" aria-label="nipy_spectral">●</a>
+  </div>
+</div>
+
+<style>
+.colormap-carousel {
+  margin: 1.5rem 0 2rem;
+}
+.colormap-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding-bottom: 0.25rem;
+}
+.colormap-slide {
+  flex: 0 0 85%;
+  max-width: 420px;
+  scroll-snap-align: center;
+  scroll-margin-left: 1rem;
+  margin: 0;
+}
+.colormap-slide img {
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+}
+.colormap-slide figcaption {
+  text-align: center;
+  margin-top: 0.4rem;
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+.colormap-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+.colormap-dots a {
+  font-size: 0.6rem;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 0.35;
+  transition: opacity 0.15s;
+}
+.colormap-dots a:hover,
+.colormap-dots a:focus {
+  opacity: 1;
+}
+@media (min-width: 640px) {
+  .colormap-slide { flex-basis: 45%; }
+}
+</style>
 
 <p>Every one of those eleven renders lives in the cache under its own hash. The
 first time each colormap is requested it costs a full render; every time
