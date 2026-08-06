@@ -180,7 +180,7 @@ reason to bother rewriting the source file at all.
 </figure>
 
 <figure class="color">
-  <img class="color" src="images/mandelbrot/Sequence.png" alt="A sequence of Mandelbrot renders showing the project's progression from binary membership through escape-time and colormap stages.">
+  <img class="color" src="images/mandelbrot/Sequence.png" alt="A terminal showing a Python script that iterates z = z² + c for a single point (c=1) and prints each value; the sequence diverges rapidly by z(9)">
   <figcaption>The project's own timeline, rendered - binary membership, escape-time, colormap pipeline, embedded cache.</figcaption>
 </figure>
 
