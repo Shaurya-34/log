@@ -185,7 +185,7 @@ entire argument for embedding the cache in the first place - if reconstructing
 from Base64 weren't meaningfully faster than recomputing, there'd be no
 reason to bother rewriting the source file at all.</p>
 <figure>
-  <img src="images/mandelbrot/cache.png" alt="A terminal showing mandel.py run twice: the first run prints 'Cache miss' with an elapsed time of 7.64 seconds, the second prints 'Cache hit' with an elapsed time of 0.01 seconds, both followed by the identical SHA-256 cache key.">
+  <img class="color" src="images/mandelbrot/cache.png" alt="A terminal showing mandel.py run twice: the first run prints 'Cache miss' with an elapsed time of 7.64 seconds, the second prints 'Cache hit' with an elapsed time of 0.01 seconds, both followed by the identical SHA-256 cache key.">
   <figcaption>Same viewport, same parameters, same key both times - 7.64s to render it, 0.01s to decode it back out of the source file.</figcaption>
 </figure>
 
