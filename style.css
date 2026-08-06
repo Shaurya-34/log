@@ -357,6 +357,10 @@ article.post img {
   filter: grayscale(1);           /* keep the page strictly monochrome */
 }
 
+article.post figure.color img {
+  filter: none;                   /* opt-in: let these images keep colour */
+}
+
 article.post figcaption {
   font-family: var(--mono);
   font-size: 0.75rem;

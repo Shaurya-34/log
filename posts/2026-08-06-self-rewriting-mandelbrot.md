@@ -96,47 +96,47 @@ Once the colormap pipeline was in place, testing it meant rendering the same
 view through every Matplotlib colormap worth trying. It's the same escape-time
 matrix underneath each one - only the last step of the pipeline changes.
 
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_inferno.png" alt="The Mandelbrot set rendered with the inferno colormap: dark background with bright orange and yellow escape bands.">
   <figcaption>inferno - the default.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_viridis.png" alt="The Mandelbrot set rendered with the viridis colormap: dark blue-purple background with green and yellow escape bands.">
   <figcaption>viridis.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_magma.png" alt="The Mandelbrot set rendered with the magma colormap: dark purple-black background with pink and pale yellow escape bands.">
   <figcaption>magma.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_plasma.png" alt="The Mandelbrot set rendered with the plasma colormap: dark violet background with hot pink and yellow escape bands.">
   <figcaption>plasma.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_cividis.png" alt="The Mandelbrot set rendered with the cividis colormap: muted blue-to-yellow gradient.">
   <figcaption>cividis.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_twilight.png" alt="The Mandelbrot set rendered with the twilight colormap: cyclic pale purple and blue bands.">
   <figcaption>twilight.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_turbo.png" alt="The Mandelbrot set rendered with the turbo colormap: bright rainbow bands from blue through red.">
   <figcaption>turbo.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_jet.png" alt="The Mandelbrot set rendered with the jet colormap: classic blue-to-red rainbow bands.">
   <figcaption>jet.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_rainbow.png" alt="The Mandelbrot set rendered with the rainbow colormap: saturated rainbow escape bands.">
   <figcaption>rainbow.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_gist_rainbow.png" alt="The Mandelbrot set rendered with the gist_rainbow colormap: high-contrast rainbow escape bands.">
   <figcaption>gist_rainbow.</figcaption>
 </figure>
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/mandelbrot_nipy_spectral.png" alt="The Mandelbrot set rendered with the nipy_spectral colormap: dense spectral escape bands from black through violet.">
   <figcaption>nipy_spectral - my favorite of the set, mostly because it looks the least like a default.</figcaption>
 </figure>
@@ -174,7 +174,7 @@ entire argument for embedding the cache in the first place - if reconstructing
 from Base64 weren't meaningfully faster than recomputing, there'd be no
 reason to bother rewriting the source file at all.
 
-<figure>
+<figure class="color">
   <img src="images/mandelbrot/Sequence.png" alt="A sequence of Mandelbrot renders showing the project's progression from binary membership through escape-time and colormap stages.">
   <figcaption>The project's own timeline, rendered - binary membership, escape-time, colormap pipeline, embedded cache.</figcaption>
 </figure>
