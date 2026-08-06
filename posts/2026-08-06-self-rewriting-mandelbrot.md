@@ -181,7 +181,7 @@ reason to bother rewriting the source file at all.
 
 <figure class="color">
   <img class="color" src="images/mandelbrot/Sequence.png" alt="A terminal showing a Python script that iterates z = z² + c for a single point (c=1) and prints each value; the sequence diverges rapidly by z(9)">
-  <figcaption>The project's own timeline, rendered - binary membership, escape-time, colormap pipeline, embedded cache.</figcaption>
+  <figcaption>Before any of it was a NumPy array, it was this - one point, one recurrence, watched by hand. c=1 escapes fast enough that by z(9) you're looking at a 43-digit number.</figcaption>
 </figure>
 
 ## Coda
