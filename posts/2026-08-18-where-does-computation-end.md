@@ -1,10 +1,10 @@
 ---
 date: 2026-08-18
-description: A journey from the Halting Problem and Turing machines to
-  hypercomputation, physical computation, and the question of whether
-  reality can compute beyond Turing.
-tags: computation, computability, hypercomputation, physics, philosophy
 title: Where Does Computation End?
+date: 2026-08-18
+description: A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.
+tags: computation, computability, hypercomputation, physics, philosophy
+---
 ---
 
 # Where Does Computation End?
