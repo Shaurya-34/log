@@ -24,7 +24,7 @@ A Gödel Machine is, roughly speaking, a hypothetical self-improving AI. It runs
 
 That sounds reasonable until you ask a simple question: **What if the modification is genuinely better, but the machine can't prove that it is?** Imagine a chess-playing Gödel Machine. Its current algorithm is mediocre. It discovers a new algorithm that would play substantially better chess. But before replacing itself, it needs to prove that the new algorithm will produce greater utility than the old one.
 
-That proof might require reasoning about every possible future game. For arbitrary programs, questions about future behavior can run directly into undecidability. While the Godel Machine's did not manifest into a real system the idea behind it still lives on in different forms like Self-modifying / self-improving agents,Meta-learning,AI systems that optimize their own reasoning/search,Program synthesis and automated theorem proving,AI agents that evaluate and improve their own generated code,Recursive/iterative AI improvement<sup>*</sup>.
+That proof might require reasoning about every possible future game. For arbitrary programs, questions about future behavior can run directly into undecidability. While Gödel Machines did not manifest into a real system, the idea behind them still lives on in different forms like self-modifying / self-improving agents, meta-learning, AI systems that optimize their own reasoning/search, program synthesis and automated theorem proving, AI agents that evaluate and improve their own generated code, and recursive/iterative AI improvement<sup>*</sup>.
 
 <sup>*</sup>these generally use empirical evaluation, gradient optimization, search, or heuristics, rather than the Gödel Machine's extremely strict “prove the modification is better, then execute it” mechanism
 
@@ -145,11 +145,11 @@ This is where I discovered the idea of **hypercomputation**. Hypercomputation st
 
 ### Oracle computation (cleanest mathematically)
 
-Given a turing machine that can answer an undecidable question, (Turing Machine + HALT Oracle)
+Given a Turing machine that can answer an undecidable question, (Turing Machine + HALT Oracle)
 
-Now the halting problem can be solved by the oracle, but the oracle is essentitally a black boc containing information that we don't know how to compute so you can construct a new halting problem for machines using that oracle (lol).
+Now the halting problem can be solved by the oracle, but the oracle is essentially a black box containing information that we don't know how to compute so you can construct a new halting problem for machines using that oracle (lol).
 
-Soooo, its powerful but does not give us a physical implementation.
+Soooo, it's powerful but does not give us a physical implementation.
 
 ### Infinite-time computation (pretty cool)
 
@@ -167,7 +167,7 @@ As you could probably guess, we don't know how :/
 
 ### Analog computation
 
-Now imagine a machine that is capable of storing a number with LITERALLY INFINITE precision. You could encode an enormous amount of information into the digits of on real number, including information that is not computable by the turing machine, then you could compute on that nuumber and extract it.
+Now imagine a machine that is capable of storing a number with LITERALLY INFINITE precision. You could encode an enormous amount of information into the digits of one real number, including information that is not computable by the Turing machine, then you could compute on that number and extract it.
 
 But we run into the same wall as we did before: How do you physically perform infinitely many operations?
 
@@ -175,9 +175,9 @@ But we run into the same wall as we did before: How do you physically perform in
 
 Use unusual spacetime structures, such as closed timelike curves, to alter what computation could theoretically accomplish. And there have actually been quantum experiments simulating CTC behavior. In 2026, researchers experimentally implemented a postselected CTC protocol on Quantinuum and IBM quantum processors: [arXiv](https://arxiv.org/abs/2501.16335).
 
-(THEY SIMULATED THE BEHVAIOR OF A CTC, AND NOT ACTUALLY CREATE ONE)
+(THEY SIMULATED THE BEHAVIOR OF A CTC, AND DID NOT ACTUALLY CREATE ONE)
 
-now a CTC is basically a path through spacetime where you can follow the curve and eventually arrive back at an earlier point in your own timeline.
+Now a CTC is basically a path through spacetime where you can follow the curve and eventually arrive back at an earlier point in your own timeline.
 
 ``` text
 Past → Future → Past
