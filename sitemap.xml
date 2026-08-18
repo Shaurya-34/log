@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://sslog.dpdns.org/</loc>
+  </url>
+  <url>
+    <loc>https://sslog.dpdns.org/about.html</loc>
+  </url>
+  <url>
+    <loc>https://sslog.dpdns.org/where-does-computation-end.html</loc>
+    <lastmod>2026-08-18</lastmod>
+  </url>
+  <url>
+    <loc>https://sslog.dpdns.org/self-rewriting-mandelbrot.html</loc>
+    <lastmod>2026-08-06</lastmod>
+  </url>
+  <url>
+    <loc>https://sslog.dpdns.org/never-repeating-never-leaving.html</loc>
+    <lastmod>2026-07-24</lastmod>
+  </url>
+  <url>
+    <loc>https://sslog.dpdns.org/marching-with-rays.html</loc>
+    <lastmod>2026-07-21</lastmod>
+  </url>
+  <url>
+    <loc>https://sslog.dpdns.org/grok-grok.html</loc>
+    <lastmod>2026-07-20</lastmod>
+  </url>
+</urlset>
