@@ -6,8 +6,6 @@ tags: computation, computability, hypercomputation, physics, philosophy
 ---
 ---
 
-# Where Does Computation End?
-
 I started with a fairly specific question: **Is the Gödel Machine actually used today?** [Jürgen Schmidhuber, "Gödel Machines"](https://arxiv.org/abs/cs/0309048). I expected the answer to lead somewhere inside AI. Instead, it led me into a much stranger question:
 
 > **What does it actually mean for something to be computable?**
