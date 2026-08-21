@@ -135,4 +135,33 @@
     addEventListener("resize", layout);
     layout();
   });
+
+  /* The generator emits the intro as .home-intro. Turn it into the lozenge at runtime. */
+  run(function () {
+    var intro = document.querySelector(".home-intro");
+    if (!intro || document.querySelector(".log-discovery")) return;
+
+    var discovery = document.createElement("section");
+    discovery.className = "log-discovery";
+    discovery.setAttribute("aria-label", "About the log");
+    discovery.innerHTML = '<button class="log-discovery-trigger" type="button" aria-expanded="false" aria-controls="log-discovery-panel"><span aria-hidden="true">◇</span><span class="sr-only">About this log</span></button><div class="log-discovery-panel" id="log-discovery-panel"><span class="log-discovery-label">ABOUT THE LOG</span><p></p></div>';
+    discovery.querySelector(".log-discovery-panel p").textContent = intro.textContent.trim();
+    intro.replaceWith(discovery);
+
+    var trigger = discovery.querySelector(".log-discovery-trigger");
+    function setOpen(open) {
+      discovery.classList.toggle("is-open", open);
+      trigger.setAttribute("aria-expanded", String(open));
+    }
+    trigger.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setOpen(!discovery.classList.contains("is-open"));
+    });
+    document.addEventListener("click", function (e) {
+      if (!discovery.contains(e.target)) setOpen(false);
+    });
+    discovery.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { setOpen(false); trigger.focus(); }
+    });
+  });
 })();
