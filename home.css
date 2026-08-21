@@ -1,6 +1,6 @@
 /* Homepage only: circular article navigator + editorial feature panel. */
 .wrap:has(.home-stage) { max-width: 94rem; padding: 0 2.25rem; }
-.home-stage { min-height: min(72vh, 700px); margin: 3.5rem 0 4.5rem; display: grid; grid-template-columns: minmax(430px, 0.86fr) minmax(560px, 1.14fr); gap: clamp(2.5rem, 5vw, 6rem); align-items: center; }
+.home-stage { min-height: min(76vh, 760px); margin: 3.5rem 0 5rem; display: grid; grid-template-columns: minmax(430px, 0.86fr) minmax(560px, 1.14fr); gap: clamp(2.5rem, 5vw, 6rem); align-items: center; }
 .article-orbit { position: relative; width: min(42vw, 540px); aspect-ratio: 1; justify-self: center; }
 .orbit-ring { position: absolute; inset: 15%; border: 1px solid var(--hairline); border-radius: 50%; pointer-events: none; }
 .orbit-ring::after { content: ""; position: absolute; inset: 15%; border: 1px solid var(--hairline); border-radius: 50%; opacity: 0.45; }
@@ -22,8 +22,8 @@
 .orbit-arrow:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
 .orbit-prev { left: -0.25rem; }
 .orbit-next { right: -0.25rem; }
-.feature-stage { position: relative; width: min(100%, 700px); min-height: 600px; justify-self: center; }
-.feature-card { position: absolute; inset: 0; border: 1px solid var(--ink); background: var(--paper); opacity: 0; visibility: hidden; transform: translateY(10px); pointer-events: none; transition: opacity 400ms ease, transform 600ms cubic-bezier(.16,.78,.18,1), visibility 0s linear 400ms; }
+.feature-stage { position: relative; width: min(100%, 700px); min-height: 700px; justify-self: center; }
+.feature-card { position: absolute; inset: 0; overflow: hidden; border: 1px solid var(--ink); background: var(--paper); opacity: 0; visibility: hidden; transform: translateY(10px); pointer-events: none; transition: opacity 400ms ease, transform 600ms cubic-bezier(.16,.78,.18,1), visibility 0s linear 400ms; }
 .feature-card.is-active { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; transition-delay: 0s; }
 .feature-head { height: 3rem; display: flex; align-items: center; justify-content: space-between; padding: 0 1.15rem; border-bottom: 1px solid var(--ink); font: 0.65rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
 .feature-head:hover { text-decoration: none; opacity: 0.6; }
@@ -43,6 +43,6 @@
 .feature-meta > span { padding: 0.75rem 0.9rem; border-right: 1px solid var(--ink); }
 .feature-meta > span:last-child { border-right: 0; display: grid; place-items: center; font-size: 0.8rem; color: var(--ink); }
 .home-intro { max-width: 44rem; margin: 0 0 4.5rem 9%; }
-@media (max-width: 1050px) { .wrap:has(.home-stage) { padding: 0 1.5rem; } .home-stage { grid-template-columns: 1fr; gap: 3rem; } .article-orbit { width: min(78vw, 540px); } .feature-stage { min-height: 600px; } .home-intro { margin-left: 0; } }
+@media (max-width: 1050px) { .wrap:has(.home-stage) { padding: 0 1.5rem; } .home-stage { grid-template-columns: 1fr; gap: 3rem; } .article-orbit { width: min(78vw, 540px); } .feature-stage { min-height: 700px; } .home-intro { margin-left: 0; } }
 @media (max-width: 600px) { .wrap:has(.home-stage) { padding: 0 1rem; } .home-stage { margin-top: 2.25rem; gap: 2.5rem; } .article-orbit { width: 96vw; max-width: 460px; } .orbit-item { width: 8rem; } .orbit-title { font-size: 0.75rem; } .orbit-center { width: 8.8rem; } .orbit-center strong { font-size: 0.78rem; } .feature-stage { min-height: 0; } .feature-card { position: relative; display: none; } .feature-card.is-active { display: block; } .feature-card h1 { font-size: 2.25rem; } .feature-grid { grid-template-rows: auto 14rem auto auto; } .feature-description { grid-column: 1 / -1; border-right: 0; } .cover-image { grid-column: 1 / -1; grid-row: auto; } .cover-kicker { border-right: 1px solid var(--ink); } .cover-quote { min-height: 8.5rem; } .feature-meta { grid-template-columns: 1fr 1fr; } .feature-meta > span:last-child { display: none; } .home-intro { margin-bottom: 3rem; } }
 @media (prefers-reduced-motion: reduce) { .orbit-item, .orbit-center, .feature-card, .cover-image img { transition: none; } }
