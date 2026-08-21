@@ -1,4 +1,4 @@
-/* Quiet site behaviors: theme, reading memory, scrollbar, and homepage carousel. */
+/* Quiet site behaviors: theme, reading memory, scrollbar, homepage carousel, and page transitions. */
 (function () {
   var doc = document.documentElement;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -8,6 +8,14 @@
     remove: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
   };
   function run(fn) { try { fn(); } catch (e) {} }
+
+  run(function () {
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "transitions.css";
+    link.setAttribute("blocking", "render");
+    document.head.appendChild(link);
+  });
 
   run(function () {
     var stored = safeStore.get("theme");
