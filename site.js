@@ -14,31 +14,18 @@
     if (stored === "dark" || stored === "light") doc.setAttribute("data-theme", stored);
     var button = document.querySelector(".theme-toggle");
     if (!button) return;
-    function current() {
-      return doc.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    }
+    function current() { return doc.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); }
     function paint() { button.textContent = current() === "dark" ? "light" : "dark"; }
-    button.addEventListener("click", function () {
-      var next = current() === "dark" ? "light" : "dark";
-      doc.setAttribute("data-theme", next);
-      safeStore.set("theme", next);
-      paint();
-    });
+    button.addEventListener("click", function () { var next = current() === "dark" ? "light" : "dark"; doc.setAttribute("data-theme", next); safeStore.set("theme", next); paint(); });
     paint();
   });
 
   run(function () {
     var hideTimer;
-    addEventListener("scroll", function () {
-      doc.classList.add("scrolling");
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(function () { doc.classList.remove("scrolling"); }, 900);
-    }, { passive: true });
+    addEventListener("scroll", function () { doc.classList.add("scrolling"); clearTimeout(hideTimer); hideTimer = setTimeout(function () { doc.classList.remove("scrolling"); }, 900); }, { passive: true });
   });
 
-  function readLast() {
-    try { return JSON.parse(safeStore.get("log:last") || "null"); } catch (e) { return null; }
-  }
+  function readLast() { try { return JSON.parse(safeStore.get("log:last") || "null"); } catch (e) { return null; } }
 
   run(function () {
     var slug = location.pathname.split("/").pop() || "index.html";
@@ -51,26 +38,16 @@
       saveTimer = setTimeout(function () {
         var max = doc.scrollHeight - innerHeight;
         if (max <= 0) return;
-        if (scrollY > max - 80) {
-          safeStore.remove(key);
-          var last = readLast();
-          if (last && last.slug === slug) safeStore.remove("log:last");
-        } else if (scrollY > 300) {
-          safeStore.set(key, String(Math.round(scrollY)));
-          safeStore.set("log:last", JSON.stringify({ slug: slug, title: document.querySelector("h1").textContent }));
-        }
+        if (scrollY > max - 80) { safeStore.remove(key); var last = readLast(); if (last && last.slug === slug) safeStore.remove("log:last"); }
+        else if (scrollY > 300) { safeStore.set(key, String(Math.round(scrollY))); safeStore.set("log:last", JSON.stringify({ slug: slug, title: document.querySelector("h1").textContent })); }
       }, 200);
     }, { passive: true });
     var saved = parseInt(safeStore.get(key) || "0", 10);
     if (saved > 300) {
-      var p = document.createElement("p");
-      p.className = "resume";
-      var a = document.createElement("a");
-      a.href = "#";
-      a.textContent = "Pick up where you left off ↓";
+      var p = document.createElement("p"); p.className = "resume";
+      var a = document.createElement("a"); a.href = "#"; a.textContent = "Pick up where you left off ↓";
       a.addEventListener("click", function (e) { e.preventDefault(); scrollTo({ top: saved, behavior: reduced ? "auto" : "smooth" }); });
-      p.appendChild(a);
-      document.querySelector(".post-meta").after(p);
+      p.appendChild(a); document.querySelector(".post-meta").after(p);
     }
   });
 
@@ -85,18 +62,10 @@
     if (!list) return;
     var last = readLast();
     if (!last || !safeStore.get("log:progress:" + last.slug)) return;
-    var line = document.createElement("p");
-    line.className = "continue";
-    var label = document.createElement("span");
-    label.className = "label";
-    label.textContent = "Continue";
-    var link = document.createElement("a");
-    link.href = last.slug;
-    link.textContent = last.title;
-    line.appendChild(label);
-    line.appendChild(link);
-    var intro = document.querySelector(".intro");
-    if (intro) intro.after(line);
+    var line = document.createElement("p"); line.className = "continue";
+    var label = document.createElement("span"); label.className = "label"; label.textContent = "Continue";
+    var link = document.createElement("a"); link.href = last.slug; link.textContent = last.title;
+    line.appendChild(label); line.appendChild(link); list.parentNode.insertBefore(line, list);
   });
 
   run(function () {
@@ -107,29 +76,25 @@
 
     var active = 0;
     var radius = 0;
-    var step = items.length > 1 ? (Math.PI * 2) / (items.length - 1) : 0;
+    var step = (Math.PI * 2) / items.length;
 
     function layout() {
       var rect = orbit.getBoundingClientRect();
-      radius = Math.min(rect.width, rect.height) * 0.34;
+      radius = Math.min(rect.width, rect.height) * 0.36;
       var cx = rect.width / 2, cy = rect.height / 2;
       items.forEach(function (item, i) {
         var isActive = i === active;
         var offset = (i - active + items.length) % items.length;
-        var angle = (offset - 1) * step - Math.PI / 2;
+        var angle = offset * step - Math.PI / 2;
         var x = cx + Math.cos(angle) * radius;
         var y = cy + Math.sin(angle) * radius;
         item.classList.toggle("is-active", isActive);
         item.style.setProperty("--x", (isActive ? 0 : x - cx) + "px");
         item.style.setProperty("--y", (isActive ? 0 : y - cy) + "px");
-        item.style.setProperty("--depth", String(isActive ? 1 : 1 - Math.abs(Math.sin(angle)) * 0.35));
-        item.style.setProperty("--opacity", isActive ? "0" : "0.72");
+        item.style.setProperty("--depth", String(isActive ? 1 : 0.92 + (1 - Math.abs(Math.sin(angle))) * 0.06));
+        item.style.setProperty("--opacity", isActive ? "0" : String(0.45 + (1 - Math.abs(Math.sin(angle))) * 0.35));
       });
-      cards.forEach(function (card, i) {
-        var on = i === active;
-        card.classList.toggle("is-active", on);
-        card.setAttribute("aria-hidden", on ? "false" : "true");
-      });
+      cards.forEach(function (card, i) { var on = i === active; card.classList.toggle("is-active", on); card.setAttribute("aria-hidden", on ? "false" : "true"); });
       var center = orbit.querySelector(".orbit-center");
       if (center) {
         center.querySelector("span").textContent = String(active + 1).padStart(2, "0");
@@ -139,11 +104,7 @@
       }
     }
 
-    function select(index) {
-      active = (index + items.length) % items.length;
-      layout();
-    }
-
+    function select(index) { active = (index + items.length) % items.length; layout(); }
     items.forEach(function (item, i) {
       item.addEventListener("click", function () { select(i); });
       item.addEventListener("keydown", function (e) {
