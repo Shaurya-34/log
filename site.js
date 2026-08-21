@@ -107,7 +107,7 @@
 
     var active = 0;
     var radius = 0;
-    var step = (Math.PI * 2) / items.length;
+    var step = items.length > 1 ? (Math.PI * 2) / (items.length - 1) : 0;
 
     function layout() {
       var rect = orbit.getBoundingClientRect();
@@ -116,7 +116,7 @@
       items.forEach(function (item, i) {
         var isActive = i === active;
         var offset = (i - active + items.length) % items.length;
-        var angle = (offset - 0.5) * step - Math.PI / 2;
+        var angle = (offset - 1) * step - Math.PI / 2;
         var x = cx + Math.cos(angle) * radius;
         var y = cy + Math.sin(angle) * radius;
         item.classList.toggle("is-active", isActive);
