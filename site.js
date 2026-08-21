@@ -33,6 +33,16 @@
     addEventListener("scroll", function () { doc.classList.add("scrolling"); clearTimeout(hideTimer); hideTimer = setTimeout(function () { doc.classList.remove("scrolling"); }, 900); }, { passive: true });
   });
 
+  run(function () {
+    var discovery = document.querySelector(".log-discovery");
+    var trigger = discovery && discovery.querySelector(".log-discovery-trigger");
+    if (!discovery || !trigger) return;
+    trigger.addEventListener("click", function () {
+      var open = discovery.classList.toggle("is-open");
+      trigger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+
   function readLast() { try { return JSON.parse(safeStore.get("log:last") || "null"); } catch (e) { return null; } }
 
   run(function () {
