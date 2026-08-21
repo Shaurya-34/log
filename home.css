@@ -46,8 +46,8 @@
 .log-statement-label { display:block; margin-bottom:.75rem; font:.52rem var(--mono); letter-spacing:.12em; color:var(--faint); }
 .log-statement p { margin:0; font:1.02rem/1.5 var(--mono); color:var(--grey); }
 
-/* Interactive lozenge that reveals the site's purpose without competing with the articles. */
-.log-discovery { width:min(42rem,52%); margin:0 0 2.5rem 9%; min-height:5.5rem; display:flex; align-items:flex-start; justify-content:center; position:relative; }
+/* Interactive lozenge aligned to the same two-column geometry as the homepage. */
+.log-discovery { width:calc((100% - clamp(1.5rem,3vw,3.5rem)) * .95 / 2); margin:0 0 2.5rem 0; min-height:5.5rem; display:flex; align-items:flex-start; justify-content:center; position:relative; }
 .log-discovery-trigger { appearance:none; border:1px solid color-mix(in srgb,var(--ink) 42%,transparent); background:color-mix(in srgb,var(--paper) 72%,transparent); color:var(--grey); width:2.8rem; height:2.8rem; margin-top:.8rem; padding:0; display:grid; place-items:center; font:1.05rem/1 var(--display); cursor:pointer; transform:rotate(45deg); box-shadow:0 0 0 1px color-mix(in srgb,var(--ink) 5%,transparent); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); transition:width 500ms cubic-bezier(.16,.78,.18,1),height 500ms cubic-bezier(.16,.78,.18,1),margin 500ms cubic-bezier(.16,.78,.18,1),transform 500ms cubic-bezier(.16,.78,.18,1),background-color 350ms ease,border-color 350ms ease,box-shadow 350ms ease; }
 .log-discovery-trigger span:first-child { display:block; transform:rotate(-45deg); transition:opacity 250ms ease,transform 350ms ease; }
 .log-discovery-trigger:hover,.log-discovery-trigger:focus-visible { border-color:var(--ink); outline:none; }
