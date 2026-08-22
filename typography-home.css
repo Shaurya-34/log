@@ -33,6 +33,7 @@ header.site nav a,
 .log-discovery-label,
 .log-statement-label {
   font-family: var(--mono);
+  font-size: 13px;
 }
 
 .orbit-title {
@@ -47,7 +48,7 @@ header.site nav a,
 
 .feature-description,
 .cover-kicker {
-  font-size: .62rem;
+  font-size: 13px;
   line-height: 1.55;
 }
 
