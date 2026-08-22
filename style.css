@@ -10,7 +10,7 @@
   --ink: #161513;
   --paper: #faf9f7;
   --grey: #6f6a62;
-  --faint: #9c968c;
+  --faint: #77726b;
   --hairline: #e7e3dc;
   --code-bg: #f1eee8;
   --selection: #ded8cd;
@@ -29,7 +29,7 @@
     --ink: #eae5db;
     --paper: #17150f;
     --grey: #a29c8f;
-    --faint: #6b665b;
+    --faint: #8f8a82;
     --hairline: #2d2a23;
     --code-bg: #201d17;
     --selection: #3a352a;
@@ -40,7 +40,7 @@
   --ink: #161513;
   --paper: #faf9f7;
   --grey: #6f6a62;
-  --faint: #9c968c;
+  --faint: #77726b;
   --hairline: #e7e3dc;
   --code-bg: #f1eee8;
   --selection: #ded8cd;
@@ -50,7 +50,7 @@
   --ink: #eae5db;
   --paper: #17150f;
   --grey: #a29c8f;
-  --faint: #6b665b;
+  --faint: #8f8a82;
   --hairline: #2d2a23;
   --code-bg: #201d17;
   --selection: #3a352a;
@@ -67,7 +67,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 1.125rem;            /* 18px */
+  font-size: 1.125rem;
   line-height: 1.6;
   font-feature-settings: "liga", "kern";
   text-rendering: optimizeLegibility;
@@ -75,7 +75,7 @@ body {
 }
 
 .wrap {
-  max-width: 41rem;               /* ~656px */
+  max-width: 41rem;
   margin: 0 auto;
   padding: 0 1.375rem;
 }
@@ -99,10 +99,6 @@ header.site {
   text-decoration: none;
 }
 
-/* the "B" in "BLOG": faint and struck through, so the wordmark
-   reads as LOG at a glance while the blog pun stays legible.
-   text-decoration can only draw a horizontal line, so the slant
-   is a rotated pseudo-element instead. */
 .wordmark .b-strike {
   position: relative;
   display: inline-block;
@@ -164,7 +160,6 @@ a {
 
 a:hover { text-decoration-color: var(--ink); }
 
-/* every interactive state eases in and out; nothing snaps */
 a, button {
   transition: color 0.3s ease, text-decoration-color 0.3s ease,
               opacity 0.3s ease, background-color 0.3s ease;
@@ -203,7 +198,7 @@ body {
 .intro {
   margin: 3.25rem 0 0.75rem;
   padding-left: 1.25rem;
-  border-left: 1px solid var(--hairline);   /* reads as "pinned" */
+  border-left: 1px solid var(--hairline);
   color: var(--grey);
   font-size: 1.125rem;
 }
@@ -221,7 +216,6 @@ body {
   gap: 1rem;
 }
 
-/* partial rule beside the year, for wayfinding while scanning */
 .year::after {
   content: "";
   height: 1px;
@@ -276,14 +270,13 @@ article.post { padding-top: 4rem; }
 
 article.post h1 {
   font-family: var(--display);
-  font-size: 3.5rem;              /* 56px: scale does the work, not weight */
+  font-size: 3.5rem;
   line-height: 1.08;
   font-weight: 400;
-  letter-spacing: -0.04em;        /* Space Mono needs tighter tracking large */
+  letter-spacing: -0.04em;
   margin: 0 0 1.5rem;
 }
 
-/* article.post p would out-rank .post-meta alone and flatten the margin */
 article.post .post-meta {
   font-family: var(--mono);
   font-size: 0.75rem;
@@ -311,7 +304,11 @@ article.post h3 {
   margin: 2.25rem 0 0.75rem;
 }
 
-article.post p { margin: 0 0 1.375rem; }
+/* Body copy: slightly heavier for legibility, especially on dark mode. */
+article.post p {
+  margin: 0 0 1.375rem;
+  font-weight: 500;
+}
 
 article.post blockquote {
   margin: 2rem 0;
@@ -323,28 +320,25 @@ article.post blockquote {
 article.post blockquote p { margin-bottom: 0.75rem; }
 article.post blockquote p:last-child { margin-bottom: 0; }
 
-/* opt-in pull quote: scale does the work, no rule, no quotation marks.
-   add class="pull" to a blockquote to trigger it */
 article.post blockquote.pull {
   font-family: var(--display);
   border-left: none;
   padding-left: 0;
   margin: 3.75rem 0;
-  font-size: 1.875rem;            /* 30px */
+  font-size: 1.875rem;
   font-style: italic;
   line-height: 1.4;
   letter-spacing: -0.02em;
   color: var(--ink);
+  font-weight: 400;
 }
 
 @media (min-width: 760px) {
   article.post blockquote.pull {
-    margin-left: -2.5rem;         /* bleeds slightly past the column edge */
+    margin-left: -2.5rem;
   }
 }
 
-/* browsers default <figure> to margin: 1em 40px, which silently narrows
-   every image by 80px; figures should span the full column instead */
 article.post figure {
   margin: 0;
 }
@@ -354,11 +348,11 @@ article.post img {
   height: auto;
   display: block;
   margin: 2.5rem auto;
-  filter: grayscale(1);           /* keep the page strictly monochrome */
+  filter: grayscale(1);
 }
 
 article.post figure.color img {
-  filter: none;                   /* opt-in: let these images keep colour */
+  filter: none;
 }
 
 article.post figcaption {
@@ -402,7 +396,7 @@ pre code {
   color: var(--ink);
 }
 
-pre .cm { color: var(--faint); }   /* muted tone for comments, if wanted */
+pre .cm { color: var(--faint); }
 
 /* ---- prev/next --------------------------------------------------- */
 
@@ -449,12 +443,10 @@ footer.site a:hover { color: var(--ink); }
 /* ---- details ----------------------------------------------------- */
 
 ::selection {
-  background: var(--selection);   /* warm grey, not browser blue */
+  background: var(--selection);
   color: var(--ink);
 }
 
-/* ghost scrollbar: hairline-thin, visible only while scrolling
-   (site.js toggles .scrolling on <html>) */
 html {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -464,7 +456,6 @@ html {
 html.scrolling { scrollbar-color: var(--hairline) transparent; }
 html.scrolling:hover { scrollbar-color: var(--faint) transparent; }
 
-/* older engines without scrollbar-color: quiet static fallback */
 @supports not (scrollbar-color: auto) {
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -472,13 +463,12 @@ html.scrolling:hover { scrollbar-color: var(--faint) transparent; }
   ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
 }
 
-/* "pick up where you left off" line on posts (inserted by site.js) */
 .resume {
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  margin: -2.5rem 0 4rem;         /* sits inside the title-to-content gap */
+  margin: -2.5rem 0 4rem;
   animation: page-in 0.6s ease 0.2s both;
 }
 
@@ -489,7 +479,6 @@ html.scrolling:hover { scrollbar-color: var(--faint) transparent; }
 
 .resume a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
 
-/* "continue reading" line on the homepage (inserted by site.js) */
 .continue {
   margin: 0.5rem 0 0;
   padding-left: 1.25rem;
@@ -515,7 +504,6 @@ html.scrolling:hover { scrollbar-color: var(--faint) transparent; }
 
 .continue a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
 
-/* end-of-post tombstone; generated posts carry class "entry" */
 article.post.entry::after {
   content: "∎";
   display: block;
@@ -548,9 +536,6 @@ article.post.entry::after {
     gap: 0.25rem;
   }
 
-  /* code blocks: wrap instead of horizontal-scroll, since these are
-     short formula-style lines, not deeply indented multi-line code
-     where wrapping would break the structure */
   pre {
     padding: 0.875rem 1rem;
     white-space: pre-wrap;
