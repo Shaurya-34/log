@@ -1,0 +1,67 @@
+/* Homepage typography: literary serif for ideas, IBM Plex Mono for metadata. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap');
+
+:root {
+  --display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+body {
+  font-family: var(--display);
+}
+
+.wordmark,
+.orbit-center strong,
+.orbit-title,
+.feature-card h1,
+.cover-quote p,
+.log-discovery-panel p {
+  font-family: var(--display);
+}
+
+.motto,
+header.site nav a,
+.theme-toggle,
+.orbit-number,
+.orbit-date,
+.orbit-arrow,
+.feature-head,
+.feature-description,
+.cover-kicker,
+.cover-quote small,
+.feature-meta,
+.log-discovery-label,
+.log-statement-label {
+  font-family: var(--mono);
+}
+
+.orbit-title {
+  font-size: .9rem;
+  line-height: 1.18;
+}
+
+.feature-card h1 {
+  font-weight: 400;
+  letter-spacing: -.035em;
+}
+
+.feature-description,
+.cover-kicker {
+  font-size: .70rem;
+  line-height: 1.55;
+}
+
+.log-discovery-panel p {
+  font-size: 1.08rem;
+  line-height: 1.5;
+}
+
+/* Editorial hierarchy */
+.feature-card h1 { font-size: 2.65rem; }
+.feature-description { color: #a8a297; text-transform: none; }
+.cover-kicker { color: #8d887f; text-transform: none; }
+.cover-quote p { font-size: 1.35rem; line-height: 1.18; }
+.cover-quote small { color: #777168; }
+.feature-meta { color: #777168; }
+.feature-head { color: #e8e3d8; }
+.motto { color: #8d887f; }
