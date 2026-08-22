@@ -23,7 +23,7 @@
 .orbit-arrow:hover { color:var(--ink); }
 .orbit-arrow:focus-visible { outline:1px solid var(--ink); outline-offset:3px; }
 .orbit-prev { left:-.1rem; }.orbit-next { right:-.1rem; }
-.feature-stage { position:relative; width:100%; max-width:680px; height:500px; justify-self:end; transform:translateY(-2rem); }
+.feature-stage { position:relative; width:100%; max-width:680px; height:500px; justify-self:end; transform:none; }
 .feature-card { position:absolute; inset:0; height:100%; box-sizing:border-box; overflow:hidden; border:1px solid var(--ink); background:var(--paper); opacity:0; visibility:hidden; transform:translateY(8px); pointer-events:none; transition:opacity 350ms ease,transform 500ms cubic-bezier(.16,.78,.18,1),visibility 0s linear 350ms; }
 .feature-card.is-active { opacity:1; visibility:visible; transform:none; pointer-events:auto; transition-delay:0s; }
 .feature-head { height:2.9rem; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; padding:0 1rem; border-bottom:1px solid var(--ink); font:.58rem var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink); text-decoration:none; }
