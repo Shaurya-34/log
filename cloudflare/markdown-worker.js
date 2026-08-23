@@ -17,8 +17,7 @@ function parseAccept(value) {
         specificity: major === "*" ? 0 : minor === "*" ? 1 : 2,
         index,
       };
-    })
-    .filter((entry) => entry.q > 0);
+    });
 }
 
 function matches(entry, mediaType) {
@@ -42,6 +41,8 @@ function preferredType(accept, available) {
     );
 
     const match = matchesForType[0];
+    if (match.q <= 0) continue;
+
     const candidate = {
       type,
       q: match.q,
