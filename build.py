@@ -392,9 +392,17 @@ def build_404():
         '    <h1>404</h1>\n'
         '    <p class="post-meta">Nothing here</p>\n'
         '    <p>\n'
-        "      This page doesn't exist, or it moved. Everything that does\n"
-        f'      exist is on <a href="{base}index.html">the index</a>.\n'
+        "      This page doesn't exist, or it moved. Start at the "
+        f'<a href="{base}index.html">index</a>, browse the '
+        f'<a href="{base}sitemap.xml">sitemap</a>, read the '
+        f'<a href="{base}llms.txt">agent guide</a>, or use the '
+        f'<a href="{base}feed.xml">RSS feed</a> to discover published articles.\n'
         '    </p>\n'
+        '    <p>Recovery map: '
+        f'<a href="{base}index.md">Markdown index</a> · '
+        f'<a href="{base}about.html">About</a> · '
+        f'<a href="{base}contact.html">Contact</a> · '
+        f'<a href="{base}privacy.html">Privacy</a>.</p>\n'
         '  </article>\n'
     )
 
@@ -488,6 +496,9 @@ def build_index(posts):
     return (
         head
         + page_header()
+        + f'\n  <h1 class="sr-only">{html.escape(SITE_TITLE)}</h1>\n'
+        + f'  <p class="sr-only agent-home-summary">{html.escape(SITE_DESC)} {html.escape(INTRO)} The individual article pages are the primary sources. Use the sitemap and RSS feed for discovery, and the published Markdown siblings when machine-readable source text is preferred.</p>\n'
+        + '  <h2 class="sr-only">Articles</h2>\n'
         + motto
         + intro
         + "".join(sections)
