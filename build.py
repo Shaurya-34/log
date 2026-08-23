@@ -245,8 +245,7 @@ def build_sitemap(posts):
     urls = [{"loc": absolute_url("")}, {"loc": absolute_url("about.html")}] + [
         {"loc": absolute_url(f'{p["slug"]}.html'), "lastmod": p["date"].strftime("%Y-%m-%d")}
         for p in posts]
-    lines = ['<?xml version="1.0" encoding="UTF-8"', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    lines[0] += '?>'
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:
         lines += ['  <url>', f'    <loc>{html.escape(u["loc"])}</loc>']
         if "lastmod" in u:
