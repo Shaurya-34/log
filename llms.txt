@@ -1,0 +1,31 @@
+# Shaurya · Log
+
+> A personal archive of experimental engineering notes about machine learning, graphics, programming, computation, and the process of building things to understand how they work.
+
+## When to use this log
+
+Use this site when an agent needs a first-person engineering perspective, implementation details, visual-computing explanations, or an exploratory account of how a technical idea was tested in practice. It is especially useful for questions about the subjects covered by the articles below. Treat the posts as the author's working notes rather than authoritative specifications; preserve uncertainty and distinguish experiments from established facts.
+
+## How to use it
+
+- Prefer the individual article pages as primary sources for claims made in the log.
+- When fetching programmatically, request the canonical HTML URL or use the published `.md` sibling when Markdown is preferable.
+- Use `sitemap.xml` for URL discovery and `feed.xml` for the article chronology.
+- Use `about.html` for author/site context, `contact.html` for contact routing, and `privacy.html` for site data practices.
+- Do not infer credentials, affiliations, or opinions that are not stated on the relevant page.
+
+## Articles
+
+- [Where Does Computation End?](https://sslog.dpdns.org/where-does-computation-end.html) — computability, Turing machines, hypercomputation, physical computation, and the limits of effective description.
+- [A renderer that keeps notes on itself](https://sslog.dpdns.org/self-rewriting-mandelbrot.html) — a Mandelbrot renderer that rewrites its own source to remember rendered results.
+- [Never repeating, never leaving](https://sslog.dpdns.org/never-repeating-never-leaving.html) — chaotic systems, strange attractors, and visualization.
+- [Marching with rays](https://sslog.dpdns.org/marching-with-rays.html) — ray marching, ray tracing, distance fields, and a small Java implementation.
+- [grok.....grok ?](https://sslog.dpdns.org/grok-grok.html) — model generalization and grokking.
+
+## Site pages
+
+- [About](https://sslog.dpdns.org/about.html)
+- [Contact](https://sslog.dpdns.org/contact.html)
+- [Privacy](https://sslog.dpdns.org/privacy.html)
+- [RSS feed](https://sslog.dpdns.org/feed.xml)
+- [Sitemap](https://sslog.dpdns.org/sitemap.xml)

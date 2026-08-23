@@ -6,10 +6,17 @@ param([string]$Message = "Update site content")
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
-Write-Host "Building..." -ForegroundColor Cyan
+Write-Host "Building site..." -ForegroundColor Cyan
 python build.py
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed. Not publishing." -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Building agent-facing artifacts..." -ForegroundColor Cyan
+python agent_build.py
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Agent build failed. Not publishing." -ForegroundColor Red
     exit 1
 }
 
