@@ -56,3 +56,22 @@ header.site nav a,
   font-size: 1.08rem;
   line-height: 1.5;
 }
+
+/* Final desktop tape/card corrections. Keep the tape compact and centered
+   like the reference layout, and never crop the article artwork. */
+@media (min-width:1051px) {
+  .tape-track {
+    width: min(592px, calc(100% - 2.5rem));
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    top: 11rem;
+  }
+
+  .tape-arrow { top: 13.1rem; }
+
+  .cover-image img {
+    object-fit: contain;
+    object-position: center;
+  }
+}
