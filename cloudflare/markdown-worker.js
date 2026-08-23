@@ -85,7 +85,14 @@ function withVary(headers) {
 }
 
 function markdown404(pathname) {
-  return `# 404 — Not found\n\nThe requested page \\`${pathname}\\` does not exist.\n\n- [Index](https://sslog.dpdns.org/index.html)\n- [Markdown index](https://sslog.dpdns.org/index.md)\n- [Sitemap](https://sslog.dpdns.org/sitemap.xml)\n- [Agent guide](https://sslog.dpdns.org/llms.txt)\n`;
+  return (
+    "# 404 — Not found\n\n" +
+    "The requested page `" + pathname + "` does not exist.\n\n" +
+    "- [Index](https://sslog.dpdns.org/index.html)\n" +
+    "- [Markdown index](https://sslog.dpdns.org/index.md)\n" +
+    "- [Sitemap](https://sslog.dpdns.org/sitemap.xml)\n" +
+    "- [Agent guide](https://sslog.dpdns.org/llms.txt)\n"
+  );
 }
 
 export default {
