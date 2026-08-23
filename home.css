@@ -109,3 +109,24 @@
 .tape-cell:hover .tape-title,.tape-cell:focus-visible .tape-title { text-decoration:underline; text-underline-offset:.18rem; }
 @media (max-width:1050px) { .article-orbit.tape-nav{width:min(78vw,680px);height:500px;} }
 @media (max-width:600px) { .article-orbit.tape-nav{width:100%;height:430px;} .tape-track{left:.2rem;right:.2rem;top:5.5rem;} .tape-code{font-size:.46rem;} .tape-box{margin:.55rem 0 .5rem;} .tape-title{font-size:.62rem;} .tape-date{font-size:.45rem;} .tape-arrow{top:10.8rem;} .tape-note{left:4%;right:4%;bottom:.8rem;font-size:.62rem;} }
+
+/* Reference-layout tuning: match the supplied 1563px desktop composition. */
+@media (min-width:1051px) {
+  .home-stage { height:668px; grid-template-columns:minmax(0,1fr) minmax(680px,1fr); gap:3.5rem; }
+  .article-orbit.tape-nav { width:100%; max-width:680px; height:668px; margin-top:0; justify-self:center; }
+  .feature-stage { max-width:720px; height:668px; }
+  .feature-head { height:3.4rem; }
+  .feature-card h1 { height:6.9rem; padding:.85rem 1.25rem .9rem; font-size:2.55rem; }
+  .feature-grid { height:31.4rem; grid-template-rows:18.9rem 8.1rem 4.4rem; }
+  .tape-track { left:1.25rem; right:1.25rem; top:13rem; }
+  .tape-arrow { top:15.1rem; }
+  .tape-note { bottom:2rem; }
+  .log-discovery { width:calc((100% - 3.5rem) / 2); margin:-9.75rem 0 .35rem; min-height:4.5rem; }
+  .log-discovery::before,.log-discovery::after { content:""; position:absolute; top:1.8rem; width:calc(50% - 2.5rem); border-top:1px solid var(--hairline); }
+  .log-discovery::before { left:0; }
+  .log-discovery::after { right:0; }
+  .log-discovery-trigger { width:3.6rem; height:3.6rem; margin-top:.05rem; background:var(--paper); }
+  .log-discovery-trigger:hover,.log-discovery-trigger:focus-visible { border-color:var(--ink); }
+  .log-discovery:hover .log-discovery-trigger,.log-discovery:focus-within .log-discovery-trigger,.log-discovery.is-open .log-discovery-trigger { width:3.6rem; height:3.6rem; margin-top:.05rem; transform:rotate(45deg); background:var(--paper); box-shadow:none; }
+  .log-discovery-panel { display:none; }
+}
