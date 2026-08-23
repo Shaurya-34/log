@@ -19,7 +19,6 @@ function bestMatch(header, candidate) {
   const [major, minor] = candidate.split("/");
   let best = null;
   for (const entry of parseAccept(header)) {
-    if (entry.q <= 0) continue;
     if (entry.major !== "*" && entry.major !== major) continue;
     if (entry.minor !== "*" && entry.minor !== minor) continue;
     const specificity = (entry.major === "*" ? 0 : 1) + (entry.minor === "*" ? 0 : 1);
@@ -34,7 +33,7 @@ function preferredType(header) {
   let best = null;
   for (const candidate of PRODUCES) {
     const match = bestMatch(header, candidate);
-    if (!match) continue;
+    if (!match || match.q <= 0) continue;
     if (!best || match.q > best.q || (match.q === best.q && match.index < best.index)) {
       best = { candidate, q: match.q, index: match.index };
     }
@@ -78,7 +77,7 @@ export default {
         withVary(headers);
         return new Response(response.body, { status: response.status, headers });
       }
-      if (!bestMatch(accepts, "text/html")) {
+      if (!bestMatch(accepts, "text/html") || bestMatch(accepts, "text/html").q <= 0) {
         const headers = new Headers({ "Content-Type": "text/plain; charset=utf-8" });
         withVary(headers);
         return new Response("Not Acceptable\n\nMarkdown representation is unavailable.\n", { status: 406, headers });
