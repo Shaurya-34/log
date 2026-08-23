@@ -161,7 +161,8 @@ def build_post(post, newer, older):
               "dateModified":post["date"].replace(tzinfo=timezone.utc).isoformat(),
               "author":{"@type":"Person","name":SITE_NAME,"url":SITE_URL},
               "publisher":{"@type":"Person","name":SITE_NAME}}
-    if post["tags"]: jsonld["keywords"] = post["tags"]
+    if post["tags"]:
+        jsonld["keywords"] = post["tags"]
     return (page_head(f'{post["title"]} · {SITE_NAME}', description, f'{post["slug"]}.html',
                       og_type="article", jsonld=jsonld) + page_header() + body + nav +
             page_foot('<a href="index.html">Index</a>'))
@@ -180,16 +181,19 @@ def cover_markup(post):
 
 
 def build_index(posts):
-    orbit = []
+    tape_cells = []
     cards = []
-    count = len(posts)
     for i, p in enumerate(posts):
-        orbit.append(
-            f'<button class="orbit-item{" is-active" if i == 0 else ""}" '
-            f'data-index="{i}" aria-label="Open {html.escape(p["title"])}">'
-            f'<span class="orbit-number">{i + 1:02d}</span>'
-            f'<span class="orbit-title">{html.escape(p["title"])}</span>'
-            f'<span class="orbit-date">{p["date"]:%d %b %Y}</span></button>')
+        code = format(i + 1, "03b")
+        tape_cells.append(
+            f'<button class="tape-cell{" is-active" if i == 0 else ""}" '
+            f'data-index="{i}" aria-label="Open {html.escape(p["title"])}" '
+            f'aria-current="{"true" if i == 0 else "false"}">'
+            f'<span class="tape-code">{code}</span>'
+            f'<span class="tape-box" aria-hidden="true"></span>'
+            f'<span class="tape-title">{html.escape(p["title"])}</span>'
+            f'<span class="tape-date">{p["date"]:%d %b %Y}</span>'
+            f'</button>')
         card_class = 'feature-card is-active' if i == 0 else 'feature-card'
         tags = ', '.join(p["tags"][:4])
         cards.append(
@@ -204,14 +208,15 @@ def build_index(posts):
             f'</div></article>')
     jsonld = {"@context":"https://schema.org","@type":"Blog","name":SITE_TITLE,
               "description":SITE_DESC,"url":SITE_URL,"author":{"@type":"Person","name":SITE_NAME,"url":SITE_URL}}
+    tape = (
+        '<section class="article-orbit tape-nav" aria-label="Article navigation">'
+        '<div class="tape-track" role="list">' + ''.join(tape_cells) + '</div>'
+        '<button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button>'
+        '<button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button>'
+        '<div class="tape-note"><span>A head scans a tape. One cell at a time.<br>The machine moves. The log remains.</span></div>'
+        '</section>')
     body = (page_header() + f'<p class="motto">{MOTTO}</p>\n'
-            '<main class="home-stage">'
-            '<section class="article-orbit" aria-label="Article carousel">'
-            f'<div class="orbit-ring"></div><div class="orbit-items" data-count="{count}">'
-            + ''.join(orbit) + '</div><a class="orbit-center" href="' + posts[0]["slug"] + '.html"><span>01</span><strong>' + html.escape(posts[0]["title"]) + '</strong><small>' + posts[0]["date"].strftime("%d %b %Y") + '</small></a>'
-            '<button class="orbit-arrow orbit-prev" type="button" aria-label="Previous article">←</button>'
-            '<button class="orbit-arrow orbit-next" type="button" aria-label="Next article">→</button>'
-            '</section>'
+            '<main class="home-stage">' + tape +
             '<section class="feature-stage" aria-live="polite">' + ''.join(cards) + '</section>'
             '</main>'
             f'<p class="intro home-intro">{INTRO}</p>')
@@ -227,7 +232,8 @@ def build_feed(posts):
         item = (f'    <item>\n      <title>{html.escape(p["title"])}</title>\n'
                 f'      <link>{link}</link>\n      <guid>{link}</guid>\n      <pubDate>{pub}</pubDate>\n'
                 f'      <description>{html.escape(p["description"])}</description>\n')
-        if p["tags"]: item += f'      <category>{html.escape(", ".join(p["tags"]))}</category>\n'
+        if p["tags"]:
+            item += f'      <category>{html.escape(", ".join(p["tags"]))}</category>\n'
         items.append(item + '    </item>')
     return ('<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">\n  <channel>\n'
             f'    <title>{html.escape(SITE_TITLE)}</title>\n    <link>{SITE_URL}</link>\n'
@@ -236,14 +242,17 @@ def build_feed(posts):
 
 
 def build_sitemap(posts):
-    urls = [{"loc":absolute_url("")},{"loc":absolute_url("about.html")}] + [
-        {"loc":absolute_url(f'{p["slug"]}.html'),"lastmod":p["date"].strftime("%Y-%m-%d")} for p in posts]
-    lines = ['<?xml version="1.0" encoding="UTF-8"?>','<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    urls = [{"loc": absolute_url("")}, {"loc": absolute_url("about.html")}] + [
+        {"loc": absolute_url(f'{p["slug"]}.html'), "lastmod": p["date"].strftime("%Y-%m-%d")}
+        for p in posts]
+    lines = ['<?xml version="1.0" encoding="UTF-8"', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    lines[0] += '?>'
     for u in urls:
         lines += ['  <url>', f'    <loc>{html.escape(u["loc"])}</loc>']
-        if "lastmod" in u: lines.append(f'    <lastmod>{u["lastmod"]}</lastmod>')
+        if "lastmod" in u:
+            lines.append(f'    <lastmod>{u["lastmod"]}</lastmod>')
         lines.append('  </url>')
-    return '\n'.join(lines + ['</urlset>',''])
+    return '\n'.join(lines + ['</urlset>', ''])
 
 
 def build_robots():
