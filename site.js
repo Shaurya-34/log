@@ -136,6 +136,73 @@
     layout();
   });
 
+  /* Phase 1: visually and behaviorally replace the circular navigator with
+     the tape concept, while preserving the existing feature-card inspector. */
+  run(function () {
+    var orbit = document.querySelector(".article-orbit");
+    var sourceItems = orbit && Array.prototype.slice.call(orbit.querySelectorAll(".orbit-item"));
+    var cards = Array.prototype.slice.call(document.querySelectorAll(".feature-card"));
+    if (!orbit || !sourceItems.length || !cards.length || orbit.classList.contains("tape-nav")) return;
+
+    var active = cards.findIndex(function (card) { return card.classList.contains("is-active"); });
+    if (active < 0) active = 0;
+    var articles = sourceItems.map(function (item, i) {
+      return {
+        index: i,
+        code: String(i + 1).toString(2).padStart(3, "0"),
+        title: item.querySelector(".orbit-title").textContent.trim(),
+        date: item.querySelector(".orbit-date").textContent.trim()
+      };
+    });
+
+    orbit.classList.add("tape-nav");
+    orbit.setAttribute("aria-label", "Article navigation");
+    orbit.innerHTML = '<div class="tape-track" role="list"></div>' +
+      '<button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button>' +
+      '<button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button>' +
+      '<div class="tape-note"><span>A head scans a tape. One cell at a time.<br>The machine moves. The log remains.</span></div>';
+
+    var track = orbit.querySelector(".tape-track");
+    articles.forEach(function (article) {
+      var cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "tape-cell" + (article.index === active ? " is-active" : "");
+      cell.dataset.index = String(article.index);
+      cell.setAttribute("role", "listitem");
+      cell.setAttribute("aria-label", "Open " + article.title);
+      cell.innerHTML = '<span class="tape-code">' + article.code + '</span>' +
+        '<span class="tape-box" aria-hidden="true"></span>' +
+        '<span class="tape-title">' + article.title + '</span>' +
+        '<span class="tape-date">' + article.date + '</span>';
+      track.appendChild(cell);
+    });
+
+    var cells = Array.prototype.slice.call(track.querySelectorAll(".tape-cell"));
+    function select(index) {
+      active = (index + cells.length) % cells.length;
+      cells.forEach(function (cell, i) {
+        var on = i === active;
+        cell.classList.toggle("is-active", on);
+        cell.setAttribute("aria-current", on ? "true" : "false");
+      });
+      cards.forEach(function (card, i) {
+        var on = i === active;
+        card.classList.toggle("is-active", on);
+        card.setAttribute("aria-hidden", on ? "false" : "true");
+      });
+    }
+    cells.forEach(function (cell, i) {
+      cell.addEventListener("click", function () { select(i); });
+      cell.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); select(i + 1); cells[(i + 1) % cells.length].focus(); }
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); select(i - 1); cells[(i - 1 + cells.length) % cells.length].focus(); }
+      });
+    });
+    orbit.querySelector(".tape-next").addEventListener("click", function () { select(active + 1); });
+    orbit.querySelector(".tape-prev").addEventListener("click", function () { select(active - 1); });
+    select(active);
+  });
+
   /* The generator emits the intro as .home-intro. Turn it into the lozenge at runtime. */
   run(function () {
     var intro = document.querySelector(".home-intro");
