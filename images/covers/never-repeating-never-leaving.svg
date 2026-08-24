@@ -1,1 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650"><rect width="1000" height="650" fill="#faf9f7"/><g fill="none" stroke="#161513" stroke-width="2"><path d="M650 320 C560 150 510 500 650 330 C790 160 850 500 700 355 C575 230 570 455 720 300 C825 195 830 455 670 365 C570 310 610 520 770 335"/><ellipse cx="700" cy="325" rx="175" ry="125" opacity=".25"/><circle cx="700" cy="325" r="5" fill="#161513" stroke="none"/></g><g fill="#6f6a62" font-family="monospace" font-size="18" letter-spacing="3"><text x="70" y="85">CHAOS / ATTRACTOR / DYNAMICAL SYSTEM</text><text x="70" y="570">A PATH THAT NEVER CLOSES</text></g><g fill="#161513" font-family="Georgia,serif"><text x="70" y="185" font-size="46">never repeating</text><text x="70" y="235" font-size="46">never leaving</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" stroke-width="1" opacity=".22">
+    <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
+    <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1.6">
+    <rect x="360" y="145" width="300" height="360"/>
+    <rect x="425" y="220" width="170" height="210"/>
+    <rect x="463" y="268" width="95" height="120"/>
+    <rect x="485" y="292" width="50" height="72"/>
+    <rect x="497" y="307" width="26" height="42"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1.2" opacity=".65">
+    <path d="M360 145L660 505"/>
+    <path d="M660 145L360 505"/>
+    <path d="M425 220L595 430"/>
+    <path d="M595 220L425 430"/>
+  </g>
+
+  <path d="M145 490
+           C205 450 235 400 250 345
+           C265 290 300 250 355 240
+           C405 230 445 245 470 275"
+        stroke="#17150f" stroke-width="2"/>
+
+  <g fill="#17150f">
+    <rect x="350" y="135" width="10" height="10"/>
+    <rect x="655" y="495" width="10" height="10"/>
+    <rect x="492" y="302" width="8" height="8"/>
+  </g>
+
+  <path d="M145 490L110 520M145 490L115 475"
+        stroke="#17150f" stroke-width="1.2"/>
+</svg>
