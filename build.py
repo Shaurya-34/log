@@ -185,12 +185,13 @@ def build_index(posts):
     cards = []
     for i, p in enumerate(posts):
         code = format(i + 1, "03b")
+        bit = "01011"[i % 5]
         tape_cells.append(
             f'<button class="tape-cell{" is-active" if i == 0 else ""}" '
             f'data-index="{i}" aria-label="Open {html.escape(p["title"])}" '
             f'aria-current="{"true" if i == 0 else "false"}">'
             f'<span class="tape-code">{code}</span>'
-            f'<span class="tape-box" aria-hidden="true"></span>'
+            f'<span class="tape-box" aria-hidden="true">{bit}</span>'
             f'<span class="tape-title">{html.escape(p["title"])}</span>'
             f'<span class="tape-date">{p["date"]:%d %b %Y}</span>'
             f'</button>')
