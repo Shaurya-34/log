@@ -31,11 +31,36 @@ JS_VERSION = hashlib.md5((ROOT / "site.js").read_bytes()).hexdigest()[:8]
 HOME_CSS_VERSION = hashlib.md5((ROOT / "home.css").read_bytes()).hexdigest()[:8]
 
 COVER_DEFAULTS = {
-  "where-does-computation-end": {"cover": "images/covers/where-does-computation-end.svg", ...}
-  "self-rewriting-mandelbrot": {"cover": "images/covers/self-rewriting-mandelbrot.svg", ...}
-  "never-repeating-never-leaving": {"cover": "images/covers/never-repeating-never-leaving.svg", ...}
-  "marching-with-rays": {"cover": "images/covers/marching-with-rays.svg", ...}
-  "grok-grok": {"cover": "images/covers/grok-grok.svg", ...}
+    "where-does-computation-end": {
+        "cover": "images/covers/where-does-computation-end.svg",
+        "kicker": "A NOTE ON PHYSICAL SYSTEMS, MODELS, AND THE LIMITS OF EFFECTIVE DESCRIPTION.",
+        "quote": "The map is not the territory.",
+        "author": "N. Wiener",
+    },
+    "self-rewriting-mandelbrot": {
+        "cover": "images/covers/self-rewriting-mandelbrot.svg",
+        "kicker": "A SMALL EXPERIMENT IN SELF-MODIFICATION AND CODE THAT CHANGES ITS OWN RULES.",
+        "quote": "A program can become part of its own memory.",
+        "author": "sslog",
+    },
+    "never-repeating-never-leaving": {
+        "cover": "images/covers/never-repeating-never-leaving.svg",
+        "kicker": "ON STRANGE ATTRACTORS, DYNAMICAL SYSTEMS, AND STRUCTURES THAT NEVER SETTLE.",
+        "quote": "Never repeating. Never leaving.",
+        "author": "sslog",
+    },
+    "marching-with-rays": {
+        "cover": "images/covers/marching-with-rays.svg",
+        "kicker": "A VISUAL WALK THROUGH RAY MARCHING, DISTANCE FIELDS, AND GEOMETRY.",
+        "quote": "The image is the end of a chain of questions.",
+        "author": "sslog",
+    },
+    "grok-grok": {
+        "cover": "images/covers/grok-grok.svg",
+        "kicker": "WHAT HAPPENS WHEN A MODEL FINALLY FINDS THE RULE?",
+        "quote": "The model looked done. Then it suddenly learned.",
+        "author": "sslog",
+    },
 }
 
 
