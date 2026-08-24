@@ -1,1 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650"><rect width="1000" height="650" fill="#faf9f7"/><g fill="none" stroke="#161513" stroke-width="2"><circle cx="700" cy="325" r="170"/><circle cx="700" cy="325" r="120" opacity=".7"/><circle cx="700" cy="325" r="68" opacity=".45"/><path d="M505 325H895M700 130V520M565 190L835 460M835 190L565 460"/><circle cx="700" cy="325" r="11" fill="#161513" stroke="none"/><path d="M310 325H505" stroke-dasharray="8 10"/><path d="M470 285L515 325L470 365"/></g><g fill="#6f6a62" font-family="monospace" font-size="18" letter-spacing="3"><text x="70" y="85">COMPUTATION / PHYSICAL SYSTEM / LIMIT</text><text x="70" y="570">MODEL → SYSTEM → UNKNOWN</text></g><g fill="#161513" font-family="Georgia,serif"><text x="70" y="185" font-size="46">where does</text><text x="70" y="235" font-size="46">the model end?</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" stroke-width="1.4">
+    <path opacity=".18" d="M120 80H880M120 185H880M120 290H880M120 395H880M120 500H880M120 570H880"/>
+    <path opacity=".18" d="M180 55V595M340 55V595M500 55V595M660 55V595M820 55V595"/>
+
+    <circle cx="500" cy="325" r="65"/>
+    <circle cx="500" cy="325" r="130" opacity=".65"/>
+    <circle cx="500" cy="325" r="195" stroke-dasharray="6 7" opacity=".5"/>
+    <circle cx="500" cy="325" r="260" stroke-dasharray="2 8" opacity=".35"/>
+
+    <path d="M500 65V585M140 325H860" opacity=".35"/>
+
+    <path d="M500 325
+             C555 300 610 280 650 245
+             C690 210 720 165 748 145
+             C780 122 815 115 850 82
+             C870 63 882 45 890 25"/>
+    <path d="M890 25l-4 14M890 25l-14 4"/>
+  </g>
+
+  <g fill="#17150f">
+    <circle cx="500" cy="325" r="5"/>
+    <rect x="886" y="21" width="9" height="9"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <circle cx="500" cy="195" r="4" fill="#faf9f7"/>
+    <circle cx="630" cy="325" r="4" fill="#faf9f7"/>
+    <circle cx="500" cy="455" r="4" fill="#faf9f7"/>
+  </g>
+</svg>
