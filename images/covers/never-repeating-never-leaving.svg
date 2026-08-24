@@ -1,36 +1,54 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" stroke-width="1" opacity=".22">
-    <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
-    <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
+  <g stroke="#17150f" opacity=".16">
+    <path d="M90 520H910"/>
+    <path d="M500 70V580"/>
+    <path d="M150 500L850 120"/>
+    <path d="M150 120L850 500"/>
   </g>
-
-  <g stroke="#17150f" stroke-width="1.6">
-    <rect x="360" y="145" width="300" height="360"/>
-    <rect x="425" y="220" width="170" height="210"/>
-    <rect x="463" y="268" width="95" height="120"/>
-    <rect x="485" y="292" width="50" height="72"/>
-    <rect x="497" y="307" width="26" height="42"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1.2" opacity=".65">
-    <path d="M360 145L660 505"/>
-    <path d="M660 145L360 505"/>
-    <path d="M425 220L595 430"/>
-    <path d="M595 220L425 430"/>
-  </g>
-
-  <path d="M145 490
-           C205 450 235 400 250 345
-           C265 290 300 250 355 240
-           C405 230 445 245 470 275"
-        stroke="#17150f" stroke-width="2"/>
 
   <g fill="#17150f">
-    <rect x="350" y="135" width="10" height="10"/>
-    <rect x="655" y="495" width="10" height="10"/>
-    <rect x="492" y="302" width="8" height="8"/>
+    <circle cx="180" cy="450" r="3"/>
+    <circle cx="270" cy="390" r="2"/>
+    <circle cx="760" cy="180" r="3"/>
+    <circle cx="820" cy="430" r="2"/>
+    <circle cx="680" cy="520" r="2"/>
   </g>
 
-  <path d="M145 490L110 520M145 490L115 475"
-        stroke="#17150f" stroke-width="1.2"/>
+  <path
+    d="M145 470
+       C205 430 275 405 345 390
+       C410 376 455 340 475 285
+       C500 220 575 165 655 185
+       C730 204 760 280 710 335
+       C665 385 565 380 520 330
+       C470 275 500 205 585 170
+       C680 132 785 190 790 280
+       C796 365 720 430 625 425
+       C530 420 470 350 500 275
+       C530 195 650 155 735 215
+       C820 275 780 390 690 420
+       C600 450 505 405 495 335
+       C485 265 555 220 630 235
+       C705 250 735 325 690 365
+       C645 405 560 390 535 340
+       C510 290 545 250 600 255
+       C655 260 680 310 650 340
+       C620 370 570 355 560 320"
+    stroke="#17150f"
+    stroke-width="1.4"/>
+
+  <path
+    d="M145 470
+       C230 420 320 400 400 365
+       C480 330 500 250 580 205"
+    stroke="#17150f"
+    stroke-width=".8"
+    opacity=".35"/>
+
+  <circle cx="560" cy="320" r="5" fill="#17150f"/>
+
+  <g stroke="#17150f" stroke-width="1">
+    <circle cx="145" cy="470" r="4" fill="#faf9f7"/>
+    <circle cx="790" cy="280" r="4" fill="#faf9f7"/>
+  </g>
 </svg>
