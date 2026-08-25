@@ -85,6 +85,26 @@
 .tape-viewport { position:absolute; left:var(--tape-inset); right:var(--tape-inset); top:var(--tape-top); overflow-x:auto; overflow-y:visible; scroll-behavior:smooth; scrollbar-width:none; scroll-snap-type:x mandatory; }
 .tape-viewport::-webkit-scrollbar { display:none; }
 .tape-track { display:flex; width:100%; align-items:start; }
+.tape-read-head {
+  position:absolute;
+  top:calc(var(--tape-top) - 1.15rem);
+  left:0;
+  width:0;
+  height:0;
+  border-left:.35rem solid transparent;
+  border-right:.35rem solid transparent;
+  border-top:.55rem solid var(--ink);
+  transform:translateX(0);
+  transition:transform 650ms cubic-bezier(.16,.78,.18,1);
+  z-index:4;
+  pointer-events:none;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .tape-read-head {
+    transition:none;
+  }
+}
 .tape-cell { position:relative; flex:0 0 calc(100% / var(--tape-visible)); min-width:0; padding:0; border:0; background:none; color:var(--ink); font-family:var(--mono); text-align:center; cursor:pointer; scroll-snap-align:center; }
 .tape-code { display:block; min-height:.75rem; font:.55rem var(--mono); letter-spacing:.06em; color:var(--ink); }
 /* Boxes sit flush: only the first cell keeps its left edge, every
