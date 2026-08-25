@@ -1,17 +1,59 @@
-/* Quiet site behaviors: theme, reading memory, tape navigation, scrollbar, and page transitions. */
+/* Quiet site behaviors: theme, reading memory, tape navigation, sounds, scrollbar, and page transitions. */
 (function () {
   var doc = document.documentElement;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var safeStore = {
-    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
-    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
-    remove: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
+    get: function (k) {
+      try { return localStorage.getItem(k); }
+      catch (e) { return null; }
+    },
+    set: function (k, v) {
+      try { localStorage.setItem(k, v); }
+      catch (e) {}
+    },
+    remove: function (k) {
+      try { localStorage.removeItem(k); }
+      catch (e) {}
+    }
   };
 
   function run(fn) {
-    try { fn(); } catch (e) {}
+    try { fn(); }
+    catch (e) {}
   }
+
+  /* ------------------------------------------------------------
+     Sound assets
+     ------------------------------------------------------------ */
+
+  var sounds = {
+    readHead: new Audio("assets/sounds/read-head-click.wav"),
+    selection: new Audio("assets/sounds/selection-tick.wav"),
+    theme: new Audio("assets/sounds/theme-switch.wav")
+  };
+
+  Object.keys(sounds).forEach(function (key) {
+    sounds[key].preload = "auto";
+    sounds[key].volume = 0.45;
+  });
+
+  function playSound(sound) {
+    if (reduced || !sound) return;
+
+    try {
+      sound.currentTime = 0;
+      var promise = sound.play();
+
+      if (promise && promise.catch) {
+        promise.catch(function () {});
+      }
+    } catch (e) {}
+  }
+
+  /* ------------------------------------------------------------
+     Transitions stylesheet
+     ------------------------------------------------------------ */
 
   run(function () {
     var link = document.createElement("link");
@@ -21,7 +63,10 @@
     document.head.appendChild(link);
   });
 
-  /* Theme */
+  /* ------------------------------------------------------------
+     Theme
+     ------------------------------------------------------------ */
+
   run(function () {
     var stored = safeStore.get("theme");
 
@@ -34,29 +79,42 @@
 
     function current() {
       return doc.getAttribute("data-theme") ||
-        (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        (matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light");
     }
 
     function paint() {
-      button.textContent = current() === "dark" ? "light" : "dark";
+      button.textContent = current() === "dark"
+        ? "light"
+        : "dark";
     }
 
     button.addEventListener("click", function () {
-      var next = current() === "dark" ? "light" : "dark";
+      var next = current() === "dark"
+        ? "light"
+        : "dark";
+
       doc.setAttribute("data-theme", next);
       safeStore.set("theme", next);
       paint();
+
+      playSound(sounds.theme);
     });
 
     paint();
   });
 
-  /* Scrollbar */
+  /* ------------------------------------------------------------
+     Scrollbar
+     ------------------------------------------------------------ */
+
   run(function () {
     var hideTimer;
 
     addEventListener("scroll", function () {
       doc.classList.add("scrolling");
+
       clearTimeout(hideTimer);
 
       hideTimer = setTimeout(function () {
@@ -65,19 +123,27 @@
     }, { passive: true });
   });
 
+  /* ------------------------------------------------------------
+     Reading progress
+     ------------------------------------------------------------ */
+
   function readLast() {
     try {
-      return JSON.parse(safeStore.get("log:last") || "null");
+      return JSON.parse(
+        safeStore.get("log:last") || "null"
+      );
     } catch (e) {
       return null;
     }
   }
 
-  /* Reading progress */
   run(function () {
-    var slug = location.pathname.split("/").pop() || "index.html";
+    var slug =
+      location.pathname.split("/").pop() || "index.html";
+
     var key = "log:progress:" + slug;
-    var article = document.querySelector("article.post.entry");
+    var article =
+      document.querySelector("article.post.entry");
 
     if (!article) return;
 
@@ -88,17 +154,23 @@
 
       saveTimer = setTimeout(function () {
         var max = doc.scrollHeight - innerHeight;
+
         if (max <= 0) return;
 
         if (scrollY > max - 80) {
           safeStore.remove(key);
 
           var last = readLast();
+
           if (last && last.slug === slug) {
             safeStore.remove("log:last");
           }
         } else if (scrollY > 300) {
-          safeStore.set(key, String(Math.round(scrollY)));
+          safeStore.set(
+            key,
+            String(Math.round(scrollY))
+          );
+
           safeStore.set(
             "log:last",
             JSON.stringify({
@@ -110,7 +182,10 @@
       }, 200);
     }, { passive: true });
 
-    var saved = parseInt(safeStore.get(key) || "0", 10);
+    var saved = parseInt(
+      safeStore.get(key) || "0",
+      10
+    );
 
     if (saved > 300) {
       var p = document.createElement("p");
@@ -130,27 +205,42 @@
       });
 
       p.appendChild(a);
-      document.querySelector(".post-meta").after(p);
+
+      document
+        .querySelector(".post-meta")
+        .after(p);
     }
   });
 
-  /* Contact */
+  /* ------------------------------------------------------------
+     Contact
+     ------------------------------------------------------------ */
+
   run(function () {
-    var contact = document.querySelector("a.contact");
+    var contact =
+      document.querySelector("a.contact");
 
     if (contact) {
-      contact.href = "mailto:sshaurya595@" + ["gmail", "com"].join(".");
+      contact.href =
+        "mailto:sshaurya595@" +
+        ["gmail", "com"].join(".");
     }
   });
 
-  /* Continue reading */
+  /* ------------------------------------------------------------
+     Continue reading
+     ------------------------------------------------------------ */
+
   run(function () {
     var list = document.querySelector("ul.posts");
     if (!list) return;
 
     var last = readLast();
 
-    if (!last || !safeStore.get("log:progress:" + last.slug)) {
+    if (
+      !last ||
+      !safeStore.get("log:progress:" + last.slug)
+    ) {
       return;
     }
 
@@ -171,31 +261,40 @@
     list.parentNode.insertBefore(line, list);
   });
 
-  /*
-   * Tape navigation.
-   *
-   * The read head is independent from the active cell.
-   * It moves between cell centers using transform, giving
-   * the tape-machine effect instead of snapping between blocks.
-   */
+  /* ------------------------------------------------------------
+     Turing tape navigation
+     ------------------------------------------------------------ */
+
   run(function () {
-    var tape = document.querySelector(".article-orbit.tape-nav");
+    var tape =
+      document.querySelector(
+        ".article-orbit.tape-nav"
+      );
+
     var cells = tape
-      ? Array.prototype.slice.call(tape.querySelectorAll(".tape-cell"))
+      ? Array.prototype.slice.call(
+          tape.querySelectorAll(".tape-cell")
+        )
       : [];
 
-    var cards = Array.prototype.slice.call(
-      document.querySelectorAll(".feature-card")
-    );
+    var cards =
+      Array.prototype.slice.call(
+        document.querySelectorAll(".feature-card")
+      );
 
-    if (!tape || !cells.length || !cards.length) return;
+    if (!tape || !cells.length || !cards.length) {
+      return;
+    }
 
-    var viewport = tape.querySelector(".tape-viewport");
-    var head = tape.querySelector(".tape-read-head");
+    var viewport =
+      tape.querySelector(".tape-viewport");
+
+    var head =
+      tape.querySelector(".tape-read-head");
 
     /*
-     * If build.py has not emitted the head yet, create it here.
-     * This means the animation still works without changing HTML.
+     * Create the independent read head if build.py
+     * hasn't emitted one.
      */
     if (!head && viewport) {
       head = document.createElement("div");
@@ -208,51 +307,68 @@
       return cell.classList.contains("is-active");
     });
 
-    if (active < 0) active = 0;
+    if (active < 0) {
+      active = 0;
+    }
 
     function moveReadHead(animate) {
-      if (!head || !viewport || !cells[active]) return;
+      if (
+        !head ||
+        !viewport ||
+        !cells[active]
+      ) {
+        return;
+      }
 
       var cell = cells[active];
 
       var cellCenter =
-        cell.offsetLeft + (cell.offsetWidth / 2);
+        cell.offsetLeft +
+        cell.offsetWidth / 2;
 
-      var viewportLeft = viewport.offsetLeft;
+      var viewportLeft =
+        viewport.offsetLeft;
+
+      var x =
+        cellCenter -
+        viewportLeft;
 
       if (!animate || reduced) {
-        var oldTransition = head.style.transition;
+        var previousTransition =
+          head.style.transition;
+
         head.style.transition = "none";
 
         head.style.transform =
-          "translateX(" +
-          (cellCenter - viewportLeft) +
-          "px)";
+          "translateX(" + x + "px)";
 
-        /*
-         * Force layout so the browser commits the
-         * initial position before restoring animation.
-         */
         void head.offsetWidth;
 
-        head.style.transition = oldTransition;
+        head.style.transition =
+          previousTransition;
       } else {
         head.style.transform =
-          "translateX(" +
-          (cellCenter - viewportLeft) +
-          "px)";
+          "translateX(" + x + "px)";
       }
     }
 
-    function select(index, focus) {
+    function select(index, focus, playSelection) {
       var previous = active;
 
-      active = (index + cells.length) % cells.length;
+      active =
+        (index + cells.length) %
+        cells.length;
+
+      var moved = previous !== active;
 
       cells.forEach(function (cell, i) {
         var on = i === active;
 
-        cell.classList.toggle("is-active", on);
+        cell.classList.toggle(
+          "is-active",
+          on
+        );
+
         cell.setAttribute(
           "aria-current",
           on ? "true" : "false"
@@ -266,18 +382,35 @@
       cards.forEach(function (card, i) {
         var on = i === active;
 
-        card.classList.toggle("is-active", on);
+        card.classList.toggle(
+          "is-active",
+          on
+        );
+
         card.setAttribute(
           "aria-hidden",
           on ? "false" : "true"
         );
       });
 
+      if (moved) {
+        playSound(sounds.selection);
+      }
+
       /*
-       * Move the head after the active cell has been updated.
-       * The CSS transition handles the actual smooth motion.
+       * The head begins moving immediately.
+       * The mechanical click fires when it reaches
+       * the destination.
        */
-      moveReadHead(previous !== active);
+      moveReadHead(moved);
+
+      if (moved && !reduced) {
+        setTimeout(function () {
+          playSound(sounds.readHead);
+        }, 650);
+      } else if (moved) {
+        playSound(sounds.readHead);
+      }
 
       cells[active].scrollIntoView({
         behavior: reduced ? "auto" : "smooth",
@@ -286,115 +419,180 @@
       });
     }
 
+    /* Direct cell selection */
     cells.forEach(function (cell, i) {
-      cell.addEventListener("click", function () {
-        select(i, false);
-      });
-
-      cell.addEventListener("keydown", function (e) {
-        if (
-          e.key === "ArrowRight" ||
-          e.key === "ArrowDown"
-        ) {
-          e.preventDefault();
-          select(i + 1, true);
+      cell.addEventListener(
+        "click",
+        function () {
+          select(i, false, true);
         }
+      );
 
-        if (
-          e.key === "ArrowLeft" ||
-          e.key === "ArrowUp"
-        ) {
-          e.preventDefault();
-          select(i - 1, true);
+      cell.addEventListener(
+        "keydown",
+        function (e) {
+          if (
+            e.key === "ArrowRight" ||
+            e.key === "ArrowDown"
+          ) {
+            e.preventDefault();
+            select(i + 1, true, true);
+          }
+
+          if (
+            e.key === "ArrowLeft" ||
+            e.key === "ArrowUp"
+          ) {
+            e.preventDefault();
+            select(i - 1, true, true);
+          }
         }
-      });
+      );
     });
 
-    var next = tape.querySelector(".tape-next");
-    var prev = tape.querySelector(".tape-prev");
+    /* Next / previous controls */
+    var next =
+      tape.querySelector(".tape-next");
+
+    var prev =
+      tape.querySelector(".tape-prev");
 
     if (next) {
-      next.addEventListener("click", function () {
-        select(active + 1, false);
-      });
+      next.addEventListener(
+        "click",
+        function () {
+          select(
+            active + 1,
+            false,
+            true
+          );
+        }
+      );
     }
 
     if (prev) {
-      prev.addEventListener("click", function () {
-        select(active - 1, false);
-      });
+      prev.addEventListener(
+        "click",
+        function () {
+          select(
+            active - 1,
+            false,
+            true
+          );
+        }
+      );
     }
 
-    /*
-     * Recalculate after resize because cell positions change
-     * with responsive layout.
-     */
-    addEventListener("resize", function () {
-      moveReadHead(false);
-    });
+    /* Keep head aligned on resize */
+    addEventListener(
+      "resize",
+      function () {
+        moveReadHead(false);
+      }
+    );
 
-    /* Initial position: no animation on page load. */
+    /* Initial position — no sound */
     moveReadHead(false);
-
-    select(active, false);
   });
 
-  /* About-the-log discovery panel */
-  run(function () {
-    var intro = document.querySelector(".home-intro");
+  /* ------------------------------------------------------------
+     About-the-log discovery panel
+     ------------------------------------------------------------ */
 
-    if (!intro || document.querySelector(".log-discovery")) {
+  run(function () {
+    var intro =
+      document.querySelector(".home-intro");
+
+    if (
+      !intro ||
+      document.querySelector(".log-discovery")
+    ) {
       return;
     }
 
-    var discovery = document.createElement("section");
+    var discovery =
+      document.createElement("section");
+
     discovery.className = "log-discovery";
-    discovery.setAttribute("aria-label", "About the log");
+    discovery.setAttribute(
+      "aria-label",
+      "About the log"
+    );
 
     discovery.innerHTML =
-      '<button class="log-discovery-trigger" type="button" ' +
-      'aria-expanded="false" aria-controls="log-discovery-panel">' +
+      '<button class="log-discovery-trigger" ' +
+      'type="button" aria-expanded="false" ' +
+      'aria-controls="log-discovery-panel">' +
       '<span aria-hidden="true">◇</span>' +
       '<span class="sr-only">About this log</span>' +
       '</button>' +
-      '<div class="log-discovery-panel" id="log-discovery-panel">' +
-      '<span class="log-discovery-label">ABOUT THE LOG</span>' +
+
+      '<div class="log-discovery-panel" ' +
+      'id="log-discovery-panel">' +
+      '<span class="log-discovery-label">' +
+      'ABOUT THE LOG' +
+      '</span>' +
       '<p></p>' +
       '</div>';
 
     discovery
-      .querySelector(".log-discovery-panel p")
-      .textContent = intro.textContent.trim();
+      .querySelector(
+        ".log-discovery-panel p"
+      )
+      .textContent =
+      intro.textContent.trim();
 
     intro.replaceWith(discovery);
 
     var trigger =
-      discovery.querySelector(".log-discovery-trigger");
+      discovery.querySelector(
+        ".log-discovery-trigger"
+      );
 
     function setOpen(open) {
-      discovery.classList.toggle("is-open", open);
+      discovery.classList.toggle(
+        "is-open",
+        open
+      );
+
       trigger.setAttribute(
         "aria-expanded",
         String(open)
       );
     }
 
-    trigger.addEventListener("click", function (e) {
-      e.stopPropagation();
-      setOpen(!discovery.classList.contains("is-open"));
-    });
+    trigger.addEventListener(
+      "click",
+      function (e) {
+        e.stopPropagation();
 
-    document.addEventListener("click", function (e) {
-      if (!discovery.contains(e.target)) {
-        setOpen(false);
-      }
-    });
+        playSound(sounds.selection);
 
-    discovery.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") {
-        setOpen(false);
-        trigger.focus();
+        setOpen(
+          !discovery.classList.contains(
+            "is-open"
+          )
+        );
       }
-    });
+    );
+
+    document.addEventListener(
+      "click",
+      function (e) {
+        if (!discovery.contains(e.target)) {
+          setOpen(false);
+        }
+      }
+    );
+
+    discovery.addEventListener(
+      "keydown",
+      function (e) {
+        if (e.key === "Escape") {
+          setOpen(false);
+          trigger.focus();
+        }
+      }
+    );
   });
 })();
