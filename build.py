@@ -236,7 +236,7 @@ def build_index(posts):
               "description":SITE_DESC,"url":SITE_URL,"author":{"@type":"Person","name":SITE_NAME,"url":SITE_URL}}
     tape = (
         '<section class="article-orbit tape-nav" aria-label="Article navigation">'
-        '<div class="tape-track" role="list">' + ''.join(tape_cells) + '</div>'
+        '<div class="tape-viewport"><div class="tape-track" role="list">' + ''.join(tape_cells) + '</div></div>'
         '<button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button>'
         '<button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button>'
         '<div class="tape-note"><span>A head scans a tape. One cell at a time.<br>The machine moves. The log remains.</span></div>'
@@ -315,3 +315,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

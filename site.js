@@ -127,6 +127,11 @@
         card.classList.toggle("is-active", on);
         card.setAttribute("aria-hidden", on ? "false" : "true");
       });
+      cells[active].scrollIntoView({
+        behavior: reduced ? "auto" : "smooth",
+        block: "nearest",
+        inline: "center"
+      });
     }
 
     cells.forEach(function (cell, i) {
