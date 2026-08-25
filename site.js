@@ -2,12 +2,16 @@
 (function () {
   var doc = document.documentElement;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   var safeStore = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
     remove: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
   };
-  function run(fn) { try { fn(); } catch (e) {} }
+
+  function run(fn) {
+    try { fn(); } catch (e) {}
+  }
 
   run(function () {
     var link = document.createElement("link");
@@ -17,116 +21,264 @@
     document.head.appendChild(link);
   });
 
+  /* Theme */
   run(function () {
     var stored = safeStore.get("theme");
-    if (stored === "dark" || stored === "light") doc.setAttribute("data-theme", stored);
+
+    if (stored === "dark" || stored === "light") {
+      doc.setAttribute("data-theme", stored);
+    }
+
     var button = document.querySelector(".theme-toggle");
     if (!button) return;
-    function current() { return doc.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); }
-    function paint() { button.textContent = current() === "dark" ? "light" : "dark"; }
+
+    function current() {
+      return doc.getAttribute("data-theme") ||
+        (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    }
+
+    function paint() {
+      button.textContent = current() === "dark" ? "light" : "dark";
+    }
+
     button.addEventListener("click", function () {
       var next = current() === "dark" ? "light" : "dark";
       doc.setAttribute("data-theme", next);
       safeStore.set("theme", next);
       paint();
     });
+
     paint();
   });
 
+  /* Scrollbar */
   run(function () {
     var hideTimer;
+
     addEventListener("scroll", function () {
       doc.classList.add("scrolling");
       clearTimeout(hideTimer);
-      hideTimer = setTimeout(function () { doc.classList.remove("scrolling"); }, 900);
+
+      hideTimer = setTimeout(function () {
+        doc.classList.remove("scrolling");
+      }, 900);
     }, { passive: true });
   });
 
-  function readLast() { try { return JSON.parse(safeStore.get("log:last") || "null"); } catch (e) { return null; } }
+  function readLast() {
+    try {
+      return JSON.parse(safeStore.get("log:last") || "null");
+    } catch (e) {
+      return null;
+    }
+  }
 
+  /* Reading progress */
   run(function () {
     var slug = location.pathname.split("/").pop() || "index.html";
     var key = "log:progress:" + slug;
     var article = document.querySelector("article.post.entry");
+
     if (!article) return;
+
     var saveTimer;
+
     addEventListener("scroll", function () {
       clearTimeout(saveTimer);
+
       saveTimer = setTimeout(function () {
         var max = doc.scrollHeight - innerHeight;
         if (max <= 0) return;
+
         if (scrollY > max - 80) {
           safeStore.remove(key);
+
           var last = readLast();
-          if (last && last.slug === slug) safeStore.remove("log:last");
+          if (last && last.slug === slug) {
+            safeStore.remove("log:last");
+          }
         } else if (scrollY > 300) {
           safeStore.set(key, String(Math.round(scrollY)));
-          safeStore.set("log:last", JSON.stringify({ slug: slug, title: document.querySelector("h1").textContent }));
+          safeStore.set(
+            "log:last",
+            JSON.stringify({
+              slug: slug,
+              title: document.querySelector("h1").textContent
+            })
+          );
         }
       }, 200);
     }, { passive: true });
+
     var saved = parseInt(safeStore.get(key) || "0", 10);
+
     if (saved > 300) {
       var p = document.createElement("p");
       p.className = "resume";
+
       var a = document.createElement("a");
       a.href = "#";
       a.textContent = "Pick up where you left off ↓";
+
       a.addEventListener("click", function (e) {
         e.preventDefault();
-        scrollTo({ top: saved, behavior: reduced ? "auto" : "smooth" });
+
+        scrollTo({
+          top: saved,
+          behavior: reduced ? "auto" : "smooth"
+        });
       });
+
       p.appendChild(a);
       document.querySelector(".post-meta").after(p);
     }
   });
 
+  /* Contact */
   run(function () {
     var contact = document.querySelector("a.contact");
-    if (contact) contact.href = "mailto:sshaurya595@" + ["gmail", "com"].join(".");
+
+    if (contact) {
+      contact.href = "mailto:sshaurya595@" + ["gmail", "com"].join(".");
+    }
   });
 
+  /* Continue reading */
   run(function () {
     var list = document.querySelector("ul.posts");
     if (!list) return;
+
     var last = readLast();
-    if (!last || !safeStore.get("log:progress:" + last.slug)) return;
+
+    if (!last || !safeStore.get("log:progress:" + last.slug)) {
+      return;
+    }
+
     var line = document.createElement("p");
     line.className = "continue";
+
     var label = document.createElement("span");
     label.className = "label";
     label.textContent = "Continue";
+
     var link = document.createElement("a");
     link.href = last.slug;
     link.textContent = last.title;
+
     line.appendChild(label);
     line.appendChild(link);
+
     list.parentNode.insertBefore(line, list);
   });
 
-  /* The tape is emitted directly by build.py. JS only handles selection. */
+  /*
+   * Tape navigation.
+   *
+   * The read head is independent from the active cell.
+   * It moves between cell centers using transform, giving
+   * the tape-machine effect instead of snapping between blocks.
+   */
   run(function () {
     var tape = document.querySelector(".article-orbit.tape-nav");
-    var cells = tape && Array.prototype.slice.call(tape.querySelectorAll(".tape-cell"));
-    var cards = Array.prototype.slice.call(document.querySelectorAll(".feature-card"));
+    var cells = tape
+      ? Array.prototype.slice.call(tape.querySelectorAll(".tape-cell"))
+      : [];
+
+    var cards = Array.prototype.slice.call(
+      document.querySelectorAll(".feature-card")
+    );
+
     if (!tape || !cells.length || !cards.length) return;
 
-    var active = cells.findIndex(function (cell) { return cell.classList.contains("is-active"); });
+    var viewport = tape.querySelector(".tape-viewport");
+    var head = tape.querySelector(".tape-read-head");
+
+    /*
+     * If build.py has not emitted the head yet, create it here.
+     * This means the animation still works without changing HTML.
+     */
+    if (!head && viewport) {
+      head = document.createElement("div");
+      head.className = "tape-read-head";
+      head.setAttribute("aria-hidden", "true");
+      viewport.appendChild(head);
+    }
+
+    var active = cells.findIndex(function (cell) {
+      return cell.classList.contains("is-active");
+    });
+
     if (active < 0) active = 0;
 
+    function moveReadHead(animate) {
+      if (!head || !viewport || !cells[active]) return;
+
+      var cell = cells[active];
+
+      var cellCenter =
+        cell.offsetLeft + (cell.offsetWidth / 2);
+
+      var viewportLeft = viewport.offsetLeft;
+
+      if (!animate || reduced) {
+        var oldTransition = head.style.transition;
+        head.style.transition = "none";
+
+        head.style.transform =
+          "translateX(" +
+          (cellCenter - viewportLeft) +
+          "px)";
+
+        /*
+         * Force layout so the browser commits the
+         * initial position before restoring animation.
+         */
+        void head.offsetWidth;
+
+        head.style.transition = oldTransition;
+      } else {
+        head.style.transform =
+          "translateX(" +
+          (cellCenter - viewportLeft) +
+          "px)";
+      }
+    }
+
     function select(index, focus) {
+      var previous = active;
+
       active = (index + cells.length) % cells.length;
+
       cells.forEach(function (cell, i) {
         var on = i === active;
+
         cell.classList.toggle("is-active", on);
-        cell.setAttribute("aria-current", on ? "true" : "false");
-        if (on && focus) cell.focus();
+        cell.setAttribute(
+          "aria-current",
+          on ? "true" : "false"
+        );
+
+        if (on && focus) {
+          cell.focus();
+        }
       });
+
       cards.forEach(function (card, i) {
         var on = i === active;
+
         card.classList.toggle("is-active", on);
-        card.setAttribute("aria-hidden", on ? "false" : "true");
+        card.setAttribute(
+          "aria-hidden",
+          on ? "false" : "true"
+        );
       });
+
+      /*
+       * Move the head after the active cell has been updated.
+       * The CSS transition handles the actual smooth motion.
+       */
+      moveReadHead(previous !== active);
+
       cells[active].scrollIntoView({
         behavior: reduced ? "auto" : "smooth",
         block: "nearest",
@@ -135,40 +287,114 @@
     }
 
     cells.forEach(function (cell, i) {
-      cell.addEventListener("click", function () { select(i, false); });
+      cell.addEventListener("click", function () {
+        select(i, false);
+      });
+
       cell.addEventListener("keydown", function (e) {
-        if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); select(i + 1, true); }
-        if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); select(i - 1, true); }
+        if (
+          e.key === "ArrowRight" ||
+          e.key === "ArrowDown"
+        ) {
+          e.preventDefault();
+          select(i + 1, true);
+        }
+
+        if (
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowUp"
+        ) {
+          e.preventDefault();
+          select(i - 1, true);
+        }
       });
     });
-    tape.querySelector(".tape-next").addEventListener("click", function () { select(active + 1, false); });
-    tape.querySelector(".tape-prev").addEventListener("click", function () { select(active - 1, false); });
+
+    var next = tape.querySelector(".tape-next");
+    var prev = tape.querySelector(".tape-prev");
+
+    if (next) {
+      next.addEventListener("click", function () {
+        select(active + 1, false);
+      });
+    }
+
+    if (prev) {
+      prev.addEventListener("click", function () {
+        select(active - 1, false);
+      });
+    }
+
+    /*
+     * Recalculate after resize because cell positions change
+     * with responsive layout.
+     */
+    addEventListener("resize", function () {
+      moveReadHead(false);
+    });
+
+    /* Initial position: no animation on page load. */
+    moveReadHead(false);
+
     select(active, false);
   });
 
+  /* About-the-log discovery panel */
   run(function () {
     var intro = document.querySelector(".home-intro");
-    if (!intro || document.querySelector(".log-discovery")) return;
+
+    if (!intro || document.querySelector(".log-discovery")) {
+      return;
+    }
+
     var discovery = document.createElement("section");
     discovery.className = "log-discovery";
     discovery.setAttribute("aria-label", "About the log");
-    discovery.innerHTML = '<button class="log-discovery-trigger" type="button" aria-expanded="false" aria-controls="log-discovery-panel"><span aria-hidden="true">◇</span><span class="sr-only">About this log</span></button><div class="log-discovery-panel" id="log-discovery-panel"><span class="log-discovery-label">ABOUT THE LOG</span><p></p></div>';
-    discovery.querySelector(".log-discovery-panel p").textContent = intro.textContent.trim();
+
+    discovery.innerHTML =
+      '<button class="log-discovery-trigger" type="button" ' +
+      'aria-expanded="false" aria-controls="log-discovery-panel">' +
+      '<span aria-hidden="true">◇</span>' +
+      '<span class="sr-only">About this log</span>' +
+      '</button>' +
+      '<div class="log-discovery-panel" id="log-discovery-panel">' +
+      '<span class="log-discovery-label">ABOUT THE LOG</span>' +
+      '<p></p>' +
+      '</div>';
+
+    discovery
+      .querySelector(".log-discovery-panel p")
+      .textContent = intro.textContent.trim();
+
     intro.replaceWith(discovery);
-    var trigger = discovery.querySelector(".log-discovery-trigger");
+
+    var trigger =
+      discovery.querySelector(".log-discovery-trigger");
+
     function setOpen(open) {
       discovery.classList.toggle("is-open", open);
-      trigger.setAttribute("aria-expanded", String(open));
+      trigger.setAttribute(
+        "aria-expanded",
+        String(open)
+      );
     }
+
     trigger.addEventListener("click", function (e) {
       e.stopPropagation();
       setOpen(!discovery.classList.contains("is-open"));
     });
+
     document.addEventListener("click", function (e) {
-      if (!discovery.contains(e.target)) setOpen(false);
+      if (!discovery.contains(e.target)) {
+        setOpen(false);
+      }
     });
+
     discovery.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") { setOpen(false); trigger.focus(); }
+      if (e.key === "Escape") {
+        setOpen(false);
+        trigger.focus();
+      }
     });
   });
 })();
