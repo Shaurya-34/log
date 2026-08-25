@@ -5,46 +5,36 @@
 
   var safeStore = {
     get: function (k) {
-      try { return localStorage.getItem(k); }
-      catch (e) { return null; }
+      try { return localStorage.getItem(k); } catch (e) { return null; }
     },
     set: function (k, v) {
-      try { localStorage.setItem(k, v); }
-      catch (e) {}
+      try { localStorage.setItem(k, v); } catch (e) {}
     },
     remove: function (k) {
-      try { localStorage.removeItem(k); }
-      catch (e) {}
+      try { localStorage.removeItem(k); } catch (e) {}
     }
   };
 
   function run(fn) {
-    try { fn(); }
-    catch (e) {}
+    try { fn(); } catch (e) {}
   }
 
   /* ------------------------------------------------------------
-     Sound assets
+     Audio
      ------------------------------------------------------------ */
 
-  var sounds = {
-    readHead: new Audio("assets/sounds/read-head-click.wav"),
-    selection: new Audio("assets/sounds/selection-tick.wav"),
-    theme: new Audio("assets/sounds/theme-switch.wav")
+  var SOUND = {
+    readHead: "assets/sounds/read-head-click.wav",
+    selection: "assets/sounds/selection-tick.wav",
+    theme: "assets/sounds/theme-switch.wav"
   };
 
-  Object.keys(sounds).forEach(function (key) {
-    sounds[key].preload = "auto";
-    sounds[key].volume = 0.45;
-  });
-
-  function playSound(sound) {
-    if (reduced || !sound) return;
-
+  function playSound(src, volume) {
     try {
-      sound.currentTime = 0;
-      var promise = sound.play();
+      var audio = new Audio(src);
+      audio.volume = volume == null ? 0.45 : volume;
 
+      var promise = audio.play();
       if (promise && promise.catch) {
         promise.catch(function () {});
       }
@@ -52,7 +42,7 @@
   }
 
   /* ------------------------------------------------------------
-     Transitions stylesheet
+     Transitions
      ------------------------------------------------------------ */
 
   run(function () {
@@ -99,7 +89,7 @@
       safeStore.set("theme", next);
       paint();
 
-      playSound(sounds.theme);
+      playSound(SOUND.theme, 0.5);
     });
 
     paint();
@@ -123,10 +113,6 @@
     }, { passive: true });
   });
 
-  /* ------------------------------------------------------------
-     Reading progress
-     ------------------------------------------------------------ */
-
   function readLast() {
     try {
       return JSON.parse(
@@ -136,6 +122,10 @@
       return null;
     }
   }
+
+  /* ------------------------------------------------------------
+     Reading progress
+     ------------------------------------------------------------ */
 
   run(function () {
     var slug =
@@ -198,6 +188,8 @@
       a.addEventListener("click", function (e) {
         e.preventDefault();
 
+        playSound(SOUND.selection, 0.4);
+
         scrollTo({
           top: saved,
           behavior: reduced ? "auto" : "smooth"
@@ -255,6 +247,10 @@
     link.href = last.slug;
     link.textContent = last.title;
 
+    link.addEventListener("click", function () {
+      playSound(SOUND.selection, 0.4);
+    });
+
     line.appendChild(label);
     line.appendChild(link);
 
@@ -267,9 +263,7 @@
 
   run(function () {
     var tape =
-      document.querySelector(
-        ".article-orbit.tape-nav"
-      );
+      document.querySelector(".article-orbit.tape-nav");
 
     var cells = tape
       ? Array.prototype.slice.call(
@@ -292,10 +286,7 @@
     var head =
       tape.querySelector(".tape-read-head");
 
-    /*
-     * Create the independent read head if build.py
-     * hasn't emitted one.
-     */
+    /* Create the head automatically if necessary. */
     if (!head && viewport) {
       head = document.createElement("div");
       head.className = "tape-read-head";
@@ -312,47 +303,33 @@
     }
 
     function moveReadHead(animate) {
-      if (
-        !head ||
-        !viewport ||
-        !cells[active]
-      ) {
+      if (!head || !viewport || !cells[active]) {
         return;
       }
 
       var cell = cells[active];
 
-      var cellCenter =
+      var x =
         cell.offsetLeft +
-        cell.offsetWidth / 2;
-
-      var viewportLeft =
+        cell.offsetWidth / 2 -
         viewport.offsetLeft;
 
-      var x =
-        cellCenter -
-        viewportLeft;
-
       if (!animate || reduced) {
-        var previousTransition =
-          head.style.transition;
-
         head.style.transition = "none";
-
         head.style.transform =
           "translateX(" + x + "px)";
 
         void head.offsetWidth;
 
         head.style.transition =
-          previousTransition;
+          "transform 650ms cubic-bezier(.16,.78,.18,1)";
       } else {
         head.style.transform =
           "translateX(" + x + "px)";
       }
     }
 
-    function select(index, focus, playSelection) {
+    function select(index, focus) {
       var previous = active;
 
       active =
@@ -394,22 +371,22 @@
       });
 
       if (moved) {
-        playSound(sounds.selection);
-      }
+        /* Immediate selection sound. */
+        playSound(
+          SOUND.selection,
+          0.38
+        );
 
-      /*
-       * The head begins moving immediately.
-       * The mechanical click fires when it reaches
-       * the destination.
-       */
-      moveReadHead(moved);
+        /* Move the head. */
+        moveReadHead(true);
 
-      if (moved && !reduced) {
+        /* Mechanical click when the head arrives. */
         setTimeout(function () {
-          playSound(sounds.readHead);
-        }, 650);
-      } else if (moved) {
-        playSound(sounds.readHead);
+          playSound(
+            SOUND.readHead,
+            0.5
+          );
+        }, reduced ? 0 : 650);
       }
 
       cells[active].scrollIntoView({
@@ -419,12 +396,12 @@
       });
     }
 
-    /* Direct cell selection */
+    /* Cell clicks */
     cells.forEach(function (cell, i) {
       cell.addEventListener(
         "click",
         function () {
-          select(i, false, true);
+          select(i, false);
         }
       );
 
@@ -436,7 +413,7 @@
             e.key === "ArrowDown"
           ) {
             e.preventDefault();
-            select(i + 1, true, true);
+            select(i + 1, true);
           }
 
           if (
@@ -444,13 +421,13 @@
             e.key === "ArrowUp"
           ) {
             e.preventDefault();
-            select(i - 1, true, true);
+            select(i - 1, true);
           }
         }
       );
     });
 
-    /* Next / previous controls */
+    /* Previous / next arrows */
     var next =
       tape.querySelector(".tape-next");
 
@@ -461,11 +438,7 @@
       next.addEventListener(
         "click",
         function () {
-          select(
-            active + 1,
-            false,
-            true
-          );
+          select(active + 1, false);
         }
       );
     }
@@ -474,16 +447,11 @@
       prev.addEventListener(
         "click",
         function () {
-          select(
-            active - 1,
-            false,
-            true
-          );
+          select(active - 1, false);
         }
       );
     }
 
-    /* Keep head aligned on resize */
     addEventListener(
       "resize",
       function () {
@@ -491,12 +459,12 @@
       }
     );
 
-    /* Initial position — no sound */
+    /* Initial position: no sound. */
     moveReadHead(false);
   });
 
   /* ------------------------------------------------------------
-     About-the-log discovery panel
+     About-the-log discovery
      ------------------------------------------------------------ */
 
   run(function () {
@@ -526,7 +494,6 @@
       '<span aria-hidden="true">◇</span>' +
       '<span class="sr-only">About this log</span>' +
       '</button>' +
-
       '<div class="log-discovery-panel" ' +
       'id="log-discovery-panel">' +
       '<span class="log-discovery-label">' +
@@ -566,7 +533,10 @@
       function (e) {
         e.stopPropagation();
 
-        playSound(sounds.selection);
+        playSound(
+          SOUND.selection,
+          0.38
+        );
 
         setOpen(
           !discovery.classList.contains(
@@ -595,4 +565,32 @@
       }
     );
   });
+
+  /* ------------------------------------------------------------
+     Deliberate navigation links
+     ------------------------------------------------------------ */
+
+  run(function () {
+    var selectors = [
+      ".feature-head",
+      ".post-nav a",
+      ".post-nav .older",
+      ".post-nav .newer",
+      "a[href='about.html']",
+      "a[href='index.html']",
+      "a[href='feed.xml']"
+    ];
+
+    document
+      .querySelectorAll(selectors.join(","))
+      .forEach(function (link) {
+        link.addEventListener("click", function () {
+          playSound(
+            SOUND.selection,
+            0.32
+          );
+        });
+      });
+  });
+
 })();
