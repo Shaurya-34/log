@@ -87,9 +87,19 @@
 .tape-track { display:flex; width:100%; align-items:start; }
 .tape-cell { position:relative; flex:0 0 calc(100% / var(--tape-visible)); min-width:0; padding:0; border:0; background:none; color:var(--ink); font-family:var(--mono); text-align:center; cursor:pointer; scroll-snap-align:center; }
 .tape-code { display:block; min-height:.75rem; font:.55rem var(--mono); letter-spacing:.06em; color:var(--ink); }
-.tape-box { position:relative; display:grid; place-items:center; width:100%; aspect-ratio:1.75; margin:.7rem 0 .55rem; box-sizing:border-box; border:1px solid var(--grey); }
-.tape-cell.is-active .tape-box { border-color:var(--ink); }
-.tape-cell.is-active .tape-box::before { content:""; position:absolute; left:50%; top:-.6rem; transform:translateX(-50%); border-left:.42rem solid transparent; border-right:.42rem solid transparent; border-top:.55rem solid var(--ink); }
+/* Boxes sit flush: only the first cell keeps its left edge, every
+   following cell pulls left by the shared border's width so adjacent
+   1px borders overlap into a single line instead of doubling up. */
+.tape-box { position:relative; display:grid; place-items:center; width:100%; aspect-ratio:1.75; margin:.7rem 0 .55rem 0; box-sizing:border-box; border:1px solid var(--grey); }
+.tape-cell:not(:first-child) .tape-box { margin-left:-1px; }
+/* Alternating 0/1 per cell instead of a plain dot - decorative, not
+   real tape data, but reads as individually meaningful rather than
+   five identical placeholders. */
+.tape-box::after { font:.85rem var(--mono); color:var(--ink); opacity:.5; }
+.tape-cell:nth-child(odd) .tape-box::after { content:"1"; }
+.tape-cell:nth-child(even) .tape-box::after { content:"0"; }
+.tape-cell.is-active .tape-box { border-color:var(--ink); z-index:1; }
+.tape-cell.is-active .tape-box::after { opacity:1; }
 .tape-title { position:relative; display:block; margin-top:.35rem; font:400 .73rem/1.18 var(--display); }
 .tape-cell.is-active .tape-title { font-weight:700; }
 .tape-title::before { content:""; position:absolute; left:50%; top:-.55rem; height:.45rem; border-left:1px dashed var(--hairline); transform:translateX(-50%); }
@@ -129,4 +139,3 @@
   .home-intro { margin-top:.75rem; }
   .wrap:has(.home-stage) footer.site { margin-top:auto; padding:1rem 0 1.25rem; }
 }
-
