@@ -115,11 +115,7 @@
 /* Alternating 0/1 per cell instead of a plain dot - decorative, not
    real tape data, but reads as individually meaningful rather than
    five identical placeholders. */
-.tape-box::after { font:.85rem var(--mono); color:var(--ink); opacity:.5; }
-.tape-cell:nth-child(odd) .tape-box::after { content:"1"; }
-.tape-cell:nth-child(even) .tape-box::after { content:"0"; }
 .tape-cell.is-active .tape-box { border-color:var(--ink); z-index:1; }
-.tape-cell.is-active .tape-box::after { opacity:1; }
 .tape-title { position:relative; display:block; margin-top:.35rem; font:400 .73rem/1.18 var(--display); }
 .tape-cell.is-active .tape-title { font-weight:700; }
 .tape-title::before { content:""; position:absolute; left:50%; top:-.55rem; height:.45rem; border-left:1px dashed var(--hairline); transform:translateX(-50%); }

@@ -1,4 +1,4 @@
-/* Quiet site behaviors: theme, reading memory, tape navigation, sounds, scrollbar, and page transitions. */
+/* Quiet site behaviors: theme, reading memory, tape navigation, scrollbar, and page transitions. */
 (function () {
   var doc = document.documentElement;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -17,28 +17,6 @@
 
   function run(fn) {
     try { fn(); } catch (e) {}
-  }
-
-  /* ------------------------------------------------------------
-     Audio
-     ------------------------------------------------------------ */
-
-  var SOUND = {
-    readHead: "assets/sounds/read-head-click.wav",
-    selection: "assets/sounds/selection-tick.wav",
-    theme: "assets/sounds/theme-switch.wav"
-  };
-
-  function playSound(src, volume) {
-    try {
-      var audio = new Audio(src);
-      audio.volume = volume == null ? 0.45 : volume;
-
-      var promise = audio.play();
-      if (promise && promise.catch) {
-        promise.catch(function () {});
-      }
-    } catch (e) {}
   }
 
   /* ------------------------------------------------------------
@@ -88,8 +66,6 @@
       doc.setAttribute("data-theme", next);
       safeStore.set("theme", next);
       paint();
-
-      playSound(SOUND.theme, 0.5);
     });
 
     paint();
@@ -188,8 +164,6 @@
       a.addEventListener("click", function (e) {
         e.preventDefault();
 
-        playSound(SOUND.selection, 0.4);
-
         scrollTo({
           top: saved,
           behavior: reduced ? "auto" : "smooth"
@@ -246,10 +220,6 @@
     var link = document.createElement("a");
     link.href = last.slug;
     link.textContent = last.title;
-
-    link.addEventListener("click", function () {
-      playSound(SOUND.selection, 0.4);
-    });
 
     line.appendChild(label);
     line.appendChild(link);
@@ -316,6 +286,7 @@
 
       if (!animate || reduced) {
         head.style.transition = "none";
+
         head.style.transform =
           "translateX(" + x + "px)";
 
@@ -371,22 +342,7 @@
       });
 
       if (moved) {
-        /* Immediate selection sound. */
-        playSound(
-          SOUND.selection,
-          0.38
-        );
-
-        /* Move the head. */
         moveReadHead(true);
-
-        /* Mechanical click when the head arrives. */
-        setTimeout(function () {
-          playSound(
-            SOUND.readHead,
-            0.5
-          );
-        }, reduced ? 0 : 650);
       }
 
       cells[active].scrollIntoView({
@@ -459,7 +415,7 @@
       }
     );
 
-    /* Initial position: no sound. */
+    /* Initial position — no animation. */
     moveReadHead(false);
   });
 
@@ -533,11 +489,6 @@
       function (e) {
         e.stopPropagation();
 
-        playSound(
-          SOUND.selection,
-          0.38
-        );
-
         setOpen(
           !discovery.classList.contains(
             "is-open"
@@ -565,32 +516,4 @@
       }
     );
   });
-
-  /* ------------------------------------------------------------
-     Deliberate navigation links
-     ------------------------------------------------------------ */
-
-  run(function () {
-    var selectors = [
-      ".feature-head",
-      ".post-nav a",
-      ".post-nav .older",
-      ".post-nav .newer",
-      "a[href='about.html']",
-      "a[href='index.html']",
-      "a[href='feed.xml']"
-    ];
-
-    document
-      .querySelectorAll(selectors.join(","))
-      .forEach(function (link) {
-        link.addEventListener("click", function () {
-          playSound(
-            SOUND.selection,
-            0.32
-          );
-        });
-      });
-  });
-
 })();
