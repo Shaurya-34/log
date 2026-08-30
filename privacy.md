@@ -1,3 +1,7 @@
 # Privacy
 
-This site is a static personal log. It does not require accounts, provide comments, or intentionally collect personal information through forms. There is no first-party analytics script or advertising system operated by the site. The site loads typography from Google Fonts and is hosted through GitHub Pages; those services may process ordinary connection information required to deliver web content. If you contact Shaurya through a third-party service such as GitHub, that service's privacy policy governs that interaction. If these practices materially change, this page will be updated.
+Date: 2026-08
+Description: Privacy information for Shaurya · Log.
+Canonical: https://sslog.dpdns.org/privacy.html
+
+This site is a static personal log with no analytics, comments, accounts, or advertising. It loads fonts from Google Fonts and is hosted on GitHub Pages; both may process ordinary connection information as part of delivering the page.

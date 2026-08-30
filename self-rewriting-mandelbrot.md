@@ -1,123 +1,101 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>A renderer that keeps notes on itself · Shaurya</title>
-  <meta name="description" content="A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://sslog.dpdns.org/self-rewriting-mandelbrot.html">
-  <meta property="og:site_name" content="Shaurya · Log">
-  <meta property="og:title" content="A renderer that keeps notes on itself · Shaurya">
-  <meta property="og:description" content="A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://sslog.dpdns.org/self-rewriting-mandelbrot.html">
-  <meta property="og:image" content="https://sslog.dpdns.org/images/covers/self-rewriting-mandelbrot.svg">
-  <meta property="article:published_time" content="2026-08-06T00:00:00+00:00">
-  <link rel="alternate" type="text/markdown" href="self-rewriting-mandelbrot.md">
-  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23faf9f7'/%3E%3Ctext x='32' y='46' font-family='Courier%20New,monospace' font-size='44' text-anchor='middle' fill='%23161513'%3ES%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=e127bbba">
-  <script src="site.js?v=06580e4a" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"A renderer that keeps notes on itself","description":"A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.","url":"https://sslog.dpdns.org/self-rewriting-mandelbrot.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/self-rewriting-mandelbrot.html"},"datePublished":"2026-08-06T00:00:00+00:00","dateModified":"2026-08-06T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["python","self-modifying-code","fractals"]}</script>
-</head>
-<body>
-<div class="wrap">
+# A renderer that keeps notes on itself
 
-  <header class="site">
-    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="b-strike">B</span>LOG</a>
-    <nav>
-      <a href="about.html">About</a>
-      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
-    </nav>
-  </header>
+Date: 2026-08-06
+Description: A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.
+Canonical: https://sslog.dpdns.org/self-rewriting-mandelbrot.html
 
-  <article class="post entry">
-    <h1>A renderer that keeps notes on itself</h1>
-    <p class="post-meta">
-      <time datetime="2026-08-06">August 06, 2026</time>
-      <span class="tags">python, self-modifying-code, fractals</span>
-    </p>
-
-<p>A quine is a program that prints its own source code and nothing else. It's a
+A quine is a program that prints its own source code and nothing else. It's a
 neat trick, but it's also a dead end - the output is always the same file you
 started with. I wanted something that used the idea of a program editing
 itself for an actual purpose: a program whose source code slowly accumulates
-knowledge, instead of just reproducing itself.</p>
-<p>The workload I picked was a Mandelbrot renderer. Rendering is deterministic -
+knowledge, instead of just reproducing itself.
+
+The workload I picked was a Mandelbrot renderer. Rendering is deterministic -
 the same viewport and parameters always produce the same image - and it's
 expensive enough that caching is worth doing. Most renderers cache to a
 folder of PNGs or a database. This one caches inside itself: every finished
 render gets Base64-encoded and written directly into a dictionary sitting in
-the <code>.py</code> file, and the file rewrites that one dictionary every time it
-learns something new.</p>
-<h2>Starting with membership, not escape time</h2>
-<p>The first version answered one question per pixel: is this point in the
+the `.py` file, and the file rewrites that one dictionary every time it
+learns something new.
+
+## Starting with membership, not escape time
+
+The first version answered one question per pixel: is this point in the
 Mandelbrot set or not. That's a boolean, so the image it produces is flat -
 every pixel is either fully in or fully out, with no shading to suggest how
-close a point came to escaping.</p>
+close a point came to escaping.
+
 <figure>
   <img src="images/mandelbrot/high_res_b_w.png" alt="An early black-and-white Mandelbrot render showing only set membership, with no shading or color gradient.">
   <figcaption>The first working version. In or out, nothing in between.</figcaption>
 </figure>
 
-<p>That got replaced with an escape-time implementation almost immediately.
+That got replaced with an escape-time implementation almost immediately.
 Instead of a boolean, each pixel records the iteration at which
-<code>|z| &gt; 2</code> first becomes true, and points that never escape get
+`|z| > 2` first becomes true, and points that never escape get
 capped at the maximum iteration count. That single change is what makes the
 rest of the project possible - you can't build a colormap pipeline on top of
-a boolean.</p>
-<h2>The pipeline</h2>
-<p>Everything downstream of that decision is a fairly standard chain:</p>
-<pre><code>viewport (center, zoom)
-  → complex grid (NumPy)
-  → escape-time matrix
-  → normalize to [0, 1]
-  → Matplotlib colormap
-  → RGB array
-  → PIL image
-</code></pre>
-<p>The viewport itself is described by a center point and a zoom factor rather
+a boolean.
+
+## The pipeline
+
+Everything downstream of that decision is a fairly standard chain:
+
+    viewport (center, zoom)
+      → complex grid (NumPy)
+      → escape-time matrix
+      → normalize to [0, 1]
+      → Matplotlib colormap
+      → RGB array
+      → PIL image
+
+The viewport itself is described by a center point and a zoom factor rather
 than raw bounds, which turned out to matter later - it's a much more natural
-thing to hash and compare than four separate floats that all have to agree.</p>
-<h2>Turning a render into something a dictionary can hold</h2>
-<p>A PIL image can't sit inside a Python literal, so every finished render goes
-through one more conversion before it's eligible for caching:</p>
-<pre><code>PIL Image → PNG bytes → Base64 → UTF-8 string
-</code></pre>
-<p>The lookup key for that string is a SHA-256 hash of everything that could
+thing to hash and compare than four separate floats that all have to agree.
+
+## Turning a render into something a dictionary can hold
+
+A PIL image can't sit inside a Python literal, so every finished render goes
+through one more conversion before it's eligible for caching:
+
+    PIL Image → PNG bytes → Base64 → UTF-8 string
+
+The lookup key for that string is a SHA-256 hash of everything that could
 change the output - the viewport bounds, pixel density, iteration count, and
 colormap, concatenated and hashed. Same parameters in, same key out, every
-time:</p>
-<pre><code>def cache_key(xmin, xmax, ymin, ymax, pixel_density, num_iterations, colormap):
-    combined = f"{xmin}:{xmax}:{ymin}:{ymax}:{pixel_density}:{num_iterations}:{colormap}"
-    return hashlib.sha256(combined.encode()).hexdigest()
-</code></pre>
-<h2>The one block the program is allowed to touch</h2>
-<p>The part I was most careful with was making sure the self-rewriting stayed
+time:
+
+    def cache_key(xmin, xmax, ymin, ymax, pixel_density, num_iterations, colormap):
+        combined = f"{xmin}:{xmax}:{ymin}:{ymax}:{pixel_density}:{num_iterations}:{colormap}"
+        return hashlib.sha256(combined.encode()).hexdigest()
+
+## The one block the program is allowed to touch
+
+The part I was most careful with was making sure the self-rewriting stayed
 contained. The executable logic - the renderer, the hashing, the encode and
-decode functions - never changes. Only one region does:</p>
-<pre><code><span class="cm"># ===== AUTO-GENERATED START =====</span>
+decode functions - never changes. Only one region does:
 
-CONFIG = {}
-CACHE = {}
-STATS = {}
+    # ===== AUTO-GENERATED START =====
 
-<span class="cm"># ===== AUTO-GENERATED END =====</span>
-</code></pre>
-<p>On a cache miss, the file reads itself, finds those two marker comments,
-rebuilds the block between them using <code>pprint.pformat()</code> so the
+    CONFIG = {}
+    CACHE = {}
+    STATS = {}
+
+    # ===== AUTO-GENERATED END =====
+
+On a cache miss, the file reads itself, finds those two marker comments,
+rebuilds the block between them using `pprint.pformat()` so the
 result is still valid Python, and writes the whole file back to disk. On the
 next run, that block is just... there, as ordinary source, no different from
 if you'd typed it in by hand. The program isn't reading a cache file at
-startup - the cache <em>is</em> the startup state.</p>
-<h2>Eleven ways to look at the same set</h2>
-<p>Once the colormap pipeline was in place, testing it meant rendering the same
+startup - the cache *is* the startup state.
+
+## Eleven ways to look at the same set
+
+Once the colormap pipeline was in place, testing it meant rendering the same
 view through every Matplotlib colormap worth trying. It's the same escape-time
-matrix underneath each one - only the last step of the pipeline changes.</p>
+matrix underneath each one - only the last step of the pipeline changes.
+
 <div class="colormap-carousel">
   <div class="colormap-track">
     <figure class="colormap-slide color" id="cm-inferno">
@@ -235,34 +213,39 @@ matrix underneath each one - only the last step of the pipeline changes.</p>
 }
 </style>
 
-<p>Every one of those eleven renders lives in the cache under its own hash. The
+Every one of those eleven renders lives in the cache under its own hash. The
 first time each colormap is requested it costs a full render; every time
 after that it's a Base64 decode, which is why the eleven images above were
-each rendered exactly once, ever.</p>
-<h2>What got left out</h2>
-<p>A few directions got explored and then deliberately dropped. Tile-based
+each rendered exactly once, ever.
+
+## What got left out
+
+A few directions got explored and then deliberately dropped. Tile-based
 caching - splitting the viewport into tiles so an infinite-zoom UI could
 request only the tiles it needs - turned out to need a tile manager, an LRU
 eviction policy, and a coordinate system for addressing tiles independent of
 the top-level viewport. That's a reasonable project on its own; it just
-isn't <em>this</em> project. A JavaScript/Web Worker port had the same
+isn't *this* project. A JavaScript/Web Worker port had the same
 problem - interesting, but it dilutes the one thing that made the embedded
 cache worth building in the first place. Scope stayed at four layers:
 escape-time computation, rendering, embedded cache, source rewriting.
-Everything else is future work, on purpose.</p>
+Everything else is future work, on purpose.
+
 <figure>
   <img src="images/mandelbrot/mandel_dotted.png" alt="An early low-resolution scatter-style test render of the Mandelbrot set.">
   <figcaption>One of the throwaway sanity checks from before the pipeline was trustworthy - the same instinct as plotting a spiral before touching real math.</figcaption>
 </figure>
 
-<h2>Does the cache actually help?</h2>
-<p>The only way to know is to measure it, so every call to
-<code>get_mandelbrot()</code> is wrapped in <code>time.perf_counter()</code>. A
+## Does the cache actually help?
+
+The only way to know is to measure it, so every call to
+`get_mandelbrot()` is wrapped in `time.perf_counter()`. A
 cache miss pays for the full NumPy escape-time computation; a cache hit pays
 for a Base64 decode and a PNG parse. The gap between those two numbers is the
 entire argument for embedding the cache in the first place - if reconstructing
 from Base64 weren't meaningfully faster than recomputing, there'd be no
-reason to bother rewriting the source file at all.</p>
+reason to bother rewriting the source file at all.
+
 <figure class="color">
   <img class="color" src="images/mandelbrot/cache.png" alt="A terminal showing mandel.py run twice: the first run prints 'Cache miss' with an elapsed time of 7.64 seconds, the second prints 'Cache hit' with an elapsed time of 0.01 seconds, both followed by the identical SHA-256 cache key.">
   <figcaption>Same viewport, same parameters, same key both times - 7.64s to render it, 0.01s to decode it back out of the source file.</figcaption>
@@ -273,27 +256,16 @@ reason to bother rewriting the source file at all.</p>
   <figcaption>Before any of it was a NumPy array, it was this - one point, one recurrence, watched by hand. c=1 escapes fast enough that by z(9) you're looking at a 43-digit number.</figcaption>
 </figure>
 
-<h2>Coda</h2>
-<p>Nothing about the executable logic changes at runtime - the functions on
+## Coda
+
+Nothing about the executable logic changes at runtime - the functions on
 disk today are the same functions that were on disk before the first render
 ever happened. What changes is a dictionary sitting between two comments,
 getting a little larger every time the renderer sees a viewport, iteration
 count, and colormap combination it hasn't seen before. It's not a quine. It
-doesn't need to be. It just needs to remember.</p>
-<p>The source is on GitHub:
-<a href="https://github.com/Shaurya-34/self_rewriting_mandelbrot">Shaurya-34/self_rewriting_mandelbrot</a>.</p>
-  </article>
+doesn't need to be. It just needs to remember.
 
-  <nav class="post-nav">
-    <a class="older" href="never-repeating-never-leaving.html">← Never repeating, never leaving</a>
-    <a class="newer" href="where-does-computation-end.html">Where Does Computation End? →</a>
-  </nav>
+The source is on GitHub:
+[Shaurya-34/self_rewriting_mandelbrot][def].
 
-  <footer class="site">
-    <span>Shaurya · 2026</span>
-    <a href="index.html">Index</a>
-  </footer>
-
-</div>
-</body>
-</html>
+[def]: https://github.com/Shaurya-34/self_rewriting_mandelbrot

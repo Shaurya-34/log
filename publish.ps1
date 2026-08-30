@@ -13,13 +13,6 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Write-Host "Building agent-facing artifacts..." -ForegroundColor Cyan
-python agent_build.py
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Agent build failed. Not publishing." -ForegroundColor Red
-    exit 1
-}
-
 if (-not (git status --porcelain)) {
     Write-Host "Nothing changed. Nothing to publish." -ForegroundColor Yellow
     exit 0

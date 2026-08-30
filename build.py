@@ -10,7 +10,6 @@ import markdown
 
 ROOT = Path(__file__).parent
 POSTS_DIR = ROOT / "posts"
-ABOUT_HTML_FILE = ROOT / "about.html"
 SITE_URL = "https://sslog.dpdns.org"
 SITE_NAME = "Shaurya"
 SITE_TITLE = "Shaurya · Log"
@@ -29,6 +28,21 @@ FONTS = ('  <link rel="preconnect" href="https://fonts.googleapis.com">\n'
 CSS_VERSION = hashlib.md5((ROOT / "style.css").read_bytes()).hexdigest()[:8]
 JS_VERSION = hashlib.md5((ROOT / "site.js").read_bytes()).hexdigest()[:8]
 HOME_CSS_VERSION = hashlib.md5((ROOT / "home.css").read_bytes()).hexdigest()[:8]
+
+# Shown to AI agents/clients via the homepage's sr-only summary and llms.txt.
+AGENT_SUMMARY = (
+    "Shaurya's Log is a small personal archive of experimental engineering notes. "
+    "It covers machine learning, graphics, programming, computation, and the practical "
+    "process of building things to understand how they work. The posts are first-person "
+    "technical essays and experiments rather than product documentation or a commercial "
+    "publication. Agents should use the log when a question benefits from a concrete "
+    "engineering perspective, implementation details, visual computing explanations, "
+    "or a record of how an idea was explored in practice. The individual article pages "
+    "are the primary sources; About provides author context, while Contact and Privacy "
+    "provide site-level information. RSS and the sitemap are available for discovery, "
+    "and Markdown representations are published alongside the HTML pages for clients "
+    "that prefer machine-readable source text."
+)
 
 COVER_DEFAULTS = {
     "where-does-computation-end": {
@@ -73,16 +87,20 @@ def jsonld_script(data):
     return f'  <script type="application/ld+json">{payload}</script>\n'
 
 
-def path_date(path):
-    m = re.search(r"\d{4}-\d{2}-\d{2}", path)
-    return m.group(0) if m else ""
-
-
-def page_head(title, desc, path, og_type="website", base="", jsonld=None, noindex=False, extra_css=None):
+def page_head(title, desc, path, og_type="website", base="", jsonld=None, noindex=False,
+              extra_css=None, og_image=None, md_href=None, published=None):
     robots = ('  <meta name="robots" content="noindex,follow">\n' if noindex
               else '  <meta name="robots" content="index,follow">\n')
-    article_meta = (f'  <meta property="article:published_time" content="{html.escape(path_date(path))}">\n'
-                    if og_type == "article" else "")
+    # published is the post's own parsed date (an aware datetime), passed in
+    # directly by the caller. The old approach regex-searched the *output*
+    # path for a date, which build.py deliberately strips from every slug,
+    # so it was structurally guaranteed to always return "".
+    article_meta = (f'  <meta property="article:published_time" content="{html.escape(published.isoformat())}">\n'
+                    if og_type == "article" and published else "")
+    og_image_tag = (f'  <meta property="og:image" content="{html.escape(og_image)}">\n'
+                     if og_image else "")
+    md_link = (f'  <link rel="alternate" type="text/markdown" href="{base}{md_href}">\n'
+               if md_href else "")
     head = (
         '<!doctype html>\n<html lang="en">\n<head>\n'
         '  <meta charset="utf-8">\n'
@@ -95,7 +113,9 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
         f'  <meta property="og:description" content="{html.escape(desc)}">\n'
         f'  <meta property="og:type" content="{og_type}">\n'
         f'  <meta property="og:url" content="{html.escape(absolute_url(path))}">\n'
+        f'{og_image_tag}'
         f'{article_meta}'
+        f'{md_link}'
         f'  <link rel="alternate" type="application/rss+xml" title="{html.escape(SITE_TITLE)}" href="{base}feed.xml">\n'
         f'  <link rel="icon" href="{FAVICON}">\n{FONTS}\n'
         f'  <link rel="stylesheet" href="{base}style.css?v={CSS_VERSION}">\n'
@@ -122,6 +142,17 @@ def page_header(base=""):
 def page_foot(link_html):
     return (f'\n  <footer class="site">\n    <span>{SITE_NAME} · {datetime.now().year}</span>\n'
             f'    {link_html}\n  </footer>\n\n</div>\n</body>\n</html>\n')
+
+
+def simple_page(slug, h1, meta_line, paragraphs_html, description):
+    """A plain single-article static page (About/Contact/Privacy): same
+    head/header/footer as every other page, one h1, a few paragraphs."""
+    body = ('\n  <article class="post">\n'
+            f'    <h1>{html.escape(h1)}</h1>\n'
+            f'    <p class="post-meta">{html.escape(meta_line)}</p>\n'
+            f'{paragraphs_html}\n  </article>\n')
+    return (page_head(f'{h1} · {SITE_NAME}', description, f'{slug}.html', md_href=f'{slug}.md') +
+            page_header() + body + page_foot('<a href="index.html">Index</a>'))
 
 
 def parse_post(path):
@@ -180,16 +211,20 @@ def build_post(post, newer, older):
     nav = f'\n  <nav class="post-nav">\n    {old_link}\n    {new_link}\n  </nav>\n'
     description = post["description"] or post["title"]
     post_url = absolute_url(f'{post["slug"]}.html')
+    published = post["date"].replace(tzinfo=timezone.utc)
     jsonld = {"@context":"https://schema.org","@type":"BlogPosting","headline":post["title"],
               "description":description,"url":post_url,"mainEntityOfPage":{"@type":"WebPage","@id":post_url},
-              "datePublished":post["date"].replace(tzinfo=timezone.utc).isoformat(),
-              "dateModified":post["date"].replace(tzinfo=timezone.utc).isoformat(),
+              "datePublished":published.isoformat(),
+              "dateModified":published.isoformat(),
               "author":{"@type":"Person","name":SITE_NAME,"url":SITE_URL},
               "publisher":{"@type":"Person","name":SITE_NAME}}
     if post["tags"]:
         jsonld["keywords"] = post["tags"]
+    og_image = absolute_url(post["cover"]) if post["cover"] else None
     return (page_head(f'{post["title"]} · {SITE_NAME}', description, f'{post["slug"]}.html',
-                      og_type="article", jsonld=jsonld) + page_header() + body + nav +
+                      og_type="article", jsonld=jsonld, og_image=og_image,
+                      md_href=f'{post["slug"]}.md', published=published) +
+            page_header() + body + nav +
             page_foot('<a href="index.html">Index</a>'))
 
 
@@ -241,13 +276,119 @@ def build_index(posts):
         '<button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button>'
         '<div class="tape-note"><span>A head scans a tape. One cell at a time.<br>The machine moves. The log remains.</span></div>'
         '</section>')
-    body = (page_header() + f'<p class="motto">{MOTTO}</p>\n'
+    # sr-only: the tape/feature-card layout has no single visible page
+    # heading (each feature card carries its own <h1>), so this gives
+    # screen readers and agents one real heading plus a plain-text summary
+    # of the whole site up front, not just its newest post.
+    agent_summary = (f'<h1 class="sr-only">{html.escape(SITE_TITLE)}</h1>\n'
+                      f'<p class="sr-only agent-home-summary">{html.escape(AGENT_SUMMARY)}</p>\n')
+    body = (page_header() + agent_summary + f'<p class="motto">{MOTTO}</p>\n'
             '<main class="home-stage">' + tape +
             '<section class="feature-stage" aria-live="polite">' + ''.join(cards) + '</section>'
             '</main>'
             f'<p class="intro home-intro">{INTRO}</p>')
-    return (page_head(SITE_TITLE, SITE_DESC, "", jsonld=jsonld, extra_css="home.css") + body +
+    og_image = absolute_url(posts[0]["cover"]) if posts and posts[0]["cover"] else None
+    return (page_head(SITE_TITLE, SITE_DESC, "", jsonld=jsonld, extra_css="home.css",
+                      og_image=og_image, md_href="index.md") + body +
             page_foot('<a href="feed.xml">RSS</a>'))
+
+
+def build_about():
+    paragraphs = (
+        "<p>Hi, I'm Shaurya. I write software and keep this log as a record of the things "
+        "I build, read, and try to understand. The subjects move around: machine learning, "
+        "graphics, programming, computation, mathematical ideas, and small experiments that "
+        "are easier to understand by implementing them than by reading about them.</p>\n"
+        "<p>The point of the site is not to present polished documentation or a fixed set of "
+        "opinions. Most posts are working notes: I start with a question, follow the "
+        "interesting parts, build something when code helps, and write down what survived "
+        "the experiment. Some pieces are explanatory, some are exploratory, and some are "
+        "simply records of a rabbit hole that seemed worth keeping.</p>\n"
+        '<p>There is no analytics layer, comments system, newsletter, or account system on '
+        "the site. The pages are generated from Markdown and published as static files. If "
+        "an agent or reader wants the machine-readable version, the same articles are "
+        'available as Markdown alongside their HTML pages. The <a href="contact.html">contact '
+        'page</a> explains how to reach me, and the <a href="privacy.html">privacy page</a> '
+        "describes what the site does and does not collect.</p>"
+    )
+    return simple_page("about", "About", "Updated August 2026", paragraphs,
+                        "About Shaurya and the purpose of this engineering log.")
+
+
+def build_contact():
+    paragraphs = (
+        "<p>This is a personal engineering log, not a company support site. For questions "
+        "about a post, technical corrections, collaboration, or something you think I would "
+        'find interesting, the most reliable public contact point is my '
+        '<a href="https://github.com/Shaurya-34">GitHub profile</a>. You can open an issue on '
+        "the relevant repository when the question is about code, or use the public profile "
+        "to find the current contact route I have chosen to expose.</p>\n"
+        "<p>I deliberately do not publish a private address or phone number on this site. If "
+        "a message needs a private channel, use the contact method currently listed on my "
+        'GitHub profile. For article context, the <a href="about.html">About</a> page '
+        'explains what this log is for. The <a href="privacy.html">Privacy</a> page explains '
+        "the site's data practices.</p>"
+    )
+    return simple_page("contact", "Contact", "Ways to reach me", paragraphs, "How to contact Shaurya.")
+
+
+def build_privacy():
+    paragraphs = (
+        "<p>This site is a static personal log. It does not require accounts, does not "
+        "provide a comment system, and does not intentionally collect names, email "
+        "addresses, phone numbers, or other personal information through forms. There is no "
+        "first-party analytics script on the site and no advertising system operated by the "
+        "site.</p>\n"
+        "<p>The site does load its typography from Google Fonts, so a page visit can result "
+        "in a request to Google's font infrastructure. The site also uses GitHub Pages for "
+        "hosting and may be cached or transported by infrastructure between the origin and a "
+        "visitor. Those services may process ordinary connection information such as an IP "
+        "address as part of delivering web content; this site does not add a separate "
+        "tracking database on top of that infrastructure.</p>\n"
+        "<p>If you contact me through a third-party service such as GitHub, that service's "
+        "own privacy policy governs that interaction. If the site's data practices "
+        'materially change, this page will be updated. Questions about privacy can be '
+        'raised through the <a href="contact.html">Contact</a> page.</p>'
+    )
+    return simple_page("privacy", "Privacy", "Site-level data practices", paragraphs,
+                        "Privacy information for Shaurya · Log.")
+
+
+def build_llms(posts):
+    lines = [
+        "# Shaurya · Log", "",
+        "> A personal archive of experimental engineering notes about machine learning, "
+        "graphics, programming, computation, and the process of building things to "
+        "understand how they work.", "",
+        "## When to use this log", "",
+        "Use this site when an agent needs a first-person engineering perspective, "
+        "implementation details, visual-computing explanations, or an exploratory account "
+        "of how a technical idea was tested in practice. It is especially useful for "
+        "questions about the subjects covered by the articles below. Treat the posts as the "
+        "author's working notes rather than authoritative specifications; preserve "
+        "uncertainty and distinguish experiments from established facts.", "",
+        "## How to use it", "",
+        "- Prefer the individual article pages as primary sources for claims made in the log.",
+        "- When fetching programmatically, request the canonical HTML URL or use the "
+        "published `.md` sibling when Markdown is preferable.",
+        "- Use `sitemap.xml` for URL discovery and `feed.xml` for the article chronology.",
+        "- Use `about.html` for author/site context, `contact.html` for contact routing, "
+        "and `privacy.html` for site data practices.",
+        "- Do not infer credentials, affiliations, or opinions that are not stated on the "
+        "relevant page.", "",
+        "## Articles", "",
+    ]
+    for p in posts:
+        lines.append(f'- [{p["title"]}]({absolute_url(f"{p["slug"]}.html")}) — {p["description"]}')
+    lines += [
+        "", "## Site pages", "",
+        f"- [About]({absolute_url('about.html')})",
+        f"- [Contact]({absolute_url('contact.html')})",
+        f"- [Privacy]({absolute_url('privacy.html')})",
+        f"- [RSS feed]({absolute_url('feed.xml')})",
+        f"- [Sitemap]({absolute_url('sitemap.xml')})",
+    ]
+    return "\n".join(lines) + "\n"
 
 
 def build_feed(posts):
@@ -268,9 +409,12 @@ def build_feed(posts):
 
 
 def build_sitemap(posts):
-    urls = [{"loc": absolute_url("")}, {"loc": absolute_url("about.html")}] + [
-        {"loc": absolute_url(f'{p["slug"]}.html'), "lastmod": p["date"].strftime("%Y-%m-%d")}
-        for p in posts]
+    urls = ([{"loc": absolute_url("")},
+             {"loc": absolute_url("about.html")},
+             {"loc": absolute_url("contact.html")},
+             {"loc": absolute_url("privacy.html")}] +
+            [{"loc": absolute_url(f'{p["slug"]}.html'), "lastmod": p["date"].strftime("%Y-%m-%d")}
+             for p in posts])
     lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:
         lines += ['  <url>', f'    <loc>{html.escape(u["loc"])}</loc>']
@@ -287,15 +431,64 @@ def build_robots():
 def build_404():
     base = urlparse(SITE_URL).path.rstrip("/") + "/"
     body = ('\n  <article class="post">\n    <h1>404</h1>\n    <p class="post-meta">Nothing here</p>\n'
-            f'    <p>This page doesn\'t exist, or it moved. Everything that does exist is on <a href="{base}index.html">the index</a>.</p>\n  </article>\n')
+            '    <p>This page does not exist or has moved. Start at the '
+            f'<a href="{base}index.html">index</a>, browse the '
+            f'<a href="{base}sitemap.xml">sitemap</a>, or read the '
+            f'<a href="{base}llms.txt">agent guide</a>.</p>\n  </article>\n')
     return page_head(f"404 · {SITE_NAME}", "Nothing here.", "404.html", base=base, noindex=True) + page_header(base) + body + page_foot(f'<a href="{base}index.html">Index</a>')
 
 
-def restamp_about_html():
-    text = ABOUT_HTML_FILE.read_text(encoding="utf-8")
-    text = re.sub(r'href="style\.css(?:\?v=[a-f0-9]+)?"', f'href="style.css?v={CSS_VERSION}"', text)
-    text = re.sub(r'src="site\.js(?:\?v=[a-f0-9]+)?"', f'src="site.js?v={JS_VERSION}"', text)
-    ABOUT_HTML_FILE.write_text(text, encoding="utf-8")
+def markdown_sibling(slug, title, date_str, description, canonical_path, body_md):
+    lines = [f'# {title}', "", f'Date: {date_str}', f'Description: {description}',
+              f'Canonical: {absolute_url(canonical_path)}', "", body_md.lstrip()]
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_markdown_files(posts):
+    """.md siblings for every page that advertises one via md_href in its
+    <head>. Written from the same parsed data as the HTML, in the same
+    pass, so the promise and the file can never drift apart the way the
+    old two-script version did."""
+    for p in posts:
+        text = markdown_sibling(p["slug"], p["title"], p["date"].strftime("%Y-%m-%d"),
+                                 p["description"], f'{p["slug"]}.html', p["body_md"])
+        (ROOT / f'{p["slug"]}.md').write_text(text, encoding="utf-8")
+
+    index_lines = [f"# {SITE_TITLE}", "", f"> {AGENT_SUMMARY}", "", "## Articles", ""]
+    for p in posts:
+        index_lines.append(f'- [{p["title"]}]({absolute_url(f"{p["slug"]}.html")}) — {p["description"]}')
+    (ROOT / "index.md").write_text("\n".join(index_lines).rstrip() + "\n", encoding="utf-8")
+
+    static_pages = {
+        "about": ("About", "2026-08", "About Shaurya and the purpose of this engineering log.",
+                  "Hi, I'm Shaurya. I write software and keep this log as a record of the things "
+                  "I build, read, and try to understand. The subjects move around: machine "
+                  "learning, graphics, programming, computation, mathematical ideas, and small "
+                  "experiments that are easier to understand by implementing them than by "
+                  "reading about them.\n\n"
+                  "The point of the site is not to present polished documentation or a fixed "
+                  "set of opinions. Most posts are working notes: I start with a question, "
+                  "follow the interesting parts, build something when code helps, and write "
+                  "down what survived the experiment. Some pieces are explanatory, some are "
+                  "exploratory, and some are simply records of a rabbit hole that seemed worth "
+                  "keeping.\n\n"
+                  "There is no analytics layer, comments system, newsletter, or account system "
+                  "on the site. The pages are generated from Markdown and published as static "
+                  "files. The individual articles are the primary technical sources; this page "
+                  "provides author and site context."),
+        "contact": ("Contact", "2026-08", "How to contact Shaurya.",
+                    "This is a personal engineering log, not a company support site. The most "
+                    "reliable public contact point is my GitHub profile: "
+                    "https://github.com/Shaurya-34"),
+        "privacy": ("Privacy", "2026-08", "Privacy information for Shaurya · Log.",
+                    "This site is a static personal log with no analytics, comments, accounts, "
+                    "or advertising. It loads fonts from Google Fonts and is hosted on GitHub "
+                    "Pages; both may process ordinary connection information as part of "
+                    "delivering the page."),
+    }
+    for slug, (title, date_str, desc, body) in static_pages.items():
+        text = markdown_sibling(slug, title, date_str, desc, f'{slug}.html', body)
+        (ROOT / f'{slug}.md').write_text(text, encoding="utf-8")
 
 
 def main():
@@ -305,14 +498,18 @@ def main():
         older = posts[i + 1] if i + 1 < len(posts) else None
         (ROOT / f'{post["slug"]}.html').write_text(build_post(post, newer, older), encoding="utf-8")
     (ROOT / "index.html").write_text(build_index(posts), encoding="utf-8")
+    (ROOT / "about.html").write_text(build_about(), encoding="utf-8")
+    (ROOT / "contact.html").write_text(build_contact(), encoding="utf-8")
+    (ROOT / "privacy.html").write_text(build_privacy(), encoding="utf-8")
     (ROOT / "feed.xml").write_text(build_feed(posts), encoding="utf-8")
     (ROOT / "sitemap.xml").write_text(build_sitemap(posts), encoding="utf-8")
     (ROOT / "robots.txt").write_text(build_robots(), encoding="utf-8")
     (ROOT / "404.html").write_text(build_404(), encoding="utf-8")
-    restamp_about_html()
-    print(f"built {len(posts)} posts + index.html + feed.xml + sitemap.xml + robots.txt + 404.html")
+    (ROOT / "llms.txt").write_text(build_llms(posts), encoding="utf-8")
+    write_markdown_files(posts)
+    print(f"built {len(posts)} posts + index/about/contact/privacy + feed/sitemap/robots/404 "
+          f"+ llms.txt + {len(posts) + 4} markdown siblings")
 
 
 if __name__ == "__main__":
     main()
-

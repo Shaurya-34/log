@@ -10,7 +10,6 @@ class AgentReadinessTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         subprocess.run([sys.executable, "build.py"], cwd=ROOT, check=True, capture_output=True, text=True)
-        subprocess.run([sys.executable, "agent_build.py"], cwd=ROOT, check=True, capture_output=True, text=True)
 
     def test_homepage_has_h1_and_meaningful_raw_text(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
