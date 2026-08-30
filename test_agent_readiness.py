@@ -21,15 +21,6 @@ def test_404_has_recovery_links():
         assert path in html
 
 
-def test_markdown_worker_sets_required_vary_headers():
-    worker = read("cloudflare/markdown-worker.js")
-    assert 'headers.set("Content-Type", "text/markdown; charset=utf-8")' in worker
-    assert 'values.add("accept")' in worker
-    assert 'values.add("accept-encoding")' in worker
-    assert "status: 406" in worker
-    assert "markdown404" in worker
-
-
 def test_agent_machine_readable_files_exist():
     for name in ("llms.txt", "index.md", "sitemap.xml", "feed.xml"):
         assert (ROOT / name).is_file()

@@ -12,40 +12,78 @@
   <meta property="og:description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sslog.dpdns.org/">
-  <meta property="og:image" content="https://sslog.dpdns.org/images/covers/where-does-computation-end.svg">
-  <link rel="alternate" type="text/markdown" href="index.md">
   <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23faf9f7'/%3E%3Ctext x='32' y='46' font-family='Courier%20New,monospace' font-size='44' text-anchor='middle' fill='%23161513'%3ES%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
-  <link rel="stylesheet" href="style.css?v=4b57641c">
-  <style>.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}</style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
+  <link rel="stylesheet" href="style.css?v=ff23c405">
   <script src="site.js?v=7e8b38e8" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.","url":"https://sslog.dpdns.org","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"}}</script>
 </head>
 <body>
 <div class="wrap">
+
   <header class="site">
     <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="b-strike">B</span>LOG</a>
-    <nav><a href="about.html">About</a><button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button></nav>
+    <nav>
+      <a href="about.html">About</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
+    </nav>
   </header>
 
   <h1 class="sr-only">Shaurya · Log</h1>
-  <p class="sr-only agent-home-summary">Shaurya’s Log is a personal archive of experimental engineering notes about machine learning, graphics, programming, computation, and the practical process of building things to understand how they work. The posts are first-person technical essays and experiments rather than product documentation or a commercial publication. Use the log when a question benefits from a concrete engineering perspective, implementation details, visual computing explanations, or a record of how an idea was explored in practice. The individual article pages are the primary sources. About provides author context, while Contact and Privacy provide site-level information. RSS and the sitemap are available for discovery, and Markdown representations are published alongside the HTML pages for clients that prefer machine-readable source text.</p>
+  <p class="sr-only agent-home-summary">Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work. I think of this less as a blog and more as a log: a running record of what I&#x27;m building, reading, and puzzling over. If it&#x27;s useful to anyone else, that&#x27;s a bonus. The individual article pages are the primary sources. Use the sitemap and RSS feed for discovery, and the published Markdown siblings when machine-readable source text is preferred.</p>
   <h2 class="sr-only">Articles</h2>
 
   <p class="motto">honest · semi informative · personal</p>
+
   <p class="intro">I think of this less as a blog and more as a log: a running record of what I'm building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.</p>
+
   <p class="year">2026</p>
   <ul class="posts">
-    <li><div class="post-line"><a href="where-does-computation-end.html">Where Does Computation End?</a><time datetime="2026-08-18">Aug 18</time></div><p class="post-desc">A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p></li>
-    <li><div class="post-line"><a href="self-rewriting-mandelbrot.html">A renderer that keeps notes on itself</a><time datetime="2026-08-06">Aug 06</time></div><p class="post-desc">A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.</p></li>
-    <li><div class="post-line"><a href="never-repeating-never-leaving.html">Never repeating, never leaving</a><time datetime="2026-07-24">Jul 24</time></div><p class="post-desc">Four chaotic systems, one Python framework, and the one that refused to fit it.</p></li>
-    <li><div class="post-line"><a href="marching-with-rays.html">Marching with rays</a><time datetime="2026-07-21">Jul 21</time></div><p class="post-desc">Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</p></li>
-    <li><div class="post-line"><a href="grok-grok.html">grok.....grok ?</a><time datetime="2026-07-20">Jul 20</time></div><p class="post-desc">What happens when you push a model past generalization? Does it know the rule, or just the data?</p></li>
+    <li>
+      <div class="post-line">
+        <a href="where-does-computation-end.html">Where Does Computation End?</a>
+        <time datetime="2026-08-18">Aug 18</time>
+      </div>
+      <p class="post-desc">A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p>
+    </li>
+    <li>
+      <div class="post-line">
+        <a href="self-rewriting-mandelbrot.html">A renderer that keeps notes on itself</a>
+        <time datetime="2026-08-06">Aug 06</time>
+      </div>
+      <p class="post-desc">A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.</p>
+    </li>
+    <li>
+      <div class="post-line">
+        <a href="never-repeating-never-leaving.html">Never repeating, never leaving</a>
+        <time datetime="2026-07-24">Jul 24</time>
+      </div>
+      <p class="post-desc">Four chaotic systems, one Python framework, and the one that refused to fit it.</p>
+    </li>
+    <li>
+      <div class="post-line">
+        <a href="marching-with-rays.html">Marching with rays</a>
+        <time datetime="2026-07-21">Jul 21</time>
+      </div>
+      <p class="post-desc">Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</p>
+    </li>
+    <li>
+      <div class="post-line">
+        <a href="grok-grok.html">grok.....grok ?</a>
+        <time datetime="2026-07-20">Jul 20</time>
+      </div>
+      <p class="post-desc">What happens when you push a model past generalization? Does it know the rule, or just the data?</p>
+    </li>
   </ul>
-  <footer class="site"><span>Shaurya · 2026</span><a href="feed.xml">RSS</a></footer>
+
+  <footer class="site">
+    <span>Shaurya · 2026</span>
+    <a href="feed.xml">RSS</a>
+  </footer>
+
 </div>
 </body>
 </html>
