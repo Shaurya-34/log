@@ -29,6 +29,17 @@ CSS_VERSION = hashlib.md5((ROOT / "style.css").read_bytes()).hexdigest()[:8]
 JS_VERSION = hashlib.md5((ROOT / "site.js").read_bytes()).hexdigest()[:8]
 HOME_CSS_VERSION = hashlib.md5((ROOT / "home.css").read_bytes()).hexdigest()[:8]
 
+CLARITY_PROJECT_ID = "yajiq3aa14"
+CLARITY_SCRIPT = (
+    '  <script type="text/javascript">\n'
+    '    (function(c,l,a,r,i,t,y){\n'
+    '        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};\n'
+    '        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;\n'
+    '        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);\n'
+    f'    }})(window, document, "clarity", "script", "{CLARITY_PROJECT_ID}");\n'
+    '  </script>\n'
+)
+
 # Shown to AI agents/clients via the homepage's sr-only summary and llms.txt.
 AGENT_SUMMARY = (
     "Shaurya's Log is a small personal archive of experimental engineering notes. "
@@ -124,6 +135,7 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
         head += f'  <link rel="stylesheet" href="{base}{extra_css}?v={HOME_CSS_VERSION}">\n'
     if jsonld:
         head += jsonld_script(jsonld)
+    head += CLARITY_SCRIPT
     return head + '</head>\n<body>\n<div class="wrap">\n'
 
 
@@ -304,12 +316,13 @@ def build_about():
         "interesting parts, build something when code helps, and write down what survived "
         "the experiment. Some pieces are explanatory, some are exploratory, and some are "
         "simply records of a rabbit hole that seemed worth keeping.</p>\n"
-        '<p>There is no analytics layer, comments system, newsletter, or account system on '
-        "the site. The pages are generated from Markdown and published as static files. If "
-        "an agent or reader wants the machine-readable version, the same articles are "
-        'available as Markdown alongside their HTML pages. The <a href="contact.html">contact '
-        'page</a> explains how to reach me, and the <a href="privacy.html">privacy page</a> '
-        "describes what the site does and does not collect.</p>"
+        '<p>There is no comments system, newsletter, or account system on the site. The '
+        "pages are generated from Markdown and published as static files. If an agent or "
+        "reader wants the machine-readable version, the same articles are available as "
+        'Markdown alongside their HTML pages. The site does use basic analytics to see '
+        "which pages and elements actually get used, described on the "
+        '<a href="privacy.html">privacy page</a>. The <a href="contact.html">contact page</a> '
+        "explains how to reach me.</p>"
     )
     return simple_page("about", "About", "Updated August 2026", paragraphs,
                         "About Shaurya and the purpose of this engineering log.")
@@ -337,14 +350,20 @@ def build_privacy():
         "<p>This site is a static personal log. It does not require accounts, does not "
         "provide a comment system, and does not intentionally collect names, email "
         "addresses, phone numbers, or other personal information through forms. There is no "
-        "first-party analytics script on the site and no advertising system operated by the "
-        "site.</p>\n"
+        "advertising system operated by the site.</p>\n"
+        "<p>The site uses <a href=\"https://clarity.microsoft.com\">Microsoft Clarity</a> for "
+        "basic analytics: how many people visit, which pages get read, and anonymized "
+        "recordings of clicks, scrolling, and mouse movement, so I can tell which parts of "
+        "the site are actually useful and which aren't. Clarity may set cookies and collect "
+        "device and approximate location information as part of this. I don't use it to "
+        "identify individual visitors, and it is not combined with any other data I hold. "
+        "See <a href=\"https://clarity.microsoft.com/privacy\">Microsoft's Clarity privacy "
+        "documentation</a> for what it collects and how it's handled.</p>\n"
         "<p>The site does load its typography from Google Fonts, so a page visit can result "
         "in a request to Google's font infrastructure. The site also uses GitHub Pages for "
         "hosting and may be cached or transported by infrastructure between the origin and a "
         "visitor. Those services may process ordinary connection information such as an IP "
-        "address as part of delivering web content; this site does not add a separate "
-        "tracking database on top of that infrastructure.</p>\n"
+        "address as part of delivering web content.</p>\n"
         "<p>If you contact me through a third-party service such as GitHub, that service's "
         "own privacy policy governs that interaction. If the site's data practices "
         'materially change, this page will be updated. Questions about privacy can be '
@@ -472,19 +491,26 @@ def write_markdown_files(posts):
                   "down what survived the experiment. Some pieces are explanatory, some are "
                   "exploratory, and some are simply records of a rabbit hole that seemed worth "
                   "keeping.\n\n"
-                  "There is no analytics layer, comments system, newsletter, or account system "
-                  "on the site. The pages are generated from Markdown and published as static "
-                  "files. The individual articles are the primary technical sources; this page "
-                  "provides author and site context."),
+                  "There is no comments system, newsletter, or account system on the site. The "
+                  "pages are generated from Markdown and published as static files. The site "
+                  "does use basic analytics (Microsoft Clarity) to see which pages and "
+                  "elements actually get used, described on the privacy page. The individual "
+                  "articles are the primary technical sources; this page provides author and "
+                  "site context."),
         "contact": ("Contact", "2026-08", "How to contact Shaurya.",
                     "This is a personal engineering log, not a company support site. The most "
                     "reliable public contact point is my GitHub profile: "
                     "https://github.com/Shaurya-34"),
         "privacy": ("Privacy", "2026-08", "Privacy information for Shaurya · Log.",
-                    "This site is a static personal log with no analytics, comments, accounts, "
-                    "or advertising. It loads fonts from Google Fonts and is hosted on GitHub "
-                    "Pages; both may process ordinary connection information as part of "
-                    "delivering the page."),
+                    "This site is a static personal log with no comments, accounts, or "
+                    "advertising. It uses Microsoft Clarity (https://clarity.microsoft.com) "
+                    "for basic analytics: visit counts and anonymized recordings of clicks, "
+                    "scrolling, and mouse movement, used to see which parts of the site "
+                    "actually get read. Clarity may set cookies and collect device and "
+                    "approximate location information; it is not used to identify individual "
+                    "visitors. The site also loads fonts from Google Fonts and is hosted on "
+                    "GitHub Pages; both may process ordinary connection information as part "
+                    "of delivering the page."),
     }
     for slug, (title, date_str, desc, body) in static_pages.items():
         text = markdown_sibling(slug, title, date_str, desc, f'{slug}.html', body)
