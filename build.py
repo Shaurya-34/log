@@ -29,6 +29,23 @@ CSS_VERSION = hashlib.md5((ROOT / "style.css").read_bytes()).hexdigest()[:8]
 JS_VERSION = hashlib.md5((ROOT / "site.js").read_bytes()).hexdigest()[:8]
 HOME_CSS_VERSION = hashlib.md5((ROOT / "home.css").read_bytes()).hexdigest()[:8]
 
+# Meta-tag CSP: the only form GitHub Pages allows (it serves static files
+# with no custom HTTP headers, so a real Content-Security-Policy response
+# header isn't possible here without adding a proxy in front). This still
+# blocks unauthorized script/style/connect origins; it just can't do the
+# few things that specifically require a real header (frame-ancestors,
+# and thus clickjacking protection, is silently ignored when delivered
+# via meta - there's no way around that on this host).
+# *.clarity.ms + c.bing.com are Microsoft's own documented requirement:
+# https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-csp
+CSP = ("default-src 'self'; "
+       "script-src 'self' 'unsafe-inline' https://*.clarity.ms; "
+       "style-src 'self' https://fonts.googleapis.com; "
+       "font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; "
+       "img-src 'self' data: https://*.clarity.ms https://c.bing.com; "
+       "connect-src 'self' https://*.clarity.ms https://c.bing.com; "
+       "frame-src 'none'; object-src 'none'; base-uri 'self';")
+
 CLARITY_PROJECT_ID = "yajiq3aa14"
 CLARITY_SCRIPT = (
     '  <script type="text/javascript">\n'
@@ -116,6 +133,8 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
         '<!doctype html>\n<html lang="en">\n<head>\n'
         '  <meta charset="utf-8">\n'
         '  <meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        f'  <meta http-equiv="Content-Security-Policy" content="{CSP}">\n'
+        '  <meta name="referrer" content="strict-origin-when-cross-origin">\n'
         f'  <title>{html.escape(title)}</title>\n'
         f'  <meta name="description" content="{html.escape(desc)}">\n{robots}'
         f'  <link rel="canonical" href="{html.escape(absolute_url(path))}">\n'
