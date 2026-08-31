@@ -78,6 +78,17 @@
   :root:not([data-theme]) .cover-svg { filter:grayscale(1) invert(1) contrast(1.35) brightness(.94); }
 }
 
+/* Cover diagram draw-in: a CSS keyframe (not SMIL beginElement(), which is
+   unreliable to trigger from script) animates each diagram's primary
+   contour from its dasharray-hidden state to fully drawn once the card
+   carrying it gains .is-drawn (site.js adds this the first time a card
+   becomes active). */
+@keyframes cover-draw { to { stroke-dashoffset:0; } }
+.feature-card.is-drawn .draw-path { animation:cover-draw .7s ease forwards; }
+@media (prefers-reduced-motion:reduce) {
+  .draw-path { stroke-dashoffset:0!important; animation:none!important; }
+}
+
 /* Phase 1: replace the circular presentation with a Turing-tape-like
    navigation while keeping the existing article inspector unchanged. */
 .article-orbit.tape-nav { --tape-visible:5; --tape-inset:1.25rem; --tape-top:7.1rem; --tape-arrow-top:9.1rem; width:100%; max-width:680px; height:500px; aspect-ratio:auto; margin-top:.25rem; }

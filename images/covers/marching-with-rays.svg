@@ -8,11 +8,8 @@
     <path d="M80 325H940" opacity=".2"/>
     <path d="M720 70V580" opacity=".2"/>
 
-    <path d="M95 325L665 325M95 325L655 225M95 325L655 425M95 325L630 160M95 325L630 490"
-          stroke-dasharray="3200" stroke-dashoffset="3200">
-      <animate class="draw-anim" attributeName="stroke-dashoffset" from="3200" to="0"
-               dur="0.7s" begin="indefinite" fill="freeze"/>
-    </path>
+    <path class="draw-path" d="M95 325L665 325M95 325L655 225M95 325L655 425M95 325L630 160M95 325L630 490"
+          stroke-dasharray="3200" stroke-dashoffset="3200"/>
 
     <path d="M665 325l-12-6M665 325l-12 6"/>
     <path d="M655 225l-12-4M655 225l-9 9"/>

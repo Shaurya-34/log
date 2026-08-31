@@ -34,12 +34,10 @@
        C510 290 545 250 600 255
        C655 260 680 310 650 340
        C620 370 570 355 560 320"
+    class="draw-path"
     stroke="#17150f"
     stroke-width="1.4"
-    stroke-dasharray="5000" stroke-dashoffset="5000">
-    <animate class="draw-anim" attributeName="stroke-dashoffset" from="5000" to="0"
-             dur="0.7s" begin="indefinite" fill="freeze"/>
-  </path>
+    stroke-dasharray="5000" stroke-dashoffset="5000"/>
 
   <path
     d="M145 470

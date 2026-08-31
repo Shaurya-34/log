@@ -10,15 +10,12 @@
 
     <path d="M500 65V585M140 325H860" opacity=".35"/>
 
-    <path d="M500 325
+    <path class="draw-path" d="M500 325
              C555 300 610 280 650 245
              C690 210 720 165 748 145
              C780 122 815 115 850 82
              C870 63 882 45 890 25"
-          stroke-dasharray="900" stroke-dashoffset="900">
-      <animate class="draw-anim" attributeName="stroke-dashoffset" from="900" to="0"
-               dur="0.7s" begin="indefinite" fill="freeze"/>
-    </path>
+          stroke-dasharray="900" stroke-dashoffset="900"/>
     <path d="M890 25l-4 14M890 25l-14 4"/>
   </g>
 

@@ -273,29 +273,15 @@
     }
 
     /* Diagram draw-in: fires once per card, the first time it becomes
-       active. Reduced-motion just jumps straight to the drawn state. */
+       active, via a CSS keyframe (see .is-drawn in home.css). Reduced
+       motion is handled entirely in CSS, so this just needs the class. */
     function playDraw(card) {
       if (!card || card.dataset.animated === "1") {
         return;
       }
 
       card.dataset.animated = "1";
-
-      Array.prototype.slice
-        .call(card.querySelectorAll(".draw-anim"))
-        .forEach(function (anim) {
-          if (reduced) {
-            var path = anim.parentNode;
-
-            if (path && path.setAttribute) {
-              path.setAttribute("stroke-dashoffset", "0");
-            }
-          } else if (anim.beginElement) {
-            try {
-              anim.beginElement();
-            } catch (e) {}
-          }
-        });
+      card.classList.add("is-drawn");
     }
 
     playDraw(cards[active]);
