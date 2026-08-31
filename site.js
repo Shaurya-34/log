@@ -272,6 +272,34 @@
       active = 0;
     }
 
+    /* Diagram draw-in: fires once per card, the first time it becomes
+       active. Reduced-motion just jumps straight to the drawn state. */
+    function playDraw(card) {
+      if (!card || card.dataset.animated === "1") {
+        return;
+      }
+
+      card.dataset.animated = "1";
+
+      Array.prototype.slice
+        .call(card.querySelectorAll(".draw-anim"))
+        .forEach(function (anim) {
+          if (reduced) {
+            var path = anim.parentNode;
+
+            if (path && path.setAttribute) {
+              path.setAttribute("stroke-dashoffset", "0");
+            }
+          } else if (anim.beginElement) {
+            try {
+              anim.beginElement();
+            } catch (e) {}
+          }
+        });
+    }
+
+    playDraw(cards[active]);
+
     function moveReadHead(animate) {
       if (!head || !viewport || !cells[active]) {
         return;
@@ -344,6 +372,8 @@
       if (moved) {
         moveReadHead(true);
       }
+
+      playDraw(cards[active]);
 
       cells[active].scrollIntoView({
         behavior: reduced ? "auto" : "smooth",

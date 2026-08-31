@@ -51,7 +51,11 @@
            C260 500 360 470 450 410
            C540 350 625 285 710 220
            C775 170 830 130 880 115"
-        stroke="#17150f" stroke-width="2"/>
+        stroke="#17150f" stroke-width="2"
+        stroke-dasharray="1400" stroke-dashoffset="1400">
+    <animate class="draw-anim" attributeName="stroke-dashoffset" from="1400" to="0"
+             dur="0.7s" begin="indefinite" fill="freeze"/>
+  </path>
 
   <g stroke="#17150f" opacity=".18">
     <path d="M80 90H470M80 560H470"/>

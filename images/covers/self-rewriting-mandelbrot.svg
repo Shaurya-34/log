@@ -23,7 +23,11 @@
            C205 450 235 400 250 345
            C265 290 300 250 355 240
            C405 230 445 245 470 275"
-        stroke="#17150f" stroke-width="2"/>
+        stroke="#17150f" stroke-width="2"
+        stroke-dasharray="800" stroke-dashoffset="800">
+    <animate class="draw-anim" attributeName="stroke-dashoffset" from="800" to="0"
+             dur="0.7s" begin="indefinite" fill="freeze"/>
+  </path>
 
   <g fill="#17150f">
     <rect x="350" y="135" width="10" height="10"/>

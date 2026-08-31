@@ -111,6 +111,18 @@ COVER_DEFAULTS = {
 }
 
 
+_SVG_CACHE = {}
+
+
+def read_cover_svg(path):
+    """Raw SVG markup for a cover, inlined directly into the page (rather
+    than referenced via <img>) so the draw-in <animate> elements it embeds
+    are reachable and triggerable from site.js."""
+    if path not in _SVG_CACHE:
+        _SVG_CACHE[path] = (ROOT / path).read_text(encoding="utf-8").strip()
+    return _SVG_CACHE[path]
+
+
 def absolute_url(path=""):
     return f"{SITE_URL}/" if not path else f"{SITE_URL}/{path.lstrip('/')}"
 
@@ -266,8 +278,11 @@ def build_post(post, newer, older):
 
 
 def cover_markup(post, index):
-    image = (f'<img src="{html.escape(post["cover"])}" alt="" loading="lazy">'
-             if post["cover"] else '<div class="cover-placeholder" aria-hidden="true"><span>SSLOG</span></div>')
+    if post["cover"]:
+        image = read_cover_svg(post["cover"]).replace(
+            '<svg ', '<svg class="cover-svg" aria-hidden="true" ', 1)
+    else:
+        image = '<div class="cover-placeholder" aria-hidden="true"><span>SSLOG</span></div>'
     fig_chrome = ""
     if post["cover"] and post["diagram_label"]:
         fig_chrome = ('<div class="cover-fig-chrome">'
