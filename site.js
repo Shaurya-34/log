@@ -534,6 +534,233 @@
   });
 
   /* ------------------------------------------------------------
+     Grokking figure
+
+     Interactive version of the phase1 accuracy plot. Two real runs
+     (weight decay 1.0 and 0.0, identical otherwise) exported from
+     catapult; the toggle lets the reader check the article's claim
+     that removing weight decay removes the jump entirely, and the
+     slider reveals training one logged epoch at a time.
+     ------------------------------------------------------------ */
+  run(function () {
+    var fig = document.getElementById("grok-demo");
+
+    if (!fig) {
+      return;
+    }
+
+    var NS = "http://www.w3.org/2000/svg";
+    /* Y1 leaves headroom above the 1.0 gridline so the legend sits in the
+       top margin instead of colliding with a curve that reaches 100%. */
+    var NS_LEGEND_Y = 18;
+    var X0 = 64, X1 = 644, Y0 = 248, Y1 = 44;
+
+    var svg = fig.querySelector(".grok-plot");
+    var range = fig.querySelector(".grok-scrub input");
+    var buttons = Array.prototype.slice.call(
+      fig.querySelectorAll(".grok-switch button")
+    );
+
+    var out = {
+      epoch: fig.querySelector('[data-out="epoch"]'),
+      train: fig.querySelector('[data-out="train"]'),
+      val: fig.querySelector('[data-out="val"]')
+    };
+
+    var data = null;
+    var mode = "on";
+    var layer = null;
+
+    function el(name, attrs) {
+      var node = document.createElementNS(NS, name);
+
+      for (var k in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, k)) {
+          node.setAttribute(k, attrs[k]);
+        }
+      }
+
+      return node;
+    }
+
+    function sx(epoch) {
+      var last = data.epochs[data.epochs.length - 1];
+      return X0 + (epoch / last) * (X1 - X0);
+    }
+
+    function sy(acc) {
+      return Y0 + acc * (Y1 - Y0);
+    }
+
+    /* Axes, grid and legend: drawn once, never change. */
+    function drawFrame() {
+      var g = el("g", { class: "grok-frame" });
+      var i;
+
+      for (i = 0; i <= 4; i++) {
+        var acc = i / 4;
+        var y = sy(acc);
+
+        g.appendChild(el("line", {
+          class: "grok-grid", x1: X0, y1: y, x2: X1, y2: y
+        }));
+
+        var yl = el("text", {
+          class: "grok-label grok-label-y", x: X0 - 10, y: y + 4
+        });
+        yl.textContent = acc.toFixed(2);
+        g.appendChild(yl);
+      }
+
+      var last = data.epochs[data.epochs.length - 1];
+
+      for (i = 0; i <= 4; i++) {
+        var ep = (last / 4) * i;
+        var x = sx(ep);
+
+        g.appendChild(el("line", {
+          class: "grok-tick", x1: x, y1: Y0, x2: x, y2: Y0 + 6
+        }));
+
+        var xl = el("text", {
+          class: "grok-label grok-label-x", x: x, y: Y0 + 22
+        });
+        /* The final logged epoch is 39,999 rather than a round 40,000,
+           so label the ticks at the nearest thousand instead of printing
+           values like "9.99975k". */
+        xl.textContent = ep === 0 ? "0" : Math.round(ep / 1000) + "k";
+        g.appendChild(xl);
+      }
+
+      g.appendChild(el("line", {
+        class: "grok-axis", x1: X0, y1: Y0, x2: X1, y2: Y0
+      }));
+
+      /* Distinct classes from the data polylines: sharing them makes
+         '.grok-line-train' ambiguous in the DOM and matches the legend
+         swatch first. */
+      var legend = [
+        { label: "train", cls: "grok-swatch grok-swatch-train", x: X0 + 8 },
+        { label: "val", cls: "grok-swatch grok-swatch-val", x: X0 + 96 }
+      ];
+
+      legend.forEach(function (item) {
+        g.appendChild(el("line", {
+          class: item.cls,
+          x1: item.x, y1: NS_LEGEND_Y, x2: item.x + 24, y2: NS_LEGEND_Y
+        }));
+
+        var t = el("text", {
+          class: "grok-label", x: item.x + 30, y: NS_LEGEND_Y + 4
+        });
+        t.textContent = item.label;
+        g.appendChild(t);
+      });
+
+      svg.appendChild(g);
+    }
+
+    function points(series, upto) {
+      var pts = [];
+
+      for (var i = 0; i <= upto; i++) {
+        pts.push(sx(data.epochs[i]).toFixed(1) + "," + sy(series[i]).toFixed(1));
+      }
+
+      return pts.join(" ");
+    }
+
+    function render() {
+      var run_ = data.runs[mode];
+      var i = parseInt(range.value, 10);
+
+      layer.train.setAttribute("points", points(run_.train, i));
+      layer.val.setAttribute("points", points(run_.val, i));
+
+      var x = sx(data.epochs[i]);
+      layer.head.setAttribute("x1", x);
+      layer.head.setAttribute("x2", x);
+      layer.dotTrain.setAttribute("cx", x);
+      layer.dotTrain.setAttribute("cy", sy(run_.train[i]));
+      layer.dotVal.setAttribute("cx", x);
+      layer.dotVal.setAttribute("cy", sy(run_.val[i]));
+
+      /* The grok epoch marker only means anything for the run that
+         actually groks, so hide it entirely for weight decay off. */
+      if (run_.grokEpoch) {
+        var gx = sx(run_.grokEpoch);
+        layer.grok.setAttribute("x1", gx);
+        layer.grok.setAttribute("x2", gx);
+        layer.grok.removeAttribute("hidden");
+      } else {
+        layer.grok.setAttribute("hidden", "hidden");
+      }
+
+      out.epoch.textContent = data.epochs[i].toLocaleString();
+      out.train.textContent = Math.round(run_.train[i] * 100) + "%";
+      out.val.textContent = Math.round(run_.val[i] * 100) + "%";
+    }
+
+    function build() {
+      drawFrame();
+
+      var g = el("g", { class: "grok-series" });
+
+      layer = {
+        grok: el("line", { class: "grok-grokline", y1: Y1, y2: Y0 }),
+        train: el("polyline", { class: "grok-line-train", points: "" }),
+        val: el("polyline", { class: "grok-line-val", points: "" }),
+        head: el("line", { class: "grok-head-line", y1: Y1, y2: Y0 }),
+        dotTrain: el("circle", { class: "grok-dot grok-dot-train", r: 3 }),
+        dotVal: el("circle", { class: "grok-dot grok-dot-val", r: 3.5 })
+      };
+
+      g.appendChild(layer.grok);
+      g.appendChild(layer.train);
+      g.appendChild(layer.val);
+      g.appendChild(layer.head);
+      g.appendChild(layer.dotTrain);
+      g.appendChild(layer.dotVal);
+      svg.appendChild(g);
+
+      range.max = String(data.epochs.length - 1);
+      range.value = range.max;
+
+      range.addEventListener("input", render);
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          mode = btn.getAttribute("data-wd");
+
+          buttons.forEach(function (b) {
+            b.setAttribute(
+              "aria-pressed",
+              b === btn ? "true" : "false"
+            );
+          });
+
+          render();
+        });
+      });
+
+      fig.classList.add("is-ready");
+      render();
+    }
+
+    fetch(fig.getAttribute("data-src"))
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        data = json;
+        build();
+      })
+      .catch(function () {
+        /* Leave the figure in its un-ready state; CSS keeps it
+           collapsed so a failed fetch shows nothing rather than an
+           empty set of axes. */
+      });
+  });
+
+  /* ------------------------------------------------------------
      Colormap carousel dots
 
      Plain anchor navigation loses to the track's mandatory scroll

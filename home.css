@@ -57,7 +57,6 @@
 .log-statement { width:min(42rem,52%); margin:0 0 2.5rem 0; padding:1.15rem 0 1.15rem 1.35rem; border-left:1px solid var(--hairline); box-sizing:border-box; }
 .log-statement-label { display:block; margin-bottom:.75rem; font:.52rem var(--mono); letter-spacing:.12em; color:var(--home-tertiary); }
 .log-statement p { margin:0; font:1.02rem/1.5 var(--mono); color:var(--home-secondary); overflow-wrap:anywhere; font-weight:400; letter-spacing:0; }
-.sr-only { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
 
 /* Three explicit text tiers for the homepage: readable secondary copy,
    quieter metadata, and primary ink. Keep tertiary at the dark-mode

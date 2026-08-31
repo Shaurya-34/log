@@ -37,9 +37,27 @@ addition. Feed a network pairs of numbers and their sum modulo
 some prime, hold out a chunk of the pairs, and watch what happens as it trains.
 It turned out I'd already done a lot more with this than I remembered.
 
-<figure>
-  <img src="images/wedge1/phase1_wd1_seed0.png" alt="Training and validation accuracy curves over training steps, with validation accuracy jumping sharply thousands of steps after training accuracy saturates.">
-  <figcaption>Modular addition, weight decay on. Training accuracy hits 100% almost immediately. Validation accuracy sits flat for thousands of steps, then jumps late. That gap, and the delayed jump, is grokking.</figcaption>
+<figure class="grok-demo" id="grok-demo" data-src="data/grokking.json">
+  <div class="grok-head">
+    <div class="grok-switch" role="group" aria-label="Weight decay">
+      <button type="button" data-wd="on" aria-pressed="true">weight decay on</button>
+      <button type="button" data-wd="off" aria-pressed="false">off</button>
+    </div>
+    <p class="grok-readout" aria-live="polite">
+      <span>epoch <b data-out="epoch">-</b></span>
+      <span>train <b data-out="train">-</b></span>
+      <span>val <b data-out="val">-</b></span>
+    </p>
+  </div>
+  <svg class="grok-plot" viewBox="0 0 660 300" role="img" aria-label="Training and validation accuracy plotted against training epoch"></svg>
+  <label class="grok-scrub">
+    <span class="sr-only">Training epoch</span>
+    <input type="range" min="0" max="40" value="40" step="1">
+  </label>
+  <figcaption>Modular addition, seed 0. Training accuracy hits 100% within 1,000 epochs; validation sits flat for thousands more, then jumps to 100%. Switch weight decay off and the jump never arrives - validation never passes 12%. Drag the slider to scrub through training.</figcaption>
+  <noscript>
+    <img src="images/wedge1/phase1_wd1_seed0.png" alt="Training and validation accuracy curves over training steps, with validation accuracy jumping sharply thousands of steps after training accuracy saturates.">
+  </noscript>
 </figure>
 
 A few things from catapult turned out to matter a lot later. First, weight decay

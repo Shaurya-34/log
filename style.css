@@ -513,6 +513,126 @@ article.post.entry::after {
   color: var(--grey);
 }
 
+/* Visually-hidden but readable by screen readers. Lives here rather than
+   in home.css because article pages need it too and only load style.css. */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ---- grokking figure --------------------------------------------- */
+/* Interactive accuracy plot. Hidden until site.js has fetched the run
+   data and added .is-ready, so a failed fetch shows nothing rather than
+   empty axes; <noscript> carries the original static plot. */
+
+/* article.post figure sets margin:0, so this needs the same prefix to
+   win on specificity and keep the figure clear of the surrounding prose. */
+article.post .grok-demo { margin: 2.75rem 0 3rem; }
+.grok-demo .grok-head,
+.grok-demo .grok-plot,
+.grok-demo .grok-scrub { display: none; }
+.grok-demo.is-ready .grok-head,
+.grok-demo.is-ready .grok-plot { display: block; }
+.grok-demo.is-ready .grok-scrub { display: block; }
+
+.grok-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.grok-switch { display: flex; gap: 0; }
+
+.grok-switch button {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.grok-switch button + button { border-left: 0; }
+.grok-switch button:hover { color: var(--ink); border-color: var(--ink); }
+
+.grok-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.grok-readout {
+  margin: 0;
+  display: flex;
+  gap: 1rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.grok-readout b { font-weight: 400; color: var(--ink); }
+
+.grok-plot { width: 100%; height: auto; overflow: visible; }
+
+.grok-plot .grok-grid { stroke: var(--hairline); stroke-width: 1; }
+.grok-plot .grok-axis,
+.grok-plot .grok-tick { stroke: var(--grey); stroke-width: 1; }
+
+.grok-plot .grok-label {
+  fill: var(--faint);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.grok-plot .grok-label-y { text-anchor: end; }
+.grok-plot .grok-label-x { text-anchor: middle; }
+
+.grok-plot .grok-line-train,
+.grok-plot .grok-line-val { fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.grok-plot .grok-line-train,
+.grok-plot .grok-swatch-train { stroke: var(--grey); stroke-width: 1.2; }
+.grok-plot .grok-line-val,
+.grok-plot .grok-swatch-val { stroke: var(--ink); stroke-width: 2; }
+
+.grok-plot .grok-grokline {
+  stroke: var(--grey);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+
+.grok-plot .grok-grokline[hidden] { display: none; }
+.grok-plot .grok-head-line { stroke: var(--ink); stroke-width: 1; opacity: 0.35; }
+.grok-plot .grok-dot-train { fill: var(--grey); }
+.grok-plot .grok-dot-val { fill: var(--ink); }
+
+.grok-scrub { margin-top: 0.5rem; }
+.grok-scrub input { width: 100%; accent-color: var(--ink); cursor: pointer; }
+
+/* article.post figcaption pulls captions up under an <img>; this figure
+   has a slider there instead, so cancel the negative margin. Needs the
+   article.post prefix to outrank that rule's specificity. */
+article.post .grok-demo figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grok-switch button { transition: none; }
+}
+
 /* ---- colormap carousel ------------------------------------------- */
 /* Lives here rather than in a per-post <style> block: the page CSP sets
    style-src without 'unsafe-inline', so an inline <style> is blocked and
