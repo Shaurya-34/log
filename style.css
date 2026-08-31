@@ -513,13 +513,12 @@ article.post.entry::after {
   color: var(--grey);
 }
 
-/* ---- article page: asymmetric prose/figure columns ---------------- */
-/* Real posts get a wider shell than the rest of the site so figures can
-   extend past the prose column. Prose keeps a narrow measure; figures,
-   code blocks and rules break out to the full width, and everything
-   shares one left edge. .entry is only ever set on posts, so About /
-   Contact / Privacy / 404 keep the original narrow wrap. Below 60rem
-   the layout is unchanged. */
+/* ---- article page: centred prose, wide figures -------------------- */
+/* Real posts get a wider shell than the rest of the site. Prose keeps a
+   narrow, centred measure; figures, code blocks and rules break out past
+   it on both sides, staying centred on the same axis. .entry is only ever
+   set on posts, so About / Contact / Privacy / 404 keep the original
+   narrow wrap. Below 60rem the layout is unchanged. */
 
 @media (min-width: 60rem) {
   .wrap:has(article.post.entry) { max-width: 56rem; }
@@ -527,7 +526,10 @@ article.post.entry::after {
   article.post.entry {
     display: grid;
     grid-template-columns:
-      [text-start] minmax(0, 34rem) [text-end] minmax(0, 1fr) [wide-end];
+      [wide-start] minmax(0, 1fr)
+      [text-start] min(34rem, 100%)
+      [text-end] minmax(0, 1fr)
+      [wide-end];
   }
 
   article.post.entry > * { grid-column: text-start / text-end; min-width: 0; }
@@ -536,18 +538,7 @@ article.post.entry::after {
   article.post.entry > figure,
   article.post.entry > pre,
   article.post.entry > hr,
-  article.post.entry > .colormap-carousel { grid-column: text-start / wide-end; }
-
-  /* Figures share the prose column's left edge rather than centring, so
-     images narrower than the column stop short instead of drifting.
-     Scoped to direct children so self-contained widgets (the colormap
-     carousel) keep their own internal centring. */
-  article.post.entry > figure img { margin-left: 0; margin-right: auto; }
-
-  article.post.entry > figure figcaption {
-    text-align: left;
-    max-width: 34rem;
-  }
+  article.post.entry > .colormap-carousel { grid-column: wide-start / wide-end; }
 }
 
 @media print {
