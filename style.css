@@ -538,17 +538,20 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .grok-demo .grok-head,
 .grok-demo .grok-plot,
 .grok-demo .grok-scrub { display: none; }
-.grok-demo.is-ready .grok-head,
-.grok-demo.is-ready .grok-plot { display: block; }
+/* .grok-head must come back as flex, not block: a blanket display:block
+   here outranks the flex declaration below and silently kills the
+   switch/readout row layout. */
+.grok-demo.is-ready .grok-head { display: flex; }
+.grok-demo.is-ready .grok-plot,
 .grok-demo.is-ready .grok-scrub { display: block; }
 
 .grok-head {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 1.25rem;
+  gap: 0.85rem 1.25rem;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .grok-switch { display: flex; gap: 0; }
