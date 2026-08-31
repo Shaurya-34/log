@@ -52,7 +52,7 @@ It turned out I'd already done a lot more with this than I remembered.
   <svg class="grok-plot" viewBox="0 0 660 300" role="img" aria-label="Training and validation accuracy plotted against training epoch"></svg>
   <label class="grok-scrub">
     <span class="sr-only">Training epoch</span>
-    <input type="range" min="0" max="40" value="40" step="1">
+    <input type="range" min="0" max="40" value="0" step="1">
   </label>
   <figcaption>Modular addition, seed 0. Training accuracy hits 100% within 1,000 epochs; validation sits flat for thousands more, then jumps to 100%. Switch weight decay off and the jump never arrives - validation never passes 12%. Drag the slider to scrub through training.</figcaption>
   <noscript>

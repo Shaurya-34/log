@@ -723,8 +723,11 @@
       g.appendChild(layer.dotVal);
       svg.appendChild(g);
 
+      /* Start at epoch 0 so the reader drags forward through training
+         and watches the jump arrive, rather than starting on the
+         finished curve and scrubbing backwards. */
       range.max = String(data.epochs.length - 1);
-      range.value = range.max;
+      range.value = "0";
 
       range.addEventListener("input", render);
 

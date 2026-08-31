@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
   <link rel="stylesheet" href="style.css?v=ce67cb49">
-  <script src="site.js?v=79a7172c" defer></script>
+  <script src="site.js?v=64726824" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"grok.....grok ?","description":"What happens when you push a model past generalization? Does it know the rule, or just the data?","url":"https://sslog.dpdns.org/grok-grok.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/grok-grok.html"},"datePublished":"2026-07-20T00:00:00+00:00","dateModified":"2026-07-20T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["research","machine learning","physics"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -94,7 +94,7 @@ It turned out I'd already done a lot more with this than I remembered.</p>
   <svg class="grok-plot" viewBox="0 0 660 300" role="img" aria-label="Training and validation accuracy plotted against training epoch"></svg>
   <label class="grok-scrub">
     <span class="sr-only">Training epoch</span>
-    <input type="range" min="0" max="40" value="40" step="1">
+    <input type="range" min="0" max="40" value="0" step="1">
   </label>
   <figcaption>Modular addition, seed 0. Training accuracy hits 100% within 1,000 epochs; validation sits flat for thousands more, then jumps to 100%. Switch weight decay off and the jump never arrives - validation never passes 12%. Drag the slider to scrub through training.</figcaption>
   <noscript>
