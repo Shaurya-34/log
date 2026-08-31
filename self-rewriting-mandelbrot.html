@@ -22,8 +22,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=82c541d1">
-  <script src="site.js?v=ec5fae88" defer></script>
+  <link rel="stylesheet" href="style.css?v=cb0fd833">
+  <script src="site.js?v=2c070ecf" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"A renderer that keeps notes on itself","description":"A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.","url":"https://sslog.dpdns.org/self-rewriting-mandelbrot.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/self-rewriting-mandelbrot.html"},"datePublished":"2026-08-06T00:00:00+00:00","dateModified":"2026-08-06T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["python","self-modifying-code","fractals"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -188,61 +188,6 @@ matrix underneath each one - only the last step of the pipeline changes.</p>
     <a href="#cm-nipy-spectral" aria-label="nipy_spectral">●</a>
   </div>
 </div>
-
-<style>
-.colormap-carousel {
-  margin: 1.5rem 0 2rem;
-}
-.colormap-track {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  padding-bottom: 0.25rem;
-}
-.colormap-slide {
-  flex: 0 0 85%;
-  max-width: 420px;
-  scroll-snap-align: center;
-  scroll-margin-left: 1rem;
-  margin: 0;
-}
-.colormap-slide img {
-  width: 100%;
-  display: block;
-  border-radius: 4px;
-}
-.colormap-slide figcaption {
-  text-align: center;
-  margin-top: 0.4rem;
-  font-size: 0.85em;
-  opacity: 0.75;
-}
-.colormap-dots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  justify-content: center;
-  margin-top: 0.75rem;
-}
-.colormap-dots a {
-  font-size: 0.6rem;
-  line-height: 1;
-  text-decoration: none;
-  opacity: 0.35;
-  transition: opacity 0.15s;
-}
-.colormap-dots a:hover,
-.colormap-dots a:focus {
-  opacity: 1;
-}
-@media (min-width: 640px) {
-  .colormap-slide { flex-basis: 45%; }
-}
-</style>
 
 <p>Every one of those eleven renders lives in the cache under its own hash. The
 first time each colormap is requested it costs a full render; every time

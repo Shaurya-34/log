@@ -532,4 +532,48 @@
       }
     );
   });
+
+  /* ------------------------------------------------------------
+     Colormap carousel dots
+
+     Plain anchor navigation loses to the track's mandatory scroll
+     snapping: the browser scrolls the *page* down to the slide
+     instead of scrolling the track sideways to it. Drive the
+     horizontal scroll directly instead, and keep the page still.
+     ------------------------------------------------------------ */
+  run(function () {
+    var dots = Array.prototype.slice.call(
+      document.querySelectorAll(".colormap-dots a")
+    );
+
+    if (!dots.length) {
+      return;
+    }
+
+    dots.forEach(function (dot) {
+      dot.addEventListener(
+        "click",
+        function (e) {
+          var id = dot.getAttribute("href");
+
+          var slide =
+            id && id.charAt(0) === "#"
+              ? document.getElementById(id.slice(1))
+              : null;
+
+          if (!slide) {
+            return;
+          }
+
+          e.preventDefault();
+
+          slide.scrollIntoView({
+            behavior: reduced ? "auto" : "smooth",
+            block: "nearest",
+            inline: "center"
+          });
+        }
+      );
+    });
+  });
 })();

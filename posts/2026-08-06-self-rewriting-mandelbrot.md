@@ -158,60 +158,6 @@ matrix underneath each one - only the last step of the pipeline changes.
   </div>
 </div>
 
-<style>
-.colormap-carousel {
-  margin: 1.5rem 0 2rem;
-}
-.colormap-track {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  padding-bottom: 0.25rem;
-}
-.colormap-slide {
-  flex: 0 0 85%;
-  max-width: 420px;
-  scroll-snap-align: center;
-  scroll-margin-left: 1rem;
-  margin: 0;
-}
-.colormap-slide img {
-  width: 100%;
-  display: block;
-  border-radius: 4px;
-}
-.colormap-slide figcaption {
-  text-align: center;
-  margin-top: 0.4rem;
-  font-size: 0.85em;
-  opacity: 0.75;
-}
-.colormap-dots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  justify-content: center;
-  margin-top: 0.75rem;
-}
-.colormap-dots a {
-  font-size: 0.6rem;
-  line-height: 1;
-  text-decoration: none;
-  opacity: 0.35;
-  transition: opacity 0.15s;
-}
-.colormap-dots a:hover,
-.colormap-dots a:focus {
-  opacity: 1;
-}
-@media (min-width: 640px) {
-  .colormap-slide { flex-basis: 45%; }
-}
-</style>
 
 Every one of those eleven renders lives in the cache under its own hash. The
 first time each colormap is requested it costs a full render; every time
