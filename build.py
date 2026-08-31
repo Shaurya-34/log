@@ -78,30 +78,35 @@ COVER_DEFAULTS = {
         "kicker": "A NOTE ON PHYSICAL SYSTEMS, MODELS, AND THE LIMITS OF EFFECTIVE DESCRIPTION.",
         "quote": "The map is not the territory.",
         "author": "N. Wiener",
+        "diagram_label": "HALTING BOUNDARY",
     },
     "self-rewriting-mandelbrot": {
         "cover": "images/covers/self-rewriting-mandelbrot.svg",
         "kicker": "A SMALL EXPERIMENT IN SELF-MODIFICATION AND CODE THAT CHANGES ITS OWN RULES.",
         "quote": "A program can become part of its own memory.",
         "author": "sslog",
+        "diagram_label": "SELF-SIMILARITY",
     },
     "never-repeating-never-leaving": {
         "cover": "images/covers/never-repeating-never-leaving.svg",
         "kicker": "ON STRANGE ATTRACTORS, DYNAMICAL SYSTEMS, AND STRUCTURES THAT NEVER SETTLE.",
         "quote": "Never repeating. Never leaving.",
         "author": "sslog",
+        "diagram_label": "STRANGE ATTRACTOR",
     },
     "marching-with-rays": {
         "cover": "images/covers/marching-with-rays.svg",
         "kicker": "A VISUAL WALK THROUGH RAY MARCHING, DISTANCE FIELDS, AND GEOMETRY.",
         "quote": "The image is the end of a chain of questions.",
         "author": "sslog",
+        "diagram_label": "DISTANCE FIELD",
     },
     "grok-grok": {
         "cover": "images/covers/grok-grok.svg",
         "kicker": "WHAT HAPPENS WHEN A MODEL FINALLY FINDS THE RULE?",
         "quote": "The model looked done. Then it suddenly learned.",
         "author": "sslog",
+        "diagram_label": "GENERALIZATION",
     },
 }
 
@@ -211,6 +216,7 @@ def parse_post(path):
         "cover_kicker": meta.get("cover_kicker", defaults.get("kicker", "")),
         "cover_quote": meta.get("cover_quote", defaults.get("quote", "")),
         "cover_quote_author": meta.get("cover_quote_author", defaults.get("author", "")),
+        "diagram_label": meta.get("diagram_label", defaults.get("diagram_label", "")),
         "body_md": body,
         "read_time": max(1, round(len(re.findall(r"\b\w+\b", body)) / 220)),
     }
@@ -259,15 +265,21 @@ def build_post(post, newer, older):
             page_foot('<a href="index.html">Index</a>'))
 
 
-def cover_markup(post):
+def cover_markup(post, index):
     image = (f'<img src="{html.escape(post["cover"])}" alt="" loading="lazy">'
              if post["cover"] else '<div class="cover-placeholder" aria-hidden="true"><span>SSLOG</span></div>')
+    fig_chrome = ""
+    if post["cover"] and post["diagram_label"]:
+        fig_chrome = ('<div class="cover-fig-chrome">'
+                      f'<span>FIG_{index + 1:03d}</span>'
+                      f'<span>[ {html.escape(post["diagram_label"])} ]</span>'
+                      '</div>')
     kicker = post["cover_kicker"] or ", ".join(post["tags"][:3]).upper()
     quote = post["cover_quote"]
     quote_html = (f'<div class="cover-quote"><p>{html.escape(quote)}</p>'
                   f'<small>— {html.escape(post["cover_quote_author"])}</small></div>'
                   if quote else '<div class="cover-quote"><p>NOTES FROM THE RABBIT HOLE.</p></div>')
-    return (f'<div class="cover-image">{image}</div>\n'
+    return (f'<div class="cover-image">{fig_chrome}{image}</div>\n'
             f'<div class="cover-kicker">{html.escape(kicker)}</div>\n{quote_html}')
 
 
@@ -294,7 +306,7 @@ def build_index(posts):
             f'<h1>{html.escape(p["title"])}</h1>'
             f'<div class="feature-grid">'
             f'<div class="feature-description">{html.escape(p["description"])}</div>'
-            f'{cover_markup(p)}'
+            f'{cover_markup(p, i)}'
             f'<div class="feature-meta"><span>{p["date"]:%d %b %Y}<br>~ {p["read_time"]} min read</span>'
             f'<span>{html.escape(tags)}</span><span>∎</span></div>'
             f'</div></article>')

@@ -43,4 +43,13 @@
     <path d="M665 290H695M665 360H695" opacity=".5"/>
     <path d="M705 325H735" opacity=".5"/>
   </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M300 300H345" opacity=".55"/>
+    <path d="M740 325H785" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="350" y="304">RAY</text>
+    <text x="790" y="329">STEP</text>
+  </g>
 </svg>

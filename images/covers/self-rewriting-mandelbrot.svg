@@ -33,4 +33,12 @@
 
   <path d="M145 490L110 520M145 490L115 475"
         stroke="#17150f" stroke-width="1.2"/>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M558 307H605" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="610" y="311">SELF-SIMILAR</text>
+    <text x="120" y="440">REWRITES →</text>
+  </g>
 </svg>

@@ -28,4 +28,12 @@
     <circle cx="630" cy="325" r="4" fill="#faf9f7"/>
     <circle cx="500" cy="455" r="4" fill="#faf9f7"/>
   </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M598 325H645" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="650" y="329">BOUNDED</text>
+    <text x="820" y="55">ESCAPES →</text>
+  </g>
 </svg>

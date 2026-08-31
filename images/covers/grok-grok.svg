@@ -56,4 +56,13 @@
   <g stroke="#17150f" opacity=".18">
     <path d="M80 90H470M80 560H470"/>
   </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M250 400H295" opacity=".55"/>
+    <path d="M700 250H745" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="300" y="404">NOISE</text>
+    <text x="750" y="254">GENERALIZES →</text>
+  </g>
 </svg>

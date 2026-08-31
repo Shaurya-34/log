@@ -51,4 +51,12 @@
     <circle cx="145" cy="470" r="4" fill="#faf9f7"/>
     <circle cx="790" cy="280" r="4" fill="#faf9f7"/>
   </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M565 320H610" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="615" y="324">ATTRACTOR</text>
+    <text x="100" y="440">NEVER CLOSES →</text>
+  </g>
 </svg>
