@@ -515,10 +515,13 @@ article.post.entry::after {
 
 /* ---- article page: centred prose, wide figures -------------------- */
 /* Real posts get a wider shell than the rest of the site. Prose keeps a
-   narrow, centred measure; figures, code blocks and rules break out past
-   it on both sides, staying centred on the same axis. .entry is only ever
-   set on posts, so About / Contact / Privacy / 404 keep the original
-   narrow wrap. Below 60rem the layout is unchanged. */
+   narrow, centred measure and only figures break out past it, staying
+   centred on the same axis. Code blocks deliberately stay in the text
+   column: almost every block on the site is under 400px of actual
+   content, so widening them just produced large empty slabs that broke
+   the reading rhythm (the rare wide one scrolls via pre's overflow-x).
+   .entry is only ever set on posts, so About / Contact / Privacy / 404
+   keep the original narrow wrap. Below 60rem the layout is unchanged. */
 
 @media (min-width: 60rem) {
   .wrap:has(article.post.entry) { max-width: 56rem; }
@@ -536,8 +539,6 @@ article.post.entry::after {
   article.post.entry::after { grid-column: text-start / text-end; }
 
   article.post.entry > figure,
-  article.post.entry > pre,
-  article.post.entry > hr,
   article.post.entry > .colormap-carousel { grid-column: wide-start / wide-end; }
 }
 
