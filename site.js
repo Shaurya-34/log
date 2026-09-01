@@ -293,10 +293,18 @@
 
       var cell = cells[active];
 
+      /* head and cell share the same offsetParent (.tape-viewport), so
+         cell.offsetLeft is already in the right coordinate frame for
+         positioning head via translateX. Subtracting viewport.offsetLeft
+         here was mixing that in with viewport's own offset relative to
+         ITS parent (.tape-nav) - a different frame entirely - which threw
+         the head off-center by exactly that amount. Harmless-looking at
+         index 0 (a small constant offset near the tape's own left edge)
+         but very visible once the active cell moved to the far end of
+         the tape. */
       var x =
         cell.offsetLeft +
-        cell.offsetWidth / 2 -
-        viewport.offsetLeft;
+        cell.offsetWidth / 2;
 
       if (!animate || reduced) {
         head.style.transition = "none";
