@@ -90,22 +90,32 @@
 
 .tape-viewport::-webkit-scrollbar { display: none; }
 
-/* The blank run-out either side, and the only thing that lets the
-   first and last cells reach the centre of the frame. Sized in vw, not
-   percent and not measured pixels, for one reason: it can never come
-   out too small. A percentage resolves against a width:max-content box
-   inconsistently, and a measured pixel value is a snapshot that goes
-   stale the moment the frame changes width - and a run-out that is even
-   slightly short is a hard wall, because the last cell then sits past
-   the end of the scroll range and simply cannot be reached. The frame
-   is never wider than the window, so half the window is always enough;
-   any surplus is just extra blank tape, which the settle-snap in
-   site.js pulls back out of. */
 .tape-track {
   display: flex;
   align-items: center;
   width: max-content;
-  padding-inline: calc(50vw - (var(--cell-w) / 2));
+}
+
+/* The blank run-out either side, and the only thing that lets the first
+   and last cells reach the centre of the frame. A run-out that is even
+   slightly short is a hard wall: the end cells then sit past the end of
+   the scroll range and simply cannot be reached, so this has to be
+   right on every engine.
+
+   Real flex items rather than padding on the track, because the track is
+   width:max-content under a global box-sizing:border-box - which puts
+   padding *inside* that width instead of extending it, leaving whether
+   the run-out exists at all up to the engine. A flex item's base size is
+   unambiguous: max-content is the sum of the items, spacers included.
+
+   Sized in vw, so it is never a stale measurement. The frame is never
+   wider than the window, so half the window is always enough; any
+   surplus is just blank tape, which the settle-snap in site.js pulls
+   back out of. */
+.tape-track::before,
+.tape-track::after {
+  content: "";
+  flex: 0 0 calc(50vw - (var(--cell-w) / 2));
 }
 
 .tape-cell {

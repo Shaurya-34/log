@@ -292,6 +292,33 @@
       return cell.offsetLeft + cell.offsetWidth / 2 - viewport.clientWidth / 2;
     }
 
+    /* Safety net for the run-out. Its whole job is reachability: if the
+       blank tape either side is even slightly short, the end cells sit
+       past the end of the scroll range and no amount of scrolling can
+       bring them under the head - a silent, permanent wall that has
+       already shipped here more than once. CSS owns the run-out (see
+       .tape-track in home.css); this only checks the result and tops it
+       up in pixels if some engine disagreed. Re-checked on every reflow,
+       so a value that later goes stale is simply recomputed. */
+    var track = viewport.querySelector(".tape-track");
+
+    function repairRunout() {
+      if (!track || viewport.clientWidth < 1 || cells[0].offsetWidth < 1) {
+        return;
+      }
+
+      var max = viewport.scrollWidth - viewport.clientWidth;
+
+      if (targetFor(0) >= -1 && targetFor(cells.length - 1) <= max + 1) {
+        return;
+      }
+
+      var pad = viewport.clientWidth / 2 - cells[0].offsetWidth / 2;
+
+      track.style.paddingLeft = pad + "px";
+      track.style.paddingRight = pad + "px";
+    }
+
     /* Which cell currently sits closest to the head. */
     function nearestCell() {
       var centre = viewport.scrollLeft + viewport.clientWidth / 2;
@@ -486,6 +513,7 @@
     }
 
     function reflow() {
+      repairRunout();
       centre(active, false);
     }
 
