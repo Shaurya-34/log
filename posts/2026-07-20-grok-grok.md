@@ -56,7 +56,7 @@ It turned out I'd already done a lot more with this than I remembered.
   </label>
   <figcaption>Modular addition, seed 0. Training accuracy hits 100% within 1,000 epochs; validation sits flat for thousands more, then jumps to 100%. Switch weight decay off and the jump never arrives - validation never passes 12%. Drag the slider to scrub through training.</figcaption>
   <noscript>
-    <img src="images/wedge1/phase1_wd1_seed0.png" alt="Training and validation accuracy curves over training steps, with validation accuracy jumping sharply thousands of steps after training accuracy saturates.">
+    <img src="images/wedge1/phase1_wd1_seed0.png" alt="Training and validation accuracy curves over training steps, with validation accuracy jumping sharply thousands of steps after training accuracy saturates." loading="lazy">
   </noscript>
 </figure>
 
@@ -67,7 +67,7 @@ never happens at all. Second, I could actually look inside the grokked network
 and see what it was doing, not just that it worked.
 
 <figure>
-  <img src="images/wedge1/phase3_fourier_spectrum.png" alt="Frequency spectrum of the trained embedding showing a small number of sharp spikes rather than a flat noisy spread.">
+  <img src="images/wedge1/phase3_fourier_spectrum.png" alt="Frequency spectrum of the trained embedding showing a small number of sharp spikes rather than a flat noisy spread." loading="lazy">
   <figcaption>The grokked network's internal representation, broken into frequencies. A handful of sharp spikes, not noise. It's not memorizing input-output pairs, it's computing with a small set of frequencies, the same trick you'd use to do modular arithmetic with sine and cosine waves.</figcaption>
 </figure>
 
@@ -90,7 +90,7 @@ training examples, the grokked one was just sturdier in every way I tried to
 break it.
 
 <figure>
-  <img src="images/wedge1/phase4_pruning.png" alt="Bar chart comparing accuracy after pruning 30% of network weights, showing the grokked model near 97% and the memorizing model collapsed near zero.">
+  <img src="images/wedge1/phase4_pruning.png" alt="Bar chart comparing accuracy after pruning 30% of network weights, showing the grokked model near 97% and the memorizing model collapsed near zero." loading="lazy">
   <figcaption>Cut the smallest 30% of the network's weights and the grokked model barely notices, still around 97% accurate. Do the same to a model that only memorized the training set and it falls apart. Whatever grokking builds is more redundant, more real, than what memorization leaves behind.</figcaption>
 </figure>
 
@@ -99,7 +99,7 @@ decay further, remove it entirely partway through, add noise to the labels. None
 of it worked.
 
 <figure>
-  <img src="images/wedge1/antigrok_wd50.png" alt="Training curve showing accuracy staying high despite an aggressive attempt to undo grokking.">
+  <img src="images/wedge1/antigrok_wd50.png" alt="Training curve showing accuracy staying high despite an aggressive attempt to undo grokking." loading="lazy">
   <figcaption>Trying to unlearn a grokked solution, several different ways. Once the network finds the real algorithm for modular addition, it does not let go.</figcaption>
 </figure>
 
@@ -195,7 +195,7 @@ against how much that region's true values vary, essentially asking "did this
 beat just predicting the average"), the honest result was clear and not close.
 
 <figure>
-  <img src="images/wedge1/mlp_ood_grid.png" alt="Grid of prediction curves for a neural network trained on Lennard-Jones potential data, showing accurate fits inside the training window and diverging or flat predictions outside it.">
+  <img src="images/wedge1/mlp_ood_grid.png" alt="Grid of prediction curves for a neural network trained on Lennard-Jones potential data, showing accurate fits inside the training window and diverging or flat predictions outside it." loading="lazy">
   <figcaption>A plain neural network trained on Lennard-Jones data, tested past its training window (shaded). Inside the window it tracks the true curve closely. A short distance outside it, the prediction goes flat or drifts off in a straight line while the real curve keeps bending.</figcaption>
 </figure>
 
@@ -250,7 +250,7 @@ because the model finally had access to the right shape. But there was a twist
 I didn't expect.
 
 <figure>
-  <img src="images/wedge1/p2_basis.png" alt="Bar chart of learned coefficients across a menu of candidate physical terms, at increasing weight decay strengths, showing worse recovery of the true terms as weight decay increases.">
+  <img src="images/wedge1/p2_basis.png" alt="Bar chart of learned coefficients across a menu of candidate physical terms, at increasing weight decay strengths, showing worse recovery of the true terms as weight decay increases." loading="lazy">
   <figcaption>Same setup, but the model can only choose from a fixed menu of physics-shaped ingredients. Turning weight decay up, the exact ingredient behind grokking, made recovery of the true two terms worse, not better.</figcaption>
 </figure>
 
@@ -271,7 +271,7 @@ matters," L1 seemed like the more honest tool for finding it. So I ran the
 direct comparison.
 
 <figure>
-  <img src="images/wedge1/l1_vs_l2_weights.png" alt="Bar chart comparing learned coefficients under weak L1 regularization, which closely match the true two ingredients with everything else near zero, against L2 weight decay, which leaves nonzero weight spread across several decoy terms.">
+  <img src="images/wedge1/l1_vs_l2_weights.png" alt="Bar chart comparing learned coefficients under weak L1 regularization, which closely match the true two ingredients with everything else near zero, against L2 weight decay, which leaves nonzero weight spread across several decoy terms." loading="lazy">
   <figcaption>Same test, L1 against L2. A light L1 penalty finds the true two ingredients almost exactly and zeroes out everything else. L2, the actual mechanism behind grokking, never gets there, and gets worse the harder it's pushed.</figcaption>
 </figure>
 

@@ -1096,10 +1096,11 @@
        exact same distance function the ray uses - not an approximation
        of it. A soft alpha falloff near the zero level set gives the
        outline a slight anti-alias, which felt right for an article whose
-       last section is exactly that. */
+       last section is exactly that. Costs ~350,000 scene() evaluations
+       (~80-90ms on desktop, likely several times that on a phone), so the
+       caller only invokes this when the pixels it would produce have
+       actually changed - see resetCanvas(). */
     function renderBackground() {
-      readColors();
-
       var rgb = hexToRgb(colorInk);
       var img = ctx.createImageData(W, H);
       var data = img.data;
@@ -1130,17 +1131,29 @@
       ctx.fill();
     }
 
+    /* Cache key for the last background render: mode changes the shape
+       (min vs smin), colorInk changes the theme. resetCanvas() runs on
+       every click including every ray cast, so only actually re-running
+       the ~350,000-pixel fill when one of these has changed matters on a
+       phone - reusing the same bitmap the rest of the time keeps a click
+       to sub-millisecond instead of ~90ms+. */
+    var bgKey = null;
+
     function resetCanvas() {
       if (raf) {
         cancelAnimationFrame(raf);
         raf = null;
       }
 
-      /* Recomputed on every reset, not just on mode change: this runs on
-         every click, and re-blitting a cached bitmap would leave the
-         outline showing whatever theme was active when it was last
-         built, wrong the moment the reader toggles dark/light. */
-      renderBackground();
+      readColors();
+
+      var key = mode + colorInk;
+
+      if (!bg || bgKey !== key) {
+        renderBackground();
+        bgKey = key;
+      }
+
       ctx.clearRect(0, 0, W, H);
       ctx.putImageData(bg, 0, 0);
       drawOrigin();

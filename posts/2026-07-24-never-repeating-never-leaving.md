@@ -52,7 +52,7 @@ calling the butterfly.
   <canvas class="chaos-canvas" width="852" height="480" role="img" aria-label="Two Lorenz attractor trajectories, starting a millionth apart, drawn as they diverge over time"></canvas>
   <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge. Drag sigma, rho or beta to see how the shape itself depends on the constants, not just the starting point; reset to default returns to Lorenz's own 10, 28, 8/3.</figcaption>
   <noscript>
-    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line.">
+    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line." loading="lazy">
   </noscript>
 </figure>
 
@@ -184,7 +184,7 @@ anything structural. It produces a layered, shell-like spiral that looks
 like something turned on a lathe.
 
 <figure>
-  <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form.">
+  <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form." loading="lazy">
   <figcaption>Four systems, one framework, one animation clock. Lorenz, Rössler, Aizawa, Thomas.</figcaption>
 </figure>
 
@@ -217,7 +217,7 @@ dense, others almost never. I rendered half a million iterations as a
 single static scatter, coloured by iteration order:
 
 <figure>
-  <img src="images/attractors/clifford.png" alt="A dense static scatter plot of the Clifford attractor, forming sweeping curved bands and lobes that look like folded ribbons.">
+  <img src="images/attractors/clifford.png" alt="A dense static scatter plot of the Clifford attractor, forming sweeping curved bands and lobes that look like folded ribbons." loading="lazy">
   <figcaption>The Clifford attractor. No animation, no path, no dt. Half a million points, and the shape is what the density does.</figcaption>
 </figure>
 

@@ -54,7 +54,7 @@ whatever they hit, and there's an image. First real output, one sphere,
 one light:
 
 <figure>
-  <img src="images/raymarcher/output.png" alt="A single shaded sphere on a dark background, rendered with a raymarcher.">
+  <img src="images/raymarcher/output.png" alt="A single shaded sphere on a dark background, rendered with a raymarcher." loading="lazy">
   <figcaption>The first thing that rendered. One sphere, one point light, plain diffuse shading. Sphere tracing already works.</figcaption>
 </figure>
 
@@ -78,7 +78,7 @@ That works, technically. It also produces a hard, visible seam exactly
 where the two distance fields cross over:
 
 <figure>
-  <img src="images/raymarcher/output1.png" alt="A sphere and a box rendered side by side, with a visible hard seam where the two shapes meet.">
+  <img src="images/raymarcher/output1.png" alt="A sphere and a box rendered side by side, with a visible hard seam where the two shapes meet." loading="lazy">
   <figcaption>Plain min() of two SDFs. Correct, and correctly ugly at the boundary.</figcaption>
 </figure>
 
@@ -102,7 +102,7 @@ into one continuous surface, like they were always a single piece of
 material:
 
 <figure>
-  <img src="images/raymarcher/output2.png" alt="A sphere and a box merged into a single smooth, continuous surface.">
+  <img src="images/raymarcher/output2.png" alt="A sphere and a box merged into a single smooth, continuous surface." loading="lazy">
   <figcaption>Same sphere, same box, smin() instead of min(). One organic blob instead of two shapes colliding.</figcaption>
 </figure>
 
@@ -130,7 +130,7 @@ or fully out, no in-between, which is what a staircase pattern along every
 edge looks like:
 
 <figure>
-  <img src="images/raymarcher/rough_edges.png" alt="Extreme close-up of a rendered surface edge, showing a visible jagged staircase pattern.">
+  <img src="images/raymarcher/rough_edges.png" alt="Extreme close-up of a rendered surface edge, showing a visible jagged staircase pattern." loading="lazy">
   <figcaption>One sample per pixel. The curve is smooth; the pixels sampling it are not.</figcaption>
 </figure>
 
@@ -149,7 +149,7 @@ Four samples in a fixed quadrant pattern was enough to soften the
 staircase into a clean curve:
 
 <figure>
-  <img src="images/raymarcher/after_anti_aliasing.png" alt="The same close-up edge as before, now smooth instead of jagged.">
+  <img src="images/raymarcher/after_anti_aliasing.png" alt="The same close-up edge as before, now smooth instead of jagged." loading="lazy">
   <figcaption>Same edge, same camera, four samples per pixel instead of one. The steps are gone.</figcaption>
 </figure>
 

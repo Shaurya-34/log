@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
   <link rel="stylesheet" href="style.css?v=3f3a449b">
-  <script src="site.js?v=ae615ffb" defer></script>
+  <script src="site.js?v=e18be0ea" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Marching with rays","description":"Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.","url":"https://sslog.dpdns.org/marching-with-rays.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/marching-with-rays.html"},"datePublished":"2026-07-21T00:00:00+00:00","dateModified":"2026-07-21T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["graphics","java"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -89,7 +89,7 @@ repeat up to maxSteps:
 whatever they hit, and there's an image. First real output, one sphere,
 one light:</p>
 <figure>
-  <img src="images/raymarcher/output.png" alt="A single shaded sphere on a dark background, rendered with a raymarcher.">
+  <img src="images/raymarcher/output.png" alt="A single shaded sphere on a dark background, rendered with a raymarcher." loading="lazy">
   <figcaption>The first thing that rendered. One sphere, one point light, plain diffuse shading. Sphere tracing already works.</figcaption>
 </figure>
 
@@ -107,7 +107,7 @@ way to combine them is to take whichever is closer at any given point:</p>
 <p>That works, technically. It also produces a hard, visible seam exactly
 where the two distance fields cross over:</p>
 <figure>
-  <img src="images/raymarcher/output1.png" alt="A sphere and a box rendered side by side, with a visible hard seam where the two shapes meet.">
+  <img src="images/raymarcher/output1.png" alt="A sphere and a box rendered side by side, with a visible hard seam where the two shapes meet." loading="lazy">
   <figcaption>Plain min() of two SDFs. Correct, and correctly ugly at the boundary.</figcaption>
 </figure>
 
@@ -126,7 +126,7 @@ full:</p>
 into one continuous surface, like they were always a single piece of
 material:</p>
 <figure>
-  <img src="images/raymarcher/output2.png" alt="A sphere and a box merged into a single smooth, continuous surface.">
+  <img src="images/raymarcher/output2.png" alt="A sphere and a box merged into a single smooth, continuous surface." loading="lazy">
   <figcaption>Same sphere, same box, smin() instead of min(). One organic blob instead of two shapes colliding.</figcaption>
 </figure>
 
@@ -151,7 +151,7 @@ exactly one point, so a curve crossing a pixel either counted as fully in
 or fully out, no in-between, which is what a staircase pattern along every
 edge looks like:</p>
 <figure>
-  <img src="images/raymarcher/rough_edges.png" alt="Extreme close-up of a rendered surface edge, showing a visible jagged staircase pattern.">
+  <img src="images/raymarcher/rough_edges.png" alt="Extreme close-up of a rendered surface edge, showing a visible jagged staircase pattern." loading="lazy">
   <figcaption>One sample per pixel. The curve is smooth; the pixels sampling it are not.</figcaption>
 </figure>
 
@@ -166,7 +166,7 @@ write average(accumulated colors)
 <p>Four samples in a fixed quadrant pattern was enough to soften the
 staircase into a clean curve:</p>
 <figure>
-  <img src="images/raymarcher/after_anti_aliasing.png" alt="The same close-up edge as before, now smooth instead of jagged.">
+  <img src="images/raymarcher/after_anti_aliasing.png" alt="The same close-up edge as before, now smooth instead of jagged." loading="lazy">
   <figcaption>Same edge, same camera, four samples per pixel instead of one. The steps are gone.</figcaption>
 </figure>
 

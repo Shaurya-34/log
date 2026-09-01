@@ -26,7 +26,7 @@ every pixel is either fully in or fully out, with no shading to suggest how
 close a point came to escaping.
 
 <figure>
-  <img src="images/mandelbrot/high_res_b_w.png" alt="An early black-and-white Mandelbrot render showing only set membership, with no shading or color gradient.">
+  <img src="images/mandelbrot/high_res_b_w.png" alt="An early black-and-white Mandelbrot render showing only set membership, with no shading or color gradient." loading="lazy">
   <figcaption>The first working version. In or out, nothing in between.</figcaption>
 </figure>
 
@@ -99,47 +99,47 @@ matrix underneath each one - only the last step of the pipeline changes.
 <div class="colormap-carousel">
   <div class="colormap-track">
     <figure class="colormap-slide color" id="cm-inferno">
-      <img class="color" src="images/mandelbrot/mandelbrot_inferno.png" alt="The Mandelbrot set rendered with the inferno colormap: dark background with bright orange and yellow escape bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_inferno.png" alt="The Mandelbrot set rendered with the inferno colormap: dark background with bright orange and yellow escape bands." loading="lazy">
       <figcaption>inferno - the default.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-viridis">
-      <img class="color" src="images/mandelbrot/mandelbrot_viridis.png" alt="The Mandelbrot set rendered with the viridis colormap: dark blue-purple background with green and yellow escape bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_viridis.png" alt="The Mandelbrot set rendered with the viridis colormap: dark blue-purple background with green and yellow escape bands." loading="lazy">
       <figcaption>viridis.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-magma">
-      <img class="color" src="images/mandelbrot/mandelbrot_magma.png" alt="The Mandelbrot set rendered with the magma colormap: dark purple-black background with pink and pale yellow escape bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_magma.png" alt="The Mandelbrot set rendered with the magma colormap: dark purple-black background with pink and pale yellow escape bands." loading="lazy">
       <figcaption>magma.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-plasma">
-      <img class="color" src="images/mandelbrot/mandelbrot_plasma.png" alt="The Mandelbrot set rendered with the plasma colormap: dark violet background with hot pink and yellow escape bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_plasma.png" alt="The Mandelbrot set rendered with the plasma colormap: dark violet background with hot pink and yellow escape bands." loading="lazy">
       <figcaption>plasma.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-cividis">
-      <img class="color" src="images/mandelbrot/mandelbrot_cividis.png" alt="The Mandelbrot set rendered with the cividis colormap: muted blue-to-yellow gradient.">
+      <img class="color" src="images/mandelbrot/mandelbrot_cividis.png" alt="The Mandelbrot set rendered with the cividis colormap: muted blue-to-yellow gradient." loading="lazy">
       <figcaption>cividis.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-twilight">
-      <img class="color" src="images/mandelbrot/mandelbrot_twilight.png" alt="The Mandelbrot set rendered with the twilight colormap: cyclic pale purple and blue bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_twilight.png" alt="The Mandelbrot set rendered with the twilight colormap: cyclic pale purple and blue bands." loading="lazy">
       <figcaption>twilight.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-turbo">
-      <img class="color" src="images/mandelbrot/mandelbrot_turbo.png" alt="The Mandelbrot set rendered with the turbo colormap: bright rainbow bands from blue through red.">
+      <img class="color" src="images/mandelbrot/mandelbrot_turbo.png" alt="The Mandelbrot set rendered with the turbo colormap: bright rainbow bands from blue through red." loading="lazy">
       <figcaption>turbo.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-jet">
-      <img class="color" src="images/mandelbrot/mandelbrot_jet.png" alt="The Mandelbrot set rendered with the jet colormap: classic blue-to-red rainbow bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_jet.png" alt="The Mandelbrot set rendered with the jet colormap: classic blue-to-red rainbow bands." loading="lazy">
       <figcaption>jet.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-rainbow">
-      <img class="color" src="images/mandelbrot/mandelbrot_rainbow.png" alt="The Mandelbrot set rendered with the rainbow colormap: saturated rainbow escape bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_rainbow.png" alt="The Mandelbrot set rendered with the rainbow colormap: saturated rainbow escape bands." loading="lazy">
       <figcaption>rainbow.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-gist-rainbow">
-      <img class="color" src="images/mandelbrot/mandelbrot_gist_rainbow.png" alt="The Mandelbrot set rendered with the gist_rainbow colormap: high-contrast rainbow escape bands.">
+      <img class="color" src="images/mandelbrot/mandelbrot_gist_rainbow.png" alt="The Mandelbrot set rendered with the gist_rainbow colormap: high-contrast rainbow escape bands." loading="lazy">
       <figcaption>gist_rainbow.</figcaption>
     </figure>
     <figure class="colormap-slide color" id="cm-nipy-spectral">
-      <img class="color" src="images/mandelbrot/mandelbrot_nipy_spectral.png" alt="The Mandelbrot set rendered with the nipy_spectral colormap: dense spectral escape bands from black through violet.">
+      <img class="color" src="images/mandelbrot/mandelbrot_nipy_spectral.png" alt="The Mandelbrot set rendered with the nipy_spectral colormap: dense spectral escape bands from black through violet." loading="lazy">
       <figcaption>nipy_spectral - my favorite of the set, mostly because it looks the least like a default.</figcaption>
     </figure>
   </div>
@@ -178,7 +178,7 @@ escape-time computation, rendering, embedded cache, source rewriting.
 Everything else is future work, on purpose.
 
 <figure>
-  <img src="images/mandelbrot/mandel_dotted.png" alt="An early low-resolution scatter-style test render of the Mandelbrot set.">
+  <img src="images/mandelbrot/mandel_dotted.png" alt="An early low-resolution scatter-style test render of the Mandelbrot set." loading="lazy">
   <figcaption>One of the throwaway sanity checks from before the pipeline was trustworthy - the same instinct as plotting a spiral before touching real math.</figcaption>
 </figure>
 
@@ -193,12 +193,12 @@ from Base64 weren't meaningfully faster than recomputing, there'd be no
 reason to bother rewriting the source file at all.
 
 <figure class="color">
-  <img class="color" src="images/mandelbrot/cache.png" alt="A terminal showing mandel.py run twice: the first run prints 'Cache miss' with an elapsed time of 7.64 seconds, the second prints 'Cache hit' with an elapsed time of 0.01 seconds, both followed by the identical SHA-256 cache key.">
+  <img class="color" src="images/mandelbrot/cache.png" alt="A terminal showing mandel.py run twice: the first run prints 'Cache miss' with an elapsed time of 7.64 seconds, the second prints 'Cache hit' with an elapsed time of 0.01 seconds, both followed by the identical SHA-256 cache key." loading="lazy">
   <figcaption>Same viewport, same parameters, same key both times - 7.64s to render it, 0.01s to decode it back out of the source file.</figcaption>
 </figure>
 
 <figure class="color">
-  <img class="color" src="images/mandelbrot/Sequence.png" alt="A terminal showing a Python script that iterates z = z² + c for a single point (c=1) and prints each value; the sequence diverges rapidly by z(9)">
+  <img class="color" src="images/mandelbrot/Sequence.png" alt="A terminal showing a Python script that iterates z = z² + c for a single point (c=1) and prints each value; the sequence diverges rapidly by z(9)" loading="lazy">
   <figcaption>Before any of it was a NumPy array, it was this - one point, one recurrence, watched by hand. c=1 escapes fast enough that by z(9) you're looking at a 43-digit number.</figcaption>
 </figure>
 
