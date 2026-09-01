@@ -22,8 +22,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=9977f962">
-  <script src="site.js?v=fcec6b7b" defer></script>
+  <link rel="stylesheet" href="style.css?v=d102e66e">
+  <script src="site.js?v=ec5f9523" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Never repeating, never leaving","description":"Four chaotic systems, one Python framework, and the one that refused to fit it.","url":"https://sslog.dpdns.org/never-repeating-never-leaving.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/never-repeating-never-leaving.html"},"datePublished":"2026-07-24T00:00:00+00:00","dateModified":"2026-07-24T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["chaos","python","visualization"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -78,8 +78,20 @@ calling the butterfly.</p>
     <button type="button" class="chaos-restart">restart, nudged</button>
     <p class="chaos-readout" aria-live="polite">separation <b data-out="sep">-</b></p>
   </div>
+  <div class="chaos-params">
+    <label>sigma <output data-val="sigma">10.0</output>
+      <input type="range" data-param="sigma" min="1" max="20" value="10" step="0.5">
+    </label>
+    <label>rho <output data-val="rho">28.0</output>
+      <input type="range" data-param="rho" min="1" max="45" value="28" step="0.5">
+    </label>
+    <label>beta <output data-val="beta">2.67</output>
+      <input type="range" data-param="beta" min="0.5" max="5" value="2.667" step="0.1">
+    </label>
+    <button type="button" class="chaos-defaults">reset to default</button>
+  </div>
   <canvas class="chaos-canvas" width="852" height="480" role="img" aria-label="Two Lorenz attractor trajectories, starting a millionth apart, drawn as they diverge over time"></canvas>
-  <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge.</figcaption>
+  <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge. Drag sigma, rho or beta to see how the shape itself depends on the constants, not just the starting point; reset to default returns to Lorenz's own 10, 28, 8/3.</figcaption>
   <noscript>
     <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line.">
   </noscript>

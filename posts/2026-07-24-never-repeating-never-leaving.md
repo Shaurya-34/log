@@ -37,8 +37,20 @@ calling the butterfly.
     <button type="button" class="chaos-restart">restart, nudged</button>
     <p class="chaos-readout" aria-live="polite">separation <b data-out="sep">-</b></p>
   </div>
+  <div class="chaos-params">
+    <label>sigma <output data-val="sigma">10.0</output>
+      <input type="range" data-param="sigma" min="1" max="20" value="10" step="0.5">
+    </label>
+    <label>rho <output data-val="rho">28.0</output>
+      <input type="range" data-param="rho" min="1" max="45" value="28" step="0.5">
+    </label>
+    <label>beta <output data-val="beta">2.67</output>
+      <input type="range" data-param="beta" min="0.5" max="5" value="2.667" step="0.1">
+    </label>
+    <button type="button" class="chaos-defaults">reset to default</button>
+  </div>
   <canvas class="chaos-canvas" width="852" height="480" role="img" aria-label="Two Lorenz attractor trajectories, starting a millionth apart, drawn as they diverge over time"></canvas>
-  <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge.</figcaption>
+  <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge. Drag sigma, rho or beta to see how the shape itself depends on the constants, not just the starting point; reset to default returns to Lorenz's own 10, 28, 8/3.</figcaption>
   <noscript>
     <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line.">
   </noscript>

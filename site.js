@@ -550,9 +550,19 @@
     var canvas = fig.querySelector(".chaos-canvas");
     var ctx = canvas.getContext("2d");
     var restartBtn = fig.querySelector(".chaos-restart");
+    var defaultsBtn = fig.querySelector(".chaos-defaults");
     var sepOut = fig.querySelector('[data-out="sep"]');
+    var paramInputs = Array.prototype.slice.call(
+      fig.querySelectorAll(".chaos-params input[data-param]")
+    );
 
-    var SIGMA = 10, RHO = 28, BETA = 8 / 3;
+    var DEFAULTS = { sigma: 10, rho: 28, beta: 8 / 3 };
+
+    /* sigma/rho/beta are mutable and read from the sliders on every
+       reset, rather than fixed constants, so the reader can explore the
+       shape's dependence on the equation's own constants and not just
+       on where the two trajectories start. */
+    var SIGMA = DEFAULTS.sigma, RHO = DEFAULTS.rho, BETA = DEFAULTS.beta;
     var DT = 0.006;
     var EPSILON = 0.000001;
     var SUBSTEPS_PER_FRAME = 6;
@@ -611,10 +621,28 @@
     var colorInk, colorGrey;
     var a, b, step, raf, prevA, prevB;
 
+    /* The starting point itself, jittered a little on each explicit
+       restart so repeat runs actually look different (see below) - held
+       fixed across slider drags so comparing sigma/rho/beta at a fixed
+       starting point is apples to apples. */
+    var base = [0.1, 0, 0];
+
     function readColors() {
       var cs = getComputedStyle(fig);
       colorInk = cs.getPropertyValue("--ink").trim() || "#161513";
       colorGrey = cs.getPropertyValue("--grey").trim() || "#6f6a62";
+    }
+
+    function rerollBase() {
+      /* Small jitter around the usual [0.1, 0, 0] start: big enough that
+         two restarts trace visibly different paths before settling onto
+         the attractor, small enough to still land in its basin for any
+         of the slider's parameter combinations. */
+      base = [
+        0.1 + (Math.random() * 4 - 2),
+        Math.random() * 4 - 2,
+        Math.random() * 4 - 2
+      ];
     }
 
     function reset() {
@@ -625,8 +653,8 @@
       readColors();
       ctx.clearRect(0, 0, W, H);
 
-      a = [0.1, 0, 0];
-      b = [0.1 + EPSILON, 0, 0];
+      a = base.slice();
+      b = [base[0] + EPSILON, base[1], base[2]];
       prevA = a.slice();
       prevB = b.slice();
       step = 0;
@@ -667,8 +695,8 @@
       readColors();
       ctx.clearRect(0, 0, W, H);
 
-      var s1 = [0.1, 0, 0];
-      var s2 = [0.1 + EPSILON, 0, 0];
+      var s1 = base.slice();
+      var s2 = [base[0] + EPSILON, base[1], base[2]];
       var p1 = s1.slice();
       var p2 = s2.slice();
 
@@ -684,23 +712,71 @@
       sepOut.textContent = formatSep(separation(s1, s2));
     }
 
-    restartBtn.addEventListener("click", function () {
+    function run_() {
       if (reduced) {
         drawStatic();
       } else {
         reset();
         raf = requestAnimationFrame(tick);
       }
+    }
+
+    function formatParam(v) {
+      return v.toFixed(v < 10 ? 2 : 1);
+    }
+
+    /* Sets the actual simulation value and its label from an exact
+       number - NOT from reading the slider back. A range input's value
+       setter silently snaps to the nearest step even when set from JS
+       (e.g. beta's true default 8/3 = 2.667 lands on 2.7, one whole step
+       off), so "reset to default" must carry the exact constant through
+       rather than round-trip it through the slider's own value. */
+    function setParam(name, v) {
+      if (name === "sigma") { SIGMA = v; }
+      if (name === "rho") { RHO = v; }
+      if (name === "beta") { BETA = v; }
+
+      var out = fig.querySelector('[data-val="' + name + '"]');
+
+      if (out) {
+        out.textContent = formatParam(v);
+      }
+    }
+
+    paramInputs.forEach(function (input) {
+      input.addEventListener("input", function () {
+        /* User-dragged values are already step-quantized by the browser,
+           so reading .value back here is exact - no snapping loss. */
+        setParam(input.getAttribute("data-param"), parseFloat(input.value));
+        /* Deliberately does not reroll the starting point: changing one
+           slider while the run stays comparable to the last one is the
+           point, versus restart, which is about the nudge instead. */
+        run_();
+      });
     });
 
-    fig.classList.add("is-ready");
+    restartBtn.addEventListener("click", function () {
+      rerollBase();
+      run_();
+    });
 
-    if (reduced) {
-      drawStatic();
-    } else {
-      reset();
-      raf = requestAnimationFrame(tick);
+    if (defaultsBtn) {
+      defaultsBtn.addEventListener("click", function () {
+        paramInputs.forEach(function (input) {
+          var name = input.getAttribute("data-param");
+
+          input.value = DEFAULTS[name];
+          setParam(name, DEFAULTS[name]);
+        });
+
+        rerollBase();
+        run_();
+      });
     }
+
+    fig.classList.add("is-ready");
+    rerollBase();
+    run_();
   });
 
   /* ------------------------------------------------------------

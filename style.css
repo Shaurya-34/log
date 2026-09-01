@@ -676,6 +676,52 @@ article.post .chaos-demo { margin: 2.75rem 0 3rem; }
 
 .chaos-readout b { font-weight: 400; color: var(--ink); }
 
+.chaos-demo .chaos-params { display: none; }
+.chaos-demo.is-ready .chaos-params { display: flex; }
+
+.chaos-params {
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem 1.5rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.chaos-params label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.chaos-params output {
+  min-width: 2.6em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.chaos-params input[type="range"] {
+  width: 6.5rem;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.chaos-defaults {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.6rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.chaos-defaults:hover { color: var(--ink); border-color: var(--ink); }
+
 .chaos-canvas {
   width: 100%;
   height: auto;
@@ -690,7 +736,8 @@ article.post .chaos-demo figcaption {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chaos-restart { transition: none; }
+  .chaos-restart,
+  .chaos-defaults { transition: none; }
 }
 
 /* ---- colormap carousel ------------------------------------------- */
