@@ -108,23 +108,23 @@
 /* The blank run-out either side, and the only thing that lets the first
    and last cells reach the centre of the frame. A run-out that is even
    slightly short is a hard wall: the end cells then sit past the end of
-   the scroll range and simply cannot be reached, so this has to be
-   right on every engine.
+   the scroll range and cannot be reached at all.
 
-   Real flex items rather than padding on the track, because the track is
-   width:max-content under a global box-sizing:border-box - which puts
-   padding *inside* that width instead of extending it, leaving whether
-   the run-out exists at all up to the engine. A flex item's base size is
-   unambiguous: max-content is the sum of the items, spacers included.
+   Two empty boxes with a width, and nothing cleverer than that. This has
+   now been percentage padding, vw padding and pseudo-element flex items,
+   and each one collapsed to nothing on some engine - padding because the
+   track is width:max-content under a global box-sizing:border-box, which
+   puts padding inside that width instead of extending it. A plain
+   in-flow box with a width is the one construction every engine agrees
+   contributes to a flex row's max-content size.
 
-   Sized in vw, so it is never a stale measurement. The frame is never
-   wider than the window, so half the window is always enough; any
-   surplus is just blank tape, which the settle-snap in site.js pulls
-   back out of. */
-.tape-track::before,
-.tape-track::after {
-  content: "";
-  flex: 0 0 calc(50vw - (var(--cell-w) / 2));
+   The width here is only the floor for a page with no JS; site.js sets
+   it in real pixels off the measured frame. Half the window is always
+   enough, because the frame is never wider than the window. */
+.tape-runout {
+  flex: 0 0 auto;
+  width: calc(50vw - (var(--cell-w) / 2));
+  align-self: stretch;
 }
 
 .tape-cell {

@@ -366,8 +366,16 @@ def build_index(posts):
     tape = (
         '<section class="tape-nav" aria-label="Article navigation">'
         '<div class="tape-head" aria-hidden="true"></div>'
+        # The blank run-out either side is two real, empty elements with a
+        # real width. Everything cleverer than this has failed on some
+        # engine: percentage padding, vw padding, and pseudo-element flex
+        # items all collapsed to nothing, leaving the end cells stranded
+        # past the end of the scroll range. A plain box with a width is
+        # the one thing every layout engine agrees on.
         '<div class="tape-viewport"><div class="tape-track" role="list">'
+        '<div class="tape-runout" aria-hidden="true"></div>'
         + ''.join(tape_cells) +
+        '<div class="tape-runout" aria-hidden="true"></div>'
         '</div></div>'
         '<button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button>'
         '<button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button>'

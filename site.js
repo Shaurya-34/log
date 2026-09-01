@@ -292,31 +292,34 @@
       return cell.offsetLeft + cell.offsetWidth / 2 - viewport.clientWidth / 2;
     }
 
-    /* Safety net for the run-out. Its whole job is reachability: if the
-       blank tape either side is even slightly short, the end cells sit
-       past the end of the scroll range and no amount of scrolling can
-       bring them under the head - a silent, permanent wall that has
-       already shipped here more than once. CSS owns the run-out (see
-       .tape-track in home.css); this only checks the result and tops it
-       up in pixels if some engine disagreed. Re-checked on every reflow,
-       so a value that later goes stale is simply recomputed. */
+    /* The run-out either side, sized in real pixels off the measured
+       frame. It is what lets the first and last cells reach the centre;
+       without enough of it they sit past the end of the scroll range and
+       cannot be reached at all, which is a silent, permanent wall.
+
+       Half the frame, deliberately, rather than the exact half-frame
+       minus half a cell that is strictly needed. Half a frame is always
+       at least enough whatever the cell turns out to measure, so there
+       is one fewer measurement that can be wrong, and the surplus is the
+       slack the over-pull stretches into.
+
+       CSS carries a generous fallback for the no-JS case (see
+       .tape-runout in home.css); this refines it to the real frame. */
     var track = viewport.querySelector(".tape-track");
+    var runouts = Array.prototype.slice.call(
+      viewport.querySelectorAll(".tape-runout")
+    );
 
-    function repairRunout() {
-      if (!track || viewport.clientWidth < 1 || cells[0].offsetWidth < 1) {
+    function sizeRunout() {
+      if (!runouts.length || viewport.clientWidth < 1) {
         return;
       }
 
-      var max = viewport.scrollWidth - viewport.clientWidth;
+      var width = viewport.clientWidth / 2;
 
-      if (targetFor(0) >= -1 && targetFor(cells.length - 1) <= max + 1) {
-        return;
-      }
-
-      var pad = viewport.clientWidth / 2 - cells[0].offsetWidth / 2;
-
-      track.style.paddingLeft = pad + "px";
-      track.style.paddingRight = pad + "px";
+      runouts.forEach(function (runout) {
+        runout.style.width = width + "px";
+      });
     }
 
     /* Which cell sits closest to the head - or, given a position, which
@@ -801,9 +804,22 @@
         paintSound();
 
         /* The click that switches it on is also the gesture that lets
-           the audio engine start, so let it answer for itself. */
-        if (soundOn) {
-          tick(0.5);
+           the audio engine start, so let it answer for itself - this is
+           the only confirmation anything works, since the tape itself
+           stays silent until it moves.
+
+           resume() is asynchronous, and scheduling into a context that
+           has not actually started yet drops the sound, so wait on it. */
+        if (soundOn && audioReady()) {
+          var confirm = function () {
+            tick(0.6);
+          };
+
+          if (audio.state === "running" || !audio.resume) {
+            confirm();
+          } else {
+            audio.resume().then(confirm, confirm);
+          }
         }
       });
 
@@ -924,7 +940,7 @@
     }
 
     function reflow() {
-      repairRunout();
+      sizeRunout();
       centre(active, false);
     }
 
