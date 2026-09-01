@@ -499,10 +499,34 @@
       });
     }
 
-    addEventListener("resize", function () {
+    function reflow() {
       sizeRunout();
       centre(active, false);
-    });
+    }
+
+    addEventListener("resize", reflow);
+
+    /* Anything that changes the frame's size invalidates both the
+       run-out padding and the scroll offset that parks a cell under the
+       head - and those changes keep arriving after first paint: web
+       fonts swapping in, the reader's own default font size, browser
+       zoom. Without this the tape is positioned once against a layout
+       that is then quietly replaced, leaving the head pointing at blank
+       tape while the panel shows a different article. Observing the
+       frame catches every one of those causes rather than guessing at
+       them individually. */
+    if (window.ResizeObserver) {
+      /* Observes the frame, and only ever writes scrollLeft and the
+         track's padding - neither of which resizes the frame - so this
+         cannot feed back into itself. */
+      new ResizeObserver(reflow).observe(viewport);
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(reflow).catch(function () {});
+    }
+
+    addEventListener("load", reflow);
 
     /* Left/right anywhere on the page drive the tape - the tape is the
        page's primary control, so it shouldn't require finding and
