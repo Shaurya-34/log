@@ -90,16 +90,22 @@
 
 .tape-viewport::-webkit-scrollbar { display: none; }
 
-/* The inline padding is what lets the first and last cells reach the
-   centre of the viewport - percentage padding resolves against the
-   viewport's width, so this is exactly half a viewport minus half a
-   cell. It doubles as the blank run-out either side of the punched
-   section. */
+/* The blank run-out either side, and the only thing that lets the
+   first and last cells reach the centre of the frame. Sized in vw, not
+   percent and not measured pixels, for one reason: it can never come
+   out too small. A percentage resolves against a width:max-content box
+   inconsistently, and a measured pixel value is a snapshot that goes
+   stale the moment the frame changes width - and a run-out that is even
+   slightly short is a hard wall, because the last cell then sits past
+   the end of the scroll range and simply cannot be reached. The frame
+   is never wider than the window, so half the window is always enough;
+   any surplus is just extra blank tape, which the settle-snap in
+   site.js pulls back out of. */
 .tape-track {
   display: flex;
   align-items: center;
   width: max-content;
-  padding-inline: calc(50% - (var(--cell-w) / 2));
+  padding-inline: calc(50vw - (var(--cell-w) / 2));
 }
 
 .tape-cell {

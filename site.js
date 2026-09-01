@@ -279,40 +279,14 @@
       panel.classList.add("is-drawn");
     }
 
-    var track = viewport.querySelector(".tape-track");
-
-    /* The blank run-out either side, sized so the first and last cells
-       can still reach the centre of the frame. Set here in real pixels
-       rather than as a CSS percentage: the track is width:max-content,
-       and percentage padding against an intrinsically-sized box is
-       exactly the kind of thing browsers disagree about. */
-    function sizeRunout() {
-      if (!track || !cells.length) {
-        return false;
-      }
-
-      /* Bail rather than write a bad value. If this runs before the
-         frame has been laid out, clientWidth is 0, the run-out collapses
-         to nothing and every scroll target computed from it is wrong -
-         which parks the head over the wrong cell for the rest of the
-         visit. Returning false lets the caller know the measurement
-         wasn't usable yet. */
-      if (viewport.clientWidth < 1 || cells[0].offsetWidth < 1) {
-        return false;
-      }
-
-      var pad = Math.max(
-        0,
-        viewport.clientWidth / 2 - cells[0].offsetWidth / 2
-      );
-
-      track.style.paddingLeft = pad + "px";
-      track.style.paddingRight = pad + "px";
-
-      return true;
-    }
-
-    /* Scroll position that puts cell `i` under the head. */
+    /* Scroll position that puts cell `i` under the head. Read straight
+       off the live layout every time rather than derived from a stored
+       measurement, so it cannot disagree with what is actually on
+       screen. The run-out that makes the end cells reachable is CSS's
+       job now (see .tape-track in home.css); this used to measure the
+       frame and write that padding in pixels, and a single measurement
+       taken while the page was still settling was enough to leave the
+       newest article permanently past the end of the scroll range. */
     function targetFor(i) {
       var cell = cells[Math.max(0, Math.min(i, cells.length - 1))];
       return cell.offsetLeft + cell.offsetWidth / 2 - viewport.clientWidth / 2;
@@ -512,21 +486,10 @@
     }
 
     function reflow() {
-      if (sizeRunout()) {
-        centre(active, false);
-      }
+      centre(active, false);
     }
 
     addEventListener("resize", reflow);
-
-    /* Belt and braces on top of the observer below. Getting this wrong
-       is silent and permanent - the head sits over blank tape until the
-       next resize - so re-assert a few times while the page settles
-       rather than trusting a single measurement. Each pass is a no-op
-       once the position is already right. */
-    [0, 120, 400, 1000].forEach(function (delay) {
-      setTimeout(reflow, delay);
-    });
 
     /* Anything that changes the frame's size invalidates both the
        run-out padding and the scroll offset that parks a cell under the
@@ -538,9 +501,8 @@
        frame catches every one of those causes rather than guessing at
        them individually. */
     if (window.ResizeObserver) {
-      /* Observes the frame, and only ever writes scrollLeft and the
-         track's padding - neither of which resizes the frame - so this
-         cannot feed back into itself. */
+      /* Observes the frame and only ever writes scrollLeft, which does
+         not resize it, so this cannot feed back into itself. */
       new ResizeObserver(reflow).observe(viewport);
     }
 
