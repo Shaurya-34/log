@@ -319,9 +319,12 @@
       track.style.paddingRight = pad + "px";
     }
 
-    /* Which cell currently sits closest to the head. */
-    function nearestCell() {
-      var centre = viewport.scrollLeft + viewport.clientWidth / 2;
+    /* Which cell sits closest to the head - or, given a position, which
+       cell would sit closest to it. The argument is what lets a throw
+       be aimed at a cell before the tape has finished moving. */
+    function nearestCell(pos) {
+      var at = pos === undefined ? viewport.scrollLeft : pos;
+      var centre = at + viewport.clientWidth / 2;
       var best = 0;
       var bestDist = Infinity;
 
@@ -408,7 +411,12 @@
       var target = targetFor(active);
 
       if (smooth && !reduced) {
-        animateTo(target, 420);
+        /* Longer throws take longer to stop. A constant duration makes a
+           four-cell flick feel weightless and a one-cell nudge feel
+           sluggish; tying it to the distance gives the tape mass. */
+        var distance = Math.abs(target - viewport.scrollLeft);
+
+        animateTo(target, Math.min(760, 300 + distance * 0.45));
       } else {
         if (anim) {
           cancelAnimationFrame(anim);
@@ -421,6 +429,238 @@
 
       paint();
     }
+
+    /* ----------------------------------------------------------
+       Grab, throw, and the ends
+
+       The tape is meant to read as a physical thing: you can take hold
+       of it, throw it, and it comes to rest with a cell under the head
+       rather than parked between two.
+
+       Touch is deliberately left alone. Native scrolling already has
+       momentum tuned to the platform and the settle-snap below catches
+       it; all of this exists because a mouse gets nothing from
+       overflow-x on its own, so on a desktop the tape is currently only
+       reachable through the arrows.
+       ---------------------------------------------------------- */
+
+    var DRAG_SLOP = 4;      /* px of movement before a press is a drag  */
+    var THROW_REACH = 220;  /* ms of coasting a flick is worth          */
+    var OVERPULL = 64;      /* px the tape can stretch past either end  */
+
+    var dragging = false;
+    var dragMoved = false;
+    var dragFromX = 0;
+    var dragFromScroll = 0;
+    var samples = [];
+    var stretch = 0;
+
+    /* The ends are the first and last cell under the head - not the
+       ends of the scroll range, which sit far out in the blank run-out
+       that exists only so those two cells can reach the centre. */
+    function lowerBound() { return targetFor(0); }
+    function upperBound() { return targetFor(cells.length - 1); }
+
+    /* Past either end the tape stretches rather than stopping dead, so
+       the limit feels like the end of a reel instead of a wall.
+
+       The stretch is a transform on the track, not more scrolling. Using
+       scrollLeft for it would make the give depend on how much blank
+       run-out happened to be left over past the end cell - which varies
+       with the window width, so the same pull would yield 17px on a
+       laptop and 180px on a wide monitor. A transform gives the same
+       travel everywhere, and it doesn't move the sprocket rails, which
+       are painted on the frame: the tape stretches, the machine holds
+       still. Transforms don't affect offsetLeft either, so every scroll
+       target stays correct while this is applied. */
+    function setStretch(px) {
+      track.style.transform = px ? "translateX(" + px + "px)" : "";
+    }
+
+    /* Diminishing returns, so it never runs away: the first few pixels
+       of over-pull come easily and the last ones barely move at all. */
+    function damped(over) {
+      var sign = over < 0 ? -1 : 1;
+      var mag = Math.abs(over);
+
+      return sign * OVERPULL * (1 - 1 / (1 + mag / OVERPULL));
+    }
+
+    /* Scroll as far as the end cell, then stretch for anything beyond.
+       Returns the over-pull so the caller can render it. */
+    function scrollWithStretch(pos) {
+      var low = lowerBound();
+      var high = upperBound();
+
+      if (pos < low) {
+        viewport.scrollLeft = low;
+        return low - pos;
+      }
+
+      if (pos > high) {
+        viewport.scrollLeft = high;
+        return high - pos;
+      }
+
+      viewport.scrollLeft = pos;
+      return 0;
+    }
+
+    /* Let go of an over-pulled tape and it snaps back to its stop. */
+    function releaseStretch() {
+      var from = stretch;
+
+      stretch = 0;
+
+      if (!from) {
+        setStretch(0);
+        return;
+      }
+
+      if (reduced) {
+        setStretch(0);
+        return;
+      }
+
+      var startedAt = null;
+
+      function frame(now) {
+        if (startedAt === null) {
+          startedAt = now;
+        }
+
+        var t = Math.min((now - startedAt) / 380, 1);
+
+        setStretch(from * (1 - (1 - Math.pow(1 - t, 3))));
+
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          setStretch(0);
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    /* Scroll velocity in px/ms, measured over the last few moves only.
+       Sampling the whole drag would average a fast flick down to
+       nothing if the visitor had paused earlier in the same gesture. */
+    function throwVelocity() {
+      if (samples.length < 2) {
+        return 0;
+      }
+
+      var first = samples[0];
+      var last = samples[samples.length - 1];
+      var dt = last.t - first.t;
+
+      return dt > 0 ? (last.x - first.x) / dt : 0;
+    }
+
+    viewport.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "touch" || e.button !== 0) {
+        return;
+      }
+
+      dragging = true;
+      dragMoved = false;
+      dragFromX = e.clientX;
+      dragFromScroll = viewport.scrollLeft;
+      samples = [{ t: performance.now(), x: viewport.scrollLeft }];
+
+      /* Taking hold of the tape stops whatever it was doing. */
+      if (anim) {
+        cancelAnimationFrame(anim);
+        anim = null;
+      }
+
+      animating = false;
+      stretch = 0;
+      setStretch(0);
+
+      viewport.setPointerCapture(e.pointerId);
+      tape.classList.add("is-dragging");
+    });
+
+    viewport.addEventListener("pointermove", function (e) {
+      if (!dragging) {
+        return;
+      }
+
+      var dx = e.clientX - dragFromX;
+
+      /* A few pixels of slop, so a click on a cell is still a click and
+         not a one-pixel drag that swallows it. */
+      if (!dragMoved) {
+        if (Math.abs(dx) <= DRAG_SLOP) {
+          return;
+        }
+
+        dragMoved = true;
+      }
+
+      e.preventDefault();
+
+      stretch = damped(scrollWithStretch(dragFromScroll - dx));
+      setStretch(stretch);
+
+      var now = performance.now();
+
+      samples.push({ t: now, x: viewport.scrollLeft });
+
+      while (samples.length > 2 && now - samples[0].t > 70) {
+        samples.shift();
+      }
+    });
+
+    function endDrag(e) {
+      if (!dragging) {
+        return;
+      }
+
+      dragging = false;
+      tape.classList.remove("is-dragging");
+      releaseStretch();
+
+      if (viewport.releasePointerCapture && e.pointerId !== undefined) {
+        try {
+          viewport.releasePointerCapture(e.pointerId);
+        } catch (err) {
+          /* already released */
+        }
+      }
+
+      if (!dragMoved) {
+        return;
+      }
+
+      /* Where the tape would coast to if left alone, then the nearest
+         cell to that point. Aiming the throw at a detent rather than
+         letting it run down and snapping afterwards is what keeps it
+         feeling like one movement instead of two: a hard flick crosses
+         several cells, a nudge crosses one, and it always arrives
+         somewhere legible. Clamped to the ends, which is also what
+         springs the tape back out of an over-pull. */
+      var projected = viewport.scrollLeft + throwVelocity() * THROW_REACH;
+
+      projected = Math.max(lowerBound(), Math.min(upperBound(), projected));
+
+      centre(nearestCell(projected), true);
+    }
+
+    viewport.addEventListener("pointerup", endDrag);
+    viewport.addEventListener("pointercancel", endDrag);
+
+    /* A drag that ends over a cell must not also open it. Capture phase,
+       so this runs before the cell's own handler. */
+    viewport.addEventListener("click", function (e) {
+      if (dragMoved) {
+        dragMoved = false;
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    }, true);
 
     /* The tape drives the panel: whatever the scroll settles on wins,
        whether it got there by drag, wheel, arrow or click. */
@@ -439,6 +679,12 @@
       if (next !== active) {
         active = next;
         paint();
+      }
+
+      /* Still holding it: the panel keeps up, but where it lands is the
+         throw's decision, not a timer's. */
+      if (dragging) {
+        return;
       }
 
       if (scrollTimer) {

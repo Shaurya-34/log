@@ -177,6 +177,19 @@ following the same shape:
   number of iterations, not run `infinite` — indefinite motion in a page
   header reads as distracting, not lively. Land on a solid, legible end
   state, not mid-cycle.
+- The tape has mass. It can be grabbed and thrown with a mouse, it
+  coasts, and it always comes to rest with a cell under the head rather
+  than parked between two - a thrown tape is aimed at a detent up front
+  rather than left to run down and snapped afterwards, which is what
+  keeps it reading as one movement instead of two. Travel time scales
+  with distance; a constant duration makes a four-cell flick feel
+  weightless and a one-cell nudge feel sluggish. Past either end the
+  tape stretches on a transform and springs back - never scrollLeft,
+  which would make the give depend on leftover run-out and so vary with
+  the window width.
+- Touch is left to the browser. Native scrolling already has momentum
+  tuned to the platform; the pointer physics exists because a mouse gets
+  none of that from overflow-x on its own.
 - Motion should be quiet: no bounce, no overshoot easing on anything
   chrome-level. `cubic-bezier(.16,.78,.18,1)` is the one eased curve used
   for interface motion (tape read-head, feature-card transitions); most

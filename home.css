@@ -90,6 +90,15 @@
 
 .tape-viewport::-webkit-scrollbar { display: none; }
 
+/* The tape is grabbable, so say so. Cells keep the pointer cursor at
+   rest because they are also links; once a drag is under way everything
+   becomes the tape. */
+.tape-viewport { cursor: grab; }
+
+.tape-nav.is-dragging { user-select: none; }
+.tape-nav.is-dragging .tape-viewport,
+.tape-nav.is-dragging .tape-cell { cursor: grabbing; }
+
 .tape-track {
   display: flex;
   align-items: center;
