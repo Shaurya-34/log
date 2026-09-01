@@ -469,6 +469,35 @@
       centre(active, false);
     });
 
+    /* Left/right anywhere on the page drive the tape - the tape is the
+       page's primary control, so it shouldn't require finding and
+       focusing a cell first. Skipped while the visitor is typing, or
+       when a modifier is held (browsers use those for history and
+       word-jumps). */
+    function isTyping(el) {
+      if (!el) {
+        return false;
+      }
+
+      var tag = el.tagName;
+
+      return tag === "INPUT" || tag === "TEXTAREA" ||
+        tag === "SELECT" || el.isContentEditable;
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (
+        (e.key !== "ArrowLeft" && e.key !== "ArrowRight") ||
+        e.metaKey || e.ctrlKey || e.altKey ||
+        isTyping(e.target)
+      ) {
+        return;
+      }
+
+      e.preventDefault();
+      centre(active + (e.key === "ArrowRight" ? 1 : -1), true);
+    });
+
     /* The active cell is the newest article, at the right-hand end of
        the tape, so the initial scroll position has to be set explicitly
        - otherwise the tape renders at scrollLeft 0 showing the oldest

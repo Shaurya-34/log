@@ -43,26 +43,19 @@
   pointer-events: none;
 }
 
+/* The tape edges - the two rails and their sprocket holes - live on the
+   viewport, not the track, so they span the full frame and stay put
+   while only the cells travel underneath. Putting them on the track
+   made them scroll off with it, so the rails stopped short of the frame
+   and the cells appeared to spill out of their own box. A background on
+   a scroll container is fixed to the element by default, which is
+   exactly the behaviour wanted here. */
 .tape-viewport {
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
-}
-
-.tape-viewport::-webkit-scrollbar { display: none; }
-
-/* The inline padding is what lets the first and last cells reach the
-   centre of the viewport - percentage padding resolves against the
-   viewport's width, so this is exactly half a viewport minus half a
-   cell. It doubles as the blank run-out either side of the punched
-   section, which is why the sprocket holes run through it. */
-.tape-track {
-  display: flex;
-  align-items: center;
-  width: max-content;
-  padding-inline: calc(50% - (var(--cell-w) / 2));
   border-top: 1px solid var(--grey);
   border-bottom: 1px solid var(--grey);
   background-image:
@@ -71,6 +64,20 @@
   background-size: 13px 13px, 13px 13px;
   background-position: 0 5px, 0 calc(100% - 5px);
   background-repeat: repeat-x, repeat-x;
+}
+
+.tape-viewport::-webkit-scrollbar { display: none; }
+
+/* The inline padding is what lets the first and last cells reach the
+   centre of the viewport - percentage padding resolves against the
+   viewport's width, so this is exactly half a viewport minus half a
+   cell. It doubles as the blank run-out either side of the punched
+   section. */
+.tape-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  padding-inline: calc(50% - (var(--cell-w) / 2));
 }
 
 .tape-cell {
@@ -191,10 +198,16 @@
   color: var(--home-tertiary);
 }
 
+/* Capped against the viewport height so the whole homepage - identity,
+   tape and panel - lands inside one screen on a normal laptop instead
+   of pushing the figure below the fold. The SVGs carry a viewBox and
+   default preserveAspectRatio, so they scale down and centre rather
+   than distort. */
 .cover-svg {
   display: block;
   width: 100%;
   height: auto;
+  max-height: min(20rem, 34vh);
   filter: grayscale(1) contrast(1.4) brightness(.94);
 }
 
