@@ -21,10 +21,23 @@ MOTTO = "honest · semi informative · personal"
 IDENTITY = "Shaurya — engineering notes on ML, graphics, computation"
 INTRO = ("I think of this less as a blog and more as a log: a running record of what I'm "
          "building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.")
+# The read head above the tape: the same mark the homepage is built
+# around, cut down to three shapes that survive being 16 pixels wide.
+# Deliberately drawn rather than typeset - a data-URI icon can't load
+# Space Mono, so any letterform here would render in whatever fallback
+# the reader happens to have.
+#
+# No background rectangle. A transparent icon sits on the browser's own
+# chrome, which is already the right colour in either theme, and the
+# fill follows prefers-color-scheme so ink and paper swap here the way
+# they do everywhere else on the site. The old icon hardcoded a light
+# background and showed up as a white tile on a dark tab strip.
 FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
-           "%3Crect width='64' height='64' fill='%23faf9f7'/%3E%3Ctext x='32' y='46' "
-           "font-family='Courier%20New,monospace' font-size='44' text-anchor='middle' "
-           "fill='%23161513'%3ES%3C/text%3E%3C/svg%3E")
+           "%3Cstyle%3Epath,rect%7Bfill:%23161513%7D"
+           "@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E"
+           "%3Cpath d='M22 10h20l-10 14z'/%3E"
+           "%3Crect x='4' y='31' width='56' height='6'/%3E"
+           "%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E")
 FONTS = ('  <link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
          '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">')

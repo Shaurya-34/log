@@ -25,6 +25,28 @@ days later, I write it down." Article prose should read the same way:
 first-person, working notes rather than polished documentation, willing to
 say when something didn't work.
 
+## The mark
+
+The favicon is the read head above the tape, reduced to three shapes: a
+triangle and two rails. It is the homepage's own mechanism at 16 pixels,
+and it follows the same test as everything else here - does it extend the
+tape metaphor, or is it decoration placed near it?
+
+Three rules came out of drawing it, and they apply to any future icon:
+
+- **Drawn, never typeset.** A data-URI icon can't load Space Mono, so a
+  letterform renders in whatever fallback the reader has. The previous
+  favicon was an `S` in Courier New - a shape the site didn't control,
+  and the wrong letter besides once the wordmark became LOG.
+- **No background rectangle.** A transparent icon sits on the browser's
+  own chrome, which is already correct in both themes. The old one
+  hardcoded `#faf9f7` and rendered as a white tile on a dark tab strip,
+  breaking the ink/paper swap the rest of the site obeys.
+- **16px is the only test that matters.** Outlined boxes fill in, interior
+  detail mushes, and sub-pixel dots blur to grey bands. Marks that need
+  more room - a bordered cell, the sprocket cross-section - belong on a
+  180px touch icon, not in a tab.
+
 ## Typography
 
 Two font stacks, both monospace, no serif or humanist sans anywhere on the
