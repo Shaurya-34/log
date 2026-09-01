@@ -353,10 +353,13 @@ def build_index(posts):
 
 def build_about():
     paragraphs = (
-        "<p>Hi, I'm Shaurya. I write software and keep this log as a record of the things "
-        "I build, read, and try to understand. The subjects move around: machine learning, "
-        "graphics, programming, computation, mathematical ideas, and small experiments that "
-        "are easier to understand by implementing them than by reading about them.</p>\n"
+        "<p>Hi, I'm Shaurya. I'm a student who writes software and keeps this log as a "
+        "record of the things I build, read, and try to understand. There isn't a bigger "
+        "plan behind any of it — I get bored, end up somewhere on the internet, find "
+        "something that snags my attention, and if it's still interesting a few days later, "
+        "I write it down. The subjects move around: machine learning, graphics, programming, "
+        "computation, mathematical ideas, and small experiments that are easier to understand "
+        "by implementing them than by reading about them.</p>\n"
         "<p>The point of the site is not to present polished documentation or a fixed set of "
         "opinions. Most posts are working notes: I start with a question, follow the "
         "interesting parts, build something when code helps, and write down what survived "
@@ -370,7 +373,7 @@ def build_about():
         '<a href="privacy.html">privacy page</a>. The <a href="contact.html">contact page</a> '
         "explains how to reach me.</p>"
     )
-    return simple_page("about", "About", "Updated August 2026", paragraphs,
+    return simple_page("about", "About", "Updated September 2026", paragraphs,
                         "About Shaurya and the purpose of this engineering log.")
 
 
@@ -525,12 +528,15 @@ def write_markdown_files(posts):
     (ROOT / "index.md").write_text("\n".join(index_lines).rstrip() + "\n", encoding="utf-8")
 
     static_pages = {
-        "about": ("About", "2026-08", "About Shaurya and the purpose of this engineering log.",
-                  "Hi, I'm Shaurya. I write software and keep this log as a record of the things "
-                  "I build, read, and try to understand. The subjects move around: machine "
-                  "learning, graphics, programming, computation, mathematical ideas, and small "
-                  "experiments that are easier to understand by implementing them than by "
-                  "reading about them.\n\n"
+        "about": ("About", "2026-09", "About Shaurya and the purpose of this engineering log.",
+                  "Hi, I'm Shaurya. I'm a student who writes software and keeps this log as a "
+                  "record of the things I build, read, and try to understand. There isn't a "
+                  "bigger plan behind any of it — I get bored, end up somewhere on the "
+                  "internet, find something that snags my attention, and if it's still "
+                  "interesting a few days later, I write it down. The subjects move around: "
+                  "machine learning, graphics, programming, computation, mathematical ideas, "
+                  "and small experiments that are easier to understand by implementing them "
+                  "than by reading about them.\n\n"
                   "The point of the site is not to present polished documentation or a fixed "
                   "set of opinions. Most posts are working notes: I start with a question, "
                   "follow the interesting parts, build something when code helps, and write "
