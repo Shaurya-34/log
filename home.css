@@ -20,27 +20,45 @@
 
 /* ---- tape --------------------------------------------------------- */
 
+/* Held to a compact centred width so the reader reads as one piece of
+   machinery sitting in the page, rather than a rule drawn across it. */
 .tape-nav {
   --cell-w: 9.5rem;
   --cell-h: 5.5rem;
   position: relative;
-  margin-top: 5.5rem;
+  max-width: 46rem;
+  margin: 5.5rem auto 0;
 }
 
-/* Fixed at the centre of the frame: the head does not chase the tape,
-   the tape is pulled through it. */
+/* The head is a fixed gate bolted to the frame, not a marker floating
+   over the tape - the tape is threaded through it. Same idea as the
+   finger stop on a rotary dial: the stop never moves, the dial turns
+   against it and every number arrives at the same place. */
 .tape-head {
   position: absolute;
   left: 50%;
-  top: -1.6rem;
+  top: -.75rem;
+  bottom: -.75rem;
+  width: calc(var(--cell-w) + 1.5rem);
+  transform: translateX(-50%);
+  border-left: 1px solid var(--ink);
+  border-right: 1px solid var(--ink);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* The pointer, attached to the gate rather than hovering above it. */
+.tape-head::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -.58rem;
   transform: translateX(-50%);
   width: 0;
   height: 0;
   border-left: .45rem solid transparent;
   border-right: .45rem solid transparent;
-  border-top: .62rem solid var(--ink);
-  z-index: 3;
-  pointer-events: none;
+  border-top: .6rem solid var(--ink);
 }
 
 /* The tape edges - the two rails and their sprocket holes - live on the
