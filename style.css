@@ -929,3 +929,41 @@ article.post .ray-demo figcaption {
 
   pre code { font-size: 0.75rem; }
 }
+
+/* ---- in-app browser banner ----------------------------------------- */
+
+.iab-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.65rem 2.25rem 0.65rem 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  border-bottom: 1px solid var(--hairline);
+  font: 0.75rem/1.5 var(--mono);
+  text-align: center;
+  position: relative;
+}
+
+.iab-banner a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.iab-close {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.6rem;
+  font: 1rem/1 var(--mono);
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.iab-close:hover { opacity: 1; }

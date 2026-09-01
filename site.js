@@ -1377,4 +1377,94 @@
       );
     });
   });
+
+  /* ------------------------------------------------------------
+     In-app browser escape hatch
+
+     Instagram (and Facebook, same WebView family) open bio/profile
+     links in their own embedded browser rather than the visitor's real
+     one - noticeably slower, since it re-fetches everything with no
+     shared cache and Instagram injects its own scripts into the page.
+     There's no header or meta tag that opts out of this; the only lever
+     available from the page itself is offering a way out once the
+     visitor is already there.
+     ------------------------------------------------------------ */
+  run(function () {
+    var ua = navigator.userAgent || "";
+
+    if (!/Instagram|FBAN|FBAV/i.test(ua)) {
+      return;
+    }
+
+    try {
+      if (sessionStorage.getItem("dismissedIabBanner") === "1") {
+        return;
+      }
+    } catch (e) {}
+
+    var isAndroid = /Android/i.test(ua);
+    var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+    var banner = document.createElement("div");
+    banner.className = "iab-banner";
+
+    var msg = document.createElement("span");
+
+    if (isAndroid) {
+      msg.appendChild(
+        document.createTextNode("This browser can run slower than your own. ")
+      );
+
+      var link = document.createElement("a");
+
+      /* A generic VIEW intent with no package attached hands the URL to
+         whatever the visitor already has set as their default browser -
+         Chrome, Brave, Firefox, Opera, whichever - or a chooser if they
+         have none set. Works from inside Instagram's WebView because
+         Android resolves the intent at the OS level, not inside the app
+         that's currently displaying the page. */
+      link.href =
+        "intent://" +
+        location.host +
+        location.pathname +
+        location.search +
+        "#Intent;scheme=https;action=android.intent.action.VIEW;end";
+      link.textContent = "Open in your browser";
+      msg.appendChild(link);
+    } else if (isIOS) {
+      /* iOS gives a page no way to hand itself to Safari or any other
+         browser from script - the only route out is Instagram's own
+         menu, which already has this built in. */
+      msg.appendChild(
+        document.createTextNode(
+          'This browser can run slower than your own. Tap the ⋯ menu above and choose "Open in Safari" (or your browser) for the full experience.'
+        )
+      );
+    } else {
+      msg.appendChild(
+        document.createTextNode(
+          "You're viewing this inside Instagram's built-in browser, which can run slower than your own."
+        )
+      );
+    }
+
+    banner.appendChild(msg);
+
+    var close = document.createElement("button");
+    close.type = "button";
+    close.className = "iab-close";
+    close.setAttribute("aria-label", "Dismiss");
+    close.textContent = "×";
+
+    close.addEventListener("click", function () {
+      banner.remove();
+
+      try {
+        sessionStorage.setItem("dismissedIabBanner", "1");
+      } catch (e) {}
+    });
+
+    banner.appendChild(close);
+    document.body.insertBefore(banner, document.body.firstChild);
+  });
 })();
