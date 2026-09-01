@@ -534,6 +534,176 @@
   });
 
   /* ------------------------------------------------------------
+     Lorenz divergence figure
+
+     Two copies of the same deterministic system, integrated live,
+     starting a millionth apart in x. Demonstrates the article's own
+     claim rather than illustrating it: nothing here is pre-rendered.
+     ------------------------------------------------------------ */
+  run(function () {
+    var fig = document.getElementById("chaos-demo");
+
+    if (!fig) {
+      return;
+    }
+
+    var canvas = fig.querySelector(".chaos-canvas");
+    var ctx = canvas.getContext("2d");
+    var restartBtn = fig.querySelector(".chaos-restart");
+    var sepOut = fig.querySelector('[data-out="sep"]');
+
+    var SIGMA = 10, RHO = 28, BETA = 8 / 3;
+    var DT = 0.006;
+    var EPSILON = 0.000001;
+    var SUBSTEPS_PER_FRAME = 6;
+    var MAX_STEPS = 9000;
+
+    /* Phase space to canvas: Lorenz wanders roughly x,y in [-25,25],
+       z in [0,50]. Project onto x-z, the classic two-lobe silhouette. */
+    var W = canvas.width, H = canvas.height;
+    var PAD = 24;
+
+    function px(x) {
+      return PAD + ((x + 26) / 52) * (W - PAD * 2);
+    }
+
+    function py(z) {
+      return H - PAD - (z / 50) * (H - PAD * 2);
+    }
+
+    function deriv(s) {
+      return [
+        SIGMA * (s[1] - s[0]),
+        s[0] * (RHO - s[2]) - s[1],
+        s[0] * s[1] - BETA * s[2]
+      ];
+    }
+
+    function rk4Step(s, dt) {
+      var k1 = deriv(s);
+      var s2 = [s[0] + k1[0] * dt / 2, s[1] + k1[1] * dt / 2, s[2] + k1[2] * dt / 2];
+      var k2 = deriv(s2);
+      var s3 = [s[0] + k2[0] * dt / 2, s[1] + k2[1] * dt / 2, s[2] + k2[2] * dt / 2];
+      var k3 = deriv(s3);
+      var s4 = [s[0] + k3[0] * dt, s[1] + k3[1] * dt, s[2] + k3[2] * dt];
+      var k4 = deriv(s4);
+
+      return [
+        s[0] + (dt / 6) * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]),
+        s[1] + (dt / 6) * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]),
+        s[2] + (dt / 6) * (k1[2] + 2 * k2[2] + 2 * k3[2] + k4[2])
+      ];
+    }
+
+    function separation(a, b) {
+      var dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
+      return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    function formatSep(v) {
+      if (v < 0.001) {
+        return v.toExponential(1);
+      }
+
+      return v.toFixed(v < 10 ? 3 : 1);
+    }
+
+    var colorInk, colorGrey;
+    var a, b, step, raf, prevA, prevB;
+
+    function readColors() {
+      var cs = getComputedStyle(fig);
+      colorInk = cs.getPropertyValue("--ink").trim() || "#161513";
+      colorGrey = cs.getPropertyValue("--grey").trim() || "#6f6a62";
+    }
+
+    function reset() {
+      if (raf) {
+        cancelAnimationFrame(raf);
+      }
+
+      readColors();
+      ctx.clearRect(0, 0, W, H);
+
+      a = [0.1, 0, 0];
+      b = [0.1 + EPSILON, 0, 0];
+      prevA = a.slice();
+      prevB = b.slice();
+      step = 0;
+
+      sepOut.textContent = formatSep(EPSILON);
+    }
+
+    function drawSegment(from, to, color) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px(from[0]), py(from[2]));
+      ctx.lineTo(px(to[0]), py(to[2]));
+      ctx.stroke();
+    }
+
+    function tick() {
+      for (var i = 0; i < SUBSTEPS_PER_FRAME && step < MAX_STEPS; i++) {
+        prevA = a;
+        prevB = b;
+        a = rk4Step(a, DT);
+        b = rk4Step(b, DT);
+        drawSegment(prevA, a, colorGrey);
+        drawSegment(prevB, b, colorInk);
+        step++;
+      }
+
+      sepOut.textContent = formatSep(separation(a, b));
+
+      if (step < MAX_STEPS) {
+        raf = requestAnimationFrame(tick);
+      }
+    }
+
+    function drawStatic() {
+      /* Reduced motion: compute the full run synchronously and draw
+         both complete paths at once instead of animating them in. */
+      readColors();
+      ctx.clearRect(0, 0, W, H);
+
+      var s1 = [0.1, 0, 0];
+      var s2 = [0.1 + EPSILON, 0, 0];
+      var p1 = s1.slice();
+      var p2 = s2.slice();
+
+      for (var i = 0; i < MAX_STEPS; i++) {
+        s1 = rk4Step(s1, DT);
+        s2 = rk4Step(s2, DT);
+        drawSegment(p1, s1, colorGrey);
+        drawSegment(p2, s2, colorInk);
+        p1 = s1;
+        p2 = s2;
+      }
+
+      sepOut.textContent = formatSep(separation(s1, s2));
+    }
+
+    restartBtn.addEventListener("click", function () {
+      if (reduced) {
+        drawStatic();
+      } else {
+        reset();
+        raf = requestAnimationFrame(tick);
+      }
+    });
+
+    fig.classList.add("is-ready");
+
+    if (reduced) {
+      drawStatic();
+    } else {
+      reset();
+      raf = requestAnimationFrame(tick);
+    }
+  });
+
+  /* ------------------------------------------------------------
      Grokking figure
 
      Interactive version of the phase1 accuracy plot. Two real runs

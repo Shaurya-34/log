@@ -32,6 +32,18 @@ With the usual constants (sigma=10, rho=28, beta=8/3), that produces
 output that looks like structured noise, and a shape people ended up
 calling the butterfly.
 
+<figure class="chaos-demo" id="chaos-demo">
+  <div class="chaos-head">
+    <button type="button" class="chaos-restart">restart, nudged</button>
+    <p class="chaos-readout" aria-live="polite">separation <b data-out="sep">-</b></p>
+  </div>
+  <canvas class="chaos-canvas" width="852" height="480" role="img" aria-label="Two Lorenz attractor trajectories, starting a millionth apart, drawn as they diverge over time"></canvas>
+  <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge.</figcaption>
+  <noscript>
+    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line.">
+  </noscript>
+</figure>
+
 ## Not building it by hand this time
 
 The last graphics thing I built was a raymarcher in plain Java, no

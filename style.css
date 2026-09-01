@@ -636,6 +636,63 @@ article.post .grok-demo figcaption {
   .grok-switch button { transition: none; }
 }
 
+/* ---- Lorenz divergence figure -------------------------------------- */
+
+article.post .chaos-demo { margin: 2.75rem 0 3rem; }
+
+.chaos-demo .chaos-head,
+.chaos-demo .chaos-canvas { display: none; }
+.chaos-demo.is-ready .chaos-head { display: flex; }
+.chaos-demo.is-ready .chaos-canvas { display: block; }
+
+.chaos-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.chaos-restart {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.chaos-restart:hover { color: var(--ink); border-color: var(--ink); }
+
+.chaos-readout {
+  margin: 0;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.chaos-readout b { font-weight: 400; color: var(--ink); }
+
+.chaos-canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 852 / 480;
+  border: 1px solid var(--hairline);
+}
+
+article.post .chaos-demo figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chaos-restart { transition: none; }
+}
+
 /* ---- colormap carousel ------------------------------------------- */
 /* Lives here rather than in a per-post <style> block: the page CSP sets
    style-src without 'unsafe-inline', so an inline <style> is blocked and

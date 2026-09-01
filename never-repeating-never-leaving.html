@@ -22,8 +22,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=6438e74b">
-  <script src="site.js?v=64726824" defer></script>
+  <link rel="stylesheet" href="style.css?v=9977f962">
+  <script src="site.js?v=fcec6b7b" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Never repeating, never leaving","description":"Four chaotic systems, one Python framework, and the one that refused to fit it.","url":"https://sslog.dpdns.org/never-repeating-never-leaving.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/never-repeating-never-leaving.html"},"datePublished":"2026-07-24T00:00:00+00:00","dateModified":"2026-07-24T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["chaos","python","visualization"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -73,6 +73,18 @@ dz/dt = x * y - beta * z
 <p>With the usual constants (sigma=10, rho=28, beta=8/3), that produces
 output that looks like structured noise, and a shape people ended up
 calling the butterfly.</p>
+<figure class="chaos-demo" id="chaos-demo">
+  <div class="chaos-head">
+    <button type="button" class="chaos-restart">restart, nudged</button>
+    <p class="chaos-readout" aria-live="polite">separation <b data-out="sep">-</b></p>
+  </div>
+  <canvas class="chaos-canvas" width="852" height="480" role="img" aria-label="Two Lorenz attractor trajectories, starting a millionth apart, drawn as they diverge over time"></canvas>
+  <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge.</figcaption>
+  <noscript>
+    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line.">
+  </noscript>
+</figure>
+
 <h2>Not building it by hand this time</h2>
 <p>The last graphics thing I built was a raymarcher in plain Java, no
 libraries, on purpose. This project I did the opposite and reached
