@@ -195,11 +195,21 @@ WORDMARK_HTML = ('<span class="wordmark-text">LOG</span>'
                   '<span class="wordmark-cursor" aria-hidden="true"></span>')
 
 
-def page_header(base=""):
+def page_header(base="", sound=False):
+    # The sound control only appears where there is something to hear.
+    # The tape lives on the index and nowhere else, so carrying this in
+    # every header would be a button that does nothing on four pages out
+    # of five. Hidden until site.js has confirmed the browser can
+    # actually synthesise the tick, the same as every other widget here.
+    sound_button = ('      <button type="button" class="sound-toggle" hidden '
+                    'aria-pressed="false" aria-label="Turn on tape sound">'
+                    'sound</button>' + chr(10)) if sound else ''
+
     return ('\n  <header class="site">\n'
             f'    <a class="wordmark" href="{base}index.html" aria-label="{SITE_NAME}">{WORDMARK_HTML}</a>\n'
             '    <nav>\n'
             f'      <a href="{base}about.html">About</a>\n'
+            f'{sound_button}'
             '      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>\n'
             '    </nav>\n  </header>\n')
 
@@ -368,7 +378,7 @@ def build_index(posts):
     # front, not just its newest post.
     agent_summary = (f'<h1 class="sr-only">{html.escape(SITE_TITLE)}</h1>\n'
                       f'<p class="sr-only agent-home-summary">{html.escape(AGENT_SUMMARY)}</p>\n')
-    body = (page_header() + agent_summary + f'<p class="identity">{IDENTITY}</p>\n'
+    body = (page_header(sound=True) + agent_summary + f'<p class="identity">{IDENTITY}</p>\n'
             '<main class="home-stage">' + tape +
             '<section class="panel-stage" aria-live="polite">' + ''.join(cards) + '</section>'
             '</main>')

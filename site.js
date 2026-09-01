@@ -380,6 +380,10 @@
       }
 
       var startedAt = null;
+      /* How hard this movement is, for the tick: a four-cell flick is
+         loud and bright, a one-cell nudge is quiet. */
+      var pace = Math.min(1, Math.abs(delta) / duration / 1.2);
+
       animating = true;
 
       function frame(now) {
@@ -393,6 +397,7 @@
         var eased = 1 - Math.pow(1 - t, 3);
 
         viewport.scrollLeft = start + delta * eased;
+        ratchet(nearestCell(), pace);
 
         if (t < 1) {
           anim = requestAnimationFrame(frame);
@@ -425,6 +430,13 @@
 
         animating = false;
         viewport.scrollLeft = target;
+      }
+
+      /* A silent reposition - first paint, a resize, a font swap - must
+         not leave the tick counter pointing at a cell the tape has
+         already left, or the next real move starts one detent late. */
+      if (!smooth) {
+        soundedCell = active;
       }
 
       paint();
@@ -662,6 +674,156 @@
       }
     }, true);
 
+    /* ----------------------------------------------------------
+       Sound
+
+       A cell passing under the head makes a tick, the way a dial does
+       going round. Synthesised rather than loaded: a sample would be
+       another request on a page that currently costs 23KB, and a
+       generated click can take its brightness and level from how fast
+       the tape is actually travelling, which a file cannot.
+
+       A filtered burst of noise, not a tone - a tone reads as a beep,
+       noise reads as a mechanism.
+
+       Off until asked for, and remembered after that. Nothing here
+       should make noise at someone who only came to read.
+       ---------------------------------------------------------- */
+
+    var soundOn = safeStore.get("tape-sound") === "on";
+    var audio = null;
+    var noise = null;
+    /* Wall clock, in ms, and deliberately negative to start. This floor
+       is about what an ear can separate, so it is measured against real
+       time rather than the audio clock - an AudioContext that has not
+       been resumed keeps currentTime frozen, which would make every
+       tick after the first look simultaneous and drop them all. */
+    var lastTickAt = -1000;
+    var soundedCell = active;
+
+    function audioReady() {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+
+      if (!Ctx) {
+        return false;
+      }
+
+      if (!audio) {
+        audio = new Ctx();
+
+        var length = Math.floor(audio.sampleRate * 0.06);
+
+        noise = audio.createBuffer(1, length, audio.sampleRate);
+
+        var data = noise.getChannelData(0);
+
+        for (var i = 0; i < length; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+      }
+
+      if (audio.state === "suspended") {
+        audio.resume();
+      }
+
+      return true;
+    }
+
+    function tick(pace) {
+      if (!soundOn || !audioReady()) {
+        return;
+      }
+
+      /* A hard throw crosses cells faster than the ear resolves them as
+         separate events; without a floor they smear into a buzz. */
+      var wall = performance.now();
+
+      if (wall - lastTickAt < 30) {
+        return;
+      }
+
+      lastTickAt = wall;
+
+      var now = audio.currentTime;
+      var hard = Math.max(0, Math.min(1, pace));
+      var source = audio.createBufferSource();
+      var band = audio.createBiquadFilter();
+      var gain = audio.createGain();
+
+      source.buffer = noise;
+      band.type = "bandpass";
+      /* Faster tape, brighter and louder tick. */
+      band.frequency.value = 1500 + hard * 900;
+      band.Q.value = 1.4;
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.05 + hard * 0.09, now + 0.002);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+
+      source.connect(band);
+      band.connect(gain);
+      gain.connect(audio.destination);
+      source.start(now);
+      source.stop(now + 0.06);
+    }
+
+    /* One tick per cell that passes the head, wherever the movement came
+       from. Tracked separately from `active` because a throw deliberately
+       stops the panel changing on the way past - the sound should still
+       count every detent it crosses. */
+    function ratchet(index, pace) {
+      if (index === soundedCell) {
+        return;
+      }
+
+      soundedCell = index;
+      tick(pace);
+    }
+
+    var soundButton = document.querySelector(".sound-toggle");
+
+    function paintSound() {
+      /* Names the action, matching the theme toggle next to it. */
+      soundButton.textContent = soundOn ? "mute" : "sound";
+      soundButton.setAttribute("aria-pressed", soundOn ? "true" : "false");
+      soundButton.setAttribute(
+        "aria-label",
+        soundOn ? "Mute tape sound" : "Turn on tape sound"
+      );
+    }
+
+    if (soundButton && (window.AudioContext || window.webkitAudioContext)) {
+      soundButton.hidden = false;
+
+      soundButton.addEventListener("click", function () {
+        soundOn = !soundOn;
+        safeStore.set("tape-sound", soundOn ? "on" : "off");
+        paintSound();
+
+        /* The click that switches it on is also the gesture that lets
+           the audio engine start, so let it answer for itself. */
+        if (soundOn) {
+          tick(0.5);
+        }
+      });
+
+      paintSound();
+    }
+
+    /* A remembered "on" from a previous visit cannot start the engine by
+       itself - browsers only allow that inside a gesture - so arm it on
+       the first interaction of the visit instead. */
+    if (soundOn) {
+      var arm = function () {
+        audioReady();
+        document.removeEventListener("pointerdown", arm);
+        document.removeEventListener("keydown", arm);
+      };
+
+      document.addEventListener("pointerdown", arm);
+      document.addEventListener("keydown", arm);
+    }
+
     /* The tape drives the panel: whatever the scroll settles on wins,
        whether it got there by drag, wheel, arrow or click. */
     var scrollTimer = null;
@@ -684,8 +846,11 @@
       /* Still holding it: the panel keeps up, but where it lands is the
          throw's decision, not a timer's. */
       if (dragging) {
+        ratchet(next, Math.min(1, Math.abs(throwVelocity()) / 1.2));
         return;
       }
+
+      ratchet(next, 0.35);
 
       if (scrollTimer) {
         clearTimeout(scrollTimer);

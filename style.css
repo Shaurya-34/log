@@ -152,7 +152,8 @@ header.site nav a {
 
 header.site nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
 
-.theme-toggle {
+.theme-toggle,
+.sound-toggle {
   font-family: var(--mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
@@ -165,12 +166,18 @@ header.site nav a:hover { color: var(--ink); text-decoration: underline; text-un
   cursor: pointer;
 }
 
-.theme-toggle:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
+.theme-toggle:hover,
+.sound-toggle:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
 
-.theme-toggle:focus-visible {
+.theme-toggle:focus-visible,
+.sound-toggle:focus-visible {
   outline: 1px solid var(--faint);
   outline-offset: 3px;
 }
+
+/* Sound is off until asked for, so the control reads as inactive until
+   it isn't - the state has to be visible without clicking to find out. */
+.sound-toggle[aria-pressed="true"] { color: var(--ink); }
 
 /* ---- links & motion ---------------------------------------------- */
 

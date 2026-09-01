@@ -190,6 +190,32 @@ following the same shape:
 - Touch is left to the browser. Native scrolling already has momentum
   tuned to the platform; the pointer physics exists because a mouse gets
   none of that from overflow-x on its own.
+
+## Sound
+
+One rule: the site is silent until someone asks for it, and it remembers
+the answer. A reader who came to read should never be made a noise at.
+
+The tape ticks once per cell passing the head, like a dial going round.
+It is synthesised in Web Audio rather than loaded - a sample would be
+another request on a page that costs 23KB, and a generated click can
+take its brightness and level from how fast the tape is actually
+travelling. Filtered noise, never a tone: a tone reads as a beep, noise
+reads as a mechanism.
+
+Two things that are easy to get wrong here, both found by measuring:
+
+- **Throttle perceptual timing on the wall clock, not `currentTime`.**
+  An AudioContext that hasn't been resumed keeps `currentTime` frozen,
+  so a floor measured against it makes every tick look simultaneous and
+  drops all of them.
+- **A fresh context starts its clock at zero**, so a "last fired at"
+  counter initialised to 0 swallows the first tick of the visit,
+  including the one that answers the toggle. Start it negative.
+
+The control only appears on the page that has a tape, and stays hidden
+until JS confirms the browser can actually synthesise the tick - same
+gating as every widget here.
 - Motion should be quiet: no bounce, no overshoot easing on anything
   chrome-level. `cubic-bezier(.16,.78,.18,1)` is the one eased curve used
   for interface motion (tape read-head, feature-card transitions); most
