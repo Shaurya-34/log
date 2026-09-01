@@ -740,6 +740,73 @@ article.post .chaos-demo figcaption {
   .chaos-defaults { transition: none; }
 }
 
+/* ---- sphere-tracing figure ----------------------------------------- */
+
+article.post .ray-demo { margin: 2.75rem 0 3rem; }
+
+.ray-demo .ray-head,
+.ray-demo .ray-canvas { display: none; }
+.ray-demo.is-ready .ray-head { display: flex; }
+.ray-demo.is-ready .ray-canvas { display: block; }
+
+.ray-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.ray-switch { display: flex; gap: 0; }
+
+.ray-switch button {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.ray-switch button + button { border-left: 0; }
+.ray-switch button:hover { color: var(--ink); border-color: var(--ink); }
+
+.ray-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.ray-readout {
+  margin: 0;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.ray-readout b { font-weight: 400; color: var(--ink); }
+
+.ray-canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 852 / 420;
+  border: 1px solid var(--hairline);
+  cursor: crosshair;
+}
+
+article.post .ray-demo figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ray-switch button { transition: none; }
+}
+
 /* ---- colormap carousel ------------------------------------------- */
 /* Lives here rather than in a per-post <style> block: the page CSP sets
    style-src without 'unsafe-inline', so an inline <style> is blocked and

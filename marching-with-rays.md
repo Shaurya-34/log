@@ -110,6 +110,18 @@ There's still a faint crease near the top, right where the blend zone
 runs out of room, but it reads as a fold in the surface rather than a
 seam. That's the whole difference a few lines of arithmetic can make.
 
+<figure class="ray-demo" id="ray-demo">
+  <div class="ray-head">
+    <div class="ray-switch" role="group" aria-label="Shape combine mode">
+      <button type="button" data-mode="min" aria-pressed="false">min()</button>
+      <button type="button" data-mode="smin" aria-pressed="true">smin()</button>
+    </div>
+    <p class="ray-readout" aria-live="polite">steps <b data-out="steps">-</b> <span data-out="status"></span></p>
+  </div>
+  <canvas class="ray-canvas" width="852" height="420" role="img" aria-label="A 2D cross-section of the sphere and box scene. Click anywhere to cast a ray from the camera point toward the click, sphere-tracing step by step."></canvas>
+  <figcaption>The same two shapes, the same scene() from above - min() on the left button gives the hard seam, smin() gives the smooth blend. Click anywhere in the frame to cast a ray from the camera point (bottom left) toward the click: each circle is the distance field's answer at that step, the radius that's safe to jump by in any direction. The ray jumps by exactly that much, asks again, and the circles shrink until it lands on a surface or gives up.</figcaption>
+</figure>
+
 ## Jagged edges, then not
 
 Zoomed in, the edges were rough. Each pixel was sampling the scene at

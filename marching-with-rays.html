@@ -22,8 +22,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=d102e66e">
-  <script src="site.js?v=ec5f9523" defer></script>
+  <link rel="stylesheet" href="style.css?v=3f3a449b">
+  <script src="site.js?v=ae615ffb" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Marching with rays","description":"Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.","url":"https://sslog.dpdns.org/marching-with-rays.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/marching-with-rays.html"},"datePublished":"2026-07-21T00:00:00+00:00","dateModified":"2026-07-21T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["graphics","java"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -133,6 +133,18 @@ material:</p>
 <p>There's still a faint crease near the top, right where the blend zone
 runs out of room, but it reads as a fold in the surface rather than a
 seam. That's the whole difference a few lines of arithmetic can make.</p>
+<figure class="ray-demo" id="ray-demo">
+  <div class="ray-head">
+    <div class="ray-switch" role="group" aria-label="Shape combine mode">
+      <button type="button" data-mode="min" aria-pressed="false">min()</button>
+      <button type="button" data-mode="smin" aria-pressed="true">smin()</button>
+    </div>
+    <p class="ray-readout" aria-live="polite">steps <b data-out="steps">-</b> <span data-out="status"></span></p>
+  </div>
+  <canvas class="ray-canvas" width="852" height="420" role="img" aria-label="A 2D cross-section of the sphere and box scene. Click anywhere to cast a ray from the camera point toward the click, sphere-tracing step by step."></canvas>
+  <figcaption>The same two shapes, the same scene() from above - min() on the left button gives the hard seam, smin() gives the smooth blend. Click anywhere in the frame to cast a ray from the camera point (bottom left) toward the click: each circle is the distance field's answer at that step, the radius that's safe to jump by in any direction. The ray jumps by exactly that much, asks again, and the circles shrink until it lands on a surface or gives up.</figcaption>
+</figure>
+
 <h2>Jagged edges, then not</h2>
 <p>Zoomed in, the edges were rough. Each pixel was sampling the scene at
 exactly one point, so a curve crossing a pixel either counted as fully in

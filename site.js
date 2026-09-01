@@ -1010,6 +1010,318 @@
   });
 
   /* ------------------------------------------------------------
+     Sphere-tracing figure
+
+     The article's own scene() - a sphere and a box, combined with min()
+     or smin() - rendered live as a 2D cross-section, plus a ray the
+     reader casts by clicking: sphere tracing, one safe-radius circle per
+     step, exactly the pseudocode a few paragraphs up.
+     ------------------------------------------------------------ */
+  run(function () {
+    var fig = document.getElementById("ray-demo");
+
+    if (!fig) {
+      return;
+    }
+
+    var canvas = fig.querySelector(".ray-canvas");
+    var ctx = canvas.getContext("2d");
+    var modeButtons = Array.prototype.slice.call(
+      fig.querySelectorAll(".ray-switch button")
+    );
+    var stepsOut = fig.querySelector('[data-out="steps"]');
+    var statusOut = fig.querySelector('[data-out="status"]');
+
+    var W = canvas.width, H = canvas.height;
+
+    var SPHERE = { x: 560, y: 190, r: 95 };
+    var BOX = { x: 430, y: 250, hx: 90, hy: 70 };
+    var K = 70;
+    var ORIGIN = { x: 70, y: 380 };
+    var HIT_EPS = 1;
+    var MAX_DIST = 1000;
+    var MAX_STEPS = 80;
+    var STEPS_PER_TICK = 1;
+    var FRAME_SKIP = 3;
+
+    var mode = "smin";
+    var colorInk, colorGrey;
+    var bg = null;
+    var raf = null;
+
+    function sdCircle(px, py, c) {
+      var dx = px - c.x, dy = py - c.y;
+      return Math.sqrt(dx * dx + dy * dy) - c.r;
+    }
+
+    function sdBox(px, py, b) {
+      var dx = Math.abs(px - b.x) - b.hx;
+      var dy = Math.abs(py - b.y) - b.hy;
+      var ax = Math.max(dx, 0), ay = Math.max(dy, 0);
+
+      return Math.sqrt(ax * ax + ay * ay) + Math.min(Math.max(dx, dy), 0);
+    }
+
+    function smin(a, b, k) {
+      var h = Math.max(k - Math.abs(a - b), 0) / k;
+      return Math.min(a, b) - (h * h * k) / 4;
+    }
+
+    function scene(px, py) {
+      var ds = sdCircle(px, py, SPHERE);
+      var db = sdBox(px, py, BOX);
+
+      return mode === "smin" ? smin(ds, db, K) : Math.min(ds, db);
+    }
+
+    function readColors() {
+      var cs = getComputedStyle(fig);
+      colorInk = cs.getPropertyValue("--ink").trim() || "#161513";
+      colorGrey = cs.getPropertyValue("--grey").trim() || "#6f6a62";
+    }
+
+    function hexToRgb(hex) {
+      hex = hex.replace("#", "");
+
+      if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      }
+
+      var n = parseInt(hex, 16);
+
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    /* Silhouette of the current scene(), filled pixel by pixel from the
+       exact same distance function the ray uses - not an approximation
+       of it. A soft alpha falloff near the zero level set gives the
+       outline a slight anti-alias, which felt right for an article whose
+       last section is exactly that. */
+    function renderBackground() {
+      readColors();
+
+      var rgb = hexToRgb(colorInk);
+      var img = ctx.createImageData(W, H);
+      var data = img.data;
+      var band = 1.4;
+
+      for (var y = 0; y < H; y++) {
+        for (var x = 0; x < W; x++) {
+          var d = Math.abs(scene(x, y));
+          var i = (y * W + x) * 4;
+
+          if (d < band) {
+            var a = 1 - d / band;
+            data[i] = rgb[0];
+            data[i + 1] = rgb[1];
+            data[i + 2] = rgb[2];
+            data[i + 3] = Math.round(a * 255);
+          }
+        }
+      }
+
+      bg = img;
+    }
+
+    function drawOrigin() {
+      ctx.fillStyle = colorGrey;
+      ctx.beginPath();
+      ctx.arc(ORIGIN.x, ORIGIN.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function resetCanvas() {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+
+      /* Recomputed on every reset, not just on mode change: this runs on
+         every click, and re-blitting a cached bitmap would leave the
+         outline showing whatever theme was active when it was last
+         built, wrong the moment the reader toggles dark/light. */
+      renderBackground();
+      ctx.clearRect(0, 0, W, H);
+      ctx.putImageData(bg, 0, 0);
+      drawOrigin();
+    }
+
+    function setMode(next) {
+      mode = next;
+
+      modeButtons.forEach(function (btn) {
+        btn.setAttribute(
+          "aria-pressed",
+          btn.getAttribute("data-mode") === mode ? "true" : "false"
+        );
+      });
+
+      resetCanvas();
+      stepsOut.textContent = "-";
+      statusOut.textContent = "";
+    }
+
+    function castRay(targetX, targetY) {
+      var dx = targetX - ORIGIN.x, dy = targetY - ORIGIN.y;
+      var len = Math.sqrt(dx * dx + dy * dy);
+
+      if (len < 1) {
+        return;
+      }
+
+      dx /= len;
+      dy /= len;
+
+      resetCanvas();
+
+      var travelled = 0;
+      var step = 0;
+      var px = ORIGIN.x, py = ORIGIN.y;
+      var skip = 0;
+
+      ctx.strokeStyle = colorInk;
+      ctx.lineWidth = 1.2;
+
+      function drawStepMarker(x, y, d) {
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        ctx.strokeStyle = colorGrey;
+        ctx.globalAlpha = 0.55;
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(d, 0), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = colorInk;
+      }
+
+      function finish(label) {
+        stepsOut.textContent = String(step);
+        statusOut.textContent = label;
+      }
+
+      function tick() {
+        skip++;
+
+        if (skip < FRAME_SKIP) {
+          raf = requestAnimationFrame(tick);
+          return;
+        }
+
+        skip = 0;
+
+        for (var i = 0; i < STEPS_PER_TICK; i++) {
+          var d = scene(px, py);
+          var nx = px + dx * d, ny = py + dy * d;
+
+          drawStepMarker(nx, ny, d);
+
+          px = nx;
+          py = ny;
+          travelled += d;
+          step++;
+
+          stepsOut.textContent = String(step);
+          statusOut.textContent = "marching…";
+
+          if (d < HIT_EPS) {
+            ctx.fillStyle = colorInk;
+            ctx.beginPath();
+            ctx.arc(px, py, 3, 0, Math.PI * 2);
+            ctx.fill();
+            finish("hit");
+            return;
+          }
+
+          if (travelled > MAX_DIST || step >= MAX_STEPS) {
+            finish("missed");
+            return;
+          }
+        }
+
+        raf = requestAnimationFrame(tick);
+      }
+
+      tick();
+    }
+
+    function castRayStatic(targetX, targetY) {
+      /* Reduced motion: no per-step animation, just the final ray and
+         where it landed. */
+      var dx = targetX - ORIGIN.x, dy = targetY - ORIGIN.y;
+      var len = Math.sqrt(dx * dx + dy * dy);
+
+      if (len < 1) {
+        return;
+      }
+
+      dx /= len;
+      dy /= len;
+
+      resetCanvas();
+
+      var travelled = 0, step = 0, px = ORIGIN.x, py = ORIGIN.y;
+      var hit = false;
+
+      for (; step < MAX_STEPS; step++) {
+        var d = scene(px, py);
+
+        px += dx * d;
+        py += dy * d;
+        travelled += d;
+
+        if (d < HIT_EPS) {
+          hit = true;
+          step++;
+          break;
+        }
+
+        if (travelled > MAX_DIST) {
+          break;
+        }
+      }
+
+      ctx.strokeStyle = colorInk;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(ORIGIN.x, ORIGIN.y);
+      ctx.lineTo(px, py);
+      ctx.stroke();
+
+      ctx.fillStyle = colorInk;
+      ctx.beginPath();
+      ctx.arc(px, py, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      stepsOut.textContent = String(step);
+      statusOut.textContent = hit ? "hit" : "missed";
+    }
+
+    canvas.addEventListener("click", function (e) {
+      var r = canvas.getBoundingClientRect();
+      var x = ((e.clientX - r.left) / r.width) * W;
+      var y = ((e.clientY - r.top) / r.height) * H;
+
+      if (reduced) {
+        castRayStatic(x, y);
+      } else {
+        castRay(x, y);
+      }
+    });
+
+    modeButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        setMode(btn.getAttribute("data-mode"));
+      });
+    });
+
+    resetCanvas();
+    fig.classList.add("is-ready");
+  });
+
+  /* ------------------------------------------------------------
      Colormap carousel dots
 
      Plain anchor navigation loses to the track's mandatory scroll
