@@ -279,6 +279,33 @@
       panel.classList.add("is-drawn");
     }
 
+    var track = viewport.querySelector(".tape-track");
+
+    /* The blank run-out either side, sized so the first and last cells
+       can still reach the centre of the frame. Set here in real pixels
+       rather than as a CSS percentage: the track is width:max-content,
+       and percentage padding against an intrinsically-sized box is
+       exactly the kind of thing browsers disagree about. */
+    function sizeRunout() {
+      if (!track || !cells.length) {
+        return;
+      }
+
+      var pad = Math.max(
+        0,
+        viewport.clientWidth / 2 - cells[0].offsetWidth / 2
+      );
+
+      track.style.paddingLeft = pad + "px";
+      track.style.paddingRight = pad + "px";
+    }
+
+    /* Scroll position that puts cell `i` under the head. */
+    function targetFor(i) {
+      var cell = cells[Math.max(0, Math.min(i, cells.length - 1))];
+      return cell.offsetLeft + cell.offsetWidth / 2 - viewport.clientWidth / 2;
+    }
+
     /* Which cell currently sits closest to the head. */
     function nearestCell() {
       var centre = viewport.scrollLeft + viewport.clientWidth / 2;
@@ -365,9 +392,7 @@
     function centre(index, smooth) {
       active = Math.max(0, Math.min(index, cells.length - 1));
 
-      var cell = cells[active];
-      var target =
-        cell.offsetLeft + cell.offsetWidth / 2 - viewport.clientWidth / 2;
+      var target = targetFor(active);
 
       if (smooth && !reduced) {
         animateTo(target, 420);
@@ -407,16 +432,25 @@
         clearTimeout(scrollTimer);
       }
 
-      /* Re-check once movement stops, in case the snap landed somewhere
-         the last scroll event didn't report. */
+      /* Our own snap, replacing scroll-snap-type: once a free drag or
+         wheel stops, ease the nearest cell under the head. Skipped when
+         it is already centred, so this can't fight itself. */
       scrollTimer = setTimeout(function () {
+        if (animating) {
+          return;
+        }
+
         var settled = nearestCell();
 
         if (settled !== active) {
           active = settled;
           paint();
         }
-      }, 90);
+
+        if (Math.abs(viewport.scrollLeft - targetFor(settled)) > 1) {
+          centre(settled, true);
+        }
+      }, 110);
     }, { passive: true });
 
     cells.forEach(function (cell, i) {
@@ -466,6 +500,7 @@
     }
 
     addEventListener("resize", function () {
+      sizeRunout();
       centre(active, false);
     });
 
@@ -502,6 +537,7 @@
        the tape, so the initial scroll position has to be set explicitly
        - otherwise the tape renders at scrollLeft 0 showing the oldest
        cells while the panel already displays the newest. */
+    sizeRunout();
     centre(active, false);
   });
 

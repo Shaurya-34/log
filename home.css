@@ -50,17 +50,21 @@
    and the cells appeared to spill out of their own box. A background on
    a scroll container is fixed to the element by default, which is
    exactly the behaviour wanted here. */
+/* No scroll-snap here on purpose. Mandatory snap silently reverts any
+   intermediate scrollLeft assignment, which killed the per-frame
+   animation outright: the panel changed but the tape never moved. The
+   snapping is done in site.js instead, by easing to the nearest cell
+   once a drag settles - same behaviour, fully under our control. */
 .tape-viewport {
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
-  border-top: 1px solid var(--grey);
-  border-bottom: 1px solid var(--grey);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
   background-image:
-    radial-gradient(circle at center, var(--grey) 0 1px, transparent 1.4px),
-    radial-gradient(circle at center, var(--grey) 0 1px, transparent 1.4px);
+    radial-gradient(circle at center, var(--grey) 0 1.15px, transparent 1.5px),
+    radial-gradient(circle at center, var(--grey) 0 1.15px, transparent 1.5px);
   background-size: 13px 13px, 13px 13px;
   background-position: 0 5px, 0 calc(100% - 5px);
   background-repeat: repeat-x, repeat-x;
@@ -85,7 +89,6 @@
   height: var(--cell-h);
   margin: 1.15rem 0;
   padding: 0;
-  scroll-snap-align: center;
   display: grid;
   place-items: center;
   background: none;
