@@ -996,10 +996,10 @@
       centre(active + (e.key === "ArrowRight" ? 1 : -1), true);
     });
 
-    /* The active cell is the newest article, at the right-hand end of
-       the tape, so the initial scroll position has to be set explicitly
-       - otherwise the tape renders at scrollLeft 0 showing the oldest
-       cells while the panel already displays the newest. */
+    /* Sizes the run-out and parks the starting cell under the head. The
+       scroll position has to be set explicitly even though the tape opens
+       on its leftmost cell: scrollLeft 0 is the far end of the blank
+       run-out, not the first article. */
     reflow();
   });
 

@@ -326,14 +326,17 @@ def build_index(posts):
     cards = []
     # posts arrives newest-first (everywhere else - feed, sitemap, prev/next
     # nav - relies on that order). The tape itself reads left-to-right like
-    # an actual tape: oldest cell first, newest last. The newest post stays
-    # the one shown/active on load, it's just the rightmost cell instead of
-    # the leftmost.
+    # an actual tape: oldest cell first, newest last.
+    #
+    # The head starts on the oldest post, at the left-hand end, so the tape
+    # is read the way it was written - the reader arrives at the start of
+    # the log and moves forward through it, rather than at the end facing
+    # backwards. It also means the tape opens with somewhere to go.
     tape_posts = list(reversed(posts))
-    newest = len(tape_posts) - 1
+    first = 0
     for i, p in enumerate(tape_posts):
         bit = "01011"[i % 5]
-        is_active = i == newest
+        is_active = i == first
         # The cell carries only its bit: a tape is cells, not a labelled
         # list. Title and date live in the panel below, for whichever cell
         # is currently under the head.

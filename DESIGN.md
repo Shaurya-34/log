@@ -106,9 +106,11 @@ color on this site, full stop.
 - Homepage tape strip: five visible cells on desktop, three on mobile
   (`--tape-visible`), each cell bordered `1px solid var(--grey)`
   (`var(--ink)` when active). The tape reads oldest → newest, left to
-  right, like an actual tape being written forward in time; the newest
-  entry is still what's shown active by default, it's just the rightmost
-  cell now instead of the leftmost.
+  right, like an actual tape being written forward in time, and the head
+  starts on the oldest cell at the left-hand end - the reader arrives at
+  the start of the log and moves forward through it, rather than at the
+  end facing backwards. It also means the tape opens with somewhere to
+  go, instead of against its own stop.
 - Single mobile breakpoint: `max-width: 600px`. A second tier at `1050px`
   handles tablet-width reflow. Don't invent a third without a concrete
   layout that needs it.
