@@ -16,6 +16,9 @@ SITE_TITLE = "Shaurya · Log"
 SITE_DESC = ("Experimental engineering notes on AI, machine learning, graphics, "
              "programming, computation, and the things I build to understand how they work.")
 MOTTO = "honest · semi informative · personal"
+# One line under the wordmark answering who/what before anything else -
+# the homepage is also the landing page, so it can't stay anonymous.
+IDENTITY = "Shaurya — engineering notes on ML, graphics, computation"
 INTRO = ("I think of this less as a blog and more as a log: a running record of what I'm "
          "building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.")
 FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
@@ -278,25 +281,21 @@ def build_post(post, newer, older):
             page_foot('<a href="index.html">Index</a>'))
 
 
-def cover_markup(post, index):
-    if post["cover"]:
-        image = read_cover_svg(post["cover"]).replace(
-            '<svg ', '<svg class="cover-svg" aria-hidden="true" ', 1)
-    else:
-        image = '<div class="cover-placeholder" aria-hidden="true"><span>SSLOG</span></div>'
-    fig_chrome = ""
-    if post["cover"] and post["diagram_label"]:
-        fig_chrome = ('<div class="cover-fig-chrome">'
-                      f'<span>FIG_{index + 1:03d}</span>'
-                      f'<span>[ {html.escape(post["diagram_label"])} ]</span>'
-                      '</div>')
-    kicker = post["cover_kicker"] or ", ".join(post["tags"][:3]).upper()
-    quote = post["cover_quote"]
-    quote_html = (f'<div class="cover-quote"><p>{html.escape(quote)}</p>'
-                  f'<small>— {html.escape(post["cover_quote_author"])}</small></div>'
-                  if quote else '<div class="cover-quote"><p>NOTES FROM THE RABBIT HOLE.</p></div>')
-    return (f'<div class="cover-image">{fig_chrome}{image}</div>\n'
-            f'<div class="cover-kicker">{html.escape(kicker)}</div>\n{quote_html}')
+def panel_figure(post, index):
+    """The article's diagram, with its FIG_ chrome, as the right-hand
+    column of an entry panel. The SVG is inlined rather than referenced
+    via <img> so its draw-in <animate>/CSS hooks stay reachable."""
+    if not post["cover"]:
+        return '<div class="entry-figure" aria-hidden="true"></div>'
+    svg = read_cover_svg(post["cover"]).replace(
+        '<svg ', '<svg class="cover-svg" aria-hidden="true" ', 1)
+    label = post["diagram_label"] or ", ".join(post["tags"][:2]).upper()
+    return ('<div class="entry-figure">'
+            '<div class="cover-fig-chrome">'
+            f'<span>FIG_{index + 1:03d}</span>'
+            f'<span>[ {html.escape(label)} ]</span>'
+            '</div>'
+            f'{svg}</div>')
 
 
 def build_index(posts):
@@ -310,50 +309,56 @@ def build_index(posts):
     tape_posts = list(reversed(posts))
     newest = len(tape_posts) - 1
     for i, p in enumerate(tape_posts):
-        code = format(i + 1, "03b")
         bit = "01011"[i % 5]
         is_active = i == newest
+        # The cell carries only its bit: a tape is cells, not a labelled
+        # list. Title and date live in the panel below, for whichever cell
+        # is currently under the head.
         tape_cells.append(
             f'<button class="tape-cell{" is-active" if is_active else ""}" '
             f'data-index="{i}" aria-label="Open {html.escape(p["title"])}" '
             f'aria-current="{"true" if is_active else "false"}">'
-            f'<span class="tape-code">{code}</span>'
-            f'<span class="tape-box" aria-hidden="true">{bit}</span>'
-            f'<span class="tape-title">{html.escape(p["title"])}</span>'
-            f'<span class="tape-date">{p["date"]:%d %b %Y}</span>'
+            f'<span class="tape-bit" aria-hidden="true">{bit}</span>'
             f'</button>')
-        card_class = 'feature-card is-active' if is_active else 'feature-card'
         tags = ', '.join(p["tags"][:4])
+        # Every panel is rendered into the HTML and hidden with CSS rather
+        # than injected on demand, so crawlers and agents still see all
+        # five articles' text on the homepage.
         cards.append(
-            f'<article class="{card_class}" data-index="{i}" aria-hidden="{"false" if is_active else "true"}">'
-            f'<a class="feature-head" href="{p["slug"]}.html"><span>ARTICLE NO. {i + 1:02d}</span><span>→</span></a>'
-            f'<h1>{html.escape(p["title"])}</h1>'
-            f'<div class="feature-grid">'
-            f'<div class="feature-description">{html.escape(p["description"])}</div>'
-            f'{cover_markup(p, i)}'
-            f'<div class="feature-meta"><span>{p["date"]:%d %b %Y}<br>~ {p["read_time"]} min read</span>'
-            f'<span>{html.escape(tags)}</span><span>∎</span></div>'
-            f'</div></article>')
+            f'<article class="entry-panel{" is-active" if is_active else ""}" '
+            f'data-index="{i}" aria-hidden="{"false" if is_active else "true"}">'
+            '<div class="entry-text">'
+            f'<p class="entry-meta">ARTICLE NO. {i + 1:02d} · {p["date"]:%d %b %Y} · '
+            f'{p["read_time"]} min read</p>'
+            f'<h2 class="entry-title"><a href="{p["slug"]}.html">{html.escape(p["title"])}</a></h2>'
+            f'<p class="entry-desc">{html.escape(p["description"])}</p>'
+            f'<p class="entry-tags">{html.escape(tags)}</p>'
+            '</div>'
+            f'{panel_figure(p, i)}'
+            '</article>')
     jsonld = {"@context":"https://schema.org","@type":"Blog","name":SITE_TITLE,
               "description":SITE_DESC,"url":SITE_URL,"author":{"@type":"Person","name":SITE_NAME,"url":SITE_URL}}
+    # The head is fixed at the centre and the tape scrolls beneath it, the
+    # way a real reader works: the head doesn't chase the tape.
     tape = (
-        '<section class="article-orbit tape-nav" aria-label="Article navigation">'
-        '<div class="tape-viewport"><div class="tape-track" role="list">' + ''.join(tape_cells) + '</div></div>'
+        '<section class="tape-nav" aria-label="Article navigation">'
+        '<div class="tape-head" aria-hidden="true"></div>'
+        '<div class="tape-viewport"><div class="tape-track" role="list">'
+        + ''.join(tape_cells) +
+        '</div></div>'
         '<button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button>'
         '<button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button>'
-        '<div class="tape-note"><span>A head scans a tape. One cell at a time.<br>The machine moves. The log remains.</span></div>'
         '</section>')
-    # sr-only: the tape/feature-card layout has no single visible page
-    # heading (each feature card carries its own <h1>), so this gives
-    # screen readers and agents one real heading plus a plain-text summary
-    # of the whole site up front, not just its newest post.
+    # sr-only: the tape/panel layout has no single visible page heading
+    # (the panel titles are h2s), so this gives screen readers and agents
+    # one real heading plus a plain-text summary of the whole site up
+    # front, not just its newest post.
     agent_summary = (f'<h1 class="sr-only">{html.escape(SITE_TITLE)}</h1>\n'
                       f'<p class="sr-only agent-home-summary">{html.escape(AGENT_SUMMARY)}</p>\n')
-    body = (page_header() + agent_summary + f'<p class="motto">{MOTTO}</p>\n'
+    body = (page_header() + agent_summary + f'<p class="identity">{IDENTITY}</p>\n'
             '<main class="home-stage">' + tape +
-            '<section class="feature-stage" aria-live="polite">' + ''.join(cards) + '</section>'
-            '</main>'
-            f'<p class="intro home-intro">{INTRO}</p>')
+            '<section class="panel-stage" aria-live="polite">' + ''.join(cards) + '</section>'
+            '</main>')
     og_image = absolute_url(posts[0]["cover"]) if posts and posts[0]["cover"] else None
     return (page_head(SITE_TITLE, SITE_DESC, "", jsonld=jsonld, extra_css="home.css",
                       og_image=og_image, md_href="index.md") + body +

@@ -228,40 +228,35 @@
   });
 
   /* ------------------------------------------------------------
+  /* ------------------------------------------------------------
      Turing tape navigation
+
+     The read head is fixed at the centre of the frame and the tape is
+     pulled through it, the way a real reader works. Whichever cell is
+     nearest the centre is "being read": it drives the entry panel
+     below. Scrolling is native (overflow-x + scroll-snap), so momentum,
+     touch and keyboard come for free and behave identically on both.
      ------------------------------------------------------------ */
 
   run(function () {
-    var tape =
-      document.querySelector(".article-orbit.tape-nav");
+    var tape = document.querySelector(".tape-nav");
 
     var cells = tape
-      ? Array.prototype.slice.call(
-          tape.querySelectorAll(".tape-cell")
-        )
+      ? Array.prototype.slice.call(tape.querySelectorAll(".tape-cell"))
       : [];
 
-    var cards =
-      Array.prototype.slice.call(
-        document.querySelectorAll(".feature-card")
-      );
+    var panels = Array.prototype.slice.call(
+      document.querySelectorAll(".entry-panel")
+    );
 
-    if (!tape || !cells.length || !cards.length) {
+    if (!tape || !cells.length || !panels.length) {
       return;
     }
 
-    var viewport =
-      tape.querySelector(".tape-viewport");
+    var viewport = tape.querySelector(".tape-viewport");
 
-    var head =
-      tape.querySelector(".tape-read-head");
-
-    /* Create the head automatically if necessary. */
-    if (!head && viewport) {
-      head = document.createElement("div");
-      head.className = "tape-read-head";
-      head.setAttribute("aria-hidden", "true");
-      viewport.appendChild(head);
+    if (!viewport) {
+      return;
     }
 
     var active = cells.findIndex(function (cell) {
@@ -272,186 +267,213 @@
       active = 0;
     }
 
-    /* Diagram draw-in: fires once per card, the first time it becomes
+    /* Diagram draw-in: fires once per panel, the first time it becomes
        active, via a CSS keyframe (see .is-drawn in home.css). Reduced
        motion is handled entirely in CSS, so this just needs the class. */
-    function playDraw(card) {
-      if (!card || card.dataset.animated === "1") {
+    function playDraw(panel) {
+      if (!panel || panel.dataset.animated === "1") {
         return;
       }
 
-      card.dataset.animated = "1";
-      card.classList.add("is-drawn");
+      panel.dataset.animated = "1";
+      panel.classList.add("is-drawn");
     }
 
-    playDraw(cards[active]);
-
-    function moveReadHead(animate) {
-      if (!head || !viewport || !cells[active]) {
-        return;
-      }
-
-      var cell = cells[active];
-
-      /* head and cell share the same offsetParent (.tape-viewport), so
-         cell.offsetLeft is already in the right coordinate frame for
-         positioning head via translateX. Subtracting viewport.offsetLeft
-         here was mixing that in with viewport's own offset relative to
-         ITS parent (.tape-nav) - a different frame entirely - which threw
-         the head off-center by exactly that amount. Harmless-looking at
-         index 0 (a small constant offset near the tape's own left edge)
-         but very visible once the active cell moved to the far end of
-         the tape. */
-      var x =
-        cell.offsetLeft +
-        cell.offsetWidth / 2;
-
-      if (!animate || reduced) {
-        head.style.transition = "none";
-
-        head.style.transform =
-          "translateX(" + x + "px)";
-
-        void head.offsetWidth;
-
-        head.style.transition =
-          "transform 650ms cubic-bezier(.16,.78,.18,1)";
-      } else {
-        head.style.transform =
-          "translateX(" + x + "px)";
-      }
-    }
-
-    function select(index, focus) {
-      var previous = active;
-
-      active =
-        (index + cells.length) %
-        cells.length;
-
-      var moved = previous !== active;
+    /* Which cell currently sits closest to the head. */
+    function nearestCell() {
+      var centre = viewport.scrollLeft + viewport.clientWidth / 2;
+      var best = 0;
+      var bestDist = Infinity;
 
       cells.forEach(function (cell, i) {
-        var on = i === active;
+        var cellCentre = cell.offsetLeft + cell.offsetWidth / 2;
+        var dist = Math.abs(cellCentre - centre);
 
-        cell.classList.toggle(
-          "is-active",
-          on
-        );
-
-        cell.setAttribute(
-          "aria-current",
-          on ? "true" : "false"
-        );
-
-        if (on && focus) {
-          cell.focus();
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
         }
       });
 
-      cards.forEach(function (card, i) {
-        var on = i === active;
-
-        card.classList.toggle(
-          "is-active",
-          on
-        );
-
-        card.setAttribute(
-          "aria-hidden",
-          on ? "false" : "true"
-        );
-      });
-
-      if (moved) {
-        moveReadHead(true);
-      }
-
-      playDraw(cards[active]);
-
-      cells[active].scrollIntoView({
-        behavior: reduced ? "auto" : "smooth",
-        block: "nearest",
-        inline: "center"
-      });
+      return best;
     }
 
-    /* Cell clicks */
+    function paint() {
+      cells.forEach(function (cell, i) {
+        var on = i === active;
+        cell.classList.toggle("is-active", on);
+        cell.setAttribute("aria-current", on ? "true" : "false");
+      });
+
+      panels.forEach(function (panel, i) {
+        var on = i === active;
+        panel.classList.toggle("is-active", on);
+        panel.setAttribute("aria-hidden", on ? "false" : "true");
+      });
+
+      playDraw(panels[active]);
+    }
+
+    /* Native smooth scrolling is unreliable against mandatory scroll
+       snap: the snap can abort the animation mid-flight, leaving the
+       tape parked between cells. That exact conflict already bit the
+       colormap carousel elsewhere in this project. So drive the scroll
+       ourselves - every frame is an instant assignment, which snap has
+       nothing to fight, and it lets us pick the easing. */
+    var anim = null;
+    var animating = false;
+
+    function animateTo(target, duration) {
+      if (anim) {
+        cancelAnimationFrame(anim);
+      }
+
+      var start = viewport.scrollLeft;
+      var delta = target - start;
+
+      if (Math.abs(delta) < 1) {
+        viewport.scrollLeft = target;
+        return;
+      }
+
+      var startedAt = null;
+      animating = true;
+
+      function frame(now) {
+        if (startedAt === null) {
+          startedAt = now;
+        }
+
+        var t = Math.min((now - startedAt) / duration, 1);
+        /* easeOutCubic: moves off quickly, settles slowly, like
+           something with mass coming to rest. */
+        var eased = 1 - Math.pow(1 - t, 3);
+
+        viewport.scrollLeft = start + delta * eased;
+
+        if (t < 1) {
+          anim = requestAnimationFrame(frame);
+        } else {
+          anim = null;
+          animating = false;
+        }
+      }
+
+      anim = requestAnimationFrame(frame);
+    }
+
+    function centre(index, smooth) {
+      active = Math.max(0, Math.min(index, cells.length - 1));
+
+      var cell = cells[active];
+      var target =
+        cell.offsetLeft + cell.offsetWidth / 2 - viewport.clientWidth / 2;
+
+      if (smooth && !reduced) {
+        animateTo(target, 420);
+      } else {
+        if (anim) {
+          cancelAnimationFrame(anim);
+          anim = null;
+        }
+
+        animating = false;
+        viewport.scrollLeft = target;
+      }
+
+      paint();
+    }
+
+    /* The tape drives the panel: whatever the scroll settles on wins,
+       whether it got there by drag, wheel, arrow or click. */
+    var scrollTimer = null;
+
+    viewport.addEventListener("scroll", function () {
+      /* While we're driving the scroll ourselves, centre() has already
+         set the destination - don't let intermediate frames flicker the
+         panel through every cell we pass on the way. */
+      if (animating) {
+        return;
+      }
+
+      var next = nearestCell();
+
+      if (next !== active) {
+        active = next;
+        paint();
+      }
+
+      if (scrollTimer) {
+        clearTimeout(scrollTimer);
+      }
+
+      /* Re-check once movement stops, in case the snap landed somewhere
+         the last scroll event didn't report. */
+      scrollTimer = setTimeout(function () {
+        var settled = nearestCell();
+
+        if (settled !== active) {
+          active = settled;
+          paint();
+        }
+      }, 90);
+    }, { passive: true });
+
     cells.forEach(function (cell, i) {
-      cell.addEventListener(
-        "click",
-        function () {
-          select(i, false);
-        }
-      );
+      cell.addEventListener("click", function () {
+        /* A cell already under the head opens its article; anything
+           else scrolls itself under the head first. */
+        if (i === active) {
+          var link = panels[active] &&
+            panels[active].querySelector(".entry-title a");
 
-      cell.addEventListener(
-        "keydown",
-        function (e) {
-          if (
-            e.key === "ArrowRight" ||
-            e.key === "ArrowDown"
-          ) {
-            e.preventDefault();
-            select(i + 1, true);
+          if (link) {
+            window.location.href = link.getAttribute("href");
           }
 
-          if (
-            e.key === "ArrowLeft" ||
-            e.key === "ArrowUp"
-          ) {
-            e.preventDefault();
-            select(i - 1, true);
-          }
+          return;
         }
-      );
+
+        centre(i, true);
+      });
+
+      cell.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          centre(active + 1, true);
+          cells[active].focus();
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          centre(active - 1, true);
+          cells[active].focus();
+        }
+      });
     });
 
-    /* Previous / next arrows */
-    var next =
-      tape.querySelector(".tape-next");
-
-    var prev =
-      tape.querySelector(".tape-prev");
+    var next = tape.querySelector(".tape-next");
+    var prev = tape.querySelector(".tape-prev");
 
     if (next) {
-      next.addEventListener(
-        "click",
-        function () {
-          select(active + 1, false);
-        }
-      );
+      next.addEventListener("click", function () {
+        centre(active + 1, true);
+      });
     }
 
     if (prev) {
-      prev.addEventListener(
-        "click",
-        function () {
-          select(active - 1, false);
-        }
-      );
+      prev.addEventListener("click", function () {
+        centre(active - 1, true);
+      });
     }
 
-    addEventListener(
-      "resize",
-      function () {
-        moveReadHead(false);
-      }
-    );
-
-    /* Initial position — no animation. The active cell is now the
-       newest article, at the right end of the tape rather than index 0,
-       so it needs an explicit (instant) scroll into view on load -
-       without this the track would render at scrollLeft 0, showing the
-       oldest cells while the featured panel already displays the
-       newest. */
-    moveReadHead(false);
-
-    cells[active].scrollIntoView({
-      behavior: "auto",
-      block: "nearest",
-      inline: "center"
+    addEventListener("resize", function () {
+      centre(active, false);
     });
+
+    /* The active cell is the newest article, at the right-hand end of
+       the tape, so the initial scroll position has to be set explicitly
+       - otherwise the tape renders at scrollLeft 0 showing the oldest
+       cells while the panel already displays the newest. */
+    centre(active, false);
   });
 
   /* ------------------------------------------------------------
