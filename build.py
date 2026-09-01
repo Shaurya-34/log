@@ -175,7 +175,8 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
     return head + '</head>\n<body>\n<div class="wrap">\n'
 
 
-WORDMARK_HTML = 'LOG<span class="wordmark-cursor" aria-hidden="true"></span>'
+WORDMARK_HTML = ('<span class="wordmark-text">LOG</span>'
+                  '<span class="wordmark-cursor" aria-hidden="true"></span>')
 
 
 def page_header(base=""):

@@ -99,6 +99,19 @@ header.site {
   text-decoration: none;
 }
 
+.wordmark-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 0;
+  animation: wordmark-type 0.7s steps(3, end) forwards;
+}
+
+@keyframes wordmark-type {
+  to { width: 3ch; }
+}
+
 .wordmark-cursor {
   display: inline-block;
   width: 0.5em;
@@ -106,7 +119,17 @@ header.site {
   margin-left: 0.08em;
   background: currentColor;
   vertical-align: -0.1em;
-  animation: wordmark-blink 1.1s step-end infinite;
+  /* Solid while "LOG" is still being typed, then starts blinking the
+     moment the typing animation finishes. */
+  animation: wordmark-blink 1.1s step-end 0.7s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The site's global reduced-motion rule disables the typing animation
+     entirely, which would otherwise leave .wordmark-text stuck at its
+     pre-animation width:0 - permanently invisible. Show the full text
+     immediately instead. */
+  .wordmark-text { width: auto; }
 }
 
 @keyframes wordmark-blink {
