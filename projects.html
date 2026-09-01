@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Projects · Shaurya</title>
+  <meta name="description" content="Software Shaurya has built: research tools, renderers and experiments, with links to the code and the write-ups.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://sslog.dpdns.org/projects.html">
+  <meta property="og:site_name" content="Shaurya · Log">
+  <meta property="og:title" content="Projects · Shaurya">
+  <meta property="og:description" content="Software Shaurya has built: research tools, renderers and experiments, with links to the code and the write-ups.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sslog.dpdns.org/projects.html">
+  <link rel="alternate" type="text/markdown" href="projects.md">
+  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
+  <link rel="stylesheet" href="style.css?v=3c375887">
+  <script src="site.js?v=11510693" defer></script>
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yajiq3aa14");
+  </script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
+    <nav>
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
+    </nav>
+  </header>
+
+  <article class="post">
+    <h1>Projects</h1>
+    <p class="post-meta">7 projects · 4 written up</p>
+    <p>Things I have built, mostly to understand something rather than to ship it. Four of them have an entry on the log, which is usually the more honest account: what I expected, what actually happened, and which part turned out to matter. The rest are just the code, for now.</p>
+    <ul class="project-list"><li class="project"><p class="project-head"><a class="project-name" href="https://github.com/Shaurya-34/Prism" rel="noopener">Prism &#8599;</a><span class="project-stack">Python</span></p><p class="project-blurb">A terminal-native multi-agent research tool. It splits one question into parallel web-searching subagents, supervises them with Sotis, and merges what comes back into an exportable report, all inside a keyboard-driven TUI.</p></li><li class="project"><p class="project-head"><a class="project-name" href="https://github.com/Shaurya-34/Sotis" rel="noopener">Sotis &#8599;</a><span class="project-stack">Python</span></p><p class="project-blurb">Watches an LLM agent while it is running and steps in when it starts to spiral, instead of reading the wreckage afterwards.</p></li><li class="project"><p class="project-head"><a class="project-name" href="https://github.com/Shaurya-34/catapult" rel="noopener">catapult &#8599;</a><span class="project-stack">Python, PyTorch</span></p><p class="project-blurb">Reproducing gwern&#x27;s LLM-catapult hypothesis on a laptop GPU: can a high learning rate and heavy weight decay push a network through a memorisation-to-algorithm phase transition? Grokking reproduced on modular addition, with weight decay turning out to be the load-bearing knob.</p><p class="project-entry"><a href="grok-grok.html">Read the log entry &rarr;</a></p></li><li class="project"><p class="project-head"><a class="project-name" href="https://github.com/Shaurya-34/raymarcher" rel="noopener">raymarcher &#8599;</a><span class="project-stack">Java</span></p><p class="project-blurb">A signed-distance-field ray marcher in about 170 lines of plain Java. No engine, no shader language, no graphics library, plus anti-aliasing and soft shadows.</p><p class="project-entry"><a href="marching-with-rays.html">Read the log entry &rarr;</a></p></li><li class="project"><p class="project-head"><a class="project-name" href="https://github.com/Shaurya-34/strange_attractors" rel="noopener">strange_attractors &#8599;</a><span class="project-stack">Python</span></p><p class="project-blurb">Four continuous chaotic systems and the Clifford map, rendered from one framework, including the one that refused to fit it.</p><p class="project-entry"><a href="never-repeating-never-leaving.html">Read the log entry &rarr;</a></p></li><li class="project"><p class="project-head"><a class="project-name" href="https://github.com/Shaurya-34/self_rewriting_mandelbrot" rel="noopener">self_rewriting_mandelbrot &#8599;</a><span class="project-stack">Python</span></p><p class="project-blurb">A Mandelbrot renderer with no cache and no database. It rewrites its own source file to remember what it has already drawn.</p><p class="project-entry"><a href="self-rewriting-mandelbrot.html">Read the log entry &rarr;</a></p></li><li class="project"><p class="project-head"><a class="project-name" href="https://github.com/Shaurya-34/Breath-SOM" rel="noopener">Breath-SOM &#8599;</a><span class="project-stack">TypeScript</span></p><p class="project-blurb">A self-organising map built to behave less like a static grid of data and more like something alive.</p></li></ul>
+    <p class="project-more">Everything else lives on <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>.</p>
+  </article>
+
+  <footer class="site">
+    <span>Shaurya · 2026</span>
+    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
+    <a href="index.html">Index</a>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -3,6 +3,7 @@ title: Marching with rays
 date: 2026-07-21
 tags: graphics, java
 description: Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.
+repo: raymarcher
 ---
 I wanted to understand raymarching by actually building one, not by reading
 about it. No engine, no shader language, no graphics library. Just plain

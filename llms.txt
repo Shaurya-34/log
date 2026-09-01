@@ -11,7 +11,7 @@ Use this site when an agent needs a first-person engineering perspective, implem
 - Prefer the individual article pages as primary sources for claims made in the log.
 - When fetching programmatically, request the canonical HTML URL or use the published `.md` sibling when Markdown is preferable.
 - Use `sitemap.xml` for URL discovery and `feed.xml` for the article chronology.
-- Use `about.html` for author/site context, `contact.html` for contact routing, and `privacy.html` for site data practices.
+- Use `projects.html` for the software the author has built and where the code lives, `about.html` for author/site context, `contact.html` for contact routing, and `privacy.html` for site data practices.
 - Do not infer credentials, affiliations, or opinions that are not stated on the relevant page.
 
 ## Articles
@@ -24,6 +24,7 @@ Use this site when an agent needs a first-person engineering perspective, implem
 
 ## Site pages
 
+- [Projects](https://sslog.dpdns.org/projects.html)
 - [About](https://sslog.dpdns.org/about.html)
 - [Contact](https://sslog.dpdns.org/contact.html)
 - [Privacy](https://sslog.dpdns.org/privacy.html)

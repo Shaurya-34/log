@@ -179,6 +179,88 @@ header.site nav a:hover { color: var(--ink); text-decoration: underline; text-un
    it isn't - the state has to be visible without clicking to find out. */
 .sound-toggle[aria-pressed="true"] { color: var(--ink); }
 
+/* ---- projects ----------------------------------------------------- */
+
+/* A list, not a grid of cards. Each project is one hairline-separated
+   band: name and stack on one line, what it is underneath, and the log
+   entry only where one exists. Nothing is numbered - a numbered list
+   would claim a sequence these do not have. */
+.project-list {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+}
+
+.project {
+  padding: 1.6rem 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.project:last-child { border-bottom: 1px solid var(--hairline); }
+
+.project-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.project-name {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--faint);
+}
+
+.project-name:hover { border-bottom-color: var(--ink); }
+
+/* Right-aligned and quiet: the stack is a fact you scan for, not a
+   claim the project is making. */
+.project-stack {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.project-blurb {
+  margin: 0;
+  color: var(--grey);
+}
+
+.project-entry {
+  margin: 0.65rem 0 0;
+  font-size: 0.85rem;
+}
+
+.project-more {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: var(--grey);
+}
+
+/* The source link sits in the article's meta line, in the same register
+   as the date and tags - a fact about the piece, not a call to action. */
+.post-source {
+  color: var(--faint);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.post-source:hover { color: var(--ink); border-bottom-color: var(--faint); }
+
+@media (max-width: 600px) {
+  .project-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
 /* ---- links & motion ---------------------------------------------- */
 
 a {

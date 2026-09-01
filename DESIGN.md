@@ -111,6 +111,16 @@ color on this site, full stop.
   the start of the log and moves forward through it, rather than at the
   end facing backwards. It also means the tape opens with somewhere to
   go, instead of against its own stop.
+- Projects page: a hairline-separated list, not a grid of cards. Each
+  band is name plus stack on one line, what the thing is underneath, and
+  a link to its log entry only where one exists. Nothing is numbered - a
+  numbered list would claim a sequence these projects do not have. The
+  list lives as `PROJECTS` in `build.py` and generates both the HTML and
+  the Markdown sibling, so the two cannot drift.
+- An article about code links to that code: posts carry an optional
+  `repo:` in their front matter, which renders as a `source` link in the
+  article's meta line, in the same quiet register as the date and tags.
+  Conceptual posts have no repo and show nothing.
 - Single mobile breakpoint: `max-width: 600px`. A second tier at `1050px`
   handles tablet-width reflow. Don't invent a third without a concrete
   layout that needs it.

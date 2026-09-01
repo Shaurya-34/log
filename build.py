@@ -208,6 +208,7 @@ def page_header(base="", sound=False):
     return ('\n  <header class="site">\n'
             f'    <a class="wordmark" href="{base}index.html" aria-label="{SITE_NAME}">{WORDMARK_HTML}</a>\n'
             '    <nav>\n'
+            f'      <a href="{base}projects.html">Projects</a>\n'
             f'      <a href="{base}about.html">About</a>\n'
             f'{sound_button}'
             '      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>\n'
@@ -216,7 +217,7 @@ def page_header(base="", sound=False):
 
 def page_foot(link_html):
     return (f'\n  <footer class="site">\n    <span>{SITE_NAME} · {datetime.now().year}</span>\n'
-            f'    {link_html}\n  </footer>\n\n</div>\n</body>\n</html>\n')
+            f'    <a href="{GITHUB_URL}" rel="noopener">GitHub</a>\n    {link_html}\n  </footer>\n\n</div>\n</body>\n</html>\n')
 
 
 def simple_page(slug, h1, meta_line, paragraphs_html, description):
@@ -256,6 +257,7 @@ def parse_post(path):
         "cover_quote": meta.get("cover_quote", defaults.get("quote", "")),
         "cover_quote_author": meta.get("cover_quote_author", defaults.get("author", "")),
         "diagram_label": meta.get("diagram_label", defaults.get("diagram_label", "")),
+        "repo": meta.get("repo", ""),
         "body_md": body,
         "read_time": max(1, round(len(re.findall(r"\b\w+\b", body)) / 220)),
     }
@@ -274,10 +276,15 @@ def render_body(body_md):
 def build_post(post, newer, older):
     tags = (f'\n      <span class="tags">{html.escape(", ".join(post["tags"]))}</span>'
             if post["tags"] else "")
+    # An article about code should say where the code is. Only posts
+    # that name a repo carry this; the conceptual ones have none.
+    source = (f'\n      <a class="post-source" href="{GITHUB_URL}/{post["repo"]}"'
+              f' rel="noopener">source &#8599;</a>'
+              if post["repo"] else "")
     body = ('\n  <article class="post entry">\n'
             f'    <h1>{html.escape(post["title"])}</h1>\n'
             '    <p class="post-meta">\n'
-            f'      <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%B %d, %Y}</time>{tags}\n'
+            f'      <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%B %d, %Y}</time>{tags}{source}\n'
             '    </p>\n\n'
             f'{render_body(post["body_md"])}\n  </article>\n')
     old_link = (f'<a class="older" href="{older["slug"]}.html">← {html.escape(older["title"])}</a>'
@@ -399,6 +406,98 @@ def build_index(posts):
             page_foot('<a href="feed.xml">RSS</a>'))
 
 
+GITHUB_USER = "Shaurya-34"
+GITHUB_URL = "https://github.com/" + GITHUB_USER
+
+# The work worth showing, ordered by weight rather than by date and
+# deliberately not numbered - a numbered list would imply a sequence that
+# does not exist. Four of the seven have a log entry; that link is shown
+# where there is one, because the writing is part of the work rather than
+# an advert for it. One list, one source of truth: the HTML page and its
+# Markdown sibling are both generated from this.
+PROJECTS = [
+    {"name": "Prism", "repo": "Prism", "stack": "Python", "slug": "",
+     "blurb": "A terminal-native multi-agent research tool. It splits one "
+              "question into parallel web-searching subagents, supervises "
+              "them with Sotis, and merges what comes back into an "
+              "exportable report, all inside a keyboard-driven TUI."},
+    {"name": "Sotis", "repo": "Sotis", "stack": "Python", "slug": "",
+     "blurb": "Watches an LLM agent while it is running and steps in when it "
+              "starts to spiral, instead of reading the wreckage afterwards."},
+    {"name": "catapult", "repo": "catapult", "stack": "Python, PyTorch",
+     "slug": "grok-grok",
+     "blurb": "Reproducing gwern's LLM-catapult hypothesis on a laptop GPU: "
+              "can a high learning rate and heavy weight decay push a network "
+              "through a memorisation-to-algorithm phase transition? Grokking "
+              "reproduced on modular addition, with weight decay turning out "
+              "to be the load-bearing knob."},
+    {"name": "raymarcher", "repo": "raymarcher", "stack": "Java",
+     "slug": "marching-with-rays",
+     "blurb": "A signed-distance-field ray marcher in about 170 lines of "
+              "plain Java. No engine, no shader language, no graphics "
+              "library, plus anti-aliasing and soft shadows."},
+    {"name": "strange_attractors", "repo": "strange_attractors",
+     "stack": "Python", "slug": "never-repeating-never-leaving",
+     "blurb": "Four continuous chaotic systems and the Clifford map, "
+              "rendered from one framework, including the one that refused "
+              "to fit it."},
+    {"name": "self_rewriting_mandelbrot", "repo": "self_rewriting_mandelbrot",
+     "stack": "Python", "slug": "self-rewriting-mandelbrot",
+     "blurb": "A Mandelbrot renderer with no cache and no database. It "
+              "rewrites its own source file to remember what it has already "
+              "drawn."},
+    {"name": "Breath-SOM", "repo": "Breath-SOM", "stack": "TypeScript",
+     "slug": "",
+     "blurb": "A self-organising map built to behave less like a static grid "
+              "of data and more like something alive."},
+]
+
+PROJECTS_INTRO = (
+    "Things I have built, mostly to understand something rather than to ship "
+    "it. Four of them have an entry on the log, which is usually the more "
+    "honest account: what I expected, what actually happened, and which part "
+    "turned out to matter. The rest are just the code, for now."
+)
+
+
+def project_row(project):
+    repo_url = GITHUB_URL + "/" + project["repo"]
+    entry = ""
+    if project["slug"]:
+        entry = ('<p class="project-entry">'
+                 f'<a href="{project["slug"]}.html">Read the log entry &rarr;</a>'
+                 '</p>')
+    return ('<li class="project">'
+            '<p class="project-head">'
+            f'<a class="project-name" href="{repo_url}" rel="noopener">'
+            f'{html.escape(project["name"])} &#8599;</a>'
+            f'<span class="project-stack">{html.escape(project["stack"])}</span>'
+            '</p>'
+            f'<p class="project-blurb">{html.escape(project["blurb"])}</p>'
+            f'{entry}'
+            '</li>')
+
+
+def build_projects():
+    written = sum(1 for pr in PROJECTS if pr["slug"])
+    meta = f"{len(PROJECTS)} projects \u00b7 {written} written up"
+    rows = "".join(project_row(pr) for pr in PROJECTS)
+    body = ('\n  <article class="post">\n'
+            '    <h1>Projects</h1>\n'
+            f'    <p class="post-meta">{meta}</p>\n'
+            f'    <p>{html.escape(PROJECTS_INTRO)}</p>\n'
+            f'    <ul class="project-list">{rows}</ul>\n'
+            f'    <p class="project-more">Everything else lives on '
+            f'<a href="{GITHUB_URL}" rel="noopener">GitHub</a>.</p>\n'
+            '  </article>\n')
+    return (page_head(f"Projects \u00b7 {SITE_NAME}",
+                      "Software Shaurya has built: research tools, renderers "
+                      "and experiments, with links to the code and the "
+                      "write-ups.",
+                      "projects.html", md_href="projects.md") +
+            page_header() + body + page_foot('<a href="index.html">Index</a>'))
+
+
 def build_about():
     paragraphs = (
         "<p>Hi, I'm Shaurya. I'm a student who writes software and keeps this log as a "
@@ -488,7 +587,7 @@ def build_llms(posts):
         "- When fetching programmatically, request the canonical HTML URL or use the "
         "published `.md` sibling when Markdown is preferable.",
         "- Use `sitemap.xml` for URL discovery and `feed.xml` for the article chronology.",
-        "- Use `about.html` for author/site context, `contact.html` for contact routing, "
+        "- Use `projects.html` for the software the author has built and where the code lives, `about.html` for author/site context, `contact.html` for contact routing, "
         "and `privacy.html` for site data practices.",
         "- Do not infer credentials, affiliations, or opinions that are not stated on the "
         "relevant page.", "",
@@ -498,6 +597,7 @@ def build_llms(posts):
         lines.append(f'- [{p["title"]}]({absolute_url(f"{p["slug"]}.html")}) — {p["description"]}')
     lines += [
         "", "## Site pages", "",
+        f"- [Projects]({absolute_url('projects.html')})",
         f"- [About]({absolute_url('about.html')})",
         f"- [Contact]({absolute_url('contact.html')})",
         f"- [Privacy]({absolute_url('privacy.html')})",
@@ -526,6 +626,7 @@ def build_feed(posts):
 
 def build_sitemap(posts):
     urls = ([{"loc": absolute_url("")},
+             {"loc": absolute_url("projects.html")},
              {"loc": absolute_url("about.html")},
              {"loc": absolute_url("contact.html")},
              {"loc": absolute_url("privacy.html")}] +
@@ -612,6 +713,26 @@ def write_markdown_files(posts):
                     "GitHub Pages; both may process ordinary connection information as part "
                     "of delivering the page."),
     }
+    # Generated from the same PROJECTS list as the HTML page, in the same
+    # pass, so the two can never drift apart.
+    project_md = [PROJECTS_INTRO, ""]
+    for pr in PROJECTS:
+        project_md.append(
+            f'## {pr["name"]} ({pr["stack"]})')
+        project_md.append("")
+        project_md.append(pr["blurb"])
+        project_md.append("")
+        links = [f'[Source]({GITHUB_URL}/{pr["repo"]})']
+        if pr["slug"]:
+            links.append(f'[Log entry]({absolute_url(pr["slug"] + ".html")})')
+        project_md.append(" \u00b7 ".join(links))
+        project_md.append("")
+    static_pages["projects"] = (
+        "Projects", "2026-09",
+        "Software Shaurya has built: research tools, renderers and "
+        "experiments, with links to the code and the write-ups.",
+        "\n".join(project_md).strip())
+
     for slug, (title, date_str, desc, body) in static_pages.items():
         text = markdown_sibling(slug, title, date_str, desc, f'{slug}.html', body)
         (ROOT / f'{slug}.md').write_text(text, encoding="utf-8")
@@ -624,6 +745,7 @@ def main():
         older = posts[i + 1] if i + 1 < len(posts) else None
         (ROOT / f'{post["slug"]}.html').write_text(build_post(post, newer, older), encoding="utf-8")
     (ROOT / "index.html").write_text(build_index(posts), encoding="utf-8")
+    (ROOT / "projects.html").write_text(build_projects(), encoding="utf-8")
     (ROOT / "about.html").write_text(build_about(), encoding="utf-8")
     (ROOT / "contact.html").write_text(build_contact(), encoding="utf-8")
     (ROOT / "privacy.html").write_text(build_privacy(), encoding="utf-8")
@@ -633,8 +755,8 @@ def main():
     (ROOT / "404.html").write_text(build_404(), encoding="utf-8")
     (ROOT / "llms.txt").write_text(build_llms(posts), encoding="utf-8")
     write_markdown_files(posts)
-    print(f"built {len(posts)} posts + index/about/contact/privacy + feed/sitemap/robots/404 "
-          f"+ llms.txt + {len(posts) + 4} markdown siblings")
+    print(f"built {len(posts)} posts + index/about/projects/contact/privacy + feed/sitemap/robots/404 "
+          f"+ llms.txt + {len(posts) + 5} markdown siblings")
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ title: Never repeating, never leaving
 date: 2026-07-24
 tags: chaos, python, visualization
 description: Four chaotic systems, one Python framework, and the one that refused to fit it.
+repo: strange_attractors
 ---
 A strange attractor is what you get when a system is chaotic but still
 bounded. It never settles down to a fixed point, never falls into a

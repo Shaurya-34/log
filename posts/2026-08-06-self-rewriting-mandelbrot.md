@@ -3,6 +3,7 @@ title: A renderer that keeps notes on itself
 date: 2026-08-06
 tags: python, self-modifying-code, fractals
 description: A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.
+repo: self_rewriting_mandelbrot
 ---
 A quine is a program that prints its own source code and nothing else. It's a
 neat trick, but it's also a dead end - the output is always the same file you
