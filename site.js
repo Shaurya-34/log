@@ -431,8 +431,19 @@
       }
     );
 
-    /* Initial position — no animation. */
+    /* Initial position — no animation. The active cell is now the
+       newest article, at the right end of the tape rather than index 0,
+       so it needs an explicit (instant) scroll into view on load -
+       without this the track would render at scrollLeft 0, showing the
+       oldest cells while the featured panel already displays the
+       newest. */
     moveReadHead(false);
+
+    cells[active].scrollIntoView({
+      behavior: "auto",
+      block: "nearest",
+      inline: "center"
+    });
   });
 
   /* ------------------------------------------------------------

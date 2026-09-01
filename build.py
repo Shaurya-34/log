@@ -302,22 +302,30 @@ def cover_markup(post, index):
 def build_index(posts):
     tape_cells = []
     cards = []
-    for i, p in enumerate(posts):
+    # posts arrives newest-first (everywhere else - feed, sitemap, prev/next
+    # nav - relies on that order). The tape itself reads left-to-right like
+    # an actual tape: oldest cell first, newest last. The newest post stays
+    # the one shown/active on load, it's just the rightmost cell instead of
+    # the leftmost.
+    tape_posts = list(reversed(posts))
+    newest = len(tape_posts) - 1
+    for i, p in enumerate(tape_posts):
         code = format(i + 1, "03b")
         bit = "01011"[i % 5]
+        is_active = i == newest
         tape_cells.append(
-            f'<button class="tape-cell{" is-active" if i == 0 else ""}" '
+            f'<button class="tape-cell{" is-active" if is_active else ""}" '
             f'data-index="{i}" aria-label="Open {html.escape(p["title"])}" '
-            f'aria-current="{"true" if i == 0 else "false"}">'
+            f'aria-current="{"true" if is_active else "false"}">'
             f'<span class="tape-code">{code}</span>'
             f'<span class="tape-box" aria-hidden="true">{bit}</span>'
             f'<span class="tape-title">{html.escape(p["title"])}</span>'
             f'<span class="tape-date">{p["date"]:%d %b %Y}</span>'
             f'</button>')
-        card_class = 'feature-card is-active' if i == 0 else 'feature-card'
+        card_class = 'feature-card is-active' if is_active else 'feature-card'
         tags = ', '.join(p["tags"][:4])
         cards.append(
-            f'<article class="{card_class}" data-index="{i}" aria-hidden="{"false" if i == 0 else "true"}">'
+            f'<article class="{card_class}" data-index="{i}" aria-hidden="{"false" if is_active else "true"}">'
             f'<a class="feature-head" href="{p["slug"]}.html"><span>ARTICLE NO. {i + 1:02d}</span><span>→</span></a>'
             f'<h1>{html.escape(p["title"])}</h1>'
             f'<div class="feature-grid">'

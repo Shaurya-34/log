@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
   <link rel="stylesheet" href="style.css?v=c08ad8ab">
-  <script src="site.js?v=07cd821a" defer></script>
+  <script src="site.js?v=ac15c570" defer></script>
   <link rel="stylesheet" href="home.css?v=2eb6d00e">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.","url":"https://sslog.dpdns.org","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"}}</script>
   <script type="text/javascript">
@@ -46,212 +46,7 @@
 <h1 class="sr-only">Shaurya · Log</h1>
 <p class="sr-only agent-home-summary">Shaurya&#x27;s Log is a small personal archive of experimental engineering notes. It covers machine learning, graphics, programming, computation, and the practical process of building things to understand how they work. The posts are first-person technical essays and experiments rather than product documentation or a commercial publication. Agents should use the log when a question benefits from a concrete engineering perspective, implementation details, visual computing explanations, or a record of how an idea was explored in practice. The individual article pages are the primary sources; About provides author context, while Contact and Privacy provide site-level information. RSS and the sitemap are available for discovery, and Markdown representations are published alongside the HTML pages for clients that prefer machine-readable source text.</p>
 <p class="motto">honest · semi informative · personal</p>
-<main class="home-stage"><section class="article-orbit tape-nav" aria-label="Article navigation"><div class="tape-viewport"><div class="tape-track" role="list"><button class="tape-cell is-active" data-index="0" aria-label="Open Where Does Computation End?" aria-current="true"><span class="tape-code">001</span><span class="tape-box" aria-hidden="true">0</span><span class="tape-title">Where Does Computation End?</span><span class="tape-date">18 Aug 2026</span></button><button class="tape-cell" data-index="1" aria-label="Open A renderer that keeps notes on itself" aria-current="false"><span class="tape-code">010</span><span class="tape-box" aria-hidden="true">1</span><span class="tape-title">A renderer that keeps notes on itself</span><span class="tape-date">06 Aug 2026</span></button><button class="tape-cell" data-index="2" aria-label="Open Never repeating, never leaving" aria-current="false"><span class="tape-code">011</span><span class="tape-box" aria-hidden="true">0</span><span class="tape-title">Never repeating, never leaving</span><span class="tape-date">24 Jul 2026</span></button><button class="tape-cell" data-index="3" aria-label="Open Marching with rays" aria-current="false"><span class="tape-code">100</span><span class="tape-box" aria-hidden="true">1</span><span class="tape-title">Marching with rays</span><span class="tape-date">21 Jul 2026</span></button><button class="tape-cell" data-index="4" aria-label="Open grok.....grok ?" aria-current="false"><span class="tape-code">101</span><span class="tape-box" aria-hidden="true">1</span><span class="tape-title">grok.....grok ?</span><span class="tape-date">20 Jul 2026</span></button></div></div><button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button><button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button><div class="tape-note"><span>A head scans a tape. One cell at a time.<br>The machine moves. The log remains.</span></div></section><section class="feature-stage" aria-live="polite"><article class="feature-card is-active" data-index="0" aria-hidden="false"><a class="feature-head" href="where-does-computation-end.html"><span>ARTICLE NO. 01</span><span>→</span></a><h1>Where Does Computation End?</h1><div class="feature-grid"><div class="feature-description">A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_001</span><span>[ HALTING BOUNDARY ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" stroke-width="1.4">
-    <path opacity=".18" d="M120 80H880M120 185H880M120 290H880M120 395H880M120 500H880M120 570H880"/>
-    <path opacity=".18" d="M180 55V595M340 55V595M500 55V595M660 55V595M820 55V595"/>
-
-    <circle cx="500" cy="325" r="65"/>
-    <circle cx="500" cy="325" r="130" opacity=".65"/>
-    <circle cx="500" cy="325" r="195" stroke-dasharray="6 7" opacity=".5"/>
-    <circle cx="500" cy="325" r="260" stroke-dasharray="2 8" opacity=".35"/>
-
-    <path d="M500 65V585M140 325H860" opacity=".35"/>
-
-    <path class="draw-path" d="M500 325
-             C555 300 610 280 650 245
-             C690 210 720 165 748 145
-             C780 122 815 115 850 82
-             C870 63 882 45 890 25"
-          stroke-dasharray="900" stroke-dashoffset="900"/>
-    <path d="M890 25l-4 14M890 25l-14 4"/>
-  </g>
-
-  <g fill="#17150f">
-    <circle cx="500" cy="325" r="5"/>
-    <rect x="886" y="21" width="9" height="9"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <circle cx="500" cy="195" r="4" fill="#faf9f7"/>
-    <circle cx="630" cy="325" r="4" fill="#faf9f7"/>
-    <circle cx="500" cy="455" r="4" fill="#faf9f7"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M598 325H645" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="650" y="329">BOUNDED</text>
-    <text x="820" y="55">ESCAPES →</text>
-  </g>
-</svg></div>
-<div class="cover-kicker">A NOTE ON PHYSICAL SYSTEMS, MODELS, AND THE LIMITS OF EFFECTIVE DESCRIPTION.</div>
-<div class="cover-quote"><p>The map is not the territory.</p><small>— N. Wiener</small></div><div class="feature-meta"><span>18 Aug 2026<br>~ 16 min read</span><span>computation, computability, hypercomputation, physics</span><span>∎</span></div></div></article><article class="feature-card" data-index="1" aria-hidden="true"><a class="feature-head" href="self-rewriting-mandelbrot.html"><span>ARTICLE NO. 02</span><span>→</span></a><h1>A renderer that keeps notes on itself</h1><div class="feature-grid"><div class="feature-description">A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_002</span><span>[ SELF-SIMILARITY ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" stroke-width="1" opacity=".22">
-    <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
-    <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1.6">
-    <rect x="360" y="145" width="300" height="360"/>
-    <rect x="425" y="220" width="170" height="210"/>
-    <rect x="463" y="268" width="95" height="120"/>
-    <rect x="485" y="292" width="50" height="72"/>
-    <rect x="497" y="307" width="26" height="42"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1.2" opacity=".65">
-    <path d="M360 145L660 505"/>
-    <path d="M660 145L360 505"/>
-    <path d="M425 220L595 430"/>
-    <path d="M595 220L425 430"/>
-  </g>
-
-  <path class="draw-path" d="M145 490
-           C205 450 235 400 250 345
-           C265 290 300 250 355 240
-           C405 230 445 245 470 275"
-        stroke="#17150f" stroke-width="2"
-        stroke-dasharray="800" stroke-dashoffset="800"/>
-
-  <g fill="#17150f">
-    <rect x="350" y="135" width="10" height="10"/>
-    <rect x="655" y="495" width="10" height="10"/>
-    <rect x="492" y="302" width="8" height="8"/>
-  </g>
-
-  <path d="M145 490L110 520M145 490L115 475"
-        stroke="#17150f" stroke-width="1.2"/>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M558 307H605" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="610" y="311">SELF-SIMILAR</text>
-    <text x="120" y="440">REWRITES →</text>
-  </g>
-</svg></div>
-<div class="cover-kicker">A SMALL EXPERIMENT IN SELF-MODIFICATION AND CODE THAT CHANGES ITS OWN RULES.</div>
-<div class="cover-quote"><p>A program can become part of its own memory.</p><small>— sslog</small></div><div class="feature-meta"><span>06 Aug 2026<br>~ 8 min read</span><span>python, self-modifying-code, fractals</span><span>∎</span></div></div></article><article class="feature-card" data-index="2" aria-hidden="true"><a class="feature-head" href="never-repeating-never-leaving.html"><span>ARTICLE NO. 03</span><span>→</span></a><h1>Never repeating, never leaving</h1><div class="feature-grid"><div class="feature-description">Four chaotic systems, one Python framework, and the one that refused to fit it.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_003</span><span>[ STRANGE ATTRACTOR ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" opacity=".16">
-    <path d="M90 520H910"/>
-    <path d="M500 70V580"/>
-    <path d="M150 500L850 120"/>
-    <path d="M150 120L850 500"/>
-  </g>
-
-  <g fill="#17150f">
-    <circle cx="180" cy="450" r="3"/>
-    <circle cx="270" cy="390" r="2"/>
-    <circle cx="760" cy="180" r="3"/>
-    <circle cx="820" cy="430" r="2"/>
-    <circle cx="680" cy="520" r="2"/>
-  </g>
-
-  <path
-    d="M145 470
-       C205 430 275 405 345 390
-       C410 376 455 340 475 285
-       C500 220 575 165 655 185
-       C730 204 760 280 710 335
-       C665 385 565 380 520 330
-       C470 275 500 205 585 170
-       C680 132 785 190 790 280
-       C796 365 720 430 625 425
-       C530 420 470 350 500 275
-       C530 195 650 155 735 215
-       C820 275 780 390 690 420
-       C600 450 505 405 495 335
-       C485 265 555 220 630 235
-       C705 250 735 325 690 365
-       C645 405 560 390 535 340
-       C510 290 545 250 600 255
-       C655 260 680 310 650 340
-       C620 370 570 355 560 320"
-    class="draw-path"
-    stroke="#17150f"
-    stroke-width="1.4"
-    stroke-dasharray="5000" stroke-dashoffset="5000"/>
-
-  <path
-    d="M145 470
-       C230 420 320 400 400 365
-       C480 330 500 250 580 205"
-    stroke="#17150f"
-    stroke-width=".8"
-    opacity=".35"/>
-
-  <circle cx="560" cy="320" r="5" fill="#17150f"/>
-
-  <g stroke="#17150f" stroke-width="1">
-    <circle cx="145" cy="470" r="4" fill="#faf9f7"/>
-    <circle cx="790" cy="280" r="4" fill="#faf9f7"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M565 320H610" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="615" y="324">ATTRACTOR</text>
-    <text x="100" y="440">NEVER CLOSES →</text>
-  </g>
-</svg></div>
-<div class="cover-kicker">ON STRANGE ATTRACTORS, DYNAMICAL SYSTEMS, AND STRUCTURES THAT NEVER SETTLE.</div>
-<div class="cover-quote"><p>Never repeating. Never leaving.</p><small>— sslog</small></div><div class="feature-meta"><span>24 Jul 2026<br>~ 9 min read</span><span>chaos, python, visualization</span><span>∎</span></div></div></article><article class="feature-card" data-index="3" aria-hidden="true"><a class="feature-head" href="marching-with-rays.html"><span>ARTICLE NO. 04</span><span>→</span></a><h1>Marching with rays</h1><div class="feature-grid"><div class="feature-description">Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_004</span><span>[ DISTANCE FIELD ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" stroke-width="1.3">
-    <circle cx="720" cy="325" r="55"/>
-    <circle cx="720" cy="325" r="105"/>
-    <circle cx="720" cy="325" r="155" stroke-dasharray="7 7" opacity=".55"/>
-    <circle cx="720" cy="325" r="205" stroke-dasharray="2 8" opacity=".35"/>
-
-    <path d="M80 325H940" opacity=".2"/>
-    <path d="M720 70V580" opacity=".2"/>
-
-    <path class="draw-path" d="M95 325L665 325M95 325L655 225M95 325L655 425M95 325L630 160M95 325L630 490"
-          stroke-dasharray="3200" stroke-dashoffset="3200"/>
-
-    <path d="M665 325l-12-6M665 325l-12 6"/>
-    <path d="M655 225l-12-4M655 225l-9 9"/>
-    <path d="M655 425l-12 4M655 425l-9-9"/>
-  </g>
-
-  <g fill="#faf9f7" stroke="#17150f" stroke-width="1.3">
-    <circle cx="190" cy="325" r="5"/>
-    <circle cx="300" cy="325" r="5"/>
-    <circle cx="405" cy="325" r="5"/>
-    <circle cx="500" cy="325" r="5"/>
-    <circle cx="575" cy="325" r="5"/>
-
-    <circle cx="205" cy="306" r="4"/>
-    <circle cx="320" cy="286" r="4"/>
-    <circle cx="430" cy="266" r="4"/>
-    <circle cx="525" cy="248" r="4"/>
-
-    <circle cx="205" cy="344" r="4"/>
-    <circle cx="320" cy="364" r="4"/>
-    <circle cx="430" cy="384" r="4"/>
-    <circle cx="525" cy="402" r="4"/>
-  </g>
-
-  <circle cx="720" cy="325" r="6" fill="#17150f"/>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M665 290H695M665 360H695" opacity=".5"/>
-    <path d="M705 325H735" opacity=".5"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M300 300H345" opacity=".55"/>
-    <path d="M740 325H785" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="350" y="304">RAY</text>
-    <text x="790" y="329">STEP</text>
-  </g>
-</svg></div>
-<div class="cover-kicker">A VISUAL WALK THROUGH RAY MARCHING, DISTANCE FIELDS, AND GEOMETRY.</div>
-<div class="cover-quote"><p>The image is the end of a chain of questions.</p><small>— sslog</small></div><div class="feature-meta"><span>21 Jul 2026<br>~ 6 min read</span><span>graphics, java</span><span>∎</span></div></div></article><article class="feature-card" data-index="4" aria-hidden="true"><a class="feature-head" href="grok-grok.html"><span>ARTICLE NO. 05</span><span>→</span></a><h1>grok.....grok ?</h1><div class="feature-grid"><div class="feature-description">What happens when you push a model past generalization? Does it know the rule, or just the data?</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_005</span><span>[ GENERALIZATION ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+<main class="home-stage"><section class="article-orbit tape-nav" aria-label="Article navigation"><div class="tape-viewport"><div class="tape-track" role="list"><button class="tape-cell" data-index="0" aria-label="Open grok.....grok ?" aria-current="false"><span class="tape-code">001</span><span class="tape-box" aria-hidden="true">0</span><span class="tape-title">grok.....grok ?</span><span class="tape-date">20 Jul 2026</span></button><button class="tape-cell" data-index="1" aria-label="Open Marching with rays" aria-current="false"><span class="tape-code">010</span><span class="tape-box" aria-hidden="true">1</span><span class="tape-title">Marching with rays</span><span class="tape-date">21 Jul 2026</span></button><button class="tape-cell" data-index="2" aria-label="Open Never repeating, never leaving" aria-current="false"><span class="tape-code">011</span><span class="tape-box" aria-hidden="true">0</span><span class="tape-title">Never repeating, never leaving</span><span class="tape-date">24 Jul 2026</span></button><button class="tape-cell" data-index="3" aria-label="Open A renderer that keeps notes on itself" aria-current="false"><span class="tape-code">100</span><span class="tape-box" aria-hidden="true">1</span><span class="tape-title">A renderer that keeps notes on itself</span><span class="tape-date">06 Aug 2026</span></button><button class="tape-cell is-active" data-index="4" aria-label="Open Where Does Computation End?" aria-current="true"><span class="tape-code">101</span><span class="tape-box" aria-hidden="true">1</span><span class="tape-title">Where Does Computation End?</span><span class="tape-date">18 Aug 2026</span></button></div></div><button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button><button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button><div class="tape-note"><span>A head scans a tape. One cell at a time.<br>The machine moves. The log remains.</span></div></section><section class="feature-stage" aria-live="polite"><article class="feature-card" data-index="0" aria-hidden="true"><a class="feature-head" href="grok-grok.html"><span>ARTICLE NO. 01</span><span>→</span></a><h1>grok.....grok ?</h1><div class="feature-grid"><div class="feature-description">What happens when you push a model past generalization? Does it know the rule, or just the data?</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_001</span><span>[ GENERALIZATION ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="#17150f">
     <circle cx="120" cy="120" r="2"/>
     <circle cx="150" cy="165" r="1.5"/>
@@ -321,7 +116,212 @@
   </g>
 </svg></div>
 <div class="cover-kicker">WHAT HAPPENS WHEN A MODEL FINALLY FINDS THE RULE?</div>
-<div class="cover-quote"><p>The model looked done. Then it suddenly learned.</p><small>— sslog</small></div><div class="feature-meta"><span>20 Jul 2026<br>~ 15 min read</span><span>research, machine learning, physics</span><span>∎</span></div></div></article></section></main><p class="intro home-intro">I think of this less as a blog and more as a log: a running record of what I'm building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.</p>
+<div class="cover-quote"><p>The model looked done. Then it suddenly learned.</p><small>— sslog</small></div><div class="feature-meta"><span>20 Jul 2026<br>~ 15 min read</span><span>research, machine learning, physics</span><span>∎</span></div></div></article><article class="feature-card" data-index="1" aria-hidden="true"><a class="feature-head" href="marching-with-rays.html"><span>ARTICLE NO. 02</span><span>→</span></a><h1>Marching with rays</h1><div class="feature-grid"><div class="feature-description">Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_002</span><span>[ DISTANCE FIELD ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" stroke-width="1.3">
+    <circle cx="720" cy="325" r="55"/>
+    <circle cx="720" cy="325" r="105"/>
+    <circle cx="720" cy="325" r="155" stroke-dasharray="7 7" opacity=".55"/>
+    <circle cx="720" cy="325" r="205" stroke-dasharray="2 8" opacity=".35"/>
+
+    <path d="M80 325H940" opacity=".2"/>
+    <path d="M720 70V580" opacity=".2"/>
+
+    <path class="draw-path" d="M95 325L665 325M95 325L655 225M95 325L655 425M95 325L630 160M95 325L630 490"
+          stroke-dasharray="3200" stroke-dashoffset="3200"/>
+
+    <path d="M665 325l-12-6M665 325l-12 6"/>
+    <path d="M655 225l-12-4M655 225l-9 9"/>
+    <path d="M655 425l-12 4M655 425l-9-9"/>
+  </g>
+
+  <g fill="#faf9f7" stroke="#17150f" stroke-width="1.3">
+    <circle cx="190" cy="325" r="5"/>
+    <circle cx="300" cy="325" r="5"/>
+    <circle cx="405" cy="325" r="5"/>
+    <circle cx="500" cy="325" r="5"/>
+    <circle cx="575" cy="325" r="5"/>
+
+    <circle cx="205" cy="306" r="4"/>
+    <circle cx="320" cy="286" r="4"/>
+    <circle cx="430" cy="266" r="4"/>
+    <circle cx="525" cy="248" r="4"/>
+
+    <circle cx="205" cy="344" r="4"/>
+    <circle cx="320" cy="364" r="4"/>
+    <circle cx="430" cy="384" r="4"/>
+    <circle cx="525" cy="402" r="4"/>
+  </g>
+
+  <circle cx="720" cy="325" r="6" fill="#17150f"/>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M665 290H695M665 360H695" opacity=".5"/>
+    <path d="M705 325H735" opacity=".5"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M300 300H345" opacity=".55"/>
+    <path d="M740 325H785" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="350" y="304">RAY</text>
+    <text x="790" y="329">STEP</text>
+  </g>
+</svg></div>
+<div class="cover-kicker">A VISUAL WALK THROUGH RAY MARCHING, DISTANCE FIELDS, AND GEOMETRY.</div>
+<div class="cover-quote"><p>The image is the end of a chain of questions.</p><small>— sslog</small></div><div class="feature-meta"><span>21 Jul 2026<br>~ 6 min read</span><span>graphics, java</span><span>∎</span></div></div></article><article class="feature-card" data-index="2" aria-hidden="true"><a class="feature-head" href="never-repeating-never-leaving.html"><span>ARTICLE NO. 03</span><span>→</span></a><h1>Never repeating, never leaving</h1><div class="feature-grid"><div class="feature-description">Four chaotic systems, one Python framework, and the one that refused to fit it.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_003</span><span>[ STRANGE ATTRACTOR ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" opacity=".16">
+    <path d="M90 520H910"/>
+    <path d="M500 70V580"/>
+    <path d="M150 500L850 120"/>
+    <path d="M150 120L850 500"/>
+  </g>
+
+  <g fill="#17150f">
+    <circle cx="180" cy="450" r="3"/>
+    <circle cx="270" cy="390" r="2"/>
+    <circle cx="760" cy="180" r="3"/>
+    <circle cx="820" cy="430" r="2"/>
+    <circle cx="680" cy="520" r="2"/>
+  </g>
+
+  <path
+    d="M145 470
+       C205 430 275 405 345 390
+       C410 376 455 340 475 285
+       C500 220 575 165 655 185
+       C730 204 760 280 710 335
+       C665 385 565 380 520 330
+       C470 275 500 205 585 170
+       C680 132 785 190 790 280
+       C796 365 720 430 625 425
+       C530 420 470 350 500 275
+       C530 195 650 155 735 215
+       C820 275 780 390 690 420
+       C600 450 505 405 495 335
+       C485 265 555 220 630 235
+       C705 250 735 325 690 365
+       C645 405 560 390 535 340
+       C510 290 545 250 600 255
+       C655 260 680 310 650 340
+       C620 370 570 355 560 320"
+    class="draw-path"
+    stroke="#17150f"
+    stroke-width="1.4"
+    stroke-dasharray="5000" stroke-dashoffset="5000"/>
+
+  <path
+    d="M145 470
+       C230 420 320 400 400 365
+       C480 330 500 250 580 205"
+    stroke="#17150f"
+    stroke-width=".8"
+    opacity=".35"/>
+
+  <circle cx="560" cy="320" r="5" fill="#17150f"/>
+
+  <g stroke="#17150f" stroke-width="1">
+    <circle cx="145" cy="470" r="4" fill="#faf9f7"/>
+    <circle cx="790" cy="280" r="4" fill="#faf9f7"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M565 320H610" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="615" y="324">ATTRACTOR</text>
+    <text x="100" y="440">NEVER CLOSES →</text>
+  </g>
+</svg></div>
+<div class="cover-kicker">ON STRANGE ATTRACTORS, DYNAMICAL SYSTEMS, AND STRUCTURES THAT NEVER SETTLE.</div>
+<div class="cover-quote"><p>Never repeating. Never leaving.</p><small>— sslog</small></div><div class="feature-meta"><span>24 Jul 2026<br>~ 9 min read</span><span>chaos, python, visualization</span><span>∎</span></div></div></article><article class="feature-card" data-index="3" aria-hidden="true"><a class="feature-head" href="self-rewriting-mandelbrot.html"><span>ARTICLE NO. 04</span><span>→</span></a><h1>A renderer that keeps notes on itself</h1><div class="feature-grid"><div class="feature-description">A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_004</span><span>[ SELF-SIMILARITY ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" stroke-width="1" opacity=".22">
+    <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
+    <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1.6">
+    <rect x="360" y="145" width="300" height="360"/>
+    <rect x="425" y="220" width="170" height="210"/>
+    <rect x="463" y="268" width="95" height="120"/>
+    <rect x="485" y="292" width="50" height="72"/>
+    <rect x="497" y="307" width="26" height="42"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1.2" opacity=".65">
+    <path d="M360 145L660 505"/>
+    <path d="M660 145L360 505"/>
+    <path d="M425 220L595 430"/>
+    <path d="M595 220L425 430"/>
+  </g>
+
+  <path class="draw-path" d="M145 490
+           C205 450 235 400 250 345
+           C265 290 300 250 355 240
+           C405 230 445 245 470 275"
+        stroke="#17150f" stroke-width="2"
+        stroke-dasharray="800" stroke-dashoffset="800"/>
+
+  <g fill="#17150f">
+    <rect x="350" y="135" width="10" height="10"/>
+    <rect x="655" y="495" width="10" height="10"/>
+    <rect x="492" y="302" width="8" height="8"/>
+  </g>
+
+  <path d="M145 490L110 520M145 490L115 475"
+        stroke="#17150f" stroke-width="1.2"/>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M558 307H605" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="610" y="311">SELF-SIMILAR</text>
+    <text x="120" y="440">REWRITES →</text>
+  </g>
+</svg></div>
+<div class="cover-kicker">A SMALL EXPERIMENT IN SELF-MODIFICATION AND CODE THAT CHANGES ITS OWN RULES.</div>
+<div class="cover-quote"><p>A program can become part of its own memory.</p><small>— sslog</small></div><div class="feature-meta"><span>06 Aug 2026<br>~ 8 min read</span><span>python, self-modifying-code, fractals</span><span>∎</span></div></div></article><article class="feature-card is-active" data-index="4" aria-hidden="false"><a class="feature-head" href="where-does-computation-end.html"><span>ARTICLE NO. 05</span><span>→</span></a><h1>Where Does Computation End?</h1><div class="feature-grid"><div class="feature-description">A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</div><div class="cover-image"><div class="cover-fig-chrome"><span>FIG_005</span><span>[ HALTING BOUNDARY ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" stroke-width="1.4">
+    <path opacity=".18" d="M120 80H880M120 185H880M120 290H880M120 395H880M120 500H880M120 570H880"/>
+    <path opacity=".18" d="M180 55V595M340 55V595M500 55V595M660 55V595M820 55V595"/>
+
+    <circle cx="500" cy="325" r="65"/>
+    <circle cx="500" cy="325" r="130" opacity=".65"/>
+    <circle cx="500" cy="325" r="195" stroke-dasharray="6 7" opacity=".5"/>
+    <circle cx="500" cy="325" r="260" stroke-dasharray="2 8" opacity=".35"/>
+
+    <path d="M500 65V585M140 325H860" opacity=".35"/>
+
+    <path class="draw-path" d="M500 325
+             C555 300 610 280 650 245
+             C690 210 720 165 748 145
+             C780 122 815 115 850 82
+             C870 63 882 45 890 25"
+          stroke-dasharray="900" stroke-dashoffset="900"/>
+    <path d="M890 25l-4 14M890 25l-14 4"/>
+  </g>
+
+  <g fill="#17150f">
+    <circle cx="500" cy="325" r="5"/>
+    <rect x="886" y="21" width="9" height="9"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <circle cx="500" cy="195" r="4" fill="#faf9f7"/>
+    <circle cx="630" cy="325" r="4" fill="#faf9f7"/>
+    <circle cx="500" cy="455" r="4" fill="#faf9f7"/>
+  </g>
+
+  <g stroke="#17150f" stroke-width="1">
+    <path d="M598 325H645" opacity=".55"/>
+  </g>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="650" y="329">BOUNDED</text>
+    <text x="820" y="55">ESCAPES →</text>
+  </g>
+</svg></div>
+<div class="cover-kicker">A NOTE ON PHYSICAL SYSTEMS, MODELS, AND THE LIMITS OF EFFECTIVE DESCRIPTION.</div>
+<div class="cover-quote"><p>The map is not the territory.</p><small>— N. Wiener</small></div><div class="feature-meta"><span>18 Aug 2026<br>~ 16 min read</span><span>computation, computability, hypercomputation, physics</span><span>∎</span></div></div></article></section></main><p class="intro home-intro">I think of this less as a blog and more as a log: a running record of what I'm building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.</p>
   <footer class="site">
     <span>Shaurya · 2026</span>
     <a href="feed.xml">RSS</a>
