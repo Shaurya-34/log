@@ -288,7 +288,17 @@
        exactly the kind of thing browsers disagree about. */
     function sizeRunout() {
       if (!track || !cells.length) {
-        return;
+        return false;
+      }
+
+      /* Bail rather than write a bad value. If this runs before the
+         frame has been laid out, clientWidth is 0, the run-out collapses
+         to nothing and every scroll target computed from it is wrong -
+         which parks the head over the wrong cell for the rest of the
+         visit. Returning false lets the caller know the measurement
+         wasn't usable yet. */
+      if (viewport.clientWidth < 1 || cells[0].offsetWidth < 1) {
+        return false;
       }
 
       var pad = Math.max(
@@ -298,6 +308,8 @@
 
       track.style.paddingLeft = pad + "px";
       track.style.paddingRight = pad + "px";
+
+      return true;
     }
 
     /* Scroll position that puts cell `i` under the head. */
@@ -500,11 +512,21 @@
     }
 
     function reflow() {
-      sizeRunout();
-      centre(active, false);
+      if (sizeRunout()) {
+        centre(active, false);
+      }
     }
 
     addEventListener("resize", reflow);
+
+    /* Belt and braces on top of the observer below. Getting this wrong
+       is silent and permanent - the head sits over blank tape until the
+       next resize - so re-assert a few times while the page settles
+       rather than trusting a single measurement. Each pass is a no-op
+       once the position is already right. */
+    [0, 120, 400, 1000].forEach(function (delay) {
+      setTimeout(reflow, delay);
+    });
 
     /* Anything that changes the frame's size invalidates both the
        run-out padding and the scroll offset that parks a cell under the
@@ -561,8 +583,7 @@
        the tape, so the initial scroll position has to be set explicitly
        - otherwise the tape renders at scrollLeft 0 showing the oldest
        cells while the panel already displays the newest. */
-    sizeRunout();
-    centre(active, false);
+    reflow();
   });
 
   /* ------------------------------------------------------------
