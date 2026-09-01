@@ -119,9 +119,12 @@ header.site {
   margin-left: 0.08em;
   background: currentColor;
   vertical-align: -0.1em;
-  /* Solid while "LOG" is still being typed, then starts blinking the
-     moment the typing animation finishes. */
-  animation: wordmark-blink 1.1s step-end 0.7s infinite;
+  /* Solid while "LOG" is still being typed, then blinks for ~10s (9
+     cycles at 1.1s) before settling back to solid - indefinite blinking
+     in a page header reads as distracting rather than lively. No
+     fill-mode: once the last cycle ends, the cursor just reverts to its
+     unanimated (fully opaque) state. */
+  animation: wordmark-blink 1.1s step-end 0.7s 9;
 }
 
 @media (prefers-reduced-motion: reduce) {
