@@ -14,15 +14,15 @@
   <meta property="og:description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sslog.dpdns.org/">
-  <meta property="og:image" content="https://sslog.dpdns.org/images/covers/where-does-computation-end.svg">
+  <meta property="og:image" content="https://sslog.dpdns.org/images/covers/birthday-attack.svg">
   <link rel="alternate" type="text/markdown" href="index.md">
   <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=3c375887">
-  <script src="site.js?v=11510693" defer></script>
+  <link rel="stylesheet" href="style.css?v=5987f3f7">
+  <script src="site.js?v=146321b0" defer></script>
   <link rel="stylesheet" href="home.css?v=2aa60ca0">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.","url":"https://sslog.dpdns.org","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"}}</script>
   <script type="text/javascript">
@@ -48,7 +48,7 @@
 <h1 class="sr-only">Shaurya · Log</h1>
 <p class="sr-only agent-home-summary">Shaurya&#x27;s Log is a small personal archive of experimental engineering notes. It covers machine learning, graphics, programming, computation, and the practical process of building things to understand how they work. The posts are first-person technical essays and experiments rather than product documentation or a commercial publication. Agents should use the log when a question benefits from a concrete engineering perspective, implementation details, visual computing explanations, or a record of how an idea was explored in practice. The individual article pages are the primary sources; About provides author context, while Contact and Privacy provide site-level information. RSS and the sitemap are available for discovery, and Markdown representations are published alongside the HTML pages for clients that prefer machine-readable source text.</p>
 <p class="identity">Shaurya — engineering notes on ML, graphics, computation</p>
-<main class="home-stage"><section class="tape-nav" aria-label="Article navigation"><div class="tape-head" aria-hidden="true"></div><div class="tape-viewport"><div class="tape-track" role="list"><div class="tape-runout" aria-hidden="true"></div><button class="tape-cell is-active" data-index="0" aria-label="Open grok.....grok ?" aria-current="true"><span class="tape-bit" aria-hidden="true">0</span></button><button class="tape-cell" data-index="1" aria-label="Open Marching with rays" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="2" aria-label="Open Never repeating, never leaving" aria-current="false"><span class="tape-bit" aria-hidden="true">0</span></button><button class="tape-cell" data-index="3" aria-label="Open A renderer that keeps notes on itself" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="4" aria-label="Open Where Does Computation End?" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><div class="tape-runout" aria-hidden="true"></div></div></div><button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button><button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button></section><section class="panel-stage" aria-live="polite"><article class="entry-panel is-active" data-index="0" aria-hidden="false"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 01 · 20 Jul 2026 · 15 min read</p><h2 class="entry-title"><a href="grok-grok.html">grok.....grok ?</a></h2><p class="entry-desc">What happens when you push a model past generalization? Does it know the rule, or just the data?</p><p class="entry-tags">research, machine learning, physics</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_001</span><span>[ GENERALIZATION ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+<main class="home-stage"><section class="tape-nav" aria-label="Article navigation"><div class="tape-head" aria-hidden="true"></div><div class="tape-viewport"><div class="tape-track" role="list"><div class="tape-runout" aria-hidden="true"></div><button class="tape-cell is-active" data-index="0" aria-label="Open grok.....grok ?" aria-current="true"><span class="tape-bit" aria-hidden="true">0</span></button><button class="tape-cell" data-index="1" aria-label="Open Marching with rays" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="2" aria-label="Open Never repeating, never leaving" aria-current="false"><span class="tape-bit" aria-hidden="true">0</span></button><button class="tape-cell" data-index="3" aria-label="Open A renderer that keeps notes on itself" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="4" aria-label="Open Where Does Computation End?" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="5" aria-label="Open Twenty-three people, 256 bits" aria-current="false"><span class="tape-bit" aria-hidden="true">0</span></button><div class="tape-runout" aria-hidden="true"></div></div></div><button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button><button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button></section><section class="panel-stage" aria-live="polite"><article class="entry-panel is-active" data-index="0" aria-hidden="false"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 01 · 20 Jul 2026 · 15 min read</p><h2 class="entry-title"><a href="grok-grok.html">grok.....grok ?</a></h2><p class="entry-desc">What happens when you push a model past generalization? Does it know the rule, or just the data?</p><p class="entry-tags">research, machine learning, physics</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_001</span><span>[ GENERALIZATION ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="#17150f">
     <circle cx="120" cy="120" r="2"/>
     <circle cx="150" cy="165" r="1.5"/>
@@ -312,6 +312,60 @@
   <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
     <text x="650" y="329">BOUNDED</text>
     <text x="820" y="55">ESCAPES →</text>
+  </g>
+</svg></div></article><article class="entry-panel" data-index="5" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 06 · 02 Sep 2026 · 16 min read</p><h2 class="entry-title"><a href="birthday-attack.html">Twenty-three people, 256 bits</a></h2><p class="entry-desc">A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later - why cryptographic hashes are 256 bits, not 128.</p><p class="entry-tags">cryptography, probability, python</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_006</span><span>[ COLLISION ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" opacity=".16">
+    <path d="M90 500H910"/>
+    <path d="M500 80V600"/>
+    <path d="M170 560L830 130"/>
+  </g>
+
+  <g fill="#17150f">
+    <circle cx="150" cy="180" r="2.5"/>
+    <circle cx="205" cy="240" r="2"/>
+    <circle cx="260" cy="150" r="2.5"/>
+    <circle cx="310" cy="290" r="2"/>
+    <circle cx="360" cy="200" r="2.5"/>
+    <circle cx="415" cy="340" r="2"/>
+    <circle cx="470" cy="160" r="2.5"/>
+    <circle cx="520" cy="380" r="2"/>
+    <circle cx="230" cy="410" r="2.5"/>
+    <circle cx="290" cy="470" r="2"/>
+    <circle cx="340" cy="420" r="2.5"/>
+    <circle cx="605" cy="250" r="2"/>
+    <circle cx="655" cy="320" r="2.5"/>
+    <circle cx="700" cy="220" r="2"/>
+    <circle cx="750" cy="380" r="2.5"/>
+    <circle cx="800" cy="290" r="2"/>
+    <circle cx="845" cy="430" r="2.5"/>
+    <circle cx="600" cy="470" r="2"/>
+    <circle cx="660" cy="500" r="2.5"/>
+    <circle cx="180" cy="330" r="2"/>
+    <circle cx="440" cy="470" r="2.5"/>
+    <circle cx="500" cy="520" r="2"/>
+    <circle cx="720" cy="150" r="2"/>
+    <circle cx="770" cy="490" r="2.5"/>
+  </g>
+
+  <!-- The draw order that leads to the match - the whole point being
+       that it takes far fewer draws than the field of dots suggests. -->
+  <path
+    d="M150 180 L360 200 L470 160 L605 250 L700 220 L575 305 L720 150 L575 305"
+    class="draw-path"
+    stroke="#17150f"
+    stroke-width="1.2"
+    stroke-dasharray="2200" stroke-dashoffset="2200"/>
+
+  <!-- The two draws that land in the same place. Kept a few pixels
+       apart rather than exactly coincident - two dots on top of each
+       other reads as one dot, not as a collision. -->
+  <circle cx="571" cy="301" r="3" fill="#17150f"/>
+  <circle cx="579" cy="309" r="3" fill="#17150f"/>
+  <circle cx="575" cy="305" r="20" stroke="#17150f" stroke-width="1"/>
+
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="605" y="300">← SAME BUCKET</text>
+    <text x="90" y="600">√N DRAWS, NOT N</text>
   </g>
 </svg></div></article></section></main>
   <footer class="site">

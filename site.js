@@ -1903,6 +1903,441 @@
   });
 
   /* ------------------------------------------------------------
+     Birthday-collision demo (toy scale)
+
+     Draws random integers into N buckets, one at a time, until two
+     land in the same bucket. The article's own two constants -
+     1.177*sqrt(N) (the point collision becomes more likely than not)
+     and 1.2533*sqrt(N) (the actual expected number of draws) - are
+     shown live against the same run the reader is watching, rather
+     than asserted in prose. Auto-run keeps going after each collision,
+     building a histogram across repeated runs so the skewed shape of
+     the distribution - the reason the two constants differ at all -
+     is something the reader watches accumulate, not a claim to take on
+     faith.
+     ------------------------------------------------------------ */
+  run(function () {
+    var fig = document.getElementById("birthday-demo");
+
+    if (!fig) {
+      return;
+    }
+
+    var MEDIAN_CONST = Math.sqrt(2 * Math.log(2)); // ≈ 1.1774
+    var MEAN_CONST = Math.sqrt(Math.PI / 2);       // ≈ 1.2533
+    var N_MIN = 50, N_MAX = 10000;
+    var HIST_MAX_RUNS = 300;
+    var HIST_BINS = 30;
+
+    var nRange = fig.querySelector('[data-param="n"]');
+    var nOut = fig.querySelector('.birthday-n output');
+    var buttons = {
+      step: fig.querySelector('[data-action="step"]'),
+      auto: fig.querySelector('[data-action="auto"]'),
+      reset: fig.querySelector('[data-action="reset"]')
+    };
+    var out = {
+      draws: fig.querySelector('[data-out="draws"]'),
+      median: fig.querySelector('[data-out="median"]'),
+      mean: fig.querySelector('[data-out="mean"]'),
+      status: fig.querySelector('[data-out="status"]'),
+      runs: fig.querySelector('[data-out="runs"]')
+    };
+    var gridCanvas = fig.querySelector(".birthday-grid");
+    var gridCtx = gridCanvas.getContext("2d");
+    var histCanvas = fig.querySelector(".birthday-hist");
+    var histCtx = histCanvas.getContext("2d");
+
+    var GW = gridCanvas.width, GH = gridCanvas.height;
+    var HW = histCanvas.width, HH = histCanvas.height;
+
+    var colorInk, colorGrey, colorHairline, colorPaper;
+
+    function readColors() {
+      var cs = getComputedStyle(fig);
+      colorInk = cs.getPropertyValue("--ink").trim() || "#161513";
+      colorGrey = cs.getPropertyValue("--grey").trim() || "#6f6a62";
+      colorHairline = cs.getPropertyValue("--hairline").trim() || "#e7e3dc";
+      colorPaper = cs.getPropertyValue("--paper").trim() || "#faf9f7";
+    }
+
+    var N = 1000;
+    var cols, rows, cellW, cellH;
+    var filled;        // Uint8Array, one flag per bucket
+    var order;          // buckets in draw order, for redraw after resize
+    var draws = 0;
+    var collisionAt = -1;
+    var running = false;
+    var raf = null;
+    var histogram = []; // completed run lengths, oldest first
+
+    /* N moves on a log scale - the difference between 50 and 500 buckets
+       matters a lot more to how the grid looks than 9500 vs 10000 does,
+       so a linear slider would waste most of its travel at the crowded
+       end. */
+    function posToN(pos) {
+      var t = pos / 100;
+      return Math.round(N_MIN * Math.pow(N_MAX / N_MIN, t));
+    }
+
+    function layoutGrid() {
+      cols = Math.max(1, Math.round(Math.sqrt((N * GW) / GH)));
+      rows = Math.ceil(N / cols);
+      cellW = GW / cols;
+      cellH = GH / rows;
+    }
+
+    function newRun() {
+      layoutGrid();
+      filled = new Uint8Array(N);
+      order = [];
+      draws = 0;
+      collisionAt = -1;
+      paintGrid();
+      paintReadout();
+    }
+
+    function paintGrid() {
+      gridCtx.fillStyle = colorPaper;
+      gridCtx.fillRect(0, 0, GW, GH);
+
+      gridCtx.fillStyle = colorGrey;
+      for (var i = 0; i < order.length; i++) {
+        var b = order[i];
+        var cx = b % cols, cy = Math.floor(b / cols);
+        gridCtx.fillRect(cx * cellW + 0.5, cy * cellH + 0.5,
+          Math.max(1, cellW - 1), Math.max(1, cellH - 1));
+      }
+
+      if (collisionAt >= 0) {
+        var b2 = order[order.length - 1];
+        var cx2 = b2 % cols, cy2 = Math.floor(b2 / cols);
+        gridCtx.fillStyle = colorInk;
+        gridCtx.fillRect(cx2 * cellW + 0.5, cy2 * cellH + 0.5,
+          Math.max(1, cellW - 1), Math.max(1, cellH - 1));
+      }
+    }
+
+    function paintReadout() {
+      nOut.textContent = String(N);
+      out.draws.textContent = String(draws);
+      out.median.textContent = (MEDIAN_CONST * Math.sqrt(N)).toFixed(1);
+      out.mean.textContent = (MEAN_CONST * Math.sqrt(N)).toFixed(1);
+
+      if (collisionAt >= 0) {
+        out.status.textContent = "collision at draw " + collisionAt;
+        out.status.className = "is-hit";
+      } else {
+        out.status.textContent = "";
+        out.status.className = "";
+      }
+
+      out.runs.textContent = String(histogram.length);
+    }
+
+    function paintHist() {
+      histCtx.fillStyle = colorPaper;
+      histCtx.fillRect(0, 0, HW, HH);
+
+      if (!histogram.length) {
+        return;
+      }
+
+      var max = 0;
+      for (var i = 0; i < histogram.length; i++) {
+        if (histogram[i] > max) max = histogram[i];
+      }
+
+      var binW = Math.max(1, Math.ceil((max + 1) / HIST_BINS));
+      var bins = new Array(Math.ceil((max + 1) / binW)).fill(0);
+
+      for (i = 0; i < histogram.length; i++) {
+        bins[Math.floor(histogram[i] / binW)]++;
+      }
+
+      var bestBin = 0;
+      for (i = 0; i < bins.length; i++) {
+        if (bins[i] > bestBin) bestBin = bins[i];
+      }
+
+      var pad = 4;
+      var barW = (HW - pad * 2) / bins.length;
+      var baseline = HH - 14;
+
+      histCtx.fillStyle = colorGrey;
+      for (i = 0; i < bins.length; i++) {
+        var h = bestBin ? (bins[i] / bestBin) * (baseline - 6) : 0;
+        histCtx.fillRect(pad + i * barW + 0.5, baseline - h,
+          Math.max(1, barW - 1), h);
+      }
+
+      histCtx.strokeStyle = colorHairline;
+      histCtx.beginPath();
+      histCtx.moveTo(0, baseline + 0.5);
+      histCtx.lineTo(HW, baseline + 0.5);
+      histCtx.stroke();
+
+      /* The mean, marked against the same axis the bars are drawn on -
+         it should sit noticeably right of the tallest bar once enough
+         runs have accumulated, which is the whole point being shown:
+         the typical (modal) run is shorter than the average one. */
+      var meanX = pad + ((MEAN_CONST * Math.sqrt(N)) / binW) * barW;
+      if (meanX > 0 && meanX < HW) {
+        histCtx.strokeStyle = colorInk;
+        histCtx.beginPath();
+        histCtx.moveTo(meanX, 4);
+        histCtx.lineTo(meanX, baseline);
+        histCtx.stroke();
+      }
+    }
+
+    function draw() {
+      var value = Math.floor(Math.random() * N);
+      draws++;
+
+      if (filled[value]) {
+        collisionAt = draws;
+      } else {
+        filled[value] = 1;
+      }
+
+      order.push(value);
+      paintGrid();
+      paintReadout();
+
+      return collisionAt >= 0;
+    }
+
+    function finishRun() {
+      histogram.push(draws);
+      if (histogram.length > HIST_MAX_RUNS) {
+        histogram.shift();
+      }
+      paintHist();
+    }
+
+    function stopAuto() {
+      running = false;
+      buttons.auto.setAttribute("aria-pressed", "false");
+      buttons.auto.textContent = "auto-run";
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    }
+
+    function autoTick() {
+      /* However big N is, an auto-run takes roughly the same time to
+         watch: more draws per frame for a bigger, more crowded grid,
+         one draw per frame for a small one that would otherwise blink
+         past in an instant. */
+      var expected = MEAN_CONST * Math.sqrt(N);
+      var perFrame = reduced ? Infinity : Math.max(1, Math.round(expected / 90));
+      var i = 0;
+      var hit = false;
+
+      while (i < perFrame && !hit) {
+        hit = draw();
+        i++;
+      }
+
+      if (hit) {
+        finishRun();
+
+        if (running) {
+          newRun();
+          raf = requestAnimationFrame(autoTick);
+        }
+
+        return;
+      }
+
+      if (running) {
+        raf = requestAnimationFrame(autoTick);
+      }
+    }
+
+    buttons.step.addEventListener("click", function () {
+      stopAuto();
+
+      if (collisionAt >= 0) {
+        newRun();
+        return;
+      }
+
+      if (draw()) {
+        finishRun();
+      }
+    });
+
+    buttons.auto.addEventListener("click", function () {
+      if (running) {
+        stopAuto();
+        return;
+      }
+
+      running = true;
+      buttons.auto.setAttribute("aria-pressed", "true");
+      buttons.auto.textContent = "pause";
+
+      if (collisionAt >= 0) {
+        newRun();
+      }
+
+      autoTick();
+    });
+
+    buttons.reset.addEventListener("click", function () {
+      stopAuto();
+      histogram = [];
+      newRun();
+      paintHist();
+    });
+
+    nRange.addEventListener("input", function () {
+      stopAuto();
+      N = posToN(Number(nRange.value));
+      histogram = [];
+      newRun();
+      paintHist();
+    });
+
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () {
+        readColors();
+        paintGrid();
+        paintHist();
+      }).observe(fig);
+    }
+
+    readColors();
+    N = posToN(Number(nRange.value));
+    newRun();
+    paintHist();
+    fig.classList.add("is-ready");
+  });
+
+  /* ------------------------------------------------------------
+     Birthday-collision demo (realistic scale)
+
+     Same 1.2533*sqrt(N) figure as the toy demo above, just applied to
+     an actual digest length instead of a bucket grid a reader can
+     watch fill up - the panel that connects "here's a bucket grid you
+     just watched collide" to "here's why a hash needs to be 256 bits."
+     No brute-force draws at this scale; N itself is already too large
+     to represent exactly as a JS number, so everything is computed in
+     log space and only converted to a plain number for display.
+     ------------------------------------------------------------ */
+  run(function () {
+    var fig = document.getElementById("birthday-scale-demo");
+
+    if (!fig) {
+      return;
+    }
+
+    var MEAN_CONST_LOG10 = Math.log10(Math.sqrt(Math.PI / 2)); // log10(1.2533)
+    var SECONDS_PER_YEAR = 365.25 * 24 * 3600;
+    var AGE_OF_UNIVERSE_YEARS = 1.38e10;
+
+    /* Illustrative order-of-magnitude throughput figures, not
+       measurements of any specific device - the point is the relative
+       scale between them and against the draw counts, not the third
+       significant digit. */
+    var ATTACKERS = [
+      { name: "Laptop GPU, raw hashing", rateLog10: 9 },
+      { name: "High-end GPU rig (8 cards)", rateLog10: 11 },
+      { name: "Bitcoin network, all ASICs combined", rateLog10: 21 }
+    ];
+
+    var buttons = Array.prototype.slice.call(
+      fig.querySelectorAll(".birthday-switch button")
+    );
+    var spaceOut = fig.querySelector('[data-out="space"]');
+    var drawsOut = fig.querySelector('[data-out="draws"]');
+    var rows = fig.querySelector('[data-out="rows"]');
+
+    /* log10(x) for x given as its own log10 already - keeps every
+       number in this panel in log space until the moment it's
+       formatted, so a 2^256 space never has to exist as a float. */
+    function fmtPow(log10Value, base) {
+      base = base || 10;
+      var exp = log10Value / Math.log10(base);
+      return "≈" + (base === 2 ? "2^" : "10^") + exp.toFixed(1);
+    }
+
+    function fmtSci(log10Value) {
+      var exp = Math.floor(log10Value);
+      var mantissa = Math.pow(10, log10Value - exp);
+      return mantissa.toFixed(2) + "×10^" + exp;
+    }
+
+    function fmtDuration(log10Seconds) {
+      var years = log10Seconds - Math.log10(SECONDS_PER_YEAR);
+
+      if (log10Seconds < 0) {
+        return "< 1 second";
+      }
+      if (log10Seconds < Math.log10(60)) {
+        return fmtSci(log10Seconds) + " s";
+      }
+      if (log10Seconds < Math.log10(3600)) {
+        return fmtSci(log10Seconds - Math.log10(60)) + " min";
+      }
+      if (log10Seconds < Math.log10(SECONDS_PER_YEAR)) {
+        return fmtSci(log10Seconds - Math.log10(3600)) + " hr";
+      }
+      if (years < Math.log10(AGE_OF_UNIVERSE_YEARS)) {
+        return fmtSci(years) + " years";
+      }
+
+      var universes = years - Math.log10(AGE_OF_UNIVERSE_YEARS);
+      return fmtSci(universes) + "× the age of the universe";
+    }
+
+    function render(bits) {
+      var spaceLog10 = bits * Math.log10(2);
+      var drawsLog10 = MEAN_CONST_LOG10 + spaceLog10 / 2;
+
+      spaceOut.textContent = "2^" + bits;
+      drawsOut.textContent = fmtPow(drawsLog10, 2) +
+        " (" + fmtSci(drawsLog10) + " draws)";
+
+      rows.innerHTML = "";
+
+      ATTACKERS.forEach(function (a) {
+        var tr = document.createElement("tr");
+
+        var name = document.createElement("td");
+        name.textContent = a.name;
+
+        var rate = document.createElement("td");
+        rate.textContent = "~10^" + a.rateLog10 + " H/s";
+
+        var time = document.createElement("td");
+        time.textContent = fmtDuration(drawsLog10 - a.rateLog10);
+
+        tr.appendChild(name);
+        tr.appendChild(rate);
+        tr.appendChild(time);
+        rows.appendChild(tr);
+      });
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        buttons.forEach(function (b) {
+          b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+        });
+        render(Number(btn.getAttribute("data-bits")));
+      });
+    });
+
+    var initial = fig.querySelector('[aria-pressed="true"]') || buttons[0];
+    render(Number(initial.getAttribute("data-bits")));
+    fig.classList.add("is-ready");
+  });
+
+  /* ------------------------------------------------------------
      Colormap carousel dots
 
      Plain anchor navigation loses to the track's mandatory scroll

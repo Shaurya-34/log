@@ -124,6 +124,13 @@ COVER_DEFAULTS = {
         "author": "sslog",
         "diagram_label": "GENERALIZATION",
     },
+    "birthday-attack": {
+        "cover": "images/covers/birthday-attack.svg",
+        "kicker": "WHY 23 PEOPLE ARE ENOUGH, AND WHY A HASH NEEDS 256 BITS.",
+        "quote": "You only need √N draws, not N.",
+        "author": "sslog",
+        "diagram_label": "COLLISION",
+    },
 }
 
 
@@ -264,7 +271,7 @@ def parse_post(path):
 
 
 def render_body(body_md):
-    out = markdown.markdown(body_md, extensions=["fenced_code"])
+    out = markdown.markdown(body_md, extensions=["fenced_code", "tables"])
     out = out.replace('<blockquote>\n<p>!pull ', '<blockquote class="pull">\n<p>')
     def mute(block):
         lines = [f'<span class="cm">{ln}</span>' if ln.lstrip().startswith("#") else ln

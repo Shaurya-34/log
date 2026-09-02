@@ -511,6 +511,41 @@ pre code {
 
 pre .cm { color: var(--faint); }
 
+/* ---- prose tables --------------------------------------------------
+   A data table in running text - not the widget's own scale table,
+   which has its own class. Kept inside the prose column, same as code
+   blocks and <hr>, rather than stretched to figure width: these tables
+   are short (a handful of columns of numbers), and figure-width would
+   just spread the digits apart with nothing gained. */
+
+article.post table {
+  width: 100%;
+  margin: 2rem 0;
+  border-collapse: collapse;
+  font: 0.85rem var(--mono);
+}
+
+article.post th,
+article.post td {
+  text-align: left;
+  padding: 0.5rem 0.9rem 0.5rem 0;
+  border-bottom: 1px solid var(--hairline);
+  font-variant-numeric: tabular-nums;
+}
+
+article.post th {
+  font-weight: 400;
+  color: var(--faint);
+  letter-spacing: 0.03em;
+}
+
+article.post td { color: var(--grey); }
+
+@media (max-width: 600px) {
+  article.post table { font-size: 0.78rem; }
+  article.post th, article.post td { padding-right: 0.5rem; }
+}
+
 /* ---- prev/next --------------------------------------------------- */
 
 .post-nav {
@@ -918,6 +953,180 @@ article.post .ray-demo figcaption {
 
 @media (prefers-reduced-motion: reduce) {
   .ray-switch button { transition: none; }
+}
+
+/* ---- birthday-collision figures ------------------------------------ */
+
+article.post .birthday-demo,
+article.post .birthday-scale { margin: 2.75rem 0 3rem; }
+
+.birthday-demo .birthday-head,
+.birthday-demo .birthday-readout,
+.birthday-demo .birthday-grid,
+.birthday-demo .birthday-hist-wrap,
+.birthday-scale .birthday-scale-head,
+.birthday-scale .birthday-scale-body { display: none; }
+
+.birthday-demo.is-ready .birthday-head,
+.birthday-demo.is-ready .birthday-readout,
+.birthday-demo.is-ready .birthday-grid,
+.birthday-demo.is-ready .birthday-hist-wrap { display: block; }
+.birthday-demo.is-ready .birthday-head { display: flex; }
+
+.birthday-scale.is-ready .birthday-scale-head,
+.birthday-scale.is-ready .birthday-scale-body { display: block; }
+
+.birthday-head {
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
+  margin-bottom: 1.1rem;
+}
+
+.birthday-n {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.birthday-n output {
+  min-width: 3.4em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.birthday-n input[type="range"] {
+  width: 9rem;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+/* Reuses the switch-button look already established by grok/chaos/ray -
+   same visual language for every widget's controls, on purpose. */
+.birthday-switch,
+.birthday-scale-head .birthday-switch { display: flex; gap: 0; flex-wrap: wrap; }
+
+.birthday-switch button {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.birthday-switch button + button { border-left: 0; }
+.birthday-switch button:hover { color: var(--ink); border-color: var(--ink); }
+.birthday-switch button:disabled { opacity: 0.4; cursor: default; }
+
+.birthday-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.birthday-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  margin: 0 0 0.85rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.birthday-readout b { font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
+.birthday-readout .is-hit { color: var(--ink); }
+
+.birthday-grid {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 852 / 280;
+  border: 1px solid var(--hairline);
+  margin-bottom: 1.25rem;
+}
+
+.birthday-hist-label {
+  margin: 0 0 0.5rem;
+  font: 0.68rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.birthday-hist-label b { font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.birthday-hist {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 852 / 140;
+  border: 1px solid var(--hairline);
+}
+
+article.post .birthday-demo figcaption,
+article.post .birthday-scale figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.birthday-scale-head { margin-bottom: 1.25rem; }
+
+.birthday-scale-body {
+  border: 1px solid var(--hairline);
+  padding: 1.25rem 1.4rem;
+}
+
+.birthday-scale-stat {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  padding: 0.4rem 0;
+  font: 0.85rem var(--mono);
+  color: var(--grey);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.birthday-scale-stat b { font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.birthday-scale-table {
+  width: 100%;
+  margin-top: 0.9rem;
+  border-collapse: collapse;
+  font: 0.78rem var(--mono);
+}
+
+.birthday-scale-table th,
+.birthday-scale-table td {
+  text-align: left;
+  padding: 0.5rem 0.6rem 0.5rem 0;
+  border-bottom: 1px solid var(--hairline);
+  font-variant-numeric: tabular-nums;
+}
+
+.birthday-scale-table th {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+  color: var(--faint);
+}
+
+.birthday-scale-table td:last-child { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .birthday-switch button { transition: none; }
+}
+
+@media (max-width: 600px) {
+  .birthday-n input[type="range"] { width: 6rem; }
+  .birthday-scale-table { font-size: 0.72rem; }
 }
 
 /* ---- colormap carousel ------------------------------------------- */
