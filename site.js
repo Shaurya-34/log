@@ -2271,6 +2271,18 @@
       if (hit) {
         finishRun();
 
+        /* HIST_MAX_RUNS was only ever a cap on the histogram array - once
+           reached, finishRun() keeps trimming the oldest run as it adds
+           the newest, so the count in the readout sits frozen at 300
+           forever while auto-run just kept churning underneath it,
+           silently. To a reader that reads as stuck, not capped - the
+           number says "done," the grid keeps moving. Auto-run stopping
+           here is what actually makes the cap a cap. */
+        if (running && histogram.length >= HIST_MAX_RUNS) {
+          stopAuto();
+          return;
+        }
+
         if (running) {
           newRun();
           raf = requestAnimationFrame(autoTick);
