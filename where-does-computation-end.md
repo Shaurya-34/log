@@ -73,7 +73,7 @@ In the 1930s, several people formalized “mechanical computation” in very dif
 
 They weren't simply copies of each other. They started from different mathematical ideas. Yet they all ended up characterizing essentially the same class of computable functions.
 
-That was one of the major reasons the Church–Turing thesis became compelling: Maybe the Turing boundary isn't an arbitrary choice of one mathematical model. Maybe it is capturing something fundamental about what an algorithmic process is.
+That was one of the major reasons the <span class="term" tabindex="0">Church–Turing thesis<span class="term-preview">Anything that can be computed by a reasonable mechanical procedure can be computed by a Turing machine.</span></span> became compelling: Maybe the Turing boundary isn't an arbitrary choice of one mathematical model. Maybe it is capturing something fundamental about what an algorithmic process is.
 
 ## 3. So what exactly is computation?
 
@@ -103,7 +103,7 @@ But notice the wording. It is a **thesis**, not a mathematical theorem. "Reasona
 
 Why should the Turing machine be the final word? We can define stronger mathematical models.
 
-An Oracle Turing Machine, for example, can be given access to a hypothetical oracle that instantly answers the Halting Problem.
+An Oracle Turing Machine, for example, can be given access to a hypothetical <span class="term" tabindex="0">oracle<span class="term-preview">A hypothetical computational black box that can answer a specific question an ordinary Turing machine cannot algorithmically solve.</span></span> that instantly answers the Halting Problem.
 
 Then:
 
@@ -135,11 +135,9 @@ another undecidable problem
 
 This doesn't eliminate undecidability. It moves the boundary. That made me wonder: **Could there be some physically realizable mechanism that plays the role of an oracle?**
 
-(for the sake of this article lets define an Oracle as a hypothetical computational black box that can answer a specific question that an ordinary Turing machine cannot algorithmically solve.)
-
 ## 5. Hypercomputation
 
-This is where I discovered the idea of **hypercomputation**. Hypercomputation studies computational models that, in some sense, go beyond ordinary Turing computation. There are several theoretical approaches.
+This is where I discovered the idea of <span class="term" tabindex="0">**hypercomputation**<span class="term-preview">Computational models that, in some sense, go beyond ordinary Turing computation.</span></span>. There are several theoretical approaches.
 
 ### Oracle computation (cleanest mathematically)
 
@@ -171,7 +169,7 @@ But we run into the same wall as we did before: How do you physically perform in
 
 ### Relativistic and CTC-based computation
 
-Use unusual spacetime structures, such as closed timelike curves, to alter what computation could theoretically accomplish. And there have actually been quantum experiments simulating CTC behavior. In 2026, researchers experimentally implemented a postselected CTC protocol on Quantinuum and IBM quantum processors: [arXiv](https://arxiv.org/abs/2501.16335).
+Use unusual spacetime structures, such as <span class="term" tabindex="0">closed timelike curves<span class="term-preview">A path through spacetime that, in certain solutions of general relativity, can return to an earlier spacetime event - a CTC.</span></span>, to alter what computation could theoretically accomplish. And there have actually been quantum experiments simulating CTC behavior. In 2026, researchers experimentally implemented a postselected CTC protocol on Quantinuum and IBM quantum processors: [arXiv](https://arxiv.org/abs/2501.16335).
 
 (THEY SIMULATED THE BEHAVIOR OF A CTC, AND DID NOT ACTUALLY CREATE ONE)
 

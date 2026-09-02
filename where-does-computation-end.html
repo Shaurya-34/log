@@ -99,7 +99,7 @@
 <li>Post machines — Post</li>
 </ul>
 <p>They weren't simply copies of each other. They started from different mathematical ideas. Yet they all ended up characterizing essentially the same class of computable functions.</p>
-<p>That was one of the major reasons the Church–Turing thesis became compelling: Maybe the Turing boundary isn't an arbitrary choice of one mathematical model. Maybe it is capturing something fundamental about what an algorithmic process is.</p>
+<p>That was one of the major reasons the <span class="term" tabindex="0">Church–Turing thesis<span class="term-preview">Anything that can be computed by a reasonable mechanical procedure can be computed by a Turing machine.</span></span> became compelling: Maybe the Turing boundary isn't an arbitrary choice of one mathematical model. Maybe it is capturing something fundamental about what an algorithmic process is.</p>
 <h2>3. So what exactly is computation?</h2>
 <p>This question bothered me more than the Halting Problem itself. We casually say:</p>
 <blockquote>
@@ -122,7 +122,7 @@
 <p>But notice the wording. It is a <strong>thesis</strong>, not a mathematical theorem. "Reasonable mechanical procedure" is not itself a mathematical definition. And this opens an uncomfortable door.</p>
 <h2>4. What if computation could be defined differently?</h2>
 <p>Why should the Turing machine be the final word? We can define stronger mathematical models.</p>
-<p>An Oracle Turing Machine, for example, can be given access to a hypothetical oracle that instantly answers the Halting Problem.</p>
+<p>An Oracle Turing Machine, for example, can be given access to a hypothetical <span class="term" tabindex="0">oracle<span class="term-preview">A hypothetical computational black box that can answer a specific question an ordinary Turing machine cannot algorithmically solve.</span></span> that instantly answers the Halting Problem.</p>
 <p>Then:</p>
 <pre><code class="language-text">ordinary computation
         ↓
@@ -145,9 +145,8 @@ another undecidable problem
 ...
 </code></pre>
 <p>This doesn't eliminate undecidability. It moves the boundary. That made me wonder: <strong>Could there be some physically realizable mechanism that plays the role of an oracle?</strong></p>
-<p>(for the sake of this article lets define an Oracle as a hypothetical computational black box that can answer a specific question that an ordinary Turing machine cannot algorithmically solve.)</p>
 <h2>5. Hypercomputation</h2>
-<p>This is where I discovered the idea of <strong>hypercomputation</strong>. Hypercomputation studies computational models that, in some sense, go beyond ordinary Turing computation. There are several theoretical approaches.</p>
+<p>This is where I discovered the idea of <span class="term" tabindex="0"><strong>hypercomputation</strong><span class="term-preview">Computational models that, in some sense, go beyond ordinary Turing computation.</span></span>. There are several theoretical approaches.</p>
 <h3>Oracle computation (cleanest mathematically)</h3>
 <p>Given a Turing machine that can answer an undecidable question, (Turing Machine + HALT Oracle)</p>
 <p>Now the halting problem can be solved by the oracle, but the oracle is essentially a black box containing information that we don't know how to compute so you can construct a new halting problem for machines using that oracle (lol).</p>
@@ -163,7 +162,7 @@ another undecidable problem
 <p>Now imagine a machine that is capable of storing a number with LITERALLY INFINITE precision. You could encode an enormous amount of information into the digits of one real number, including information that is not computable by the Turing machine, then you could compute on that number and extract it.</p>
 <p>But we run into the same wall as we did before: How do you physically perform infinitely many operations?</p>
 <h3>Relativistic and CTC-based computation</h3>
-<p>Use unusual spacetime structures, such as closed timelike curves, to alter what computation could theoretically accomplish. And there have actually been quantum experiments simulating CTC behavior. In 2026, researchers experimentally implemented a postselected CTC protocol on Quantinuum and IBM quantum processors: <a href="https://arxiv.org/abs/2501.16335">arXiv</a>.</p>
+<p>Use unusual spacetime structures, such as <span class="term" tabindex="0">closed timelike curves<span class="term-preview">A path through spacetime that, in certain solutions of general relativity, can return to an earlier spacetime event - a CTC.</span></span>, to alter what computation could theoretically accomplish. And there have actually been quantum experiments simulating CTC behavior. In 2026, researchers experimentally implemented a postselected CTC protocol on Quantinuum and IBM quantum processors: <a href="https://arxiv.org/abs/2501.16335">arXiv</a>.</p>
 <p>(THEY SIMULATED THE BEHAVIOR OF A CTC, AND DID NOT ACTUALLY CREATE ONE)</p>
 <p>Now a CTC is basically a path through spacetime where you can follow the curve and eventually arrive back at an earlier point in your own timeline.</p>
 <pre><code class="language-text">Past → Future → Past

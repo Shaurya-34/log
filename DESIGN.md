@@ -78,6 +78,27 @@ Styled as its own bordered register (`--code-bg` background), the same
 move as a code block — a visible, deliberate exception reads as honest;
 the same typeface quietly failing to hold would not.
 
+**Term previews.** A recurring piece of jargon — `weight decay`, `oracle`,
+`hypercomputation` — gets a hover/focus card instead of an inline aside,
+when the alternative was either repeating the definition every time the
+term comes up or making the reader hold it in their head from one
+mention forty paragraphs back. `<span class="term" tabindex="0">word
+<span class="term-preview">definition</span></span>`, CSS-only (`:hover`,
+`:focus`, no JS), so it costs nothing the MathML rule above doesn't
+already justify. Rules for using it:
+
+- Wrap the *first* occurrence only, where the definition used to sit
+  inline (a parenthetical or an appositive) — move that text into the
+  card rather than leaving both, or the sentence just says the same
+  thing twice.
+- Skip it where the concept is already the subject of real explanatory
+  prose (the Halting Problem in `where-does-computation-end`, grokking
+  itself in `grok-grok`) — a card would compete with an explanation
+  that's already doing the job better.
+- The card is a quick-reference for the *second* mention onward, not a
+  replacement for the *first* one — don't strip the surrounding
+  sentence down to nothing on the assumption the card covers it.
+
 ## Color
 
 CSS custom properties only — never a hardcoded hex outside `:root` (canvas

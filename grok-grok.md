@@ -60,9 +60,7 @@ It turned out I'd already done a lot more with this than I remembered.
   </noscript>
 </figure>
 
-A few things from catapult turned out to matter a lot later. First, weight decay
-(a training setting that gently penalizes the network for having large internal
-numbers) wasn't optional here: turn it off and the jump in the figure above
+A few things from catapult turned out to matter a lot later. First, <span class="term" tabindex="0">weight decay<span class="term-preview">A training setting that gently penalizes the network for having large internal numbers.</span></span> wasn't optional here: turn it off and the jump in the figure above
 never happens at all. Second, I could actually look inside the grokked network
 and see what it was doing, not just that it worked.
 
@@ -294,8 +292,8 @@ causes grokking on modular addition was actively fighting law-recovery here.
 
 ## L1 versus L2
 
-Weight decay is what's called an L2 penalty: it spreads a small tax evenly
-across every number in the model. There's a different kind of penalty, L1,
+Weight decay is what's called an <span class="term" tabindex="0">L2 penalty<span class="term-preview">Spreads a small tax evenly across every number in the model - shrinks everything a little rather than picking winners.</span></span>: it spreads a small tax evenly
+across every number in the model. There's a different kind of penalty, <span class="term" tabindex="0">L1<span class="term-preview">Pushes weak ingredients all the way to zero and leaves a few strong ones alone, rather than taxing everything equally.</span></span>,
 that behaves completely differently: instead of taxing everything a little, it
 tends to push weak ingredients all the way to zero and leave a few strong ones
 alone. If the true answer really is "two ingredients, and nothing else
