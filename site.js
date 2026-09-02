@@ -954,11 +954,11 @@
         if (e.key === "ArrowRight") {
           e.preventDefault();
           centre(active + 1, true);
-          cells[active].focus();
+          cells[active].focus({ preventScroll: true });
         } else if (e.key === "ArrowLeft") {
           e.preventDefault();
           centre(active - 1, true);
-          cells[active].focus();
+          cells[active].focus({ preventScroll: true });
         } else if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
           /* A mouse click on a cell that isn't centred yet only centres
              it - a stray click shouldn't be able to navigate away by
@@ -1048,6 +1048,18 @@
 
       e.preventDefault();
       centre(active + (e.key === "ArrowRight" ? 1 : -1), true);
+
+      /* This handler is what lets the arrow keys drive the tape without
+         first finding and focusing a cell - which meant a visitor who
+         reached the newly active cell this way had no cell actually
+         focused, so Enter afterward had nothing to act on. Moving focus
+         here closes that gap: it also matches what a keyboard user
+         watching the page would expect - the highlighted cell being the
+         one that's now genuinely focused. preventScroll, since centre()
+         above is already driving the scroll itself; the browser's own
+         focus-follows-scroll would otherwise fight that animation, the
+         exact conflict scroll-snap caused here before. */
+      cells[active].focus({ preventScroll: true });
     });
 
     /* Sizes the run-out and parks the starting cell under the head. The
