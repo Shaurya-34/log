@@ -953,10 +953,19 @@
       cell.addEventListener("keydown", function (e) {
         if (e.key === "ArrowRight") {
           e.preventDefault();
+          /* This same keypress is also caught by the document-level
+             arrow handler below (it has to be, so the arrows work
+             before any cell has ever been focused). Once a cell IS
+             focused, the event would otherwise bubble straight to that
+             handler and move the tape a second time for one keypress -
+             stopping it here is what keeps a focused cell in sole
+             charge of its own arrow presses. */
+          e.stopPropagation();
           centre(active + 1, true);
           cells[active].focus({ preventScroll: true });
         } else if (e.key === "ArrowLeft") {
           e.preventDefault();
+          e.stopPropagation();
           centre(active - 1, true);
           cells[active].focus({ preventScroll: true });
         } else if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
