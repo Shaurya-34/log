@@ -1208,7 +1208,7 @@ article.post .birthday-scale figcaption {
     display: grid;
     grid-template-columns:
       [wide-start] minmax(0, 1fr)
-      [text-start] min(34rem, 100%)
+      [text-start] min(46rem, 100%)
       [text-end] minmax(0, 1fr)
       [wide-end];
   }

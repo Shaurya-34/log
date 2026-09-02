@@ -96,11 +96,15 @@ color on this site, full stop.
 
 - Site-wide max-width: `41rem` (`.wrap`), tightened further inside prose.
 - Article pages get a **wider shell** (`56rem`) with an asymmetric split:
-  prose stays centered at `34rem` (a real reading measure, ~68 characters),
-  figures break out to the full width, both sharing one center axis. Code
-  blocks and `<hr>` stay in the prose column — they were measured (41 of 42
-  blocks across every post fit under 400px) and only look worse stretched
-  to figure width.
+  prose stays centered at `46rem` (a real reading measure, 68 characters in
+  the body monospace — measured directly, not eyeballed: the column was
+  originally set to `34rem` on the assumption that it read as ~68
+  characters, and actually measured out to 50. A figure-heavy post made the
+  gap between a narrow paragraph and a full-width table impossible to miss,
+  which is what caught it). Figures break out to the full width, both
+  sharing one center axis. Code blocks, data tables and `<hr>` stay in the
+  prose column — they were measured (41 of 42 code blocks across every post
+  fit under 400px) and only look worse stretched to figure width.
 - Interactive canvas/SVG widgets use a fixed intrinsic size — `852×420` or
   `852×480` — held responsive via `aspect-ratio` in CSS, not fixed pixels.
 - Homepage tape strip: five visible cells on desktop, three on mobile
