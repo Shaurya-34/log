@@ -959,6 +959,21 @@
           e.preventDefault();
           centre(active - 1, true);
           cells[active].focus();
+        } else if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+          /* A mouse click on a cell that isn't centred yet only centres
+             it - a stray click shouldn't be able to navigate away by
+             accident. Keyboard focus doesn't carry that risk: landing on
+             a cell, whether by Tab or by the arrow keys above (which
+             already centre it), is itself a deliberate choice, so Enter
+             opens it in one press instead of requiring a click, then a
+             second one to confirm. */
+          e.preventDefault();
+
+          var link = panels[i] && panels[i].querySelector(".entry-title a");
+
+          if (link) {
+            window.location.href = link.getAttribute("href");
+          }
         }
       });
     });
