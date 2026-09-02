@@ -542,8 +542,23 @@ article.post math[display="block"] {
    or focused, not injected by script. */
 .term {
   position: relative;
-  border-bottom: 1px dotted var(--faint);
+  /* --grey rather than --faint: it's the higher-contrast of the two
+     against paper in both themes (darker in light mode, lighter in
+     dark), which --faint's own hairline-adjacent job doesn't need but a
+     dotted underline meant to be noticed does. Darkens further to --ink
+     on hover/focus, same as a real link. */
+  border-bottom: 1px dotted var(--grey);
   cursor: help;
+  transition: border-color 0.15s ease;
+}
+
+.term:hover,
+.term:focus {
+  border-bottom-color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .term { transition: none; }
 }
 
 .term:focus-visible {

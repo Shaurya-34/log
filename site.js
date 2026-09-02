@@ -451,15 +451,35 @@
       active = 0;
     }
 
-    /* Diagram draw-in: fires once per panel, the first time it becomes
-       active, via a CSS keyframe (see .is-drawn in home.css). Reduced
-       motion is handled entirely in CSS, so this just needs the class. */
-    function playDraw(panel) {
-      if (!panel || panel.dataset.animated === "1") {
+    /* Diagram draw-in: replays every time a panel becomes the active one,
+       via a CSS keyframe (see .is-drawn in home.css) - not just the
+       first time it's ever seen. Guarded on the index rather than the
+       panel, so repaint()s that leave the same cell active (an arrow
+       press clamped at the end of the tape, a settle-snap that lands
+       back where it started) don't restart it pointlessly.
+
+       Re-triggering a CSS animation by re-adding a class that's already
+       there is a no-op - the browser only starts an animation on an
+       actual 0-to-1 transition of the property. Removing the class lets
+       the path's own stroke-dashoffset attribute (the undrawn state)
+       take back over; the reflow in between forces the browser to
+       register that removal before the class goes back on, which is
+       what makes the next add() count as a fresh start rather than
+       nothing happening. Reduced motion doesn't need special handling
+       here - the existing !important override in home.css already pins
+       the path fully drawn regardless of how many times this class gets
+       toggled. */
+    var lastDrawn = -1;
+
+    function playDraw(panel, index) {
+      if (!panel || index === lastDrawn) {
         return;
       }
 
-      panel.dataset.animated = "1";
+      lastDrawn = index;
+
+      panel.classList.remove("is-drawn");
+      void panel.offsetWidth;
       panel.classList.add("is-drawn");
     }
 
@@ -541,7 +561,7 @@
         panel.setAttribute("aria-hidden", on ? "false" : "true");
       });
 
-      playDraw(panels[active]);
+      playDraw(panels[active], active);
     }
 
     /* Native smooth scrolling is unreliable against mandatory scroll
