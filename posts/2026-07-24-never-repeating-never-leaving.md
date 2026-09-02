@@ -23,11 +23,25 @@ Edward Lorenz found the canonical example in 1963 while modeling
 atmospheric convection. Three coupled differential equations, nothing
 exotic:
 
-```
-dx/dt = sigma * (y - x)
-dy/dt = x * (rho - z) - y
-dz/dt = x * y - beta * z
-```
+<math display="block">
+  <mtable>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>x</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>&#963;</mi><mo>(</mo><mi>y</mi><mo>&#8722;</mo><mi>x</mi><mo>)</mo>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>y</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>x</mi><mo>(</mo><mi>&#961;</mi><mo>&#8722;</mo><mi>z</mi><mo>)</mo><mo>&#8722;</mo><mi>y</mi>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>z</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>x</mi><mi>y</mi><mo>&#8722;</mo><mi>&#946;</mi><mi>z</mi>
+    </mtd></mtr>
+  </mtable>
+</math>
 
 With the usual constants (sigma=10, rho=28, beta=8/3), that produces
 output that looks like structured noise, and a shape people ended up
@@ -130,11 +144,25 @@ something other than what I meant.
 Rössler was next. Same three-equation, same-integration-loop pattern,
 different arithmetic:
 
-```
-dx/dt = -y - z
-dy/dt = x + a*y
-dz/dt = b + z*(x - c)
-```
+<math display="block">
+  <mtable>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>x</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mo>&#8722;</mo><mi>y</mi><mo>&#8722;</mo><mi>z</mi>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>y</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>x</mi><mo>+</mo><mi>a</mi><mi>y</mi>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>z</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>b</mi><mo>+</mo><mi>z</mi><mo>(</mo><mi>x</mi><mo>&#8722;</mo><mi>c</mi><mo>)</mo>
+    </mtd></mtr>
+  </mtable>
+</math>
 
 With a=0.2, b=0.2, c=5.7 it produces something visually very different
 from Lorenz: a single flat spiral band that winds outward, then
@@ -174,11 +202,28 @@ that needs 10,000 can still finish at roughly the same moment.
 The payoff was immediate. Adding Aizawa, which is a genuinely more
 complicated system with six parameters and a cubic term:
 
-```
-dx/dt = (z - b)*x - d*y
-dy/dt = d*x + (z - b)*y
-dz/dt = c + a*z - z^3/3 - (x^2 + y^2)*(1 + e*z) + f*z*x^3
-```
+<math display="block">
+  <mtable>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>x</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mo>(</mo><mi>z</mi><mo>&#8722;</mo><mi>b</mi><mo>)</mo><mi>x</mi><mo>&#8722;</mo><mi>d</mi><mi>y</mi>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>y</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>d</mi><mi>x</mi><mo>+</mo><mo>(</mo><mi>z</mi><mo>&#8722;</mo><mi>b</mi><mo>)</mo><mi>y</mi>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>z</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>c</mi><mo>+</mo><mi>a</mi><mi>z</mi>
+      <mo>&#8722;</mo><mfrac><msup><mi>z</mi><mn>3</mn></msup><mn>3</mn></mfrac>
+      <mo>&#8722;</mo><mo>(</mo><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msup><mi>y</mi><mn>2</mn></msup><mo>)</mo><mo>(</mo><mn>1</mn><mo>+</mo><mi>e</mi><mi>z</mi><mo>)</mo>
+      <mo>+</mo><mi>f</mi><mi>z</mi><msup><mi>x</mi><mn>3</mn></msup>
+    </mtd></mtr>
+  </mtable>
+</math>
 
 took one new step function and one new line in a list. Zero changes to
 anything structural. It produces a layered, shell-like spiral that looks
@@ -232,11 +277,25 @@ Thomas' cyclically symmetric attractor went in last, and it went back to
 being boring in the good way. One parameter, and unusually for this group,
 it is built from trigonometric functions rather than polynomials:
 
-```
-dx/dt = sin(y) - b*x
-dy/dt = sin(z) - b*y
-dz/dt = sin(x) - b*z
-```
+<math display="block">
+  <mtable>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>x</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>sin</mi><mo>(</mo><mi>y</mi><mo>)</mo><mo>&#8722;</mo><mi>b</mi><mi>x</mi>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>y</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>sin</mi><mo>(</mo><mi>z</mi><mo>)</mo><mo>&#8722;</mo><mi>b</mi><mi>y</mi>
+    </mtd></mtr>
+    <mtr><mtd>
+      <mfrac><mrow><mi>d</mi><mi>z</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac>
+      <mo>=</mo>
+      <mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>&#8722;</mo><mi>b</mi><mi>z</mi>
+    </mtd></mtr>
+  </mtable>
+</math>
 
 With b=0.208186 it gives a softer, more rounded kind of chaos than the
 others. It also evolves much more slowly, so it needed a step size five

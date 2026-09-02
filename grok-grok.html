@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=e73059f3">
+  <link rel="stylesheet" href="style.css?v=de8e307f">
   <script src="site.js?v=2beb656b" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"grok.....grok ?","description":"What happens when you push a model past generalization? Does it know the rule, or just the data?","url":"https://sslog.dpdns.org/grok-grok.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/grok-grok.html"},"datePublished":"2026-07-20T00:00:00+00:00","dateModified":"2026-07-20T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["research","machine learning","physics"]}</script>
   <script type="text/javascript">
@@ -117,9 +117,29 @@ and see what it was doing, not just that it worked.</p>
 <p>The trick itself is neat. Map each number onto an angle on a circle, and
 adding two numbers mod p turns into adding two angles. There's a plain
 trig identity for that:</p>
-<pre><code>cos(A + B) = cos(A)cos(B) - sin(A)sin(B)
-sin(A + B) = sin(A)cos(B) + cos(A)sin(B)
-</code></pre>
+<math display="block">
+  <mtable>
+    <mtr>
+      <mtd columnalign="right"><mi>cos</mi><mo>(</mo><mi>A</mi><mo>+</mo><mi>B</mi><mo>)</mo></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd columnalign="left">
+        <mi>cos</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>cos</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+        <mo>&#8722;</mo>
+        <mi>sin</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>sin</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd columnalign="right"><mi>sin</mi><mo>(</mo><mi>A</mi><mo>+</mo><mi>B</mi><mo>)</mo></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd columnalign="left">
+        <mi>sin</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>cos</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+        <mo>+</mo>
+        <mi>cos</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>sin</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
 <p>which a network can compute with nothing more exotic than multiplication
 and addition. Those sharp spikes in the spectrum are the fingerprint of a
 network that settled on a small handful of these angles, instead of
@@ -150,8 +170,16 @@ so I needed a different kind of problem to test that.</p>
 I could train a network on one range of inputs and then check its predictions
 somewhere it had never seen. Lennard-Jones potential was the main one, which
 describes how atoms attract and repel depending on distance:</p>
-<pre><code>V(r) = A / r^12  -  B / r^6
-</code></pre>
+<math display="block">
+  <mrow>
+    <mi>V</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>=</mo>
+    <mfrac><mi>A</mi><msup><mi>r</mi><mn>12</mn></msup></mfrac>
+    <mo>&#8722;</mo>
+    <mfrac><mi>B</mi><msup><mi>r</mi><mn>6</mn></msup></mfrac>
+  </mrow>
+</math>
+
 <p>Two terms: one repulsive (<code>r^-12</code>, wins up close), one attractive (<code>r^-6</code>,
 wins further out), and two positive constants that just set the strength and
 scale. I also tried a couple of other shapes for variety, mostly to check
@@ -241,8 +269,18 @@ the fix is to stop making it invent one. Instead of a free-form network, I built
 a fixed menu of candidate ingredients, things like different powers of distance
 and different exponential decay rates, and let a plain linear model choose how
 much of each ingredient to use:</p>
-<pre><code>V(r) = w1*f1(r) + w2*f2(r) + ... + wn*fn(r)
-</code></pre>
+<math display="block">
+  <mrow>
+    <mi>V</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>=</mo>
+    <msub><mi>w</mi><mn>1</mn></msub><msub><mi>f</mi><mn>1</mn></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>+</mo>
+    <msub><mi>w</mi><mn>2</mn></msub><msub><mi>f</mi><mn>2</mn></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>+</mo><mo>&#8943;</mo><mo>+</mo>
+    <msub><mi>w</mi><mi>n</mi></msub><msub><mi>f</mi><mi>n</mi></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+  </mrow>
+</math>
+
 <p>Each <code>f</code> is one menu item (<code>r^-12</code>, <code>r^-6</code>, <code>r^-4</code>, <code>exp(-r)</code>, and so on), and
 each <code>w</code> is a weight the model is free to learn. The true Lennard-Jones
 formula is exactly two of those ingredients: nonzero weight on <code>r^-12</code> and

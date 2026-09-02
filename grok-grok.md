@@ -75,10 +75,28 @@ The trick itself is neat. Map each number onto an angle on a circle, and
 adding two numbers mod p turns into adding two angles. There's a plain
 trig identity for that:
 
-```
-cos(A + B) = cos(A)cos(B) - sin(A)sin(B)
-sin(A + B) = sin(A)cos(B) + cos(A)sin(B)
-```
+<math display="block">
+  <mtable>
+    <mtr>
+      <mtd columnalign="right"><mi>cos</mi><mo>(</mo><mi>A</mi><mo>+</mo><mi>B</mi><mo>)</mo></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd columnalign="left">
+        <mi>cos</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>cos</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+        <mo>&#8722;</mo>
+        <mi>sin</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>sin</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd columnalign="right"><mi>sin</mi><mo>(</mo><mi>A</mi><mo>+</mo><mi>B</mi><mo>)</mo></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd columnalign="left">
+        <mi>sin</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>cos</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+        <mo>+</mo>
+        <mi>cos</mi><mo>(</mo><mi>A</mi><mo>)</mo><mi>sin</mi><mo>(</mo><mi>B</mi><mo>)</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
 
 which a network can compute with nothing more exotic than multiplication
 and addition. Those sharp spikes in the spectrum are the fingerprint of a
@@ -116,9 +134,15 @@ I could train a network on one range of inputs and then check its predictions
 somewhere it had never seen. Lennard-Jones potential was the main one, which
 describes how atoms attract and repel depending on distance:
 
-```
-V(r) = A / r^12  -  B / r^6
-```
+<math display="block">
+  <mrow>
+    <mi>V</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>=</mo>
+    <mfrac><mi>A</mi><msup><mi>r</mi><mn>12</mn></msup></mfrac>
+    <mo>&#8722;</mo>
+    <mfrac><mi>B</mi><msup><mi>r</mi><mn>6</mn></msup></mfrac>
+  </mrow>
+</math>
 
 Two terms: one repulsive (`r^-12`, wins up close), one attractive (`r^-6`,
 wins further out), and two positive constants that just set the strength and
@@ -228,9 +252,17 @@ a fixed menu of candidate ingredients, things like different powers of distance
 and different exponential decay rates, and let a plain linear model choose how
 much of each ingredient to use:
 
-```
-V(r) = w1*f1(r) + w2*f2(r) + ... + wn*fn(r)
-```
+<math display="block">
+  <mrow>
+    <mi>V</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>=</mo>
+    <msub><mi>w</mi><mn>1</mn></msub><msub><mi>f</mi><mn>1</mn></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>+</mo>
+    <msub><mi>w</mi><mn>2</mn></msub><msub><mi>f</mi><mn>2</mn></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>+</mo><mo>&#8943;</mo><mo>+</mo>
+    <msub><mi>w</mi><mi>n</mi></msub><msub><mi>f</mi><mi>n</mi></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+  </mrow>
+</math>
 
 Each `f` is one menu item (`r^-12`, `r^-6`, `r^-4`, `exp(-r)`, and so on), and
 each `w` is a weight the model is free to learn. The true Lennard-Jones

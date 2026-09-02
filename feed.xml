@@ -10,7 +10,7 @@
       <link>https://sslog.dpdns.org/birthday-attack.html</link>
       <guid>https://sslog.dpdns.org/birthday-attack.html</guid>
       <pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate>
-      <description>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later - why cryptographic hashes are 256 bits, not 128.</description>
+      <description>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</description>
       <category>cryptography, probability, python</category>
     </item>
     <item>

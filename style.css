@@ -530,6 +530,67 @@ article.post math[display="block"] {
   font-size: 1.2em;
 }
 
+/* ---- inline term previews -------------------------------------------
+   A term whose definition sits in a hover/focus card instead of an
+   inline aside - for a phrase used more than once, where writing the
+   definition out in the sentence every time it's needed would repeat
+   itself. Dotted underline and cursor:help are the same signal
+   <abbr title> already uses; the difference here is a styled card that
+   actually matches the page, not the browser's own plain tooltip.
+   Keyboard-reachable (tabindex, :focus) and readable without JS - the
+   preview text is real DOM content, just visually hidden until hovered
+   or focused, not injected by script. */
+.term {
+  position: relative;
+  border-bottom: 1px dotted var(--faint);
+  cursor: help;
+}
+
+.term:focus-visible {
+  outline: 1px solid var(--faint);
+  outline-offset: 3px;
+}
+
+.term-preview {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 19rem;
+  max-width: min(19rem, 80vw);
+  margin-bottom: 0.6rem;
+  padding: 0.8rem 1rem;
+  background: var(--code-bg);
+  border: 1px solid var(--hairline);
+  font: 0.8rem/1.55 var(--mono);
+  color: var(--grey);
+  text-align: left;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.18s ease, transform 0.18s ease,
+    visibility 0s linear 0.18s;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.term:hover .term-preview,
+.term:focus .term-preview {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .term-preview { transition: none; }
+}
+
+@media (max-width: 600px) {
+  .term-preview { width: 15rem; font-size: 0.76rem; }
+}
+
 /* ---- prose tables --------------------------------------------------
    A data table in running text - not the widget's own scale table,
    which has its own class. Kept inside the prose column, same as code
