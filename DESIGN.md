@@ -225,9 +225,30 @@ Two things that are easy to get wrong here, both found by measuring:
   counter initialised to 0 swallows the first tick of the visit,
   including the one that answers the toggle. Start it negative.
 
-The control only appears on the page that has a tape, and stays hidden
-until JS confirms the browser can actually synthesise the tick - same
-gating as every widget here.
+The control only appears on a page that has something to hear - opt in
+per page via `sound: true` in a post's front matter, not site-wide - and
+stays hidden until JS confirms the browser can actually synthesise the
+tick, same gating as every widget here.
+
+One engine, `siteSound` in `site.js`, not one per widget: a single
+AudioContext, noise buffer and on/off preference, shared by the tape and
+by any figure below it. The two lessons above only had to be solved
+once this way. A widget that wants its own timbre calls the shared
+`tick(pace)` or `thunk()` rather than building its own oscillator graph.
+
+## Never open on nothing
+
+An interactive figure that shows an empty canvas until the reader finds
+the right button is not demonstrating anything yet - it reads as broken,
+not quiet. The birthday-collision demo learned this the hard way: a
+first-time visitor saw a blank grid and a blank histogram, with no cue
+that either does something. The fix generalizes past that one widget -
+any figure with an empty starting state should seed itself with a real
+result the instant it's ready, silently and without animation, so
+whatever is being demonstrated is already visible before the reader
+touches anything. Interaction adds to that state; it doesn't have to
+create it from nothing.
+
 - Motion should be quiet: no bounce, no overshoot easing on anything
   chrome-level. `cubic-bezier(.16,.78,.18,1)` is the one eased curve used
   for interface motion (tape read-head, feature-card transitions); most

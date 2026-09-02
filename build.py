@@ -203,13 +203,16 @@ WORDMARK_HTML = ('<span class="wordmark-text">LOG</span>'
 
 
 def page_header(base="", sound=False):
-    # The sound control only appears where there is something to hear.
-    # The tape lives on the index and nowhere else, so carrying this in
-    # every header would be a button that does nothing on four pages out
-    # of five. Hidden until site.js has confirmed the browser can
-    # actually synthesise the tick, the same as every other widget here.
+    # The sound control only appears on pages with something to hear -
+    # opt in per page (the homepage tape, and any post whose front
+    # matter sets sound: true) rather than site-wide, so it isn't a
+    # button that does nothing on every page without a ticking widget.
+    # Hidden until site.js has confirmed the browser can actually
+    # synthesise the tick, the same as every other widget here. One
+    # engine and one on/off preference behind it (see siteSound in
+    # site.js), shared by whichever widgets the page actually has.
     sound_button = ('      <button type="button" class="sound-toggle" hidden '
-                    'aria-pressed="false" aria-label="Turn on tape sound">'
+                    'aria-pressed="false" aria-label="Turn on sound">'
                     'sound</button>' + chr(10)) if sound else ''
 
     return ('\n  <header class="site">\n'
@@ -265,6 +268,7 @@ def parse_post(path):
         "cover_quote_author": meta.get("cover_quote_author", defaults.get("author", "")),
         "diagram_label": meta.get("diagram_label", defaults.get("diagram_label", "")),
         "repo": meta.get("repo", ""),
+        "sound": meta.get("sound", "").strip().lower() == "true",
         "body_md": body,
         "read_time": max(1, round(len(re.findall(r"\b\w+\b", body)) / 220)),
     }
@@ -314,7 +318,7 @@ def build_post(post, newer, older):
     return (page_head(f'{post["title"]} · {SITE_NAME}', description, f'{post["slug"]}.html',
                       og_type="article", jsonld=jsonld, og_image=og_image,
                       md_href=f'{post["slug"]}.md', published=published) +
-            page_header() + body + nav +
+            page_header(sound=post["sound"]) + body + nav +
             page_foot('<a href="index.html">Index</a>'))
 
 

@@ -227,17 +227,17 @@ after that matched did the widget below get built.
     </div>
   </div>
   <p class="birthday-readout" aria-live="polite">
-    <span>draws <b data-out="draws">0</b></span>
-    <span>median 1.177·√N <b data-out="median">-</b></span>
-    <span>mean 1.2533·√N <b data-out="mean">-</b></span>
+    <span>draws so far <b data-out="draws">0</b></span>
+    <span title="1.177 · √N — the point a collision becomes more likely than not">50% mark <b data-out="median">-</b></span>
+    <span title="1.2533 · √N — the actual expected number of draws">average wait <b data-out="mean">-</b></span>
     <span data-out="status"></span>
   </p>
-  <canvas class="birthday-grid" width="852" height="280" role="img" aria-label="Grid of hash buckets. Each step lights up one bucket at random; the run stops and highlights the pair the moment a bucket is hit twice."></canvas>
+  <canvas class="birthday-grid" width="852" height="280" role="img" aria-label="Grid of hash buckets. Each step lights up one bucket at random; the run stops and circles the bucket the moment it is hit twice."></canvas>
   <div class="birthday-hist-wrap">
     <p class="birthday-hist-label">Draws to first collision, across <b data-out="runs">0</b> completed runs</p>
     <canvas class="birthday-hist" width="852" height="140" role="img" aria-label="Histogram of draws-to-collision, accumulated across repeated runs, with the theoretical mean marked."></canvas>
   </div>
-  <figcaption>Drag N and watch how little it changes the shape - the number of buckets can grow by 100x and the draws needed barely grows by 10x, because it only ever grows like √N. Step through one draw at a time, or auto-run to watch the histogram accumulate: the tall part of the bars sits left of the marked mean, the same right-skew from the chart above, built one run at a time instead of asserted.</figcaption>
+  <figcaption>Thirty runs are already recorded below, so the shape is there before you touch anything - the circled cell in the grid is the bucket that got hit twice. Drag N and watch how little it changes: the number of buckets can grow by 100x and the draws needed barely grows by 10x, because it only ever grows like √N. Step through one draw at a time, or press auto-run to add more runs to the histogram: the tall part of the bars sits left of the marked average, the same right-skew as the chart above.</figcaption>
   <noscript>
     <img src="images/birthday/collision_distribution.png" alt="Histogram of draw counts before first collision at N=10,000, right-skewed, median and mean marked separately." loading="lazy">
   </noscript>

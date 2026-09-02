@@ -20,6 +20,190 @@
   }
 
   /* ------------------------------------------------------------
+     Sound
+
+     One synthesised-noise engine, shared by every widget that wants a
+     tick - the tape's read head, and any figure below it. A sample
+     would be another request on a page that costs 23KB, and a
+     generated click can take its brightness and level from the caller
+     (how fast, how hard, how final) the way a file never could.
+     Filtered noise, never a tone - a tone reads as a beep, noise reads
+     as a mechanism.
+
+     One rule for the whole site, enforced once here rather than once
+     per widget: silent until asked for, remembered after that. A
+     reader who came to read should never be made a noise at.
+     ------------------------------------------------------------ */
+  var siteSound = (function () {
+    var on = safeStore.get("tape-sound") === "on";
+    var audio = null;
+    var noise = null;
+    /* Wall clock, in ms, deliberately negative to start - see burst().
+       A fresh AudioContext's own clock starts at zero, which would make
+       a floor measured against it swallow the very first sound of the
+       visit; measuring real time instead avoids that, and also survives
+       a context that hasn't been resumed yet (whose own clock stays
+       frozen at zero until it has). */
+    var lastAt = -1000;
+
+    function ensure() {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+
+      if (!Ctx) {
+        return false;
+      }
+
+      if (!audio) {
+        audio = new Ctx();
+
+        var length = Math.floor(audio.sampleRate * 0.06);
+        noise = audio.createBuffer(1, length, audio.sampleRate);
+
+        var data = noise.getChannelData(0);
+        for (var i = 0; i < length; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+      }
+
+      if (audio.state === "suspended") {
+        audio.resume();
+      }
+
+      return true;
+    }
+
+    /* freq/q shape the timbre, peak/dur shape the envelope. floorMs is
+       the minimum gap between two bursts - 30ms or so for a rapid tick
+       that would otherwise smear into a buzz, 0 for a one-off event
+       (a collision) that only ever fires once per run and must never be
+       swallowed by something that ticked a moment earlier. */
+    function burst(freq, q, peak, dur, floorMs) {
+      if (!on || !ensure()) {
+        return;
+      }
+
+      var wall = performance.now();
+
+      if (floorMs && wall - lastAt < floorMs) {
+        return;
+      }
+
+      lastAt = wall;
+
+      var now = audio.currentTime;
+      var source = audio.createBufferSource();
+      var band = audio.createBiquadFilter();
+      var gain = audio.createGain();
+
+      source.buffer = noise;
+      band.type = "bandpass";
+      band.frequency.value = freq;
+      band.Q.value = q;
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(peak, now + 0.002);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+      source.connect(band);
+      band.connect(gain);
+      gain.connect(audio.destination);
+      source.start(now);
+      source.stop(now + dur + 0.01);
+    }
+
+    return {
+      isOn: function () { return on; },
+      setOn: function (v) {
+        on = v;
+        safeStore.set("tape-sound", v ? "on" : "off");
+      },
+      ensure: ensure,
+      /* A light tick - the tape's read head crossing a cell, or one
+         draw landing in a bucket. pace in [0,1] brightens and loudens
+         it, for callers where "how hard" means something. */
+      tick: function (pace) {
+        var hard = Math.max(0, Math.min(1, pace || 0));
+        burst(1500 + hard * 900, 1.4, 0.05 + hard * 0.09, 0.05, 30);
+      },
+      /* A lower, longer hit for the moment something actually lands -
+         currently just a collision. No floor: it is rare enough by
+         construction that it can never need one. */
+      thunk: function () {
+        burst(650, 2.2, 0.17, 0.16, 0);
+      },
+      /* The click that turns sound on is also the gesture that's
+         allowed to start the audio engine, so the confirmation tick has
+         to answer for itself rather than use the throttled tick() -
+         resume() is asynchronous, and scheduling into a context that
+         hasn't actually started yet drops the sound on the floor. */
+      confirm: function () {
+        if (!ensure()) {
+          return;
+        }
+
+        var fire = function () { burst(1980, 1.4, 0.104, 0.05, 0); };
+
+        if (audio.state === "running" || !audio.resume) {
+          fire();
+        } else {
+          audio.resume().then(fire, fire);
+        }
+      }
+    };
+  })();
+
+  /* ------------------------------------------------------------
+     Sound toggle
+
+     Independent of any one widget, and wired up on whatever page
+     renders a .sound-toggle button - the homepage tape and the
+     birthday-collision demo both want one, and neither should have to
+     know how the other works. */
+  run(function () {
+    var button = document.querySelector(".sound-toggle");
+
+    if (!button || !(window.AudioContext || window.webkitAudioContext)) {
+      return;
+    }
+
+    function paint() {
+      button.textContent = siteSound.isOn() ? "mute" : "sound";
+      button.setAttribute("aria-pressed", siteSound.isOn() ? "true" : "false");
+      button.setAttribute(
+        "aria-label",
+        siteSound.isOn() ? "Mute sound" : "Turn on sound"
+      );
+    }
+
+    button.hidden = false;
+
+    button.addEventListener("click", function () {
+      siteSound.setOn(!siteSound.isOn());
+      paint();
+
+      if (siteSound.isOn()) {
+        siteSound.confirm();
+      }
+    });
+
+    paint();
+
+    /* A remembered "on" from a previous visit cannot start the engine
+       by itself - browsers only allow that inside a gesture - so arm it
+       on the first interaction of the visit instead. */
+    if (siteSound.isOn()) {
+      var arm = function () {
+        siteSound.ensure();
+        document.removeEventListener("pointerdown", arm);
+        document.removeEventListener("keydown", arm);
+      };
+
+      document.addEventListener("pointerdown", arm);
+      document.addEventListener("keydown", arm);
+    }
+  });
+
+  /* ------------------------------------------------------------
      Transitions
      ------------------------------------------------------------ */
 
@@ -677,167 +861,22 @@
       }
     }, true);
 
-    /* ----------------------------------------------------------
-       Sound
-
-       A cell passing under the head makes a tick, the way a dial does
-       going round. Synthesised rather than loaded: a sample would be
-       another request on a page that currently costs 23KB, and a
-       generated click can take its brightness and level from how fast
-       the tape is actually travelling, which a file cannot.
-
-       A filtered burst of noise, not a tone - a tone reads as a beep,
-       noise reads as a mechanism.
-
-       Off until asked for, and remembered after that. Nothing here
-       should make noise at someone who only came to read.
-       ---------------------------------------------------------- */
-
-    var soundOn = safeStore.get("tape-sound") === "on";
-    var audio = null;
-    var noise = null;
-    /* Wall clock, in ms, and deliberately negative to start. This floor
-       is about what an ear can separate, so it is measured against real
-       time rather than the audio clock - an AudioContext that has not
-       been resumed keeps currentTime frozen, which would make every
-       tick after the first look simultaneous and drop them all. */
-    var lastTickAt = -1000;
-    var soundedCell = active;
-
-    function audioReady() {
-      var Ctx = window.AudioContext || window.webkitAudioContext;
-
-      if (!Ctx) {
-        return false;
-      }
-
-      if (!audio) {
-        audio = new Ctx();
-
-        var length = Math.floor(audio.sampleRate * 0.06);
-
-        noise = audio.createBuffer(1, length, audio.sampleRate);
-
-        var data = noise.getChannelData(0);
-
-        for (var i = 0; i < length; i++) {
-          data[i] = Math.random() * 2 - 1;
-        }
-      }
-
-      if (audio.state === "suspended") {
-        audio.resume();
-      }
-
-      return true;
-    }
-
-    function tick(pace) {
-      if (!soundOn || !audioReady()) {
-        return;
-      }
-
-      /* A hard throw crosses cells faster than the ear resolves them as
-         separate events; without a floor they smear into a buzz. */
-      var wall = performance.now();
-
-      if (wall - lastTickAt < 30) {
-        return;
-      }
-
-      lastTickAt = wall;
-
-      var now = audio.currentTime;
-      var hard = Math.max(0, Math.min(1, pace));
-      var source = audio.createBufferSource();
-      var band = audio.createBiquadFilter();
-      var gain = audio.createGain();
-
-      source.buffer = noise;
-      band.type = "bandpass";
-      /* Faster tape, brighter and louder tick. */
-      band.frequency.value = 1500 + hard * 900;
-      band.Q.value = 1.4;
-
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.05 + hard * 0.09, now + 0.002);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-
-      source.connect(band);
-      band.connect(gain);
-      gain.connect(audio.destination);
-      source.start(now);
-      source.stop(now + 0.06);
-    }
-
     /* One tick per cell that passes the head, wherever the movement came
        from. Tracked separately from `active` because a throw deliberately
        stops the panel changing on the way past - the sound should still
-       count every detent it crosses. */
+       count every detent it crosses. Uses the shared siteSound engine
+       (see top of file) rather than its own - the toggle button, the
+       AudioContext and the noise buffer are all one instance, shared
+       with any other widget on the page that wants a tick. */
+    var soundedCell = active;
+
     function ratchet(index, pace) {
       if (index === soundedCell) {
         return;
       }
 
       soundedCell = index;
-      tick(pace);
-    }
-
-    var soundButton = document.querySelector(".sound-toggle");
-
-    function paintSound() {
-      /* Names the action, matching the theme toggle next to it. */
-      soundButton.textContent = soundOn ? "mute" : "sound";
-      soundButton.setAttribute("aria-pressed", soundOn ? "true" : "false");
-      soundButton.setAttribute(
-        "aria-label",
-        soundOn ? "Mute tape sound" : "Turn on tape sound"
-      );
-    }
-
-    if (soundButton && (window.AudioContext || window.webkitAudioContext)) {
-      soundButton.hidden = false;
-
-      soundButton.addEventListener("click", function () {
-        soundOn = !soundOn;
-        safeStore.set("tape-sound", soundOn ? "on" : "off");
-        paintSound();
-
-        /* The click that switches it on is also the gesture that lets
-           the audio engine start, so let it answer for itself - this is
-           the only confirmation anything works, since the tape itself
-           stays silent until it moves.
-
-           resume() is asynchronous, and scheduling into a context that
-           has not actually started yet drops the sound, so wait on it. */
-        if (soundOn && audioReady()) {
-          var confirm = function () {
-            tick(0.6);
-          };
-
-          if (audio.state === "running" || !audio.resume) {
-            confirm();
-          } else {
-            audio.resume().then(confirm, confirm);
-          }
-        }
-      });
-
-      paintSound();
-    }
-
-    /* A remembered "on" from a previous visit cannot start the engine by
-       itself - browsers only allow that inside a gesture - so arm it on
-       the first interaction of the visit instead. */
-    if (soundOn) {
-      var arm = function () {
-        audioReady();
-        document.removeEventListener("pointerdown", arm);
-        document.removeEventListener("keydown", arm);
-      };
-
-      document.addEventListener("pointerdown", arm);
-      document.addEventListener("keydown", arm);
+      siteSound.tick(pace);
     }
 
     /* The tape drives the panel: whatever the scroll settles on wins,
@@ -1915,6 +1954,13 @@
      the distribution - the reason the two constants differ at all -
      is something the reader watches accumulate, not a claim to take on
      faith.
+
+     Seeded with a batch of instant runs the moment it's ready, rather
+     than opening on an empty grid and an empty histogram - a figure
+     that shows nothing until someone finds the right button is not
+     demonstrating anything yet. The seeding itself is silent even with
+     sound on: thirty ticks fired at once on page load is a burst of
+     noise, not the small satisfying click a single draw earns.
      ------------------------------------------------------------ */
   run(function () {
     var fig = document.getElementById("birthday-demo");
@@ -1928,6 +1974,7 @@
     var N_MIN = 50, N_MAX = 10000;
     var HIST_MAX_RUNS = 300;
     var HIST_BINS = 30;
+    var SEED_RUNS = 30;
 
     var nRange = fig.querySelector('[data-param="n"]');
     var nOut = fig.querySelector('.birthday-n output');
@@ -2010,11 +2057,25 @@
       }
 
       if (collisionAt >= 0) {
+        /* Both draws that collided are this same bucket - there is only
+           one cell to point at, so a plain fill would look identical to
+           any other filled cell. A ring around it, wider than the cell
+           itself, is what actually says "look here, twice" rather than
+           just "this one's a slightly different grey." */
         var b2 = order[order.length - 1];
         var cx2 = b2 % cols, cy2 = Math.floor(b2 / cols);
+        var rx = cx2 * cellW + cellW / 2, ry = cy2 * cellH + cellH / 2;
+        var ring = Math.max(cellW, cellH) * 1.6 + 4;
+
         gridCtx.fillStyle = colorInk;
         gridCtx.fillRect(cx2 * cellW + 0.5, cy2 * cellH + 0.5,
           Math.max(1, cellW - 1), Math.max(1, cellH - 1));
+
+        gridCtx.strokeStyle = colorInk;
+        gridCtx.lineWidth = 1.5;
+        gridCtx.beginPath();
+        gridCtx.arc(rx, ry, ring / 2, 0, Math.PI * 2);
+        gridCtx.stroke();
       }
     }
 
@@ -2091,14 +2152,20 @@
       }
     }
 
-    function draw() {
+    function draw(silent) {
       var value = Math.floor(Math.random() * N);
       draws++;
 
       if (filled[value]) {
         collisionAt = draws;
+        if (!silent) {
+          siteSound.thunk();
+        }
       } else {
         filled[value] = 1;
+        if (!silent) {
+          siteSound.tick(0.4);
+        }
       }
 
       order.push(value);
@@ -2114,6 +2181,30 @@
         histogram.shift();
       }
       paintHist();
+      /* The readout's "completed runs" count is only correct once this
+         run has actually been added to the histogram - painting it
+         inside draw() alone left it one run behind every time. */
+      paintReadout();
+    }
+
+    /* A batch of complete runs, computed instantly with no animation and
+       no sound - this is what the widget opens with, and what re-fills
+       the histogram after N changes or a reset, so none of those ever
+       leave the figure blank. The very last run is left on the grid
+       rather than cleared, so there's something to look at as well as
+       something to read. */
+    function seed(count) {
+      for (var i = 0; i < count; i++) {
+        while (!draw(true)) {
+          /* keep drawing silently until this run collides */
+        }
+
+        finishRun();
+
+        if (i < count - 1) {
+          newRun();
+        }
+      }
     }
 
     function stopAuto() {
@@ -2191,7 +2282,7 @@
       stopAuto();
       histogram = [];
       newRun();
-      paintHist();
+      seed(SEED_RUNS);
     });
 
     nRange.addEventListener("input", function () {
@@ -2199,7 +2290,7 @@
       N = posToN(Number(nRange.value));
       histogram = [];
       newRun();
-      paintHist();
+      seed(SEED_RUNS);
     });
 
     if (window.ResizeObserver) {
@@ -2213,7 +2304,7 @@
     readColors();
     N = posToN(Number(nRange.value));
     newRun();
-    paintHist();
+    seed(SEED_RUNS);
     fig.classList.add("is-ready");
   });
 
