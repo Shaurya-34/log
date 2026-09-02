@@ -2034,7 +2034,7 @@
     var GW = gridCanvas.width, GH = gridCanvas.height;
     var HW = histCanvas.width, HH = histCanvas.height;
 
-    var colorInk, colorGrey, colorHairline, colorPaper;
+    var colorInk, colorGrey, colorHairline, colorPaper, colorFaint;
 
     function readColors() {
       var cs = getComputedStyle(fig);
@@ -2042,6 +2042,7 @@
       colorGrey = cs.getPropertyValue("--grey").trim() || "#6f6a62";
       colorHairline = cs.getPropertyValue("--hairline").trim() || "#e7e3dc";
       colorPaper = cs.getPropertyValue("--paper").trim() || "#faf9f7";
+      colorFaint = cs.getPropertyValue("--faint").trim() || "#77726b";
     }
 
     var N = 1000;
@@ -2159,7 +2160,7 @@
 
       var pad = 4;
       var barW = (HW - pad * 2) / bins.length;
-      var baseline = HH - 14;
+      var baseline = HH - 18;
 
       histCtx.fillStyle = colorGrey;
       for (i = 0; i < bins.length; i++) {
@@ -2174,6 +2175,24 @@
       histCtx.lineTo(HW, baseline + 0.5);
       histCtx.stroke();
 
+      /* Draw-count labels along the bottom, at five evenly spaced points
+         across whatever range is currently on screen - the range itself
+         moves every time N changes or the tail stretches out, so a fixed
+         set of labels baked into the markup could never be right. Five,
+         to match the tick count everywhere else on the site that draws
+         its own axis (see grok-demo's drawFrame). */
+      histCtx.fillStyle = colorFaint;
+      histCtx.font = "11px " + getComputedStyle(fig).getPropertyValue("--mono");
+      histCtx.textBaseline = "top";
+
+      for (i = 0; i <= 4; i++) {
+        var tickX = (bins.length * barW) * (i / 4);
+        var tickValue = Math.round(bins.length * binW * (i / 4));
+
+        histCtx.textAlign = i === 0 ? "left" : i === 4 ? "right" : "center";
+        histCtx.fillText(String(tickValue), pad + tickX, baseline + 4);
+      }
+
       /* The mean, marked against the same axis the bars are drawn on -
          it should sit noticeably right of the tallest bar once enough
          runs have accumulated, which is the whole point being shown:
@@ -2185,6 +2204,14 @@
         histCtx.moveTo(meanX, 4);
         histCtx.lineTo(meanX, baseline);
         histCtx.stroke();
+
+        /* Named rather than numbered - the exact figure is already in
+           the readout above the grid, so repeating it here would just
+           be the same number twice. What this label needs to say is
+           which line it is. */
+        histCtx.fillStyle = colorInk;
+        histCtx.textAlign = meanX > HW - 40 ? "right" : "left";
+        histCtx.fillText("avg", meanX + (meanX > HW - 40 ? -4 : 4), 4);
       }
     }
 
