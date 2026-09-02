@@ -6,8 +6,7 @@ description: A purely combinatorial fact about shared birthdays forces a real en
 sound: true
 ---
 In a room of 23 people, including you, there's a better than 50% chance two of
-them share a birthday. The obvious way to guess at this number is wrong, and
-it's worth sitting with the wrong answer for a second before seeing why.
+them share a birthday.
 
 The linear intuition says: 365 days in a year, so you'd need somewhere around
 365/2 ≈ 183 people before a shared birthday becomes likely. Twenty-three feels
@@ -28,15 +27,39 @@ there are n(n-1)/2 possible pairs, and each pair is an independent shot at a
 Made exact: the probability that none of n people share a birthday, out of N
 possible days, is
 
-    P(no collision) = (N/N) · ((N−1)/N) · ((N−2)/N) · ... · ((N−n+1)/N)
+<math display="block">
+  <mrow>
+    <mi>P</mi><mo>(</mo><mtext>no collision</mtext><mo>)</mo>
+    <mo>=</mo>
+    <mfrac><mi>N</mi><mi>N</mi></mfrac>
+    <mo>&#183;</mo>
+    <mfrac><mrow><mi>N</mi><mo>&#8722;</mo><mn>1</mn></mrow><mi>N</mi></mfrac>
+    <mo>&#183;</mo>
+    <mfrac><mrow><mi>N</mi><mo>&#8722;</mo><mn>2</mn></mrow><mi>N</mi></mfrac>
+    <mo>&#183;</mo><mo>&#8943;</mo><mo>&#183;</mo>
+    <mfrac><mrow><mi>N</mi><mo>&#8722;</mo><mi>n</mi><mo>+</mo><mn>1</mn></mrow><mi>N</mi></mfrac>
+  </mrow>
+</math>
 
 For N large relative to n this approximates cleanly to
 
-    P(no collision) ≈ e^(−n(n−1)/2N) ≈ e^(−n²/2N)
+<math display="block">
+  <mrow>
+    <mi>P</mi><mo>(</mo><mtext>no collision</mtext><mo>)</mo>
+    <mo>&#8776;</mo>
+    <msup><mi>e</mi><mrow><mo>&#8722;</mo><mfrac><mrow><mi>n</mi><mo>(</mo><mi>n</mi><mo>&#8722;</mo><mn>1</mn><mo>)</mo></mrow><mrow><mn>2</mn><mi>N</mi></mrow></mfrac></mrow></msup>
+    <mo>&#8776;</mo>
+    <msup><mi>e</mi><mrow><mo>&#8722;</mo><mfrac><msup><mi>n</mi><mn>2</mn></msup><mrow><mn>2</mn><mi>N</mi></mrow></mfrac></mrow></msup>
+  </mrow>
+</math>
 
 Set P(collision) = 1 − e^(−n²/2N) equal to 0.5 and solve for n:
 
-    n ≈ 1.177 · √N
+<math display="block">
+  <mrow>
+    <mi>n</mi><mo>&#8776;</mo><mn>1.177</mn><mo>&#183;</mo><msqrt><mi>N</mi></msqrt>
+  </mrow>
+</math>
 
 Plug in N = 365 and you get n ≈ 22.5 - round up, and there's the 23.
 
@@ -53,7 +76,16 @@ is skewed, and this one is: most collisions land early, but a long right tail
 of late arrivals drags the average upward. Solving for the actual expected
 value gives a second, larger constant:
 
-    E[draws until collision] ≈ √(π/2) · √N ≈ 1.2533 · √N
+<math display="block">
+  <mrow>
+    <mi>E</mi><mo>[</mo><mtext>draws until collision</mtext><mo>]</mo>
+    <mo>&#8776;</mo>
+    <msqrt><mfrac><mi>&#960;</mi><mn>2</mn></mfrac></msqrt>
+    <mo>&#183;</mo><msqrt><mi>N</mi></msqrt>
+    <mo>&#8776;</mo>
+    <mn>1.2533</mn><mo>&#183;</mo><msqrt><mi>N</mi></msqrt>
+  </mrow>
+</math>
 
 I didn't derive that second constant on paper first. I found out I needed it
 because the code below refused to agree with the wrong one - see the next
@@ -137,7 +169,14 @@ a new draw lands within tolerance k of *any* previous draw. Each existing
 point then shadows 2k+1 values instead of 1, which suggests reusing the same
 formula against an effective bin count of N/(2k+1):
 
-    E[draws] ≈ 1.2533 · √(N / (2k+1))
+<math display="block">
+  <mrow>
+    <mi>E</mi><mo>[</mo><mtext>draws</mtext><mo>]</mo>
+    <mo>&#8776;</mo>
+    <mn>1.2533</mn><mo>&#183;</mo>
+    <msqrt><mfrac><mi>N</mi><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow></mfrac></msqrt>
+  </mrow>
+</math>
 
 That's an approximation, not a derivation - it assumes no two existing
 points' shadows overlap each other, which has to start failing once k gets

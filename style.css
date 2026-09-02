@@ -511,6 +511,25 @@ pre code {
 
 pre .cm { color: var(--faint); }
 
+/* ---- math ----------------------------------------------------------
+   The one deliberate exception to "two typefaces, both monospace" (see
+   DESIGN.md) - MathML renders in the browser's own math face (a serif,
+   italic-variable style with a real OpenType MATH table), which a
+   monospace font cannot fake: proper fraction bars, radicals and
+   superscripts need glyph variants Courier Prime and Space Mono don't
+   have. Framed the same way a code block is - its own bordered register,
+   not silently blended into body text - rather than pretending it's the
+   same typeface making an exception. Color still inherits var(--ink), so
+   dark mode needs nothing extra here. */
+article.post math[display="block"] {
+  display: block;
+  margin: 1.75rem 0;
+  padding: 1rem 1.25rem;
+  background: var(--code-bg);
+  text-align: center;
+  font-size: 1.2em;
+}
+
 /* ---- prose tables --------------------------------------------------
    A data table in running text - not the widget's own scale table,
    which has its own class. Kept inside the prose column, same as code

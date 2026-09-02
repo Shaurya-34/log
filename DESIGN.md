@@ -66,6 +66,18 @@ No font size or weight decision should introduce a third family. If
 something needs emphasis, use weight, letter-spacing, or uppercase — not a
 different typeface.
 
+**One deliberate exception: MathML.** A displayed derivation (fraction
+bars, radicals, superscripts) needs glyph variants a monospace face
+doesn't have, and the browser's own math renderer is the only way to get
+real ones without a JS dependency the site's CSP wouldn't allow anyway
+(`script-src` is `'self'` plus Clarity only — no KaTeX/MathJax CDN, and
+vendoring one contradicts "vanilla JS, no framework"). `<math
+display="block">` needs no script and no CSP change, and its `color`
+still inherits `var(--ink)` normally, so dark mode needs nothing extra.
+Styled as its own bordered register (`--code-bg` background), the same
+move as a code block — a visible, deliberate exception reads as honest;
+the same typeface quietly failing to hold would not.
+
 ## Color
 
 CSS custom properties only — never a hardcoded hex outside `:root` (canvas
