@@ -526,6 +526,24 @@
       });
     }
 
+    /* DESIGN.md specs five cells visible on desktop, three on mobile
+       (--tape-visible), so the frame always shows a whole number of
+       cells instead of the fractional, cut-off cell a fixed rem width
+       produces at arbitrary viewport widths. --cell-w is the one CSS
+       custom property .tape-cell sizes off, so writing it here is
+       enough to resize every cell at once. */
+    function sizeCells() {
+      if (viewport.clientWidth < 1) {
+        return;
+      }
+
+      var visible =
+        parseFloat(getComputedStyle(tape).getPropertyValue("--tape-visible")) ||
+        5;
+
+      tape.style.setProperty("--cell-w", viewport.clientWidth / visible + "px");
+    }
+
     /* Which cell sits closest to the head - or, given a position, which
        cell would sit closest to it. The argument is what lets a throw
        be aimed at a cell before the tape has finished moving. */
@@ -1023,6 +1041,7 @@
     }
 
     function reflow() {
+      sizeCells();
       sizeRunout();
       centre(active, false);
     }

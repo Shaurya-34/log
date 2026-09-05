@@ -25,6 +25,7 @@
 .tape-nav {
   --cell-w: 9.5rem;
   --cell-h: 5.5rem;
+  --tape-visible: 5;
   position: relative;
   max-width: 46rem;
   margin: 5.5rem auto 0;
@@ -280,7 +281,7 @@
 
 @media (max-width: 600px) {
   .wrap:has(.home-stage) { padding: 0 1rem; }
-  .tape-nav { --cell-w: 6.5rem; --cell-h: 4.25rem; margin-top: 4rem; }
+  .tape-nav { --cell-w: 6.5rem; --cell-h: 4.25rem; --tape-visible: 3; margin-top: 4rem; }
   .tape-cell { font-size: 1.2rem; margin: .9rem 0; }
   .panel-stage { margin-top: 2.75rem; }
   .entry-title { font-size: 1.4rem; }
