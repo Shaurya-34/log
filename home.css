@@ -281,11 +281,25 @@
 
 @media (max-width: 600px) {
   .wrap:has(.home-stage) { padding: 0 1rem; }
-  .tape-nav { --cell-w: 6.5rem; --cell-h: 4.25rem; --tape-visible: 3; margin-top: 4rem; }
+  .tape-nav { --cell-w: 6.5rem; --cell-h: 4.75rem; --tape-visible: 3; margin-top: 2.5rem; }
   .tape-cell { font-size: 1.2rem; margin: .9rem 0; }
   .panel-stage { margin-top: 2.75rem; }
   .entry-title { font-size: 1.4rem; }
   .entry-desc { font-size: .88rem; }
   .tape-prev { left: -.5rem; }
   .tape-next { right: -.5rem; }
+
+  /* The figure loses its box on mobile and bleeds to the screen edges
+     instead - the one moment of real scale on a page that is otherwise
+     a single column of body text. Matches the wrap's own padding so it
+     lands flush; the side borders go with it since a border on an edge
+     that touches nothing doesn't read as a box anymore. */
+  .entry-figure {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-left: none;
+    border-right: none;
+  }
+
+  .cover-fig-chrome { padding: .45rem 1rem; }
 }
