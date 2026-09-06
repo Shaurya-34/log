@@ -20,6 +20,58 @@
   }
 
   /* ------------------------------------------------------------
+     Segmented switch indicator
+
+     One sliding block behind whichever button in a real single-select
+     group (weight decay, ray mode, hash-digest length) is currently
+     pressed, instead of each button flipping its own background on its
+     own - shared across every widget that mounts one instead of
+     reimplemented per widget. Deliberately never mounted on the
+     birthday-demo run controls (step / auto-run / reset): those three
+     are independent actions, not alternatives in a choice, so a
+     "currently selected" indicator would misrepresent them.
+     ------------------------------------------------------------ */
+
+  function mountSwitchIndicator(container) {
+    if (!container) {
+      return function () {};
+    }
+
+    var indicator = document.createElement("span");
+    indicator.className = "switch-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+    container.insertBefore(indicator, container.firstChild);
+
+    function place() {
+      var pressed = container.querySelector('button[aria-pressed="true"]');
+
+      if (!pressed) {
+        indicator.style.opacity = "0";
+        return;
+      }
+
+      indicator.style.opacity = "1";
+      indicator.style.width = pressed.offsetWidth + "px";
+      indicator.style.height = pressed.offsetHeight + "px";
+      indicator.style.transform =
+        "translate(" + pressed.offsetLeft + "px, " + pressed.offsetTop + "px)";
+    }
+
+    addEventListener("resize", place);
+
+    /* The mono faces load over the network, so the first place() (run
+       right at is-ready, before a webfont necessarily arrived) can
+       measure fallback-font widths a couple of pixels off the real
+       ones. Re-measuring once the real faces are in fixes that without
+       guessing at a timeout. */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(place, function () {});
+    }
+
+    return place;
+  }
+
+  /* ------------------------------------------------------------
      Sound
 
      One synthesised-noise engine, shared by every widget that wants a
@@ -566,7 +618,16 @@
       return best;
     }
 
-    function paint() {
+    /* dir (-1/0/1) is which way the tape just moved, so the incoming
+       panel can slide in from the side the reader dragged toward
+       instead of only cross-fading - the tape itself already commits
+       to a physical-machine feel (drag, throw, rubber-band ends), so
+       the panel below it should arrive from somewhere rather than
+       just materialize. Applied only to a panel actually becoming
+       active, never to one that already was, so a repaint that leaves
+       the same cell active (an arrow clamped at an end, a settle that
+       lands back where it started) can't retrigger it. */
+    function paint(dir) {
       cells.forEach(function (cell, i) {
         var on = i === active;
         cell.classList.toggle("is-active", on);
@@ -575,6 +636,14 @@
 
       panels.forEach(function (panel, i) {
         var on = i === active;
+        var wasOn = panel.classList.contains("is-active");
+
+        if (on && !wasOn && dir) {
+          panel.style.transform = "translateX(" + (dir * 10) + "px)";
+          void panel.offsetWidth;
+          panel.style.transform = "";
+        }
+
         panel.classList.toggle("is-active", on);
         panel.setAttribute("aria-hidden", on ? "false" : "true");
       });
@@ -636,7 +705,9 @@
     }
 
     function centre(index, smooth) {
+      var prev = active;
       active = Math.max(0, Math.min(index, cells.length - 1));
+      var dir = active > prev ? 1 : active < prev ? -1 : 0;
 
       var target = targetFor(active);
 
@@ -664,7 +735,7 @@
         soundedCell = active;
       }
 
-      paint();
+      paint(dir);
     }
 
     /* ----------------------------------------------------------
@@ -932,8 +1003,9 @@
       var next = nearestCell();
 
       if (next !== active) {
+        var dir = next > active ? 1 : -1;
         active = next;
-        paint();
+        paint(dir);
       }
 
       /* Still holding it: the panel keeps up, but where it lands is the
@@ -960,8 +1032,9 @@
         var settled = nearestCell();
 
         if (settled !== active) {
+          var dir = settled > active ? 1 : -1;
           active = settled;
-          paint();
+          paint(dir);
         }
 
         if (Math.abs(viewport.scrollLeft - targetFor(settled)) > 1) {
@@ -1488,6 +1561,7 @@
     var buttons = Array.prototype.slice.call(
       fig.querySelectorAll(".grok-switch button")
     );
+    var placeSwitch = mountSwitchIndicator(fig.querySelector(".grok-switch"));
 
     var out = {
       epoch: fig.querySelector('[data-out="epoch"]'),
@@ -1670,11 +1744,13 @@
             );
           });
 
+          placeSwitch();
           render();
         });
       });
 
       fig.classList.add("is-ready");
+      placeSwitch();
       render();
     }
 
@@ -1711,6 +1787,7 @@
     var modeButtons = Array.prototype.slice.call(
       fig.querySelectorAll(".ray-switch button")
     );
+    var placeSwitch = mountSwitchIndicator(fig.querySelector(".ray-switch"));
     var stepsOut = fig.querySelector('[data-out="steps"]');
     var statusOut = fig.querySelector('[data-out="status"]');
 
@@ -1851,6 +1928,7 @@
         );
       });
 
+      placeSwitch();
       resetCanvas();
       stepsOut.textContent = "-";
       statusOut.textContent = "";
@@ -2014,6 +2092,7 @@
 
     resetCanvas();
     fig.classList.add("is-ready");
+    placeSwitch();
   });
 
   /* ------------------------------------------------------------
@@ -2457,6 +2536,7 @@
     var buttons = Array.prototype.slice.call(
       fig.querySelectorAll(".birthday-switch button")
     );
+    var placeSwitch = mountSwitchIndicator(fig.querySelector(".birthday-switch"));
     var spaceOut = fig.querySelector('[data-out="space"]');
     var drawsOut = fig.querySelector('[data-out="draws"]');
     var rows = fig.querySelector('[data-out="rows"]');
@@ -2533,6 +2613,7 @@
         buttons.forEach(function (b) {
           b.setAttribute("aria-pressed", b === btn ? "true" : "false");
         });
+        placeSwitch();
         render(Number(btn.getAttribute("data-bits")));
       });
     });
@@ -2540,6 +2621,7 @@
     var initial = fig.querySelector('[aria-pressed="true"]') || buttons[0];
     render(Number(initial.getAttribute("data-bits")));
     fig.classList.add("is-ready");
+    placeSwitch();
   });
 
   /* ------------------------------------------------------------

@@ -806,6 +806,50 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
   margin-bottom: 1.25rem;
 }
 
+/* ---- segmented switch indicator -----------------------------------
+   Shared by every real single-select switch (weight decay, ray mode,
+   hash-digest length): one block that slides to whichever button is
+   pressed, mounted by site.js's mountSwitchIndicator(). Scoped with
+   :has() rather than a shared markup class so the birthday-demo run
+   controls (step / auto-run / reset - independent actions, not a
+   choice) are untouched: site.js only ever mounts an indicator on the
+   three containers that are genuinely one-of-many switches, and this
+   rule only fires where that indicator actually exists. */
+.grok-switch,
+.ray-switch,
+.birthday-switch {
+  position: relative;
+}
+
+.grok-switch button,
+.ray-switch button,
+.birthday-switch button {
+  position: relative;
+  z-index: 1;
+}
+
+.switch-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--ink);
+  z-index: 0;
+  pointer-events: none;
+  transition: transform 200ms cubic-bezier(.16, .78, .18, 1),
+    width 200ms cubic-bezier(.16, .78, .18, 1);
+}
+
+.grok-switch:has(.switch-indicator) button[aria-pressed="true"],
+.ray-switch:has(.switch-indicator) button[aria-pressed="true"],
+.birthday-switch:has(.switch-indicator) button[aria-pressed="true"] {
+  background: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch-indicator { transition: none; }
+}
+
 .grok-switch { display: flex; gap: 0; }
 
 .grok-switch button {

@@ -202,7 +202,8 @@
 .entry-panel.is-active {
   opacity: 1;
   visibility: visible;
-  transition: opacity 350ms ease;
+  transform: translateX(0);
+  transition: opacity 350ms ease, transform 350ms cubic-bezier(.16, .78, .18, 1);
 }
 
 .entry-meta {
