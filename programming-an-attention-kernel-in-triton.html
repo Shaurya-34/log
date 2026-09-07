@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Programming an attention kernel in Triton · Shaurya</title>
+  <meta name="description" content="Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html">
+  <meta property="og:site_name" content="Shaurya · Log">
+  <meta property="og:title" content="Programming an attention kernel in Triton · Shaurya">
+  <meta property="og:description" content="Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html">
+  <meta property="article:published_time" content="2026-09-08T00:00:00+00:00">
+  <link rel="alternate" type="text/markdown" href="programming-an-attention-kernel-in-triton.md">
+  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
+  <link rel="stylesheet" href="style.css?v=318b3fb6">
+  <script src="site.js?v=69bd206e" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Programming an attention kernel in Triton","description":"Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.","url":"https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html"},"datePublished":"2026-09-08T00:00:00+00:00","dateModified":"2026-09-08T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["gpu programming","triton","machine learning"]}</script>
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yajiq3aa14");
+  </script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
+    <nav>
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
+    </nav>
+  </header>
+
+  <article class="post entry">
+    <h1>Programming an attention kernel in Triton</h1>
+    <p class="post-meta">
+      <time datetime="2026-09-08">September 08, 2026</time>
+      <span class="tags">gpu programming, triton, machine learning</span>
+      <a class="post-source" href="https://github.com/Shaurya-34/TritonAttentionKernel" rel="noopener">source &#8599;</a>
+    </p>
+
+<p>Every PyTorch operation you've ever called, <code>softmax</code>, <code>relu</code>, <code>matmul</code>, is,
+underneath, someone else's compiled GPU kernel. You never see the kernel. You
+call the function, the tensor comes back, and the actual work of moving
+numbers in and out of GPU memory, scheduling threads, and managing on-chip
+caches happens somewhere you're not invited to look.</p>
+<p>I wanted to know what was actually happening in there. Not at the level of
+"attention is a weighted sum," which I already understood from
+<a href="grok-grok.html">a previous post</a>, but at the level of: what does the GPU
+actually do, instruction by instruction, when you call <code>torch.softmax</code>?</p>
+<p>So I wrote the kernels myself, in Triton, starting from the simplest thing
+that could possibly be called a kernel and working up. This is what that
+ladder looked like, including the one real bug I found and the wall I hit at
+the end, named honestly, not smoothed over.</p>
+<h2>Why bother: the thing PyTorch hides</h2>
+<p>Most of what PyTorch calls a single operation is really several.
+<code>torch.softmax(x)</code> internally finds the row max, subtracts it, exponentiates,
+sums, and divides, and on a naive execution model each of those steps can
+mean a separate pass over the data: read from GPU memory, compute, write
+back to GPU memory, repeat. For an operation that conceptually happens
+"once," your data can make several unnecessary round trips between the
+GPU's slow global memory and its fast on-chip compute units.</p>
+<p>A fused kernel does all of those steps in one pass: load the data into fast
+on-chip memory once, do the whole computation, write the result back once.
+That's the entire premise behind Triton, and it's the same underlying idea
+that motivates FlashAttention, which I'll come back to at the end: fewer
+memory round trips, not fewer FLOPs, is often the real lever for speed on a
+GPU.</p>
+<h2>Kernel 1: vector add, or learning to think like a GPU</h2>
+<p>The simplest possible Triton kernel doesn't optimize anything, it just adds
+two vectors, <code>out = x + y</code>. The point of writing this first wasn't the
+operation, it was learning Triton's actual execution model before any
+algorithm complexity got involved:</p>
+<ul>
+<li>Triton launches a grid of programs, each identified by a <code>pid</code> (program
+  ID). Think of each program as one worker handling one chunk of the data.</li>
+<li>Each program computes its own offsets into the input arrays,
+  <code>block_start = pid * BLOCK_SIZE</code>, then <code>tl.arange(0, BLOCK_SIZE)</code> for the
+  positions within its chunk.</li>
+<li>A mask (<code>offsets &lt; n_elements</code>) handles the case where the data size isn't
+  a clean multiple of the block size. Without it, the last block would read
+  and write past the end of the array.</li>
+</ul>
+<pre><code class="language-python">@triton.jit
+def add_kernel(x_ptr, y_ptr, out_ptr, n_elements, BLOCK_SIZE: tl.constexpr):
+    pid = tl.program_id(axis=0)
+    block_start = pid * BLOCK_SIZE
+    offsets = block_start + tl.arange(0, BLOCK_SIZE)
+    mask = offsets &lt; n_elements
+
+    x = tl.load(x_ptr + offsets, mask=mask)
+    y = tl.load(y_ptr + offsets, mask=mask)
+    tl.store(out_ptr + offsets, x + y, mask=mask)
+</code></pre>
+<p>Checked against plain <code>x + y</code> in PyTorch: matches exactly. Nothing
+interesting happens here algorithmically, that's the point. <code>pid</code>, offsets,
+and masking are the three ideas every later kernel in this post reuses, so
+getting them right on the simplest possible operation first meant later bugs
+(and there was one, further down) were never about "do I understand
+Triton," only ever about the specific algorithm.</p>
+<h2>Kernel 2: fused ReLU and dropout, and the problem with testing randomness</h2>
+<p>The next step up: fuse two operations into one pass instead of one.
+<span class="term" tabindex="0">ReLU<span class="term-preview">Zero out every negative value, leave positive values unchanged.</span></span>
+and
+<span class="term" tabindex="0">dropout<span class="term-preview">Randomly zero a fraction <code>p</code> of values, scaling the survivors by <code>1 / (1 - p)</code> to keep the expected sum unchanged.</span></span>
+are two ops that would normally be two separate kernel calls in a naive
+implementation. Fusing them means one load, one combined computation, one
+store.</p>
+<pre><code class="language-python">@triton.jit
+def relu_dropout_kernel(x_ptr, out_ptr, n_elements, p, seed, BLOCK_SIZE: tl.constexpr):
+    pid = tl.program_id(axis=0)
+    offsets = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
+    mask = offsets &lt; n_elements
+
+    x = tl.load(x_ptr + offsets, mask=mask)
+    x = tl.maximum(x, 0.0)
+    randoms = tl.rand(seed, offsets)
+    dropout_mask = randoms &gt; p
+
+    out = tl.where(dropout_mask, x / (1 - p), 0.0)
+    tl.store(out_ptr + offsets, out, mask=mask)
+</code></pre>
+<p>Here's the part worth dwelling on: you can't validate this the way you
+validate the vector-add kernel. <code>allclose</code> against a reference only works
+when the output is deterministic. Dropout is stochastic by design, there is
+no single "correct" output to compare against. Eyeballing five printed
+values, which is what I did the first time, tells you almost nothing; it's
+the same mistake as trusting a single run in the
+<a href="birthday-attack.html">birthday-paradox post</a> instead of the distribution.</p>
+<p>The actual test has to be statistical: run it on enough elements that
+probability becomes measurable, then check two things, does the empirical
+drop rate land near <code>p</code>, and are the survivors scaled by exactly
+<code>1 / (1 - p)</code>?</p>
+<pre><code>Testing with size=100000, p=0.1  -&gt; empirical rate 0.1007 (expected 0.10 +/- 0.01)  OK
+Testing with size=100000, p=0.5  -&gt; empirical rate 0.4993 (expected 0.50 +/- 0.01)  OK
+Testing with size=100000, p=0.9  -&gt; empirical rate 0.8999 (expected 0.90 +/- 0.01)  OK
+</code></pre>
+<p>All three land within a hundredth of a percent of the target. That's the
+right way to trust a kernel whose output is supposed to be random: proving
+the distribution is correct, not any single sample.</p>
+<h2>Kernel 3: fused softmax, and the bug that mattered</h2>
+<p>Softmax is the first kernel here with real numerical-stability
+considerations: naive <code>exp(x)</code> overflows for even moderately large <code>x</code>, so
+every real softmax implementation subtracts the row max before
+exponentiating. The kernel does this per row, in one pass:</p>
+<pre><code class="language-python">@triton.jit
+def softmax(output_ptr, input_ptr, input_row_stride, output_row_stride,
+            n_cols, BLOCK_SIZE: tl.constexpr):
+    row_idx = tl.program_id(0)
+    row_start_ptr = input_ptr + row_idx * input_row_stride
+    col_offsets = tl.arange(0, BLOCK_SIZE)
+    input_ptrs = row_start_ptr + col_offsets
+
+    mask = col_offsets &lt; n_cols
+    row = tl.load(input_ptrs, mask=mask, other=float(&quot;-inf&quot;))
+    row_max = tl.max(row, axis=0)
+    numerator = tl.exp(row - row_max)
+    denominator = tl.sum(numerator, axis=0)
+    softmax_output = numerator / denominator
+
+    output_ptrs = output_ptr + row_idx * output_row_stride + col_offsets
+    tl.store(output_ptrs, softmax_output, mask=mask)
+</code></pre>
+<p>First version, tested on a small <code>(4, 5)</code> input: matched PyTorch exactly. I
+moved on, satisfied.</p>
+<p>It was wrong. Here's the actual bug, left in on purpose:</p>
+<pre><code class="language-python">def triton_softmax(x: torch.Tensor):
+    n_rows, n_cols = x.shape
+    BLOCK_SIZE = 1024   # hardcoded
+    ...
+</code></pre>
+<p><code>BLOCK_SIZE</code> was a fixed number, not tied to <code>n_cols</code> at all. For a small
+input this is harmless, <code>col_offsets</code> spans more than enough room, and the
+mask correctly zeroes out the unused tail. But nothing about the mask logic
+checks whether <code>BLOCK_SIZE</code> is large enough, it only checks whether each
+position is within <code>n_cols</code>. So the moment a real row is wider than 1024
+columns, the kernel simply never loads, computes, or stores anything past
+column 1024. It doesn't crash or warn you, it just returns a softmax over
+the first 1024 columns and calls it done.</p>
+<p>Before, reproduced explicitly at <code>n_cols=2000</code>:</p>
+<pre><code>Buggy Softmax Matches PyTorch (n_cols=2000)?  False
+Max abs diff: 0.00978
+</code></pre>
+<p>After, the fix is one line: stop guessing a fixed block size and size it to
+the actual input.</p>
+<pre><code class="language-python">BLOCK_SIZE = triton.next_power_of_2(n_cols)
+</code></pre>
+<pre><code>Corrected Softmax Matches PyTorch (n_cols=2000)?  True
+</code></pre>
+<p>The lesson isn't "remember to make BLOCK_SIZE dynamic," it's narrower and
+more useful than that: a test that only covers the shape you happen to be
+thinking about will pass right over a bug that only shows up at a different
+shape. The <code>(4, 5)</code> test I ran first was real, it wasn't fake, it just
+wasn't the test that mattered.</p>
+<h2>Kernel 4: bringing it together, a self-attention kernel</h2>
+<p>Everything up to here, offsets, masks, a fused numerically-stable softmax,
+combines into one kernel implementing scaled dot-product attention directly:</p>
+<pre><code class="language-python">@triton.jit
+def attention_kernel(
+    q_ptr, k_ptr, v_ptr, out_ptr,
+    row_stride, col_stride, n_rows, n_cols, scale,
+    BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr, BLOCK_V: tl.constexpr,
+):
+    row_pid = tl.program_id(0)
+    row_offsets = row_pid * BLOCK_Q + tl.arange(0, BLOCK_Q)
+    col_offsets = tl.arange(0, BLOCK_K)
+    d_offsets = tl.arange(0, BLOCK_V)
+
+    row_mask = row_offsets &lt; n_rows
+    col_mask = col_offsets &lt; n_cols
+
+    q_offsets = tl.expand_dims(row_offsets, 1) * row_stride + tl.expand_dims(d_offsets, 0) * col_stride
+    q = tl.load(q_ptr + q_offsets, mask=tl.expand_dims(row_mask, 1), other=0.0)
+
+    k_offsets = tl.expand_dims(d_offsets, 1) * col_stride + tl.expand_dims(col_offsets, 0) * row_stride
+    k = tl.load(k_ptr + k_offsets, mask=tl.expand_dims(col_mask, 0), other=0.0)
+
+    qk = tl.dot(q, k) * scale
+    qk = tl.where(tl.expand_dims(col_mask, 0), qk, float(&quot;-inf&quot;))
+
+    m = tl.max(qk, axis=1)
+    p = tl.exp(qk - tl.expand_dims(m, 1))
+    l = tl.sum(p, axis=1)
+    weights = p / tl.expand_dims(l, 1)
+
+    v_offsets = tl.expand_dims(col_offsets, 1) * row_stride + tl.expand_dims(d_offsets, 0) * col_stride
+    v = tl.load(v_ptr + v_offsets, mask=tl.expand_dims(col_mask, 1), other=0.0)
+
+    out = tl.dot(weights.to(v.dtype), v)
+    out_offsets = tl.expand_dims(row_offsets, 1) * row_stride + tl.expand_dims(d_offsets, 0) * col_stride
+    tl.store(out_ptr + out_offsets, out, mask=tl.expand_dims(row_mask, 1))
+</code></pre>
+<p>Validated against <code>torch.nn.functional.scaled_dot_product_attention</code> across
+several shapes, including deliberately mismatched Q/K sequence lengths and a
+single-query edge case:</p>
+<pre><code>Q: (5, 32), K: (15, 32), V: (15, 32)   -&gt;  matches: True
+Q: (1, 64), K: (10, 64), V: (10, 64)   -&gt;  matches: True
+</code></pre>
+<p>Given the softmax lesson above, testing more than one shape here wasn't
+optional, it's the only reason I can trust this one.</p>
+<h2>The wall, named honestly</h2>
+<p>Here's what this kernel is not: it is not FlashAttention, and it's worth
+being precise about why, rather than letting the name imply more than the
+code does.</p>
+<p>This kernel loads the entire K and V into fast on-chip memory
+(<span class="term" tabindex="0">SRAM<span class="term-preview">The GPU's small, extremely fast on-chip memory, as opposed to its much larger but far slower off-chip global memory.</span></span>)
+in one shot before doing anything else. That's fine at the sequence lengths
+tested here, but SRAM is small (tens of kilobytes per streaming
+multiprocessor, not gigabytes), and K/V grow linearly with sequence length.
+At some sequence length, "all of K and V" simply stops fitting, and this
+kernel breaks, not gracefully, it just runs out of room.</p>
+<p>The real FlashAttention trick is to never need all of K/V in SRAM at once:
+process it in chunks, and keep a running max and running sum as you go,
+correcting the accumulated output every time a new chunk reveals a bigger
+max than anything seen so far. That's a genuinely different, harder
+algorithm than anything in this post, the online-softmax rescaling has no
+analogue in kernels 1 through 4, and it's the specific thing I haven't built
+yet.</p>
+<p>Naming that clearly here, instead of leaving it unsaid, is the whole point: this post
+is "I climbed four rungs of a real ladder, correctly, and found a real bug
+along the way," not "I built FlashAttention."</p>
+<p>Short and unforced: the useful thing wasn't the final kernel, it was the
+softmax bug. It's the one moment on this ladder where "it passed my test"
+and "it's actually correct" turned out to be different claims, the same gap
+that showed up when I mixed up the median and the mean in the
+birthday-paradox post. Different domain, same shape of mistake, same fix:
+test the case you didn't think to test.</p>
+<p>The tiled, online-softmax version is the next rung. I haven't climbed it
+yet.</p>
+  </article>
+
+  <nav class="post-nav">
+    <a class="older" href="birthday-attack.html">← Twenty-three people, 256 bits</a>
+    <span></span>
+  </nav>
+
+  <footer class="site">
+    <span>Shaurya · 2026</span>
+    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
+    <a href="index.html">Index</a>
+  </footer>
+
+</div>
+</body>
+</html>

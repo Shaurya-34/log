@@ -6,6 +6,14 @@
     <description>Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.</description>
     <language>en</language>
     <item>
+      <title>Programming an attention kernel in Triton</title>
+      <link>https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html</link>
+      <guid>https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html</guid>
+      <pubDate>Tue, 08 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</description>
+      <category>gpu programming, triton, machine learning</category>
+    </item>
+    <item>
       <title>Twenty-three people, 256 bits</title>
       <link>https://sslog.dpdns.org/birthday-attack.html</link>
       <guid>https://sslog.dpdns.org/birthday-attack.html</guid>
