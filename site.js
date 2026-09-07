@@ -2625,6 +2625,156 @@
   });
 
   /* ------------------------------------------------------------
+     BLOCK_SIZE boundary demo
+
+     The softmax bug from the post, made draggable: the bar represents
+     one row, scaled to n_cols, and shows exactly how much of it the
+     kernel actually touches. In "hardcoded" mode BLOCK_SIZE is pinned
+     at 1024, so dragging n_cols past that reproduces the bug live; in
+     "dynamic" mode BLOCK_SIZE tracks n_cols and the bar always fills.
+     ------------------------------------------------------------ */
+  run(function () {
+    var fig = document.getElementById("blocksize-demo");
+
+    if (!fig) {
+      return;
+    }
+
+    var range = fig.querySelector(".blocksize-n input[type=\"range\"]");
+    var ncolsOut = fig.querySelector(".blocksize-n output");
+    var buttons = Array.prototype.slice.call(
+      fig.querySelectorAll(".blocksize-switch button")
+    );
+    var placeSwitch = mountSwitchIndicator(fig.querySelector(".blocksize-switch"));
+    var blockOut = fig.querySelector('[data-out="block"]');
+    var droppedOut = fig.querySelector('[data-out="dropped"]');
+    var matchOut = fig.querySelector('[data-out="match"]');
+    var canvas = fig.querySelector(".blocksize-grid");
+    var ctx = canvas.getContext("2d");
+
+    var W = canvas.width, H = canvas.height;
+    var mode = "fixed";
+
+    var colorInk, colorFaint, colorHairline;
+
+    function readColors() {
+      var cs = getComputedStyle(fig);
+      colorInk = cs.getPropertyValue("--ink").trim() || "#161513";
+      colorFaint = cs.getPropertyValue("--faint").trim() || "#77726b";
+      colorHairline = cs.getPropertyValue("--hairline").trim() || "#e7e3dc";
+    }
+
+    /* Mirrors triton.next_power_of_2: the smallest power of two that is
+       >= n, so a row that already is one stays put. */
+    function nextPow2(n) {
+      var p = 1;
+      while (p < n) {
+        p *= 2;
+      }
+      return p;
+    }
+
+    function computeBlock(ncols) {
+      return mode === "dynamic" ? nextPow2(ncols) : 1024;
+    }
+
+    function draw(ncols, block, dropped) {
+      ctx.clearRect(0, 0, W, H);
+
+      var marginX = 40, barY = 55, barH = 40;
+      var x0 = marginX, usableW = W - marginX * 2;
+      var filledW = (Math.min(block, ncols) / ncols) * usableW;
+
+      ctx.strokeStyle = colorHairline;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x0 + 0.5, barY + 0.5, usableW - 1, barH - 1);
+
+      ctx.fillStyle = colorInk;
+      ctx.fillRect(x0, barY, filledW, barH);
+
+      if (dropped > 0) {
+        var dropX = x0 + filledW, dropW = usableW - filledW;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(dropX, barY, dropW, barH);
+        ctx.clip();
+        ctx.strokeStyle = colorFaint;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (var hx = dropX - barH; hx < dropX + dropW; hx += 10) {
+          ctx.moveTo(hx, barY + barH);
+          ctx.lineTo(hx + barH, barY);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.strokeStyle = colorInk;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(dropX, barY - 14);
+        ctx.lineTo(dropX, barY + barH + 14);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = colorInk;
+        ctx.font = "11px " + getComputedStyle(fig).getPropertyValue("--mono");
+        ctx.textAlign = "center";
+        ctx.fillText("BLOCK_SIZE", dropX, barY - 20);
+      }
+
+      ctx.fillStyle = colorFaint;
+      ctx.font = "11px " + getComputedStyle(fig).getPropertyValue("--mono");
+      ctx.textAlign = "left";
+      ctx.fillText("0", x0, barY + barH + 24);
+      ctx.textAlign = "right";
+      ctx.fillText(String(ncols), x0 + usableW, barY + barH + 24);
+    }
+
+    function render() {
+      var ncols = Number(range.value);
+      var block = computeBlock(ncols);
+      var dropped = Math.max(0, ncols - block);
+      var matches = dropped === 0;
+
+      ncolsOut.textContent = ncols;
+      blockOut.textContent = block;
+      droppedOut.textContent = dropped;
+      matchOut.textContent = matches ? "True" : "False";
+      matchOut.classList.toggle("is-broken", !matches);
+
+      draw(ncols, block, dropped);
+    }
+
+    range.addEventListener("input", render);
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        mode = btn.getAttribute("data-mode");
+
+        buttons.forEach(function (b) {
+          b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+        });
+
+        placeSwitch();
+        render();
+      });
+    });
+
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () {
+        readColors();
+        render();
+      }).observe(fig);
+    }
+
+    readColors();
+    fig.classList.add("is-ready");
+    placeSwitch();
+    render();
+  });
+
+  /* ------------------------------------------------------------
      Colormap carousel dots
 
      Plain anchor navigation loses to the track's mandatory scroll

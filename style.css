@@ -817,13 +817,15 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
    rule only fires where that indicator actually exists. */
 .grok-switch,
 .ray-switch,
-.birthday-switch {
+.birthday-switch,
+.blocksize-switch {
   position: relative;
 }
 
 .grok-switch button,
 .ray-switch button,
-.birthday-switch button {
+.birthday-switch button,
+.blocksize-switch button {
   position: relative;
   z-index: 1;
 }
@@ -842,7 +844,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 
 .grok-switch:has(.switch-indicator) button[aria-pressed="true"],
 .ray-switch:has(.switch-indicator) button[aria-pressed="true"],
-.birthday-switch:has(.switch-indicator) button[aria-pressed="true"] {
+.birthday-switch:has(.switch-indicator) button[aria-pressed="true"],
+.blocksize-switch:has(.switch-indicator) button[aria-pressed="true"] {
   background: none;
 }
 
@@ -1437,3 +1440,100 @@ article.post .birthday-scale figcaption {
 }
 
 .iab-close:hover { opacity: 1; }
+
+/* ---- BLOCK_SIZE boundary demo --------------------------------------- */
+
+article.post .blocksize-demo { margin: 2.75rem 0 3rem; }
+
+.blocksize-demo .blocksize-head,
+.blocksize-demo .blocksize-readout,
+.blocksize-demo .blocksize-grid { display: none; }
+
+.blocksize-demo.is-ready .blocksize-readout,
+.blocksize-demo.is-ready .blocksize-grid { display: block; }
+.blocksize-demo.is-ready .blocksize-head { display: flex; }
+
+.blocksize-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.blocksize-n {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.blocksize-n output {
+  min-width: 3.4em;
+  display: inline-block;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.blocksize-n input[type="range"] {
+  width: 9rem;
+  accent-color: var(--ink);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.blocksize-switch { display: flex; gap: 0; }
+
+.blocksize-switch button {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.blocksize-switch button + button { border-left: 0; }
+.blocksize-switch button:hover { color: var(--ink); border-color: var(--ink); }
+
+.blocksize-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.blocksize-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  margin: 0 0 0.85rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.blocksize-readout b { font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
+.blocksize-readout .is-broken { color: var(--ink); }
+
+.blocksize-grid {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 852 / 140;
+  border: 1px solid var(--hairline);
+}
+
+article.post .blocksize-demo figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blocksize-switch button { transition: none; }
+}
+
+@media (max-width: 600px) {
+  .blocksize-n input[type="range"] { width: 6rem; }
+}

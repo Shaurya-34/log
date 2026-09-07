@@ -14,14 +14,15 @@
   <meta property="og:description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sslog.dpdns.org/">
+  <meta property="og:image" content="https://sslog.dpdns.org/images/covers/programming-an-attention-kernel-in-triton.svg">
   <link rel="alternate" type="text/markdown" href="index.md">
   <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=318b3fb6">
-  <script src="site.js?v=69bd206e" defer></script>
+  <link rel="stylesheet" href="style.css?v=674665c9">
+  <script src="site.js?v=02f36596" defer></script>
   <link rel="stylesheet" href="home.css?v=128812d5">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.","url":"https://sslog.dpdns.org","author":{"@type":"Person","name":"Shaurya","url":"https://sslog.dpdns.org"}}</script>
   <script type="text/javascript">
@@ -366,7 +367,68 @@
     <text x="605" y="300">← SAME BUCKET</text>
     <text x="90" y="600">√N DRAWS, NOT N</text>
   </g>
-</svg></div></article><article class="entry-panel" data-index="6" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 07 · 08 Sep 2026 · 9 min read</p><h2 class="entry-title"><a href="programming-an-attention-kernel-in-triton.html">Programming an attention kernel in Triton</a></h2><p class="entry-desc">Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p><p class="entry-tags">gpu programming, triton, machine learning</p></div><div class="entry-figure" aria-hidden="true"></div></article></section></main>
+</svg></div></article><article class="entry-panel" data-index="6" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 07 · 08 Sep 2026 · 10 min read</p><h2 class="entry-title"><a href="programming-an-attention-kernel-in-triton.html">Programming an attention kernel in Triton</a></h2><p class="entry-desc">Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p><p class="entry-tags">gpu programming, triton, machine learning</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_007</span><span>[ THE WALL ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" opacity=".16">
+    <path d="M120 540H880"/>
+    <path d="M120 460H880"/>
+    <path d="M120 380H880"/>
+    <path d="M120 300H880"/>
+  </g>
+
+  <!-- The ladder: two rails, five rungs. The bottom four are the kernels
+       actually built here; the fifth is the tiled/online-softmax step
+       named but not climbed, so it reads differently from the rest. -->
+  <g stroke="#17150f" stroke-width="1.4">
+    <path d="M430 580V150"/>
+    <path d="M570 580V150"/>
+    <path d="M430 540H570"/>
+    <path d="M430 460H570"/>
+    <path d="M430 380H570"/>
+    <path d="M430 300H570"/>
+  </g>
+  <path d="M430 220H570" stroke="#17150f" stroke-width="1.4" stroke-dasharray="6 8" opacity=".4"/>
+
+  <!-- The wall above the last rung, with a short hatch so it reads as a
+       ceiling rather than another rung. -->
+  <path d="M370 150H630" stroke="#17150f" stroke-width="2"/>
+  <g stroke="#17150f" stroke-width="1.2" opacity=".55">
+    <path d="M385 150L370 130"/>
+    <path d="M425 150L410 130"/>
+    <path d="M465 150L450 130"/>
+    <path d="M505 150L490 130"/>
+    <path d="M545 150L530 130"/>
+    <path d="M585 150L570 130"/>
+    <path d="M625 150L610 130"/>
+  </g>
+
+  <!-- The climb: a zigzag from the ground up through the four real
+       rungs, stopping dead at the fourth. It never reaches the fifth
+       rung or the wall - that gap is the whole point of the drawing. -->
+  <path
+    d="M500 580 L462 540 L538 460 L462 380 L538 300"
+    class="draw-path"
+    stroke="#17150f"
+    stroke-width="1.6"
+    stroke-dasharray="480" stroke-dashoffset="480"/>
+
+  <g fill="#17150f">
+    <circle cx="500" cy="580" r="3"/>
+    <circle cx="462" cy="540" r="3"/>
+    <circle cx="538" cy="460" r="3"/>
+    <circle cx="462" cy="380" r="3"/>
+    <circle cx="538" cy="300" r="3.5"/>
+  </g>
+
+  <g fill="#17150f" font-family="monospace" font-size="15" letter-spacing=".05em">
+    <text x="600" y="545">1</text>
+    <text x="600" y="465">2</text>
+    <text x="600" y="385">3</text>
+    <text x="600" y="305">4</text>
+    <text x="600" y="225" opacity=".45">5</text>
+    <text x="655" y="145">← NOT YET CLIMBED</text>
+    <text x="120" y="620">FOUR RUNGS UP, ONE WALL</text>
+  </g>
+</svg></div></article></section></main>
   <footer class="site">
     <span>Shaurya · 2026</span>
     <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>

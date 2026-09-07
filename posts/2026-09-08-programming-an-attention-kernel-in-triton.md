@@ -195,6 +195,25 @@ thinking about will pass right over a bug that only shows up at a different
 shape. The `(4, 5)` test I ran first was real, it wasn't fake, it just
 wasn't the test that mattered.
 
+<figure class="blocksize-demo" id="blocksize-demo">
+  <div class="blocksize-head">
+    <label class="blocksize-n">n_cols <output data-val="ncols">512</output>
+      <input type="range" min="32" max="4096" value="512" step="1" data-param="ncols">
+    </label>
+    <div class="blocksize-switch" role="group" aria-label="BLOCK_SIZE strategy">
+      <button type="button" data-mode="fixed" aria-pressed="true">hardcoded 1024</button>
+      <button type="button" data-mode="dynamic" aria-pressed="false">dynamic</button>
+    </div>
+  </div>
+  <p class="blocksize-readout" aria-live="polite">
+    <span>BLOCK_SIZE <b data-out="block">1024</b></span>
+    <span>columns dropped <b data-out="dropped">0</b></span>
+    <span>matches PyTorch? <b data-out="match">True</b></span>
+  </p>
+  <canvas class="blocksize-grid" width="852" height="140" role="img" aria-label="A bar representing one row of the softmax input, scaled to n_cols. The filled portion is what the kernel actually computes; a hatched portion past BLOCK_SIZE, when present, marks columns the kernel silently never touches."></canvas>
+  <figcaption>Drag n_cols past 1024 in "hardcoded" mode and the bar stops filling exactly where the bug does: everything past the line is real data the kernel never reads, writes, or warns about. Switch to "dynamic" and the same drag never breaks anything, because BLOCK_SIZE grows with n_cols instead of sitting fixed.</figcaption>
+</figure>
+
 ## Kernel 4: bringing it together, a self-attention kernel
 
 Everything up to here, offsets, masks, a fused numerically-stable softmax,

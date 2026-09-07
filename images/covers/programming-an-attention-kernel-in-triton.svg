@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" opacity=".16">
+    <path d="M120 540H880"/>
+    <path d="M120 460H880"/>
+    <path d="M120 380H880"/>
+    <path d="M120 300H880"/>
+  </g>
+
+  <!-- The ladder: two rails, five rungs. The bottom four are the kernels
+       actually built here; the fifth is the tiled/online-softmax step
+       named but not climbed, so it reads differently from the rest. -->
+  <g stroke="#17150f" stroke-width="1.4">
+    <path d="M430 580V150"/>
+    <path d="M570 580V150"/>
+    <path d="M430 540H570"/>
+    <path d="M430 460H570"/>
+    <path d="M430 380H570"/>
+    <path d="M430 300H570"/>
+  </g>
+  <path d="M430 220H570" stroke="#17150f" stroke-width="1.4" stroke-dasharray="6 8" opacity=".4"/>
+
+  <!-- The wall above the last rung, with a short hatch so it reads as a
+       ceiling rather than another rung. -->
+  <path d="M370 150H630" stroke="#17150f" stroke-width="2"/>
+  <g stroke="#17150f" stroke-width="1.2" opacity=".55">
+    <path d="M385 150L370 130"/>
+    <path d="M425 150L410 130"/>
+    <path d="M465 150L450 130"/>
+    <path d="M505 150L490 130"/>
+    <path d="M545 150L530 130"/>
+    <path d="M585 150L570 130"/>
+    <path d="M625 150L610 130"/>
+  </g>
+
+  <!-- The climb: a zigzag from the ground up through the four real
+       rungs, stopping dead at the fourth. It never reaches the fifth
+       rung or the wall - that gap is the whole point of the drawing. -->
+  <path
+    d="M500 580 L462 540 L538 460 L462 380 L538 300"
+    class="draw-path"
+    stroke="#17150f"
+    stroke-width="1.6"
+    stroke-dasharray="480" stroke-dashoffset="480"/>
+
+  <g fill="#17150f">
+    <circle cx="500" cy="580" r="3"/>
+    <circle cx="462" cy="540" r="3"/>
+    <circle cx="538" cy="460" r="3"/>
+    <circle cx="462" cy="380" r="3"/>
+    <circle cx="538" cy="300" r="3.5"/>
+  </g>
+
+  <g fill="#17150f" font-family="monospace" font-size="15" letter-spacing=".05em">
+    <text x="600" y="545">1</text>
+    <text x="600" y="465">2</text>
+    <text x="600" y="385">3</text>
+    <text x="600" y="305">4</text>
+    <text x="600" y="225" opacity=".45">5</text>
+    <text x="655" y="145">← NOT YET CLIMBED</text>
+    <text x="120" y="620">FOUR RUNGS UP, ONE WALL</text>
+  </g>
+</svg>

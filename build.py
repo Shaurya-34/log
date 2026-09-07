@@ -131,6 +131,13 @@ COVER_DEFAULTS = {
         "author": "sslog",
         "diagram_label": "COLLISION",
     },
+    "programming-an-attention-kernel-in-triton": {
+        "cover": "images/covers/programming-an-attention-kernel-in-triton.svg",
+        "kicker": "WRITING GPU KERNELS IN TRITON, FROM VECTOR ADD UP TO NAIVE ATTENTION.",
+        "quote": "I climbed four rungs and found the wall.",
+        "author": "sslog",
+        "diagram_label": "THE WALL",
+    },
 }
 
 
