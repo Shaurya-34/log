@@ -2,7 +2,7 @@
 
 Date: 2026-09-02
 Description: A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.
-Canonical: https://sslog.dpdns.org/birthday-attack.html
+Canonical: https://shauryasharma.tech/birthday-attack.html
 
 In a room of 23 people, including you, there's a better than 50% chance two of
 them share a birthday.

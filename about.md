@@ -2,7 +2,7 @@
 
 Date: 2026-09
 Description: About Shaurya and the purpose of this engineering log.
-Canonical: https://sslog.dpdns.org/about.html
+Canonical: https://shauryasharma.tech/about.html
 
 Hi, I'm Shaurya. I'm a student who writes software and keeps this log as a record of the things I build, read, and try to understand. There isn't a bigger plan behind any of it — I get bored, end up somewhere on the internet, find something that snags my attention, and if it's still interesting a few days later, I write it down. The subjects move around: machine learning, graphics, programming, computation, mathematical ideas, and small experiments that are easier to understand by implementing them than by reading about them.
 

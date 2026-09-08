@@ -2,7 +2,7 @@
 
 Date: 2026-07-21
 Description: Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.
-Canonical: https://sslog.dpdns.org/marching-with-rays.html
+Canonical: https://shauryasharma.tech/marching-with-rays.html
 
 I wanted to understand raymarching by actually building one, not by reading
 about it. No engine, no shader language, no graphics library. Just plain

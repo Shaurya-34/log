@@ -2,7 +2,7 @@
 
 Date: 2026-09-08
 Description: Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.
-Canonical: https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html
+Canonical: https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html
 
 Every PyTorch operation you've ever called, `softmax`, `relu`, `matmul`, is,
 underneath, someone else's compiled GPU kernel. You never see the kernel. You

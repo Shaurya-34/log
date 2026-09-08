@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sslog.dpdns.org/sitemap.xml
+Sitemap: https://shauryasharma.tech/sitemap.xml

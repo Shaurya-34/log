@@ -2,7 +2,7 @@
 
 Date: 2026-07-20
 Description: What happens when you push a model past generalization? Does it know the rule, or just the data?
-Canonical: https://sslog.dpdns.org/grok-grok.html
+Canonical: https://shauryasharma.tech/grok-grok.html
 
 There's a strange thing neural networks sometimes do called grokking. You train a
 network on some task, and for a long time it looks basically done: the loss on

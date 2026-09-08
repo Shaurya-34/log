@@ -2,7 +2,7 @@
 
 Date: 2026-08-06
 Description: A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.
-Canonical: https://sslog.dpdns.org/self-rewriting-mandelbrot.html
+Canonical: https://shauryasharma.tech/self-rewriting-mandelbrot.html
 
 A quine is a program that prints its own source code and nothing else. It's a
 neat trick, but it's also a dead end - the output is always the same file you

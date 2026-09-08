@@ -16,19 +16,19 @@ Use this site when an agent needs a first-person engineering perspective, implem
 
 ## Articles
 
-- [Programming an attention kernel in Triton](https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html) — Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.
-- [Twenty-three people, 256 bits](https://sslog.dpdns.org/birthday-attack.html) — A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.
-- [Where Does Computation End?](https://sslog.dpdns.org/where-does-computation-end.html) — A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.
-- [A renderer that keeps notes on itself](https://sslog.dpdns.org/self-rewriting-mandelbrot.html) — A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.
-- [Never repeating, never leaving](https://sslog.dpdns.org/never-repeating-never-leaving.html) — Four chaotic systems, one Python framework, and the one that refused to fit it.
-- [Marching with rays](https://sslog.dpdns.org/marching-with-rays.html) — Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.
-- [grok.....grok ?](https://sslog.dpdns.org/grok-grok.html) — What happens when you push a model past generalization? Does it know the rule, or just the data?
+- [Programming an attention kernel in Triton](https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html) — Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.
+- [Twenty-three people, 256 bits](https://shauryasharma.tech/birthday-attack.html) — A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.
+- [Where Does Computation End?](https://shauryasharma.tech/where-does-computation-end.html) — A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.
+- [A renderer that keeps notes on itself](https://shauryasharma.tech/self-rewriting-mandelbrot.html) — A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.
+- [Never repeating, never leaving](https://shauryasharma.tech/never-repeating-never-leaving.html) — Four chaotic systems, one Python framework, and the one that refused to fit it.
+- [Marching with rays](https://shauryasharma.tech/marching-with-rays.html) — Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.
+- [grok.....grok ?](https://shauryasharma.tech/grok-grok.html) — What happens when you push a model past generalization? Does it know the rule, or just the data?
 
 ## Site pages
 
-- [Projects](https://sslog.dpdns.org/projects.html)
-- [About](https://sslog.dpdns.org/about.html)
-- [Contact](https://sslog.dpdns.org/contact.html)
-- [Privacy](https://sslog.dpdns.org/privacy.html)
-- [RSS feed](https://sslog.dpdns.org/feed.xml)
-- [Sitemap](https://sslog.dpdns.org/sitemap.xml)
+- [Projects](https://shauryasharma.tech/projects.html)
+- [About](https://shauryasharma.tech/about.html)
+- [Contact](https://shauryasharma.tech/contact.html)
+- [Privacy](https://shauryasharma.tech/privacy.html)
+- [RSS feed](https://shauryasharma.tech/feed.xml)
+- [Sitemap](https://shauryasharma.tech/sitemap.xml)

@@ -10,7 +10,7 @@ import markdown
 
 ROOT = Path(__file__).parent
 POSTS_DIR = ROOT / "posts"
-SITE_URL = "https://sslog.dpdns.org"
+SITE_URL = "https://shauryasharma.tech"
 SITE_NAME = "Shaurya"
 SITE_TITLE = "Shaurya · Log"
 SITE_DESC = ("Experimental engineering notes on AI, machine learning, graphics, "

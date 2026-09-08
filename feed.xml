@@ -2,61 +2,61 @@
 <rss version="2.0">
   <channel>
     <title>Shaurya · Log</title>
-    <link>https://sslog.dpdns.org</link>
+    <link>https://shauryasharma.tech</link>
     <description>Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.</description>
     <language>en</language>
     <item>
       <title>Programming an attention kernel in Triton</title>
-      <link>https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html</link>
-      <guid>https://sslog.dpdns.org/programming-an-attention-kernel-in-triton.html</guid>
+      <link>https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html</link>
+      <guid>https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html</guid>
       <pubDate>Tue, 08 Sep 2026 00:00:00 GMT</pubDate>
       <description>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</description>
       <category>gpu programming, triton, machine learning</category>
     </item>
     <item>
       <title>Twenty-three people, 256 bits</title>
-      <link>https://sslog.dpdns.org/birthday-attack.html</link>
-      <guid>https://sslog.dpdns.org/birthday-attack.html</guid>
+      <link>https://shauryasharma.tech/birthday-attack.html</link>
+      <guid>https://shauryasharma.tech/birthday-attack.html</guid>
       <pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate>
       <description>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</description>
       <category>cryptography, probability, python</category>
     </item>
     <item>
       <title>Where Does Computation End?</title>
-      <link>https://sslog.dpdns.org/where-does-computation-end.html</link>
-      <guid>https://sslog.dpdns.org/where-does-computation-end.html</guid>
+      <link>https://shauryasharma.tech/where-does-computation-end.html</link>
+      <guid>https://shauryasharma.tech/where-does-computation-end.html</guid>
       <pubDate>Tue, 18 Aug 2026 00:00:00 GMT</pubDate>
       <description>A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</description>
       <category>computation, computability, hypercomputation, physics, philosophy</category>
     </item>
     <item>
       <title>A renderer that keeps notes on itself</title>
-      <link>https://sslog.dpdns.org/self-rewriting-mandelbrot.html</link>
-      <guid>https://sslog.dpdns.org/self-rewriting-mandelbrot.html</guid>
+      <link>https://shauryasharma.tech/self-rewriting-mandelbrot.html</link>
+      <guid>https://shauryasharma.tech/self-rewriting-mandelbrot.html</guid>
       <pubDate>Thu, 06 Aug 2026 00:00:00 GMT</pubDate>
       <description>A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.</description>
       <category>python, self-modifying-code, fractals</category>
     </item>
     <item>
       <title>Never repeating, never leaving</title>
-      <link>https://sslog.dpdns.org/never-repeating-never-leaving.html</link>
-      <guid>https://sslog.dpdns.org/never-repeating-never-leaving.html</guid>
+      <link>https://shauryasharma.tech/never-repeating-never-leaving.html</link>
+      <guid>https://shauryasharma.tech/never-repeating-never-leaving.html</guid>
       <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
       <description>Four chaotic systems, one Python framework, and the one that refused to fit it.</description>
       <category>chaos, python, visualization</category>
     </item>
     <item>
       <title>Marching with rays</title>
-      <link>https://sslog.dpdns.org/marching-with-rays.html</link>
-      <guid>https://sslog.dpdns.org/marching-with-rays.html</guid>
+      <link>https://shauryasharma.tech/marching-with-rays.html</link>
+      <guid>https://shauryasharma.tech/marching-with-rays.html</guid>
       <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
       <description>Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</description>
       <category>graphics, java</category>
     </item>
     <item>
       <title>grok.....grok ?</title>
-      <link>https://sslog.dpdns.org/grok-grok.html</link>
-      <guid>https://sslog.dpdns.org/grok-grok.html</guid>
+      <link>https://shauryasharma.tech/grok-grok.html</link>
+      <guid>https://shauryasharma.tech/grok-grok.html</guid>
       <pubDate>Mon, 20 Jul 2026 00:00:00 GMT</pubDate>
       <description>What happens when you push a model past generalization? Does it know the rule, or just the data?</description>
       <category>research, machine learning, physics</category>
