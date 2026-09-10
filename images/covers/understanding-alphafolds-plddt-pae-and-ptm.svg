@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="#17150f" opacity=".15">
+    <path d="M120 110H880"/>
+    <path d="M120 580H880"/>
+  </g>
+
+  <!-- Two PAE matrices, drawn the way the widget itself draws them: a
+       square grid with the confident diagonal as a dark band. GFP's is
+       bold and gets the draw-in; beta-casein's stays a thin, faint line,
+       because there is nothing there to confidently draw. -->
+  <g stroke="#17150f" stroke-width="1" opacity=".22">
+    <path d="M202 175V435M254 175V435M306 175V435M358 175V435"/>
+    <path d="M150 227H410M150 279H410M150 331H410M150 383H410"/>
+    <path d="M642 175V435M694 175V435M746 175V435M798 175V435"/>
+    <path d="M590 227H850M590 279H850M590 331H850M590 383H850"/>
+  </g>
+  <g stroke="#17150f" stroke-width="1.4">
+    <path d="M150 175H410V435H150Z"/>
+    <path d="M590 175H850V435H590Z"/>
+  </g>
+
+  <path
+    d="M150 175L410 435"
+    class="draw-path"
+    stroke="#17150f"
+    stroke-width="24"
+    stroke-linecap="round"
+    opacity=".82"
+    stroke-dasharray="368" stroke-dashoffset="368"/>
+
+  <path d="M590 175L850 435" stroke="#17150f" stroke-width="2.5" opacity=".28"/>
+  <g fill="#17150f" opacity=".3">
+    <circle cx="640" cy="220" r="2.4"/>
+    <circle cx="700" cy="340" r="2.4"/>
+    <circle cx="760" cy="260" r="2.4"/>
+    <circle cx="810" cy="400" r="2.4"/>
+    <circle cx="620" cy="360" r="2.4"/>
+    <circle cx="790" cy="200" r="2.4"/>
+  </g>
+
+  <g fill="#17150f">
+    <circle cx="150" cy="175" r="3.5"/>
+    <circle cx="410" cy="435" r="3.5"/>
+  </g>
+
+  <g fill="#17150f" font-family="monospace" font-size="15" letter-spacing=".05em">
+    <text x="150" y="150">GFP &middot; WELL-FOLDED</text>
+    <text x="590" y="150">BETA-CASEIN &middot; DISORDERED</text>
+    <text x="120" y="460" opacity=".55">j</text>
+    <text x="272" y="458" opacity=".55">i</text>
+    <text x="560" y="460" opacity=".55">j</text>
+    <text x="712" y="458" opacity=".55">i</text>
+    <text x="120" y="620">CONFIDENT, NOT THE SAME AS CORRECT</text>
+  </g>
+</svg>

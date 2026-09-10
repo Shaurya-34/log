@@ -138,6 +138,13 @@ COVER_DEFAULTS = {
         "author": "sslog",
         "diagram_label": "THE WALL",
     },
+    "understanding-alphafolds-plddt-pae-and-ptm": {
+        "cover": "images/covers/understanding-alphafolds-plddt-pae-and-ptm.svg",
+        "kicker": "WHAT PLDDT, PAE, AND PTM ACTUALLY MEASURE, AND WHERE THEY STOP BEING GROUND TRUTH.",
+        "quote": "All models are wrong, but some are useful.",
+        "author": "G. Box",
+        "diagram_label": "GROUND TRUTH",
+    },
 }
 
 
