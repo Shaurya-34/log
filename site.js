@@ -2907,4 +2907,196 @@
     banner.appendChild(close);
     document.body.insertBefore(banner, document.body.firstChild);
   });
+
+  /* ------------------------------------------------------------
+     3D structure viewer (3Dmol.js)
+
+     Two AlphaFold predictions, side by side, colored by pLDDT using
+     AlphaFold Server's own four-band scheme - read straight out of
+     the PDB's B-factor column, where AlphaFold/ColabFold write
+     per-residue confidence. 3Dmol is self-hosted (vendor/3Dmol-min.js)
+     rather than pulled from a CDN, so it sits inside the site's
+     existing script-src 'self' CSP with no exception needed, and it's
+     injected here rather than added as a permanent <script> tag,
+     because at ~525KB it's the one page-weight-heavy dependency on
+     the whole site - no reason to pay for it on pages that don't use
+     it. */
+  run(function () {
+    var fig = document.getElementById("structure-demo");
+
+    if (!fig) {
+      return;
+    }
+
+    var panels = Array.prototype.slice.call(
+      fig.querySelectorAll(".structure-viewer")
+    );
+
+    if (!panels.length) {
+      return;
+    }
+
+    /* AlphaFold's own thresholds, applied to the B-factor 3Dmol
+       exposes as atom.b - not a gradient, four fixed bands. */
+    function plddtColor(atom) {
+      var b = atom.b;
+      if (b > 90) return "#0053D6";
+      if (b > 70) return "#65CBF3";
+      if (b > 50) return "#FFDB13";
+      return "#FF7D45";
+    }
+
+    function paperColor() {
+      return getComputedStyle(fig).getPropertyValue("--paper").trim() ||
+        "#faf9f7";
+    }
+
+    var viewers = [];
+
+    function repaintBackground() {
+      var bg = paperColor();
+      viewers.forEach(function (v) {
+        v.setBackgroundColor(bg);
+        v.render();
+      });
+    }
+
+    function resizeAll() {
+      viewers.forEach(function (v) { v.resize(); });
+    }
+
+    /* PAE (predicted aligned error): AlphaFold Server's own green
+       scale, 0 Angstrom at white up to the fixed 31 Angstrom cutoff at
+       its darkest - not a gradient chosen for looks, the actual
+       documented range. */
+    function paeColor(v) {
+      /* Low error (0) is the confident case and reads as dark green;
+         high error (31, the documented cutoff) fades toward white. */
+      var t = Math.min(Math.max(v, 0), 31) / 31;
+      return [
+        Math.round(0 + t * (255 - 0)),
+        Math.round(68 + t * (255 - 68)),
+        Math.round(27 + t * (255 - 27))
+      ];
+    }
+
+    function drawPae(canvas, matrix) {
+      var n = matrix.length;
+      canvas.width = n;
+      canvas.height = n;
+
+      var ctx = canvas.getContext("2d");
+      var img = ctx.createImageData(n, n);
+
+      for (var y = 0; y < n; y++) {
+        var row = matrix[y];
+
+        for (var x = 0; x < n; x++) {
+          var rgb = paeColor(row[x]);
+          var idx = (y * n + x) * 4;
+
+          img.data[idx] = rgb[0];
+          img.data[idx + 1] = rgb[1];
+          img.data[idx + 2] = rgb[2];
+          img.data[idx + 3] = 255;
+        }
+      }
+
+      ctx.putImageData(img, 0, 0);
+    }
+
+    function fmtScore(v) {
+      return typeof v === "number" ? v.toFixed(2) : null;
+    }
+
+    /* ipTM only exists for the interface between chains, so it's null
+       for every single-chain job - said outright rather than just
+       hidden, so it reads as "doesn't apply here" and not "missing". */
+    function setScores(el, ptm, iptm) {
+      var ptmText = fmtScore(ptm);
+      var iptmText = fmtScore(iptm);
+
+      el.innerHTML = "pTM <b>" + (ptmText || "n/a") + "</b> &middot; ipTM <b>" +
+        (iptmText || "n/a") + "</b>" + (iptmText ? "" : " (single chain)");
+    }
+
+    function boot() {
+      var loads = panels.map(function (el) {
+        var panel = el.closest(".structure-panel");
+        var paeCanvas = panel && panel.querySelector(".structure-pae");
+        var scoresEl = panel && panel.querySelector(".structure-scores");
+        var pdbSrc = el.getAttribute("data-src");
+
+        var pdbLoad = fetch(pdbSrc).then(function (r) {
+          if (!r.ok) {
+            throw new Error("fetch failed: " + pdbSrc);
+          }
+          return r.text();
+        });
+
+        var paeLoad = paeCanvas
+          ? fetch(paeCanvas.getAttribute("data-pae-src")).then(function (r) {
+              if (!r.ok) {
+                throw new Error("fetch failed: " + paeCanvas.getAttribute("data-pae-src"));
+              }
+              return r.json();
+            })
+          : Promise.resolve(null);
+
+        return Promise.all([pdbLoad, paeLoad]).then(function (loaded) {
+          return {
+            el: el,
+            paeCanvas: paeCanvas,
+            scoresEl: scoresEl,
+            pdbText: loaded[0],
+            paeData: loaded[1]
+          };
+        });
+      });
+
+      Promise.all(loads).then(function (results) {
+        /* The panels are display:none until is-ready, so they have no
+           real size to measure before this point - create the 3Dmol
+           viewers only once the layout is real, matching the same
+           reasoning as every other canvas widget on this site. */
+        fig.classList.add("is-ready");
+
+        results.forEach(function (r) {
+          var viewer = window.$3Dmol.createViewer(r.el, {
+            backgroundColor: paperColor()
+          });
+
+          viewer.addModel(r.pdbText, "pdb");
+          viewer.setStyle({}, { cartoon: { colorfunc: plddtColor } });
+          viewer.zoomTo();
+          viewer.render();
+          viewers.push(viewer);
+
+          if (r.paeData) {
+            if (r.scoresEl) {
+              setScores(r.scoresEl, r.paeData.ptm, r.paeData.iptm);
+            }
+
+            if (r.paeCanvas) {
+              drawPae(r.paeCanvas, r.paeData.pae);
+            }
+          }
+        });
+
+        addEventListener("resize", resizeAll);
+
+        var mo = new MutationObserver(repaintBackground);
+        mo.observe(doc, { attributes: true, attributeFilter: ["data-theme"] });
+      }).catch(function () {
+        /* Matches the rest of the site: a failed fetch leaves the
+           widget exactly as authored - nothing rendered - rather than
+           showing a broken viewer. */
+      });
+    }
+
+    var script = document.createElement("script");
+    script.src = "vendor/3Dmol-min.js";
+    script.onload = boot;
+    document.head.appendChild(script);
+  });
 })();

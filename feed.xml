@@ -6,6 +6,14 @@
     <description>Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.</description>
     <language>en</language>
     <item>
+      <title>Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM</title>
+      <link>https://shauryasharma.tech/understanding-alphafolds-plddt-pae-and-ptm.html</link>
+      <guid>https://shauryasharma.tech/understanding-alphafolds-plddt-pae-and-ptm.html</guid>
+      <pubDate>Thu, 10 Sep 2026 00:00:00 GMT</pubDate>
+      <description>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer. What GFP&#x27;s one real dip and beta-casein&#x27;s disorder actually show, and what the ranking formula does when a protein has no fixed shape to find.</description>
+      <category>machine learning, structural biology, alphafold</category>
+    </item>
+    <item>
       <title>Programming an attention kernel in Triton</title>
       <link>https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html</link>
       <guid>https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html</guid>

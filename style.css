@@ -1537,3 +1537,110 @@ article.post .blocksize-demo figcaption {
 @media (max-width: 600px) {
   .blocksize-n input[type="range"] { width: 6rem; }
 }
+
+/* ---- 3D structure viewer (3Dmol.js) --------------------------------
+   The one place on the site color is load-bearing rather than
+   decorative: pLDDT confidence has an actual meaning, and AlphaFold's
+   own four-band palette is the shared vocabulary for reading it, so
+   it's kept exactly rather than translated to monochrome. Everything
+   around it - labels, borders, the legend text - stays inside the
+   site's usual ink/paper/hairline set. */
+
+article.post .structure-demo { margin: 2.75rem 0 3rem; }
+
+.structure-demo .structure-head,
+.structure-demo .structure-panels { display: none; }
+.structure-demo.is-ready .structure-head { display: flex; }
+.structure-demo.is-ready .structure-panels { display: grid; }
+
+.structure-head {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 1.25rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.structure-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; }
+
+.structure-key { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+.structure-swatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--hairline);
+}
+.structure-swatch.is-high { background: #0053D6; }
+.structure-swatch.is-confident { background: #65CBF3; }
+.structure-swatch.is-low { background: #FFDB13; }
+.structure-swatch.is-verylow { background: #FF7D45; }
+
+.structure-panels {
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.structure-panel { border: 1px solid var(--hairline); }
+
+.structure-panel-label {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--hairline);
+  font: 0.68rem var(--mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.structure-viewer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  cursor: grab;
+}
+.structure-viewer:active { cursor: grabbing; }
+
+.structure-scores {
+  margin: 0;
+  padding: 0.5rem 0.85rem;
+  border-bottom: 1px solid var(--hairline);
+  font: 0.72rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+.structure-scores b { font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.structure-pae-label {
+  padding: 0.55rem 0.85rem 0;
+  font: 0.65rem var(--mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.structure-pae {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  margin-top: 0.55rem;
+}
+
+article.post .structure-demo figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.structure-downloads {
+  margin: 0.9rem 0 0;
+  font: 0.72rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+@media (max-width: 700px) {
+  .structure-panels { grid-template-columns: 1fr; }
+}
