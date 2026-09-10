@@ -308,6 +308,36 @@
   });
 
   /* ------------------------------------------------------------
+     Share button
+
+     The native share sheet where one exists; otherwise the article's
+     URL goes to the clipboard and the button's own label flips to
+     "copied" for a moment - no toast, no extra chrome.
+     ------------------------------------------------------------ */
+
+  run(function () {
+    var button = document.querySelector(".share-button");
+    if (!button) return;
+
+    button.addEventListener("click", function () {
+      if (navigator.share) {
+        navigator.share({ title: document.title, url: location.href }).catch(function () {});
+        return;
+      }
+
+      if (!navigator.clipboard) return;
+
+      navigator.clipboard.writeText(location.href).then(function () {
+        var original = button.textContent;
+        button.textContent = "copied";
+        setTimeout(function () {
+          button.textContent = original;
+        }, 1500);
+      }, function () {});
+    });
+  });
+
+  /* ------------------------------------------------------------
      Scrollbar
      ------------------------------------------------------------ */
 

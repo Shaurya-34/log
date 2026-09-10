@@ -306,10 +306,12 @@ def build_post(post, newer, older):
     source = (f'\n      <a class="post-source" href="{GITHUB_URL}/{post["repo"]}"'
               f' rel="noopener">source &#8599;</a>'
               if post["repo"] else "")
+    share = ('\n      <button type="button" class="share-button" '
+             'aria-label="Copy link to this article">share</button>')
     body = ('\n  <article class="post entry">\n'
             f'    <h1>{html.escape(post["title"])}</h1>\n'
             '    <p class="post-meta">\n'
-            f'      <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%B %d, %Y}</time>{tags}{source}\n'
+            f'      <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%B %d, %Y}</time>{tags}{source}{share}\n'
             '    </p>\n\n'
             f'{render_body(post["body_md"])}\n  </article>\n')
     old_link = (f'<a class="older" href="{older["slug"]}.html">← {html.escape(older["title"])}</a>'
