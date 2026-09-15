@@ -1,29 +1,32 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Twenty-three people, 256 bits · Shaurya</title>
-  <meta name="description" content="A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://shauryasharma.tech/birthday-attack.html">
-  <meta property="og:site_name" content="Shaurya · Log">
-  <meta property="og:title" content="Twenty-three people, 256 bits · Shaurya">
-  <meta property="og:description" content="A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://shauryasharma.tech/birthday-attack.html">
-  <meta property="og:image" content="https://shauryasharma.tech/images/covers/birthday-attack.svg">
-  <meta property="article:published_time" content="2026-09-02T00:00:00+00:00">
-  <link rel="alternate" type="text/markdown" href="birthday-attack.md">
-  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=a2ff6719">
-  <script src="site.js?v=b8d0ed4c" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Twenty-three people, 256 bits · Shaurya</title>
+<meta name="description" content="A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/birthday-attack.html">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="Twenty-three people, 256 bits · Shaurya">
+<meta property="og:description" content="A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shauryasharma.tech/birthday-attack.html">
+<meta property="og:image" content="https://shauryasharma.tech/images/covers/birthday-attack.svg">
+<meta property="article:published_time" content="2026-09-02T00:00:00+00:00">
+<link rel="alternate" type="text/markdown" href="birthday-attack.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="design.css?v=0c021ac6">
+<link rel="stylesheet" href="widgets.css?v=268ce49f">
+<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<script src="chrome.js?v=ef3ae2bd"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Twenty-three people, 256 bits","description":"A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.","url":"https://shauryasharma.tech/birthday-attack.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/birthday-attack.html"},"datePublished":"2026-09-02T00:00:00+00:00","dateModified":"2026-09-02T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["cryptography","probability","python"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -34,26 +37,29 @@
   </script>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="site">
-    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
-    <nav>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About</a>
-      <button type="button" class="sound-toggle" hidden aria-pressed="false" aria-label="Turn on sound">sound</button>
-      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
-    </nav>
-  </header>
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <button type="button" class="sound-toggle" hidden aria-pressed="false" aria-label="Turn on sound">sound</button>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
 
-  <article class="post entry">
-    <h1>Twenty-three people, 256 bits</h1>
-    <p class="post-meta">
-      <time datetime="2026-09-02">September 02, 2026</time>
-      <span class="tags">cryptography, probability, python</span>
-      <button type="button" class="share-button" aria-label="Copy link to this article">share</button>
-    </p>
+<section class="hero">
+  <p class="label kicker">Cryptography · Probability · Python</p>
+  <h1>Twenty-three people, 256 bits</h1>
+  <p class="standfirst">A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
+  <p class="byline">
+    <time class="label" datetime="2026-09-02">September 02, 2026</time>
+    <span class="byline-links"><span class="label">18 min read</span><button type="button" class="share label" data-url="https://shauryasharma.tech/birthday-attack.html" aria-label="Share this article">Share</button></span>
+  </p>
+</section>
 
+<article class="prose post">
 <p>In a room of 23 people, including you, there's a better than 50% chance two of
 them share a birthday.</p>
 <p>The linear intuition says: 365 days in a year, so you'd need somewhere around
@@ -71,7 +77,7 @@ there are n(n-1)/2 possible pairs, and each pair is an independent shot at a
 1/365 event is enough to cross 50%, even though 23 people is nowhere near 365.</p>
 <p>Made exact: the probability that none of n people share a birthday, out of N
 possible days, is</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mrow>
     <mi>P</mi><mo>(</mo><mtext>no collision</mtext><mo>)</mo>
     <mo>=</mo>
@@ -83,10 +89,10 @@ possible days, is</p>
     <mo>&#183;</mo><mo>&#8943;</mo><mo>&#183;</mo>
     <mfrac><mrow><mi>N</mi><mo>&#8722;</mo><mi>n</mi><mo>+</mo><mn>1</mn></mrow><mi>N</mi></mfrac>
   </mrow>
-</math>
+</math></div>
 
 <p>For N large relative to n this approximates cleanly to</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mrow>
     <mi>P</mi><mo>(</mo><mtext>no collision</mtext><mo>)</mo>
     <mo>&#8776;</mo>
@@ -94,14 +100,14 @@ possible days, is</p>
     <mo>&#8776;</mo>
     <msup><mi>e</mi><mrow><mo>&#8722;</mo><mfrac><msup><mi>n</mi><mn>2</mn></msup><mrow><mn>2</mn><mi>N</mi></mrow></mfrac></mrow></msup>
   </mrow>
-</math>
+</math></div>
 
 <p>Set P(collision) = 1 − e^(−n²/2N) equal to 0.5 and solve for n:</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mrow>
     <mi>n</mi><mo>&#8776;</mo><mn>1.177</mn><mo>&#183;</mo><msqrt><mi>N</mi></msqrt>
   </mrow>
-</math>
+</math></div>
 
 <p>Plug in N = 365 and you get n ≈ 22.5; round up, and there's the 23.</p>
 <p>Stripped of the birthday framing entirely, the structural fact underneath is:
@@ -114,7 +120,7 @@ average. Those are different quantities whenever the underlying distribution
 is skewed, and this one is: most collisions land early, but a long right tail
 of late arrivals drags the average upward. Solving for the actual expected
 value gives a second, larger constant:</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mrow>
     <mi>E</mi><mo>[</mo><mtext>draws until collision</mtext><mo>]</mo>
     <mo>&#8776;</mo>
@@ -123,11 +129,19 @@ value gives a second, larger constant:</p>
     <mo>&#8776;</mo>
     <mn>1.2533</mn><mo>&#183;</mo><msqrt><mi>N</mi></msqrt>
   </mrow>
-</math>
+</math></div>
 
 <p>I didn't derive that second constant on paper first. I found out I needed it
 because the code below refused to agree with the wrong one. See the next
 section.</p>
+</article>
+
+<section class="pull">
+  <blockquote id="pullquote">Halving the exponent sounds modest. <em>It isn't.</em></blockquote>
+  <p class="attrib"><span class="label">From party trick to attack</span></p>
+</section>
+
+<article class="prose post prose-after fin">
 <h2>From party trick to attack</h2>
 <p>The birthday paradox stayed a dinner-party curiosity until 1979, when Gideon
 Yuval published <em>"How to Swindle Rabin,"</em> pointing out that a hash function is
@@ -221,14 +235,14 @@ the median.</p>
 a new draw lands within tolerance k of <em>any</em> previous draw. Each existing
 point then shadows 2k+1 values instead of 1, which suggests reusing the same
 formula against an effective bin count of N/(2k+1):</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mrow>
     <mi>E</mi><mo>[</mo><mtext>draws</mtext><mo>]</mo>
     <mo>&#8776;</mo>
     <mn>1.2533</mn><mo>&#183;</mo>
     <msqrt><mfrac><mi>N</mi><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow></mfrac></msqrt>
   </mrow>
-</math>
+</math></div>
 
 <p>That's an approximation, not a derivation: it assumes no two existing
 points' shadows overlap each other, which has to start failing once k gets
@@ -526,20 +540,52 @@ make and how long it can survive unnoticed: both constants are "roughly
 that refused to sit on the line I'd drawn for it forced the question. The
 near-collision approximation breaking down predictably, rather than
 randomly, was the other thing worth keeping: a wrong model that fails in a
-legible direction is still more useful than a right one nobody checked.</p>
-  </article>
+legible direction is still more useful than a right one nobody checked.</p></article>
 
-  <nav class="post-nav">
-    <a class="older" href="where-does-computation-end.html">← Where Does Computation End?</a>
-    <a class="newer" href="programming-an-attention-kernel-in-triton.html">Programming an attention kernel in Triton →</a>
-  </nav>
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Elsewhere in the log</h2>
+    <a class="label" href="index.html#archive">All 8 entries →</a>
+  </div>
 
-  <footer class="site">
-    <span>Shaurya · 2026</span>
-    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
-    <a href="index.html">Index</a>
-  </footer>
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
+      <span class="label">Next · GPU programming</span>
+      <h3>Programming an attention kernel in Triton</h3>
+      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+      <span class="meta label">08.09.26</span>
+    </a>
+    <a class="tile-post" href="where-does-computation-end.html">
+      <span class="label">Previous · Computation</span>
+      <h3>Where Does Computation End?</h3>
+      <p>A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p>
+      <span class="meta label">18.08.26</span>
+    </a>
+    <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="label">Machine learning</span>
+      <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
+      <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+      <span class="meta label">10.09.26</span>
+    </a>
+    <a class="tile-post" href="self-rewriting-mandelbrot.html">
+      <span class="label">Python</span>
+      <h3>A renderer that keeps notes on itself</h3>
+      <p>A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.</p>
+      <span class="meta label">06.08.26</span>
+    </a>
+  </div>
+</section>
 
-</div>
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="design.js?v=700dc3e8"></script>
+<script src="site.js?v=b8d0ed4c"></script>
+
 </body>
 </html>

@@ -31,4 +31,4 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Write-Host "Published. Live at https://sslog.dpdns.org within a minute or two." -ForegroundColor Green
+Write-Host "Published. Live at https://shauryasharma.tech within a minute or two." -ForegroundColor Green

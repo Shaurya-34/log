@@ -1,27 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>About · Shaurya</title>
-  <meta name="description" content="About Shaurya and the purpose of this engineering log.">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://shauryasharma.tech/about.html">
-  <meta property="og:site_name" content="Shaurya · Log">
-  <meta property="og:title" content="About · Shaurya">
-  <meta property="og:description" content="About Shaurya and the purpose of this engineering log.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://shauryasharma.tech/about.html">
-  <link rel="alternate" type="text/markdown" href="about.md">
-  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=a2ff6719">
-  <script src="site.js?v=b8d0ed4c" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>About · Shaurya</title>
+<meta name="description" content="About Shaurya and the purpose of this engineering log.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/about.html">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="About · Shaurya">
+<meta property="og:description" content="About Shaurya and the purpose of this engineering log.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shauryasharma.tech/about.html">
+<link rel="alternate" type="text/markdown" href="about.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="design.css?v=0c021ac6">
+<link rel="stylesheet" href="widgets.css?v=268ce49f">
+<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<script src="chrome.js?v=ef3ae2bd"></script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -31,31 +34,71 @@
   </script>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="site">
-    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
-    <nav>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About</a>
-      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
-    </nav>
-  </header>
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html" aria-current="page">About</a>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
 
-  <article class="post">
-    <h1>About</h1>
-    <p class="post-meta">Updated September 2026</p>
-<p>Hi, I'm Shaurya. I'm a student who writes software and keeps this log as a record of the things I build, read, and try to understand. There isn't a bigger plan behind any of it — I get bored, end up somewhere on the internet, find something that snags my attention, and if it's still interesting a few days later, I write it down. The subjects move around: machine learning, graphics, programming, computation, mathematical ideas, and small experiments that are easier to understand by implementing them than by reading about them.</p>
+<section class="hero">
+  <p class="label kicker">Updated September 2026</p>
+  <h1>About</h1>
+</section>
+
+<article class="prose post prose-after">
+<p class="lead">Hi, I'm Shaurya. I'm a student who writes software and keeps this log as a record of the things I build, read, and try to understand. There isn't a bigger plan behind any of it — I get bored, end up somewhere on the internet, find something that snags my attention, and if it's still interesting a few days later, I write it down. The subjects move around: machine learning, graphics, programming, computation, mathematical ideas, and small experiments that are easier to understand by implementing them than by reading about them.</p>
 <p>The point of the site is not to present polished documentation or a fixed set of opinions. Most posts are working notes: I start with a question, follow the interesting parts, build something when code helps, and write down what survived the experiment. Some pieces are explanatory, some are exploratory, and some are simply records of a rabbit hole that seemed worth keeping.</p>
 <p>There is no comments system, newsletter, or account system on the site. The pages are generated from Markdown and published as static files. If an agent or reader wants the machine-readable version, the same articles are available as Markdown alongside their HTML pages. The site does use basic analytics to see which pages and elements actually get used, described on the <a href="privacy.html">privacy page</a>. The <a href="contact.html">contact page</a> explains how to reach me.</p>
-  </article>
+</article>
 
-  <footer class="site">
-    <span>Shaurya · 2026</span>
-    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
-    <a href="index.html">Index</a>
-  </footer>
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Latest in the log</h2>
+    <a class="label" href="index.html#archive">All 8 in the archive →</a>
+  </div>
 
-</div>
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="label">Machine learning</span>
+      <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
+      <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+      <span class="meta label">10.09.26</span>
+    </a>
+    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
+      <span class="label">GPU programming</span>
+      <h3>Programming an attention kernel in Triton</h3>
+      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+      <span class="meta label">08.09.26</span>
+    </a>
+    <a class="tile-post" href="birthday-attack.html">
+      <span class="label">Cryptography</span>
+      <h3>Twenty-three people, 256 bits</h3>
+      <p>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
+      <span class="meta label">02.09.26</span>
+    </a>
+    <a class="tile-post" href="where-does-computation-end.html">
+      <span class="label">Computation</span>
+      <h3>Where Does Computation End?</h3>
+      <p>A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p>
+      <span class="meta label">18.08.26</span>
+    </a>
+  </div>
+</section>
+
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="design.js?v=700dc3e8"></script>
+
 </body>
 </html>

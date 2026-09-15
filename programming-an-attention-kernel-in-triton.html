@@ -1,29 +1,32 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Programming an attention kernel in Triton · Shaurya</title>
-  <meta name="description" content="Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html">
-  <meta property="og:site_name" content="Shaurya · Log">
-  <meta property="og:title" content="Programming an attention kernel in Triton · Shaurya">
-  <meta property="og:description" content="Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html">
-  <meta property="og:image" content="https://shauryasharma.tech/images/covers/programming-an-attention-kernel-in-triton.svg">
-  <meta property="article:published_time" content="2026-09-08T00:00:00+00:00">
-  <link rel="alternate" type="text/markdown" href="programming-an-attention-kernel-in-triton.md">
-  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=a2ff6719">
-  <script src="site.js?v=b8d0ed4c" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Programming an attention kernel in Triton · Shaurya</title>
+<meta name="description" content="Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="Programming an attention kernel in Triton · Shaurya">
+<meta property="og:description" content="Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html">
+<meta property="og:image" content="https://shauryasharma.tech/images/covers/programming-an-attention-kernel-in-triton.svg">
+<meta property="article:published_time" content="2026-09-08T00:00:00+00:00">
+<link rel="alternate" type="text/markdown" href="programming-an-attention-kernel-in-triton.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="design.css?v=0c021ac6">
+<link rel="stylesheet" href="widgets.css?v=268ce49f">
+<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<script src="chrome.js?v=ef3ae2bd"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Programming an attention kernel in Triton","description":"Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.","url":"https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html"},"datePublished":"2026-09-08T00:00:00+00:00","dateModified":"2026-09-08T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["gpu programming","triton","machine learning"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -34,26 +37,28 @@
   </script>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="site">
-    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
-    <nav>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About</a>
-      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
-    </nav>
-  </header>
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
 
-  <article class="post entry">
-    <h1>Programming an attention kernel in Triton</h1>
-    <p class="post-meta">
-      <time datetime="2026-09-08">September 08, 2026</time>
-      <span class="tags">gpu programming, triton, machine learning</span>
-      <a class="post-source" href="https://github.com/Shaurya-34/TritonAttentionKernel" rel="noopener">source &#8599;</a>
-      <button type="button" class="share-button" aria-label="Copy link to this article">share</button>
-    </p>
+<section class="hero">
+  <p class="label kicker">GPU programming · Triton · Machine learning</p>
+  <h1>Programming an attention kernel in Triton</h1>
+  <p class="standfirst">Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+  <p class="byline">
+    <time class="label" datetime="2026-09-08">September 08, 2026</time>
+    <span class="byline-links"><a class="label" href="https://github.com/Shaurya-34/TritonAttentionKernel" rel="noopener">Source ↗</a><button type="button" class="share label" data-url="https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html" aria-label="Share this article">Share</button></span>
+  </p>
+</section>
 
+<article class="prose post">
 <p>Every PyTorch operation you've ever called, <code>softmax</code>, <code>relu</code>, <code>matmul</code>, is,
 underneath, someone else's compiled GPU kernel. You never see the kernel. You
 call the function, the tensor comes back, and the actual work of moving
@@ -81,6 +86,14 @@ That's the entire premise behind Triton, and it's the same underlying idea
 that motivates FlashAttention, which I'll come back to at the end: fewer
 memory round trips, not fewer FLOPs, is often the real lever for speed on a
 GPU.</p>
+</article>
+
+<section class="pull">
+  <blockquote id="pullquote"><em>Fewer memory round trips</em>, not fewer FLOPs, is often the real lever for speed on a GPU.</blockquote>
+  <p class="attrib"><span class="label">Why bother: the thing PyTorch hides</span></p>
+</section>
+
+<article class="prose post prose-after">
 <h2>Kernel 1: vector add, or learning to think like a GPU</h2>
 <p>The simplest possible Triton kernel doesn't optimize anything, it just adds
 two vectors, <code>out = x + y</code>. The point of writing this first wasn't the
@@ -272,24 +285,174 @@ Q: (1, 64), K: (10, 64), V: (10, 64)   -&gt;  matches: True
 </code></pre>
 <p>Given the softmax lesson above, testing more than one shape here wasn't
 optional, it's the only reason I can trust this one.</p>
-<h2>The wall, named honestly</h2>
-<p>Here's what this kernel is not: it is not FlashAttention, and it's worth
-being precise about why, rather than letting the name imply more than the
-code does.</p>
-<p>This kernel loads the entire K and V into fast on-chip memory
-(<span class="term" tabindex="0">SRAM<span class="term-preview">The GPU's small, extremely fast on-chip memory, as opposed to its much larger but far slower off-chip global memory.</span></span>)
-in one shot before doing anything else. That's fine at the sequence lengths
-tested here, but SRAM is small (tens of kilobytes per streaming
-multiprocessor, not gigabytes), and K/V grow linearly with sequence length.
-At some sequence length, "all of K and V" simply stops fitting, and this
-kernel breaks, not gracefully, it just runs out of room.</p>
-<p>The real FlashAttention trick is to never need all of K/V in SRAM at once:
-process it in chunks, and keep a running max and running sum as you go,
-correcting the accumulated output every time a new chunk reveals a bigger
-max than anything seen so far. That's a genuinely different, harder
-algorithm than anything in this post, the online-softmax rescaling has no
-analogue in kernels 1 through 4, and it's the specific thing I haven't built
-yet.</p>
+</article>
+
+<!-- The scroll figure for "The wall, named honestly". build.py puts this
+     in place of that section of the post; the step paragraphs are the
+     post's own sentences, split, so edit both together. -->
+<nav class="rail" id="rail" aria-label="Section progress"></nav>
+
+<section class="scrolly" id="scrolly">
+  <div class="scrolly-head">
+    <span class="label">Figure · the diagram follows your scroll</span>
+    <h2>The wall, named honestly</h2>
+    <p>Here's what this kernel is not: it is not FlashAttention, and it's worth
+       being precise about why, rather than letting the name imply more than the
+       code does.</p>
+  </div>
+
+  <div class="scrolly-inner">
+
+    <!-- LEFT: the steps. The paragraphs are the post's own, split at
+         sentence boundaries; only the step headings are added. -->
+    <div class="steps" id="steps">
+
+      <article class="step" data-step="1">
+        <p class="step-n">Step 01</p>
+        <h3>All of K and V, in one shot</h3>
+        <p>This kernel loads the entire K and V into fast on-chip memory
+           (<span class="term" tabindex="0">SRAM<span class="term-preview">The GPU's small, extremely fast on-chip memory, as opposed to its much larger but far slower off-chip global memory.</span></span>)
+           in one shot before doing anything else.</p>
+      </article>
+
+      <article class="step" data-step="2">
+        <p class="step-n">Step 02</p>
+        <h3>SRAM runs out</h3>
+        <p>That's fine at the sequence lengths tested here, but SRAM is small (tens of
+           kilobytes per streaming multiprocessor, not gigabytes), and K/V grow linearly
+           with sequence length. At some sequence length, "all of K and V" simply stops
+           fitting, and this kernel breaks, not gracefully, it just runs out of room.</p>
+      </article>
+
+      <article class="step" data-step="3">
+        <p class="step-n">Step 03</p>
+        <h3>Chunks, and a running max and sum</h3>
+        <p>The real FlashAttention trick is to never need all of K/V in SRAM at once:
+           process it in chunks, and keep a running max and running sum as you go,
+           correcting the accumulated output every time a new chunk reveals a bigger
+           max than anything seen so far.</p>
+      </article>
+
+      <article class="step" data-step="4">
+        <p class="step-n">Step 04</p>
+        <h3>The rung not yet climbed</h3>
+        <p>That's a genuinely different, harder algorithm than anything in this post,
+           the online-softmax rescaling has no analogue in kernels 1 through 4, and it's
+           the specific thing I haven't built yet.</p>
+      </article>
+
+    </div>
+
+    <!-- RIGHT: the sticky panel -->
+    <div class="sticky-col">
+      <div class="panel" id="panel" data-step="1">
+
+        <div class="panel-bar">
+          <span>Score matrix Q·Kᵀ</span>
+          <span class="state" id="panelState">Step 01 / 04</span>
+        </div>
+
+        <div class="legend">
+          <span><i class="k-q"></i>Query block</span>
+          <span><i class="k-live"></i>Live tile</span>
+          <span><i class="k-done"></i>Accumulated</span>
+          <span class="k-plan-item"><i class="k-plan"></i>Not built</span>
+        </div>
+
+        <figure>
+          <!--
+            SCHEMATIC DIAGRAM
+            =================
+            A 4x4 grid of score tiles: query blocks down, key blocks across. The
+            SRAM box is schematic, not to scale. The running max and sum in the
+            readout are computed for real, online softmax over one example row
+            of scores (SCORES in the script), and the last step checks the result
+            against the one-shot softmax denominator.
+
+            Tiles are addressed by (row, col) and their state is set purely
+            through the CSS classes is-materialised / is-ghost / is-queued /
+            is-active / is-done, via setTiles(fn). A truer diagram can replace
+            the <g id="grid"> contents without touching the scroll logic below.
+          -->
+          <svg viewBox="0 0 420 400" role="img" aria-labelledby="figTitle">
+            <title id="figTitle">Score tiles for the attention kernel, highlighted as the text advances</title>
+
+            <defs>
+              <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <rect width="6" height="6" fill="#f4f0e6"></rect>
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#13120f" stroke-width="1.6" stroke-opacity="0.32"></line>
+              </pattern>
+            </defs>
+
+            <!-- K labels across the top -->
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#6d6c68">
+              <text x="140" y="58" text-anchor="middle">K₁</text>
+              <text x="208" y="58" text-anchor="middle">K₂</text>
+              <text x="276" y="58" text-anchor="middle">K₃</text>
+              <text x="344" y="58" text-anchor="middle">K₄</text>
+              <text x="96"  y="104" text-anchor="end">Q₁</text>
+              <text x="96"  y="172" text-anchor="end">Q₂</text>
+              <text x="96"  y="240" text-anchor="end">Q₃</text>
+              <text x="96"  y="308" text-anchor="end">Q₄</text>
+              <text x="106" y="34"  font-size="9" letter-spacing="1.4">KEYS →</text>
+              <text x="30"  y="104" font-size="9" letter-spacing="1.4" transform="rotate(-90 30 104)">QUERIES →</text>
+            </g>
+
+            <!-- the grid of tiles -->
+            <g id="grid"></g>
+
+            <!-- SRAM capacity bracket, shown on step 2 -->
+            <g id="sramBox">
+              <rect x="104" y="68" width="72" height="72" fill="none" stroke="#0d0d0c" stroke-width="2"></rect>
+            </g>
+            <g id="sramLabel" font-family="JetBrains Mono, monospace" font-size="9" fill="#0d0d0c">
+              <line x1="176" y1="104" x2="200" y2="104" stroke="#0d0d0c" stroke-width="1"></line>
+              <text x="204" y="101">SRAM HOLDS</text>
+              <text x="204" y="113">ABOUT THIS MUCH</text>
+            </g>
+
+            <!-- active query block bracket, steps 1 to 3 -->
+            <g id="qBracket">
+              <path d="M100 70 H92 V140 H100" fill="none" stroke="#0d0d0c" stroke-width="2"></path>
+            </g>
+
+            <!-- output column, steps 3 and 4 -->
+            <g id="outCol" font-family="JetBrains Mono, monospace" font-size="10" fill="#6d6c68">
+              <text x="399" y="58" text-anchor="middle">O</text>
+              <rect x="386" y="70"  width="26" height="60" fill="#ebe9e4" stroke="#0d0d0c" stroke-width="1"></rect>
+              <rect x="386" y="138" width="26" height="60" fill="none"    stroke="#0d0d0c" stroke-width="1" stroke-opacity=".3"></rect>
+              <rect x="386" y="206" width="26" height="60" fill="none"    stroke="#0d0d0c" stroke-width="1" stroke-opacity=".3"></rect>
+              <rect x="386" y="274" width="26" height="60" fill="none"    stroke="#0d0d0c" stroke-width="1" stroke-opacity=".3"></rect>
+            </g>
+
+            <!-- how much of K/V has to sit in SRAM at once. The mark is a
+                 fixed capacity: it never moves, the need does. -->
+            <g font-family="JetBrains Mono, monospace" font-size="9" fill="#6d6c68">
+              <text x="104" y="362" letter-spacing="1.4">K/V NEEDED IN SRAM</text>
+              <rect x="104" y="374" width="240" height="6" fill="none" stroke="#0d0d0c" stroke-width="1" stroke-opacity=".35"></rect>
+              <rect id="trafficBar"  x="104" y="374" width="120" height="6" fill="#0d0d0c"></rect>
+              <rect id="trafficOver" x="254" y="374" width="0"   height="6" fill="#e5482c"></rect>
+              <line x1="254" y1="369" x2="254" y2="385" stroke="#0d0d0c" stroke-width="1"></line>
+              <text x="254" y="396" text-anchor="middle" font-size="8">SRAM LIMIT</text>
+            </g>
+          </svg>
+
+          <figcaption id="caption"></figcaption>
+        </figure>
+
+        <dl class="readout">
+          <div><dt>Running max <i>m</i></dt><dd id="roM">—</dd></div>
+          <div><dt>Running sum <i>ℓ</i></dt><dd id="roL">—</dd></div>
+          <div><dt>K/V blocks in SRAM</dt><dd id="roT">4 / 4</dd></div>
+        </dl>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<article class="prose post prose-after fin">
 <p>Naming that clearly here, instead of leaving it unsaid, is the whole point: this post
 is "I climbed four rungs of a real ladder, correctly, and found a real bug
 along the way," not "I built FlashAttention."</p>
@@ -300,20 +463,295 @@ that showed up when I mixed up the median and the mean in the
 birthday-paradox post. Different domain, same shape of mistake, same fix:
 test the case you didn't think to test.</p>
 <p>The tiled, online-softmax version is the next rung. I haven't climbed it
-yet.</p>
-  </article>
+yet.</p></article>
 
-  <nav class="post-nav">
-    <a class="older" href="birthday-attack.html">← Twenty-three people, 256 bits</a>
-    <a class="newer" href="understanding-alphafolds-plddt-pae-and-ptm.html">Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM →</a>
-  </nav>
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Elsewhere in the log</h2>
+    <a class="label" href="index.html#archive">All 8 entries →</a>
+  </div>
 
-  <footer class="site">
-    <span>Shaurya · 2026</span>
-    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
-    <a href="index.html">Index</a>
-  </footer>
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="label">Next · Machine learning</span>
+      <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
+      <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+      <span class="meta label">10.09.26</span>
+    </a>
+    <a class="tile-post" href="birthday-attack.html">
+      <span class="label">Previous · Cryptography</span>
+      <h3>Twenty-three people, 256 bits</h3>
+      <p>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
+      <span class="meta label">02.09.26</span>
+    </a>
+    <a class="tile-post" href="where-does-computation-end.html">
+      <span class="label">Computation</span>
+      <h3>Where Does Computation End?</h3>
+      <p>A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p>
+      <span class="meta label">18.08.26</span>
+    </a>
+    <a class="tile-post" href="self-rewriting-mandelbrot.html">
+      <span class="label">Python</span>
+      <h3>A renderer that keeps notes on itself</h3>
+      <p>A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.</p>
+      <span class="meta label">06.08.26</span>
+    </a>
+  </div>
+</section>
 
-</div>
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="design.js?v=700dc3e8"></script>
+<script src="site.js?v=b8d0ed4c"></script>
+<script>
+(function () {
+  "use strict";
+
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ============================================================
+     1. Build the tile grid
+     ============================================================ */
+
+  var ROWS = 4, COLS = 4, T = 60, GAP = 8, X0 = 110, Y0 = 70;
+  var grid = document.getElementById("grid");
+  var tiles = [];
+
+  for (var r = 0; r < ROWS; r++) {
+    for (var c = 0; c < COLS; c++) {
+      var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("class", "tile");
+      g.dataset.r = r;
+      g.dataset.c = c;
+
+      var x = X0 + c * (T + GAP), y = Y0 + r * (T + GAP);
+
+      var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      rect.setAttribute("class", "cell");
+      rect.setAttribute("x", x); rect.setAttribute("y", y);
+      rect.setAttribute("width", T); rect.setAttribute("height", T);
+
+      var t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t.setAttribute("class", "cellText");
+      t.setAttribute("x", x + T / 2); t.setAttribute("y", y + T / 2 + 3);
+      t.setAttribute("text-anchor", "middle");
+      t.textContent = "S" + (r + 1) + (c + 1);
+
+      g.appendChild(rect); g.appendChild(t);
+      grid.appendChild(g);
+      tiles.push(g);
+    }
+  }
+
+  /* setTiles(fn) — fn(r, c) returns a state string. This is the whole
+     contract between the scroll logic and the drawing. */
+  function setTiles(fn) {
+    tiles.forEach(function (g) {
+      var r = +g.dataset.r, c = +g.dataset.c;
+      g.setAttribute("class", "tile " + (fn(r, c) || ""));
+    });
+  }
+
+  /* ============================================================
+     2. Step definitions
+     ============================================================ */
+
+  var panel     = document.getElementById("panel");
+  var caption   = document.getElementById("caption");
+  var stateEl   = document.getElementById("panelState");
+  var roM       = document.getElementById("roM");
+  var roL       = document.getElementById("roL");
+  var roT       = document.getElementById("roT");
+  var traffic   = document.getElementById("trafficBar");
+  var trafficOver = document.getElementById("trafficOver");
+
+  /* One example row of attention scores for query block Q1 against 16
+     keys, four per key block. The running values below are real online
+     softmax over these numbers, not decoration: the max jumps in blocks
+     K2 and K4, so those are the blocks that force a rescale. */
+  var SCORES = [
+    [1.2, 0.4, 2.1, -0.3],
+    [0.8, 3.0, 1.1, 0.2],
+    [-0.5, 1.7, 0.9, 2.4],
+    [3.6, 0.1, 1.3, 2.8]
+  ];
+
+  /* the one-shot answer Kernel 4 computes with everything in SRAM */
+  function oneShot() {
+    var all = [].concat.apply([], SCORES);
+    var m = Math.max.apply(null, all), l = 0;
+    all.forEach(function (s) { l += Math.exp(s - m); });
+    return { m: m, l: l };
+  }
+
+  /* online softmax through key blocks 0..k: when a block raises the max,
+     the sum so far is rescaled by exp(old max - new max) */
+  function online(k) {
+    var m = -Infinity, l = 0, prev = -Infinity;
+    for (var i = 0; i <= k; i++) {
+      prev = m;
+      var mNew = Math.max(m, Math.max.apply(null, SCORES[i]));
+      l = l * Math.exp(m - mNew);
+      SCORES[i].forEach(function (s) { l += Math.exp(s - mNew); });
+      m = mNew;
+    }
+    return { m: m, l: l, prev: prev };
+  }
+
+  var SWEEP = 3; /* the step that follows scroll continuously */
+
+  var STEPS = {
+    1: function () {
+      var r = oneShot();
+      setTiles(function (row) { return row === 0 ? "is-active" : ""; });
+      caption.innerHTML = "Kernel 4, one program: query block <b>Q₁</b> against every key block at once. All of K and V is live in SRAM together.";
+      set(roM, r.m.toFixed(3)); set(roL, r.l.toFixed(3)); set(roT, "4 / 4");
+      bar(0.5);
+    },
+    2: function () {
+      setTiles(function (row, c) {
+        if (row !== 0) return "";
+        return c === 0 ? "is-active" : "is-ghost";
+      });
+      caption.innerHTML = "The box is what fits. Kernel 4 still needs all four key blocks at once, and they grow with the sequence: double the length and the need runs past the limit.";
+      set(roM, "—"); set(roL, "—"); set(roT, "4 / 4");
+      bar(1);
+    },
+    /* continuous: p is progress through the step, 0 to 1 */
+    3: function (p) {
+      var k = Math.min(COLS - 1, Math.floor(p * COLS));
+      setTiles(function (row, c) {
+        if (row !== 0) return "";
+        if (c < k) return "is-done";
+        if (c === k) return "is-active";
+        return "is-queued";
+      });
+
+      var r = online(k);
+      if (k > 0 && r.m > r.prev) {
+        caption.innerHTML = "Block <b>K" + (k + 1) + "</b> raised the max from " + r.prev.toFixed(1) + " to " + r.m.toFixed(1) +
+          ", so the sum so far is rescaled by e^(" + r.prev.toFixed(1) + " − " + r.m.toFixed(1) + ") = " + Math.exp(r.prev - r.m).toFixed(3) + ".";
+      } else if (k > 0) {
+        caption.innerHTML = "Block <b>K" + (k + 1) + "</b> didn't raise the max, so its terms just add onto the sum. No correction needed.";
+      } else {
+        caption.innerHTML = "Block <b>K1</b> is the only one in SRAM. Its max and sum start the running values.";
+      }
+      set(roM, r.m.toFixed(3));
+      set(roL, r.l.toFixed(3));
+      set(roT, "1 / 4");
+      bar(0.125);
+    },
+    4: function () {
+      var r = online(COLS - 1), ref = oneShot();
+      setTiles(function () { return "is-materialised"; });
+      caption.innerHTML = "Running result <b>" + r.l.toFixed(3) + "</b>, one-shot result <b>" + ref.l.toFixed(3) +
+        "</b>: the same denominator, with only one key block ever in SRAM. The arithmetic holds. The grid is hatched because the kernel that does it is the one I haven't written."
+      set(roM, r.m.toFixed(3)); set(roL, r.l.toFixed(3)); set(roT, "1 / 4");
+      bar(0.125);
+    }
+  };
+
+  function set(el, v) { if (el.textContent !== v) el.textContent = v; }
+  /* The track is the whole width; the capacity mark sits at a fixed
+     point on it. frac is how much K/V the kernel needs, as a fraction of
+     the track, so anything past CAP is overflow and is drawn in red. */
+  var TRACK = 240, CAP = 150;
+  function bar(frac) {
+    var w = Math.max(0, frac) * TRACK;
+    traffic.setAttribute("width", Math.min(w, CAP).toFixed(1));
+    trafficOver.setAttribute("width", Math.max(0, w - CAP).toFixed(1));
+  }
+
+  /* ============================================================
+     3. Scroll wiring
+        Driven off measured scroll position, not autoplay: the active
+        step is whichever step block straddles the viewport midpoint,
+        and step 4 additionally reports how far through itself it is.
+     ============================================================ */
+
+  var stepEls = Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var rail = document.getElementById("rail");
+  var scrolly = document.getElementById("scrolly");
+  var railButtons = [];
+
+  stepEls.forEach(function (el, i) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.innerHTML = '<span class="n">0' + (i + 1) + '</span><span class="tick"></span>';
+    b.setAttribute("aria-label", "Go to step " + (i + 1));
+    b.addEventListener("click", function () {
+      var y = el.getBoundingClientRect().top + window.scrollY - innerHeight * 0.28;
+      if (window.lenisInstance) window.lenisInstance.scrollTo(y, { duration: 1.1 });
+      else scrollTo({ top: y, behavior: "smooth" });
+    });
+    rail.appendChild(b);
+    railButtons.push(b);
+  });
+
+  var current = -1;
+  var stickyCol = document.querySelector(".sticky-col");
+  var narrow = matchMedia("(max-width: 900px)");
+
+  /* The line a step has to cross to become active. On desktop that is
+     the middle of the screen; on narrow screens the panel covers the top
+     half, so it is the middle of the visible area under the panel. */
+  function readingLine() {
+    if (!narrow.matches) return innerHeight / 2;
+    var b = Math.max(0, Math.min(innerHeight, stickyCol.getBoundingClientRect().bottom));
+    return b + (innerHeight - b) / 2;
+  }
+
+  function update() {
+    var mid = readingLine();
+    var activeIndex = 0, localProgress = 0;
+
+    for (var i = 0; i < stepEls.length; i++) {
+      var rect = stepEls[i].getBoundingClientRect();
+      if (rect.top <= mid && rect.bottom > mid) {
+        activeIndex = i;
+        localProgress = (mid - rect.top) / rect.height;
+        break;
+      }
+      /* past the last one */
+      if (rect.bottom <= mid) { activeIndex = i; localProgress = 1; }
+    }
+
+    var stepNo = activeIndex + 1;
+
+    if (stepNo !== current) {
+      current = stepNo;
+      panel.dataset.step = stepNo;
+      set(stateEl, "Step 0" + stepNo + " / 0" + stepEls.length);
+      stepEls.forEach(function (el, i) { el.classList.toggle("is-active", i === activeIndex); });
+      railButtons.forEach(function (b, i) { b.classList.toggle("is-active", i === activeIndex); });
+      if (stepNo !== SWEEP) STEPS[stepNo]();
+    }
+
+    /* the sweep step keeps updating continuously while it is on screen */
+    if (stepNo === SWEEP) STEPS[SWEEP](Math.max(0, Math.min(1, localProgress)));
+
+    /* rail only while the figure is in play */
+    var sr = scrolly.getBoundingClientRect();
+    rail.classList.toggle("is-visible", sr.top < innerHeight * 0.5 && sr.bottom > innerHeight * 0.5);
+  }
+
+  /* follow Lenis (design.js) when it is running, as the figure always
+     has; without it (reduced motion) the native scroll */
+  if (window.lenisInstance) window.lenisInstance.on("scroll", update);
+  else addEventListener("scroll", update, { passive: true });
+  addEventListener("resize", update);
+
+  /* first paint */
+  STEPS[1]();
+  update();
+})();
+</script>
+
 </body>
 </html>

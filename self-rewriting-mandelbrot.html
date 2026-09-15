@@ -1,29 +1,32 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>A renderer that keeps notes on itself · Shaurya</title>
-  <meta name="description" content="A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://shauryasharma.tech/self-rewriting-mandelbrot.html">
-  <meta property="og:site_name" content="Shaurya · Log">
-  <meta property="og:title" content="A renderer that keeps notes on itself · Shaurya">
-  <meta property="og:description" content="A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://shauryasharma.tech/self-rewriting-mandelbrot.html">
-  <meta property="og:image" content="https://shauryasharma.tech/images/covers/self-rewriting-mandelbrot.svg">
-  <meta property="article:published_time" content="2026-08-06T00:00:00+00:00">
-  <link rel="alternate" type="text/markdown" href="self-rewriting-mandelbrot.md">
-  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=a2ff6719">
-  <script src="site.js?v=b8d0ed4c" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>A renderer that keeps notes on itself · Shaurya</title>
+<meta name="description" content="A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/self-rewriting-mandelbrot.html">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="A renderer that keeps notes on itself · Shaurya">
+<meta property="og:description" content="A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shauryasharma.tech/self-rewriting-mandelbrot.html">
+<meta property="og:image" content="https://shauryasharma.tech/images/covers/self-rewriting-mandelbrot.svg">
+<meta property="article:published_time" content="2026-08-06T00:00:00+00:00">
+<link rel="alternate" type="text/markdown" href="self-rewriting-mandelbrot.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="design.css?v=0c021ac6">
+<link rel="stylesheet" href="widgets.css?v=268ce49f">
+<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<script src="chrome.js?v=ef3ae2bd"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"A renderer that keeps notes on itself","description":"A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.","url":"https://shauryasharma.tech/self-rewriting-mandelbrot.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/self-rewriting-mandelbrot.html"},"datePublished":"2026-08-06T00:00:00+00:00","dateModified":"2026-08-06T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["python","self-modifying-code","fractals"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -34,26 +37,28 @@
   </script>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="site">
-    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
-    <nav>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About</a>
-      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
-    </nav>
-  </header>
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
 
-  <article class="post entry">
-    <h1>A renderer that keeps notes on itself</h1>
-    <p class="post-meta">
-      <time datetime="2026-08-06">August 06, 2026</time>
-      <span class="tags">python, self-modifying-code, fractals</span>
-      <a class="post-source" href="https://github.com/Shaurya-34/self_rewriting_mandelbrot" rel="noopener">source &#8599;</a>
-      <button type="button" class="share-button" aria-label="Copy link to this article">share</button>
-    </p>
+<section class="hero">
+  <p class="label kicker">Python · Self modifying code · Fractals</p>
+  <h1>A renderer that keeps notes on itself</h1>
+  <p class="standfirst">A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.</p>
+  <p class="byline">
+    <time class="label" datetime="2026-08-06">August 06, 2026</time>
+    <span class="byline-links"><a class="label" href="https://github.com/Shaurya-34/self_rewriting_mandelbrot" rel="noopener">Source ↗</a><button type="button" class="share label" data-url="https://shauryasharma.tech/self-rewriting-mandelbrot.html" aria-label="Share this article">Share</button></span>
+  </p>
+</section>
 
+<article class="prose post">
 <p>A quine is a program that prints its own source code and nothing else. It's a
 neat trick, but it's also a dead end - the output is always the same file you
 started with. I wanted something that used the idea of a program editing
@@ -82,6 +87,14 @@ Instead of a boolean, each pixel records the iteration at which
 capped at the maximum iteration count. That single change is what makes the
 rest of the project possible - you can't build a colormap pipeline on top of
 a boolean.</p>
+</article>
+
+<section class="pull">
+  <blockquote id="pullquote">It's not a quine. It doesn't need to be. <em>It just needs to remember.</em></blockquote>
+  <p class="attrib"><span class="label">Coda</span></p>
+</section>
+
+<article class="prose post prose-after fin">
 <h2>The pipeline</h2>
 <p>Everything downstream of that decision is a fairly standard chain:</p>
 <pre><code>viewport (center, zoom)
@@ -131,7 +144,7 @@ startup - the cache <em>is</em> the startup state.</p>
 view through every Matplotlib colormap worth trying. It's the same escape-time
 matrix underneath each one - only the last step of the pipeline changes.</p>
 <div class="colormap-carousel">
-  <div class="colormap-track">
+  <div class="colormap-track" data-lenis-prevent>
     <figure class="colormap-slide color" id="cm-inferno">
       <img class="color" src="images/mandelbrot/mandelbrot_inferno.png" alt="The Mandelbrot set rendered with the inferno colormap: dark background with bright orange and yellow escape bands." loading="lazy">
       <figcaption>inferno - the default.</figcaption>
@@ -238,20 +251,52 @@ getting a little larger every time the renderer sees a viewport, iteration
 count, and colormap combination it hasn't seen before. It's not a quine. It
 doesn't need to be. It just needs to remember.</p>
 <p>The source is on GitHub:
-<a href="https://github.com/Shaurya-34/self_rewriting_mandelbrot">Shaurya-34/self_rewriting_mandelbrot</a>.</p>
-  </article>
+<a href="https://github.com/Shaurya-34/self_rewriting_mandelbrot">Shaurya-34/self_rewriting_mandelbrot</a>.</p></article>
 
-  <nav class="post-nav">
-    <a class="older" href="never-repeating-never-leaving.html">← Never repeating, never leaving</a>
-    <a class="newer" href="where-does-computation-end.html">Where Does Computation End? →</a>
-  </nav>
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Elsewhere in the log</h2>
+    <a class="label" href="index.html#archive">All 8 entries →</a>
+  </div>
 
-  <footer class="site">
-    <span>Shaurya · 2026</span>
-    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
-    <a href="index.html">Index</a>
-  </footer>
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="where-does-computation-end.html">
+      <span class="label">Next · Computation</span>
+      <h3>Where Does Computation End?</h3>
+      <p>A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p>
+      <span class="meta label">18.08.26</span>
+    </a>
+    <a class="tile-post" href="never-repeating-never-leaving.html">
+      <span class="label">Previous · Chaos</span>
+      <h3>Never repeating, never leaving</h3>
+      <p>Four chaotic systems, one Python framework, and the one that refused to fit it.</p>
+      <span class="meta label">24.07.26</span>
+    </a>
+    <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="label">Machine learning</span>
+      <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
+      <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+      <span class="meta label">10.09.26</span>
+    </a>
+    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
+      <span class="label">GPU programming</span>
+      <h3>Programming an attention kernel in Triton</h3>
+      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+      <span class="meta label">08.09.26</span>
+    </a>
+  </div>
+</section>
 
-</div>
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="design.js?v=700dc3e8"></script>
+<script src="site.js?v=b8d0ed4c"></script>
+
 </body>
 </html>

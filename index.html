@@ -1,29 +1,31 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Shaurya · Log</title>
-  <meta name="description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://shauryasharma.tech/">
-  <meta property="og:site_name" content="Shaurya · Log">
-  <meta property="og:title" content="Shaurya · Log">
-  <meta property="og:description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://shauryasharma.tech/">
-  <meta property="og:image" content="https://shauryasharma.tech/images/covers/understanding-alphafolds-plddt-pae-and-ptm.svg">
-  <link rel="alternate" type="text/markdown" href="index.md">
-  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=a2ff6719">
-  <script src="site.js?v=b8d0ed4c" defer></script>
-  <link rel="stylesheet" href="home.css?v=128812d5">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Shaurya · Log</title>
+<meta name="description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="Shaurya · Log">
+<meta property="og:description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shauryasharma.tech/">
+<meta property="og:image" content="https://shauryasharma.tech/images/covers/understanding-alphafolds-plddt-pae-and-ptm.svg">
+<link rel="alternate" type="text/markdown" href="index.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="design.css?v=0c021ac6">
+<link rel="stylesheet" href="widgets.css?v=268ce49f">
+<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<script src="chrome.js?v=ef3ae2bd"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.","url":"https://shauryasharma.tech","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"}}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -34,461 +36,119 @@
   </script>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="site">
-    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
-    <nav>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About</a>
-      <button type="button" class="sound-toggle" hidden aria-pressed="false" aria-label="Turn on sound">sound</button>
-      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
-    </nav>
-  </header>
-<h1 class="sr-only">Shaurya · Log</h1>
-<p class="sr-only agent-home-summary">Shaurya&#x27;s Log is a small personal archive of experimental engineering notes. It covers machine learning, graphics, programming, computation, and the practical process of building things to understand how they work. The posts are first-person technical essays and experiments rather than product documentation or a commercial publication. Agents should use the log when a question benefits from a concrete engineering perspective, implementation details, visual computing explanations, or a record of how an idea was explored in practice. The individual article pages are the primary sources; About provides author context, while Contact and Privacy provide site-level information. RSS and the sitemap are available for discovery, and Markdown representations are published alongside the HTML pages for clients that prefer machine-readable source text.</p>
-<p class="identity">Shaurya — engineering notes on ML, graphics, computation</p>
-<main class="home-stage"><section class="tape-nav" aria-label="Article navigation"><div class="tape-head" aria-hidden="true"></div><div class="tape-viewport"><div class="tape-track" role="list"><div class="tape-runout" aria-hidden="true"></div><button class="tape-cell is-active" data-index="0" aria-label="Open grok.....grok ?" aria-current="true"><span class="tape-bit" aria-hidden="true">0</span></button><button class="tape-cell" data-index="1" aria-label="Open Marching with rays" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="2" aria-label="Open Never repeating, never leaving" aria-current="false"><span class="tape-bit" aria-hidden="true">0</span></button><button class="tape-cell" data-index="3" aria-label="Open A renderer that keeps notes on itself" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="4" aria-label="Open Where Does Computation End?" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="5" aria-label="Open Twenty-three people, 256 bits" aria-current="false"><span class="tape-bit" aria-hidden="true">0</span></button><button class="tape-cell" data-index="6" aria-label="Open Programming an attention kernel in Triton" aria-current="false"><span class="tape-bit" aria-hidden="true">1</span></button><button class="tape-cell" data-index="7" aria-label="Open Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM" aria-current="false"><span class="tape-bit" aria-hidden="true">0</span></button><div class="tape-runout" aria-hidden="true"></div></div></div><button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button><button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button></section><section class="panel-stage" aria-live="polite"><article class="entry-panel is-active" data-index="0" aria-hidden="false"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 01 · 20 Jul 2026 · 16 min read</p><h2 class="entry-title"><a href="grok-grok.html">grok.....grok ?</a></h2><p class="entry-desc">What happens when you push a model past generalization? Does it know the rule, or just the data?</p><p class="entry-tags">research, machine learning, physics</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_001</span><span>[ GENERALIZATION ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g fill="#17150f">
-    <circle cx="120" cy="120" r="2"/>
-    <circle cx="150" cy="165" r="1.5"/>
-    <circle cx="185" cy="110" r="2"/>
-    <circle cx="220" cy="195" r="1.5"/>
-    <circle cx="250" cy="145" r="2"/>
-    <circle cx="280" cy="220" r="1.5"/>
-    <circle cx="305" cy="175" r="2"/>
-    <circle cx="340" cy="240" r="1.5"/>
-    <circle cx="370" cy="195" r="2"/>
-    <circle cx="405" cy="255" r="1.5"/>
-    <circle cx="430" cy="210" r="2"/>
-    <circle cx="460" cy="270" r="1.5"/>
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html" aria-current="page">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
 
-    <circle cx="140" cy="270" r="1.5"/>
-    <circle cx="180" cy="310" r="2"/>
-    <circle cx="215" cy="250" r="1.5"/>
-    <circle cx="245" cy="340" r="2"/>
-    <circle cx="285" cy="290" r="1.5"/>
-    <circle cx="315" cy="365" r="2"/>
-    <circle cx="350" cy="325" r="1.5"/>
-    <circle cx="390" cy="390" r="2"/>
-    <circle cx="425" cy="350" r="1.5"/>
+<p class="sr-only">Shaurya's Log is a small personal archive of experimental engineering notes. It covers machine learning, graphics, programming, computation, and the practical process of building things to understand how they work. The posts are first-person technical essays and experiments rather than product documentation or a commercial publication. Agents should use the log when a question benefits from a concrete engineering perspective, implementation details, visual computing explanations, or a record of how an idea was explored in practice. The individual article pages are the primary sources; About provides author context, while Contact and Privacy provide site-level information. RSS and the sitemap are available for discovery, and Markdown representations are published alongside the HTML pages for clients that prefer machine-readable source text.</p>
 
-    <circle cx="170" cy="430" r="2"/>
-    <circle cx="215" cy="395" r="1.5"/>
-    <circle cx="250" cy="455" r="2"/>
-    <circle cx="290" cy="420" r="1.5"/>
-    <circle cx="330" cy="485" r="2"/>
-    <circle cx="370" cy="450" r="1.5"/>
-  </g>
+<section class="hero log-hero">
+  <div class="lh-ident">
+    <span class="label">Engineering notes on ML, graphics, computation</span>
+    <span class="label">honest · semi informative · personal</span>
+  </div>
 
-  <g stroke="#17150f" stroke-width="1.2">
-    <path opacity=".22" d="M515 70V580"/>
-    <path d="M555 535L880 115"/>
-    <path opacity=".35" d="M555 535L880 535M555 535V115"/>
-  </g>
+  <div class="lh-entry" id="lh-entry" aria-live="polite">
+    <p class="label kicker"><span data-f="state">Latest</span> · <span data-f="date">10.09.26</span> · <span data-f="tag">Machine learning</span></p>
+    <h1><a data-f="title" href="understanding-alphafolds-plddt-pae-and-ptm.html">Understanding AlphaFold's pLDDT, PAE, and pTM</a></h1>
+    <p class="standfirst" data-f="desc">AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+    <a class="lh-read label" data-f="read" href="understanding-alphafolds-plddt-pae-and-ptm.html">Read →</a>
+  </div>
 
-  <g fill="#17150f">
-    <circle cx="555" cy="535" r="4"/>
-    <circle cx="610" cy="464" r="3"/>
-    <circle cx="665" cy="393" r="3"/>
-    <circle cx="720" cy="322" r="3"/>
-    <circle cx="775" cy="251" r="3"/>
-    <circle cx="830" cy="180" r="3"/>
-    <circle cx="880" cy="115" r="4"/>
-  </g>
+  <div class="lh-strip" style="--days: 58">
+    <div class="lh-scroll">
+      <div class="lh-months" aria-hidden="true"><span class="lh-month" style="grid-column: 1 / span 12">Jul</span><span class="lh-month" style="grid-column: 13 / span 31">Aug</span><span class="lh-month" style="grid-column: 44 / span 15">Sep</span></div>
+      <div class="lh-cells"><a class="cell is-entry" href="grok-grok.html" data-i="7" aria-label="20.07.26: grok.....grok ?"></a><a class="cell is-entry" href="marching-with-rays.html" data-i="6" aria-label="21.07.26: Marching with rays"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="never-repeating-never-leaving.html" data-i="5" aria-label="24.07.26: Never repeating, never leaving"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="self-rewriting-mandelbrot.html" data-i="4" aria-label="06.08.26: A renderer that keeps notes on itself"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="where-does-computation-end.html" data-i="3" aria-label="18.08.26: Where Does Computation End?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="birthday-attack.html" data-i="2" aria-label="02.09.26: Twenty-three people, 256 bits"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="programming-an-attention-kernel-in-triton.html" data-i="1" aria-label="08.09.26: Programming an attention kernel in Triton"></a><span class="cell" aria-hidden="true"></span><a class="cell is-entry is-current" href="understanding-alphafolds-plddt-pae-and-ptm.html" data-i="0" aria-label="10.09.26: Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell is-today" aria-hidden="true"></span></div>
+    </div>
+    <div class="lh-ends">
+      <span class="label">20.07.26</span>
+      <span class="label">Today · 15.09.26</span>
+    </div>
+  </div>
 
-  <path class="draw-path" d="M120 510
-           C260 500 360 470 450 410
-           C540 350 625 285 710 220
-           C775 170 830 130 880 115"
-        stroke="#17150f" stroke-width="2"
-        stroke-dasharray="1400" stroke-dashoffset="1400"/>
+  <div class="lh-foot">
+    <p>I think of this less as a blog and more as a log: a running record of what I'm building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.</p>
+    <span class="label">8 entries · 58 days · <a href="feed.xml">RSS ↗</a></span>
+  </div>
+  <script type="application/json" id="log-data">[{"t": "Understanding AlphaFold's pLDDT, PAE, and pTM", "d": "10.09.26", "tag": "Machine learning", "desc": "AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.", "href": "understanding-alphafolds-plddt-pae-and-ptm.html", "state": "Latest"}, {"t": "Programming an attention kernel in Triton", "d": "08.09.26", "tag": "GPU programming", "desc": "Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.", "href": "programming-an-attention-kernel-in-triton.html", "state": "07 of 08"}, {"t": "Twenty-three people, 256 bits", "d": "02.09.26", "tag": "Cryptography", "desc": "A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.", "href": "birthday-attack.html", "state": "06 of 08"}, {"t": "Where Does Computation End?", "d": "18.08.26", "tag": "Computation", "desc": "A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.", "href": "where-does-computation-end.html", "state": "05 of 08"}, {"t": "A renderer that keeps notes on itself", "d": "06.08.26", "tag": "Python", "desc": "A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.", "href": "self-rewriting-mandelbrot.html", "state": "04 of 08"}, {"t": "Never repeating, never leaving", "d": "24.07.26", "tag": "Chaos", "desc": "Four chaotic systems, one Python framework, and the one that refused to fit it.", "href": "never-repeating-never-leaving.html", "state": "03 of 08"}, {"t": "Marching with rays", "d": "21.07.26", "tag": "Graphics", "desc": "Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.", "href": "marching-with-rays.html", "state": "02 of 08"}, {"t": "grok.....grok ?", "d": "20.07.26", "tag": "Research", "desc": "What happens when you push a model past generalization? Does it know the rule, or just the data?", "href": "grok-grok.html", "state": "01 of 08"}]</script>
+</section>
 
-  <g stroke="#17150f" opacity=".18">
-    <path d="M80 90H470M80 560H470"/>
-  </g>
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Before that</h2>
+    <a class="label" href="#archive">All 8 in the archive ↓</a>
+  </div>
 
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M250 400H295" opacity=".55"/>
-    <path d="M700 250H745" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="300" y="404">NOISE</text>
-    <text x="750" y="254">GENERALIZES →</text>
-  </g>
-</svg></div></article><article class="entry-panel" data-index="1" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 02 · 21 Jul 2026 · 6 min read</p><h2 class="entry-title"><a href="marching-with-rays.html">Marching with rays</a></h2><p class="entry-desc">Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</p><p class="entry-tags">graphics, java</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_002</span><span>[ DISTANCE FIELD ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" stroke-width="1.3">
-    <circle cx="720" cy="325" r="55"/>
-    <circle cx="720" cy="325" r="105"/>
-    <circle cx="720" cy="325" r="155" stroke-dasharray="7 7" opacity=".55"/>
-    <circle cx="720" cy="325" r="205" stroke-dasharray="2 8" opacity=".35"/>
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
+      <span class="label">GPU programming</span>
+      <h3>Programming an attention kernel in Triton</h3>
+      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+      <span class="meta label">08.09.26</span>
+    </a>
+    <a class="tile-post" href="birthday-attack.html">
+      <span class="label">Cryptography</span>
+      <h3>Twenty-three people, 256 bits</h3>
+      <p>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
+      <span class="meta label">02.09.26</span>
+    </a>
+    <a class="tile-post" href="where-does-computation-end.html">
+      <span class="label">Computation</span>
+      <h3>Where Does Computation End?</h3>
+      <p>A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p>
+      <span class="meta label">18.08.26</span>
+    </a>
+    <a class="tile-post" href="self-rewriting-mandelbrot.html">
+      <span class="label">Python</span>
+      <h3>A renderer that keeps notes on itself</h3>
+      <p>A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.</p>
+      <span class="meta label">06.08.26</span>
+    </a>
+  </div>
+</section>
 
-    <path d="M80 325H940" opacity=".2"/>
-    <path d="M720 70V580" opacity=".2"/>
+<section class="archive" id="archive">
+  <div class="archive-head">
+    <h2>Archive</h2>
+    <div class="filters" role="group" aria-label="Filter by topic">
+      <button type="button" data-tag="" aria-pressed="true">All<span>8</span></button>
+      <button type="button" data-tag="machine learning" aria-pressed="false">Machine learning<span>3</span></button>
+      <button type="button" data-tag="python" aria-pressed="false">Python<span>3</span></button>
+      <button type="button" data-tag="physics" aria-pressed="false">Physics<span>2</span></button>
+    </div>
+  </div>
+  <div class="year">
+    <h3 class="year-label">2026</h3>
+    <ol class="rows">
+      <li data-tags="machine learning|structural biology|alphafold"><a href="understanding-alphafolds-plddt-pae-and-ptm.html"><time class="d" datetime="2026-09-10">10.09</time><span class="t">Understanding AlphaFold's pLDDT, PAE, and pTM</span><span class="tags label">Machine learning · Structural biology</span></a></li>
+      <li data-tags="gpu programming|triton|machine learning"><a href="programming-an-attention-kernel-in-triton.html"><time class="d" datetime="2026-09-08">08.09</time><span class="t">Programming an attention kernel in Triton</span><span class="tags label">GPU programming · Triton</span></a></li>
+      <li data-tags="cryptography|probability|python"><a href="birthday-attack.html"><time class="d" datetime="2026-09-02">02.09</time><span class="t">Twenty-three people, 256 bits</span><span class="tags label">Cryptography · Probability</span></a></li>
+      <li data-tags="computation|computability|hypercomputation|physics|philosophy"><a href="where-does-computation-end.html"><time class="d" datetime="2026-08-18">18.08</time><span class="t">Where Does Computation End?</span><span class="tags label">Computation · Computability</span></a></li>
+      <li data-tags="python|self-modifying-code|fractals"><a href="self-rewriting-mandelbrot.html"><time class="d" datetime="2026-08-06">06.08</time><span class="t">A renderer that keeps notes on itself</span><span class="tags label">Python · Self modifying code</span></a></li>
+      <li data-tags="chaos|python|visualization"><a href="never-repeating-never-leaving.html"><time class="d" datetime="2026-07-24">24.07</time><span class="t">Never repeating, never leaving</span><span class="tags label">Chaos · Python</span></a></li>
+      <li data-tags="graphics|java"><a href="marching-with-rays.html"><time class="d" datetime="2026-07-21">21.07</time><span class="t">Marching with rays</span><span class="tags label">Graphics · Java</span></a></li>
+      <li data-tags="research|machine learning|physics"><a href="grok-grok.html"><time class="d" datetime="2026-07-20">20.07</time><span class="t">grok.....grok ?</span><span class="tags label">Research · Machine learning</span></a></li>
+    </ol>
+  </div>
+  <p class="archive-empty" hidden>Nothing under that topic yet.</p>
+</section>
 
-    <path class="draw-path" d="M95 325L665 325M95 325L655 225M95 325L655 425M95 325L630 160M95 325L630 490"
-          stroke-dasharray="3200" stroke-dashoffset="3200"/>
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
 
-    <path d="M665 325l-12-6M665 325l-12 6"/>
-    <path d="M655 225l-12-4M655 225l-9 9"/>
-    <path d="M655 425l-12 4M655 425l-9-9"/>
-  </g>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="design.js?v=700dc3e8"></script>
 
-  <g fill="#faf9f7" stroke="#17150f" stroke-width="1.3">
-    <circle cx="190" cy="325" r="5"/>
-    <circle cx="300" cy="325" r="5"/>
-    <circle cx="405" cy="325" r="5"/>
-    <circle cx="500" cy="325" r="5"/>
-    <circle cx="575" cy="325" r="5"/>
-
-    <circle cx="205" cy="306" r="4"/>
-    <circle cx="320" cy="286" r="4"/>
-    <circle cx="430" cy="266" r="4"/>
-    <circle cx="525" cy="248" r="4"/>
-
-    <circle cx="205" cy="344" r="4"/>
-    <circle cx="320" cy="364" r="4"/>
-    <circle cx="430" cy="384" r="4"/>
-    <circle cx="525" cy="402" r="4"/>
-  </g>
-
-  <circle cx="720" cy="325" r="6" fill="#17150f"/>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M665 290H695M665 360H695" opacity=".5"/>
-    <path d="M705 325H735" opacity=".5"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M300 300H345" opacity=".55"/>
-    <path d="M740 325H785" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="350" y="304">RAY</text>
-    <text x="790" y="329">STEP</text>
-  </g>
-</svg></div></article><article class="entry-panel" data-index="2" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 03 · 24 Jul 2026 · 11 min read</p><h2 class="entry-title"><a href="never-repeating-never-leaving.html">Never repeating, never leaving</a></h2><p class="entry-desc">Four chaotic systems, one Python framework, and the one that refused to fit it.</p><p class="entry-tags">chaos, python, visualization</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_003</span><span>[ STRANGE ATTRACTOR ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" opacity=".16">
-    <path d="M90 520H910"/>
-    <path d="M500 70V580"/>
-    <path d="M150 500L850 120"/>
-    <path d="M150 120L850 500"/>
-  </g>
-
-  <g fill="#17150f">
-    <circle cx="180" cy="450" r="3"/>
-    <circle cx="270" cy="390" r="2"/>
-    <circle cx="760" cy="180" r="3"/>
-    <circle cx="820" cy="430" r="2"/>
-    <circle cx="680" cy="520" r="2"/>
-  </g>
-
-  <path
-    d="M145 470
-       C205 430 275 405 345 390
-       C410 376 455 340 475 285
-       C500 220 575 165 655 185
-       C730 204 760 280 710 335
-       C665 385 565 380 520 330
-       C470 275 500 205 585 170
-       C680 132 785 190 790 280
-       C796 365 720 430 625 425
-       C530 420 470 350 500 275
-       C530 195 650 155 735 215
-       C820 275 780 390 690 420
-       C600 450 505 405 495 335
-       C485 265 555 220 630 235
-       C705 250 735 325 690 365
-       C645 405 560 390 535 340
-       C510 290 545 250 600 255
-       C655 260 680 310 650 340
-       C620 370 570 355 560 320"
-    class="draw-path"
-    stroke="#17150f"
-    stroke-width="1.4"
-    stroke-dasharray="5000" stroke-dashoffset="5000"/>
-
-  <path
-    d="M145 470
-       C230 420 320 400 400 365
-       C480 330 500 250 580 205"
-    stroke="#17150f"
-    stroke-width=".8"
-    opacity=".35"/>
-
-  <circle cx="560" cy="320" r="5" fill="#17150f"/>
-
-  <g stroke="#17150f" stroke-width="1">
-    <circle cx="145" cy="470" r="4" fill="#faf9f7"/>
-    <circle cx="790" cy="280" r="4" fill="#faf9f7"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M565 320H610" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="615" y="324">ATTRACTOR</text>
-    <text x="100" y="440">NEVER CLOSES →</text>
-  </g>
-</svg></div></article><article class="entry-panel" data-index="3" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 04 · 06 Aug 2026 · 8 min read</p><h2 class="entry-title"><a href="self-rewriting-mandelbrot.html">A renderer that keeps notes on itself</a></h2><p class="entry-desc">A Mandelbrot renderer that doesn&#x27;t cache to disk or a database - it rewrites its own source file to remember what it&#x27;s already drawn.</p><p class="entry-tags">python, self-modifying-code, fractals</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_004</span><span>[ SELF-SIMILARITY ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" stroke-width="1" opacity=".22">
-    <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
-    <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1.6">
-    <rect x="360" y="145" width="300" height="360"/>
-    <rect x="425" y="220" width="170" height="210"/>
-    <rect x="463" y="268" width="95" height="120"/>
-    <rect x="485" y="292" width="50" height="72"/>
-    <rect x="497" y="307" width="26" height="42"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1.2" opacity=".65">
-    <path d="M360 145L660 505"/>
-    <path d="M660 145L360 505"/>
-    <path d="M425 220L595 430"/>
-    <path d="M595 220L425 430"/>
-  </g>
-
-  <path class="draw-path" d="M145 490
-           C205 450 235 400 250 345
-           C265 290 300 250 355 240
-           C405 230 445 245 470 275"
-        stroke="#17150f" stroke-width="2"
-        stroke-dasharray="800" stroke-dashoffset="800"/>
-
-  <g fill="#17150f">
-    <rect x="350" y="135" width="10" height="10"/>
-    <rect x="655" y="495" width="10" height="10"/>
-    <rect x="492" y="302" width="8" height="8"/>
-  </g>
-
-  <path d="M145 490L110 520M145 490L115 475"
-        stroke="#17150f" stroke-width="1.2"/>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M558 307H605" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="610" y="311">SELF-SIMILAR</text>
-    <text x="120" y="440">REWRITES →</text>
-  </g>
-</svg></div></article><article class="entry-panel" data-index="4" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 05 · 18 Aug 2026 · 16 min read</p><h2 class="entry-title"><a href="where-does-computation-end.html">Where Does Computation End?</a></h2><p class="entry-desc">A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p><p class="entry-tags">computation, computability, hypercomputation, physics</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_005</span><span>[ HALTING BOUNDARY ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" stroke-width="1.4">
-    <path opacity=".18" d="M120 80H880M120 185H880M120 290H880M120 395H880M120 500H880M120 570H880"/>
-    <path opacity=".18" d="M180 55V595M340 55V595M500 55V595M660 55V595M820 55V595"/>
-
-    <circle cx="500" cy="325" r="65"/>
-    <circle cx="500" cy="325" r="130" opacity=".65"/>
-    <circle cx="500" cy="325" r="195" stroke-dasharray="6 7" opacity=".5"/>
-    <circle cx="500" cy="325" r="260" stroke-dasharray="2 8" opacity=".35"/>
-
-    <path d="M500 65V585M140 325H860" opacity=".35"/>
-
-    <path class="draw-path" d="M500 325
-             C555 300 610 280 650 245
-             C690 210 720 165 748 145
-             C780 122 815 115 850 82
-             C870 63 882 45 890 25"
-          stroke-dasharray="900" stroke-dashoffset="900"/>
-    <path d="M890 25l-4 14M890 25l-14 4"/>
-  </g>
-
-  <g fill="#17150f">
-    <circle cx="500" cy="325" r="5"/>
-    <rect x="886" y="21" width="9" height="9"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <circle cx="500" cy="195" r="4" fill="#faf9f7"/>
-    <circle cx="630" cy="325" r="4" fill="#faf9f7"/>
-    <circle cx="500" cy="455" r="4" fill="#faf9f7"/>
-  </g>
-
-  <g stroke="#17150f" stroke-width="1">
-    <path d="M598 325H645" opacity=".55"/>
-  </g>
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="650" y="329">BOUNDED</text>
-    <text x="820" y="55">ESCAPES →</text>
-  </g>
-</svg></div></article><article class="entry-panel" data-index="5" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 06 · 02 Sep 2026 · 18 min read</p><h2 class="entry-title"><a href="birthday-attack.html">Twenty-three people, 256 bits</a></h2><p class="entry-desc">A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p><p class="entry-tags">cryptography, probability, python</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_006</span><span>[ COLLISION ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" opacity=".16">
-    <path d="M90 500H910"/>
-    <path d="M500 80V600"/>
-    <path d="M170 560L830 130"/>
-  </g>
-
-  <g fill="#17150f">
-    <circle cx="150" cy="180" r="2.5"/>
-    <circle cx="205" cy="240" r="2"/>
-    <circle cx="260" cy="150" r="2.5"/>
-    <circle cx="310" cy="290" r="2"/>
-    <circle cx="360" cy="200" r="2.5"/>
-    <circle cx="415" cy="340" r="2"/>
-    <circle cx="470" cy="160" r="2.5"/>
-    <circle cx="520" cy="380" r="2"/>
-    <circle cx="230" cy="410" r="2.5"/>
-    <circle cx="290" cy="470" r="2"/>
-    <circle cx="340" cy="420" r="2.5"/>
-    <circle cx="605" cy="250" r="2"/>
-    <circle cx="655" cy="320" r="2.5"/>
-    <circle cx="700" cy="220" r="2"/>
-    <circle cx="750" cy="380" r="2.5"/>
-    <circle cx="800" cy="290" r="2"/>
-    <circle cx="845" cy="430" r="2.5"/>
-    <circle cx="600" cy="470" r="2"/>
-    <circle cx="660" cy="500" r="2.5"/>
-    <circle cx="180" cy="330" r="2"/>
-    <circle cx="440" cy="470" r="2.5"/>
-    <circle cx="500" cy="520" r="2"/>
-    <circle cx="720" cy="150" r="2"/>
-    <circle cx="770" cy="490" r="2.5"/>
-  </g>
-
-  <!-- The draw order that leads to the match - the whole point being
-       that it takes far fewer draws than the field of dots suggests. -->
-  <path
-    d="M150 180 L360 200 L470 160 L605 250 L700 220 L575 305 L720 150 L575 305"
-    class="draw-path"
-    stroke="#17150f"
-    stroke-width="1.2"
-    stroke-dasharray="2200" stroke-dashoffset="2200"/>
-
-  <!-- The two draws that land in the same place. Kept a few pixels
-       apart rather than exactly coincident - two dots on top of each
-       other reads as one dot, not as a collision. -->
-  <circle cx="571" cy="301" r="3" fill="#17150f"/>
-  <circle cx="579" cy="309" r="3" fill="#17150f"/>
-  <circle cx="575" cy="305" r="20" stroke="#17150f" stroke-width="1"/>
-
-  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="605" y="300">← SAME BUCKET</text>
-    <text x="90" y="600">√N DRAWS, NOT N</text>
-  </g>
-</svg></div></article><article class="entry-panel" data-index="6" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 07 · 08 Sep 2026 · 10 min read</p><h2 class="entry-title"><a href="programming-an-attention-kernel-in-triton.html">Programming an attention kernel in Triton</a></h2><p class="entry-desc">Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p><p class="entry-tags">gpu programming, triton, machine learning</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_007</span><span>[ THE WALL ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" opacity=".16">
-    <path d="M120 540H880"/>
-    <path d="M120 460H880"/>
-    <path d="M120 380H880"/>
-    <path d="M120 300H880"/>
-  </g>
-
-  <!-- The ladder: two rails, five rungs. The bottom four are the kernels
-       actually built here; the fifth is the tiled/online-softmax step
-       named but not climbed, so it reads differently from the rest. -->
-  <g stroke="#17150f" stroke-width="1.4">
-    <path d="M430 580V150"/>
-    <path d="M570 580V150"/>
-    <path d="M430 540H570"/>
-    <path d="M430 460H570"/>
-    <path d="M430 380H570"/>
-    <path d="M430 300H570"/>
-  </g>
-  <path d="M430 220H570" stroke="#17150f" stroke-width="1.4" stroke-dasharray="6 8" opacity=".4"/>
-
-  <!-- The wall above the last rung, with a short hatch so it reads as a
-       ceiling rather than another rung. -->
-  <path d="M370 150H630" stroke="#17150f" stroke-width="2"/>
-  <g stroke="#17150f" stroke-width="1.2" opacity=".55">
-    <path d="M385 150L370 130"/>
-    <path d="M425 150L410 130"/>
-    <path d="M465 150L450 130"/>
-    <path d="M505 150L490 130"/>
-    <path d="M545 150L530 130"/>
-    <path d="M585 150L570 130"/>
-    <path d="M625 150L610 130"/>
-  </g>
-
-  <!-- The climb: a zigzag from the ground up through the four real
-       rungs, stopping dead at the fourth. It never reaches the fifth
-       rung or the wall - that gap is the whole point of the drawing. -->
-  <path
-    d="M500 580 L462 540 L538 460 L462 380 L538 300"
-    class="draw-path"
-    stroke="#17150f"
-    stroke-width="1.6"
-    stroke-dasharray="480" stroke-dashoffset="480"/>
-
-  <g fill="#17150f">
-    <circle cx="500" cy="580" r="3"/>
-    <circle cx="462" cy="540" r="3"/>
-    <circle cx="538" cy="460" r="3"/>
-    <circle cx="462" cy="380" r="3"/>
-    <circle cx="538" cy="300" r="3.5"/>
-  </g>
-
-  <g fill="#17150f" font-family="monospace" font-size="15" letter-spacing=".05em">
-    <text x="600" y="545">1</text>
-    <text x="600" y="465">2</text>
-    <text x="600" y="385">3</text>
-    <text x="600" y="305">4</text>
-    <text x="600" y="225" opacity=".45">5</text>
-    <text x="655" y="145">← NOT YET CLIMBED</text>
-    <text x="120" y="620">FOUR RUNGS UP, ONE WALL</text>
-  </g>
-</svg></div></article><article class="entry-panel" data-index="7" aria-hidden="true"><div class="entry-text"><p class="entry-meta">ARTICLE NO. 08 · 10 Sep 2026 · 9 min read</p><h2 class="entry-title"><a href="understanding-alphafolds-plddt-pae-and-ptm.html">Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM</a></h2><p class="entry-desc">AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer. What GFP&#x27;s one real dip and beta-casein&#x27;s disorder actually show, and what the ranking formula does when a protein has no fixed shape to find.</p><p class="entry-tags">machine learning, structural biology, alphafold</p></div><div class="entry-figure"><div class="cover-fig-chrome"><span>FIG_008</span><span>[ GROUND TRUTH ]</span></div><svg class="cover-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="#17150f" opacity=".15">
-    <path d="M120 110H880"/>
-    <path d="M120 580H880"/>
-  </g>
-
-  <!-- Two PAE matrices, drawn the way the widget itself draws them: a
-       square grid with the confident diagonal as a dark band. GFP's is
-       bold and gets the draw-in; beta-casein's stays a thin, faint line,
-       because there is nothing there to confidently draw. -->
-  <g stroke="#17150f" stroke-width="1" opacity=".22">
-    <path d="M202 175V435M254 175V435M306 175V435M358 175V435"/>
-    <path d="M150 227H410M150 279H410M150 331H410M150 383H410"/>
-    <path d="M642 175V435M694 175V435M746 175V435M798 175V435"/>
-    <path d="M590 227H850M590 279H850M590 331H850M590 383H850"/>
-  </g>
-  <g stroke="#17150f" stroke-width="1.4">
-    <path d="M150 175H410V435H150Z"/>
-    <path d="M590 175H850V435H590Z"/>
-  </g>
-
-  <path
-    d="M150 175L410 435"
-    class="draw-path"
-    stroke="#17150f"
-    stroke-width="24"
-    stroke-linecap="round"
-    opacity=".82"
-    stroke-dasharray="368" stroke-dashoffset="368"/>
-
-  <path d="M590 175L850 435" stroke="#17150f" stroke-width="2.5" opacity=".28"/>
-  <g fill="#17150f" opacity=".3">
-    <circle cx="640" cy="220" r="2.4"/>
-    <circle cx="700" cy="340" r="2.4"/>
-    <circle cx="760" cy="260" r="2.4"/>
-    <circle cx="810" cy="400" r="2.4"/>
-    <circle cx="620" cy="360" r="2.4"/>
-    <circle cx="790" cy="200" r="2.4"/>
-  </g>
-
-  <g fill="#17150f">
-    <circle cx="150" cy="175" r="3.5"/>
-    <circle cx="410" cy="435" r="3.5"/>
-  </g>
-
-  <g fill="#17150f" font-family="monospace" font-size="15" letter-spacing=".05em">
-    <text x="150" y="150">GFP &middot; WELL-FOLDED</text>
-    <text x="590" y="150">BETA-CASEIN &middot; DISORDERED</text>
-    <text x="120" y="460" opacity=".55">j</text>
-    <text x="272" y="458" opacity=".55">i</text>
-    <text x="560" y="460" opacity=".55">j</text>
-    <text x="712" y="458" opacity=".55">i</text>
-    <text x="120" y="620">CONFIDENT, NOT THE SAME AS CORRECT</text>
-  </g>
-</svg></div></article></section></main>
-  <footer class="site">
-    <span>Shaurya · 2026</span>
-    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
-    <a href="feed.xml">RSS</a>
-  </footer>
-
-</div>
 </body>
 </html>

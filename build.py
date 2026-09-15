@@ -1,10 +1,11 @@
+import functools
 import hashlib
 import html
 import json
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 import markdown
 
@@ -16,34 +17,35 @@ SITE_TITLE = "Shaurya · Log"
 SITE_DESC = ("Experimental engineering notes on AI, machine learning, graphics, "
              "programming, computation, and the things I build to understand how they work.")
 MOTTO = "honest · semi informative · personal"
-# One line under the wordmark answering who/what before anything else -
-# the homepage is also the landing page, so it can't stay anonymous.
-IDENTITY = "Shaurya — engineering notes on ML, graphics, computation"
 INTRO = ("I think of this less as a blog and more as a log: a running record of what I'm "
          "building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.")
-# The read head above the tape: the same mark the homepage is built
-# around, cut down to three shapes that survive being 16 pixels wide.
-# Deliberately drawn rather than typeset - a data-URI icon can't load
-# Space Mono, so any letterform here would render in whatever fallback
-# the reader happens to have.
-#
-# No background rectangle. A transparent icon sits on the browser's own
-# chrome, which is already the right colour in either theme, and the
-# fill follows prefers-color-scheme so ink and paper swap here the way
-# they do everywhere else on the site. The old icon hardcoded a light
-# background and showed up as a white tile on a dark tab strip.
-FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
-           "%3Cstyle%3Epath,rect%7Bfill:%23161513%7D"
-           "@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E"
-           "%3Cpath d='M22 10h20l-10 14z'/%3E"
-           "%3Crect x='4' y='31' width='56' height='6'/%3E"
-           "%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E")
-FONTS = ('  <link rel="preconnect" href="https://fonts.googleapis.com">\n'
-         '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-         '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">')
-CSS_VERSION = hashlib.md5((ROOT / "style.css").read_bytes()).hexdigest()[:8]
-JS_VERSION = hashlib.md5((ROOT / "site.js").read_bytes()).hexdigest()[:8]
-HOME_CSS_VERSION = hashlib.md5((ROOT / "home.css").read_bytes()).hexdigest()[:8]
+# The mark: two squares overlapping, working (petrol) and done (aqua), with
+# the overlap in the "now" ink - query meets key, two hashes in one slot.
+# The icon is drawn rather than typeset, has no background of its own so it
+# sits on the browser's chrome in either theme, and takes the dark inks under
+# prefers-color-scheme.
+MARK_SVG = ('<svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true">'
+            '<rect class="m-work" x="1" y="1" width="22" height="22"/>'
+            '<rect class="m-done" x="13" y="13" width="22" height="22"/>'
+            '<rect class="m-now" x="13" y="13" width="10" height="10"/></svg>')
+FAVICON = "data:image/svg+xml," + quote(
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'><style>"
+    ".w{fill:#134e6f}.d{fill:#a9dcd9}.n{fill:#5b5bd6}"
+    "@media(prefers-color-scheme:dark){.w{fill:#6fb8d9}.n{fill:#9a9cff}}</style>"
+    "<rect class='w' x='1' y='1' width='22' height='22'/>"
+    "<rect class='d' x='13' y='13' width='22' height='22'/>"
+    "<rect class='n' x='13' y='13' width='10' height='10'/></svg>", safe=" ='/:;.,()-")
+FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:'
+         'opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">\n')
+
+
+@functools.cache
+def version(name):
+    """Cache-busting hash for a local asset. widgets.css is written at the
+    start of main(), before any page asks for its version."""
+    return hashlib.md5((ROOT / name).read_bytes()).hexdigest()[:8]
 
 # Meta-tag CSP: the only form GitHub Pages allows (it serves static files
 # with no custom HTTP headers, so a real Content-Security-Policy response
@@ -54,9 +56,12 @@ HOME_CSS_VERSION = hashlib.md5((ROOT / "home.css").read_bytes()).hexdigest()[:8]
 # via meta - there's no way around that on this host).
 # *.clarity.ms + c.bing.com are Microsoft's own documented requirement:
 # https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-csp
+# cdn.jsdelivr.net and cdnjs serve Lenis and GSAP. Inline styles are allowed
+# for the index strip, whose day count and month spans are per-build style
+# attributes.
 CSP = ("default-src 'self'; "
-       "script-src 'self' 'unsafe-inline' https://*.clarity.ms; "
-       "style-src 'self' https://fonts.googleapis.com; "
+       "script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
+       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
        "font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; "
        "img-src 'self' data: https://*.clarity.ms https://c.bing.com; "
        "connect-src 'self' https://*.clarity.ms https://c.bing.com; "
@@ -88,78 +93,6 @@ AGENT_SUMMARY = (
     "that prefer machine-readable source text."
 )
 
-COVER_DEFAULTS = {
-    "where-does-computation-end": {
-        "cover": "images/covers/where-does-computation-end.svg",
-        "kicker": "A NOTE ON PHYSICAL SYSTEMS, MODELS, AND THE LIMITS OF EFFECTIVE DESCRIPTION.",
-        "quote": "The map is not the territory.",
-        "author": "N. Wiener",
-        "diagram_label": "HALTING BOUNDARY",
-    },
-    "self-rewriting-mandelbrot": {
-        "cover": "images/covers/self-rewriting-mandelbrot.svg",
-        "kicker": "A SMALL EXPERIMENT IN SELF-MODIFICATION AND CODE THAT CHANGES ITS OWN RULES.",
-        "quote": "A program can become part of its own memory.",
-        "author": "sslog",
-        "diagram_label": "SELF-SIMILARITY",
-    },
-    "never-repeating-never-leaving": {
-        "cover": "images/covers/never-repeating-never-leaving.svg",
-        "kicker": "ON STRANGE ATTRACTORS, DYNAMICAL SYSTEMS, AND STRUCTURES THAT NEVER SETTLE.",
-        "quote": "Never repeating. Never leaving.",
-        "author": "sslog",
-        "diagram_label": "STRANGE ATTRACTOR",
-    },
-    "marching-with-rays": {
-        "cover": "images/covers/marching-with-rays.svg",
-        "kicker": "A VISUAL WALK THROUGH RAY MARCHING, DISTANCE FIELDS, AND GEOMETRY.",
-        "quote": "The image is the end of a chain of questions.",
-        "author": "sslog",
-        "diagram_label": "DISTANCE FIELD",
-    },
-    "grok-grok": {
-        "cover": "images/covers/grok-grok.svg",
-        "kicker": "WHAT HAPPENS WHEN A MODEL FINALLY FINDS THE RULE?",
-        "quote": "The model looked done. Then it suddenly learned.",
-        "author": "sslog",
-        "diagram_label": "GENERALIZATION",
-    },
-    "birthday-attack": {
-        "cover": "images/covers/birthday-attack.svg",
-        "kicker": "WHY 23 PEOPLE ARE ENOUGH, AND WHY A HASH NEEDS 256 BITS.",
-        "quote": "You only need √N draws, not N.",
-        "author": "sslog",
-        "diagram_label": "COLLISION",
-    },
-    "programming-an-attention-kernel-in-triton": {
-        "cover": "images/covers/programming-an-attention-kernel-in-triton.svg",
-        "kicker": "WRITING GPU KERNELS IN TRITON, FROM VECTOR ADD UP TO NAIVE ATTENTION.",
-        "quote": "I climbed four rungs and found the wall.",
-        "author": "sslog",
-        "diagram_label": "THE WALL",
-    },
-    "understanding-alphafolds-plddt-pae-and-ptm": {
-        "cover": "images/covers/understanding-alphafolds-plddt-pae-and-ptm.svg",
-        "kicker": "WHAT PLDDT, PAE, AND PTM ACTUALLY MEASURE, AND WHERE THEY STOP BEING GROUND TRUTH.",
-        "quote": "All models are wrong, but some are useful.",
-        "author": "G. Box",
-        "diagram_label": "GROUND TRUTH",
-    },
-}
-
-
-_SVG_CACHE = {}
-
-
-def read_cover_svg(path):
-    """Raw SVG markup for a cover, inlined directly into the page (rather
-    than referenced via <img>) so the draw-in <animate> elements it embeds
-    are reachable and triggerable from site.js."""
-    if path not in _SVG_CACHE:
-        _SVG_CACHE[path] = (ROOT / path).read_text(encoding="utf-8").strip()
-    return _SVG_CACHE[path]
-
-
 def absolute_url(path=""):
     return f"{SITE_URL}/" if not path else f"{SITE_URL}/{path.lstrip('/')}"
 
@@ -169,90 +102,227 @@ def jsonld_script(data):
     return f'  <script type="application/ld+json">{payload}</script>\n'
 
 
+# One pull quote per post: always the post's own sentence, and the section
+# it comes from. The <em> is the emphasis. A post without one has no band.
+PULLS = {
+    "grok-grok": (
+        "The true physical law keeps curving. <em>The network structurally cannot.</em>",
+        "The real answer"),
+    "marching-with-rays": (
+        "That question turns out to be almost the whole renderer. "
+        "The rest is <em>walking toward the answer.</em>",
+        "Opening"),
+    "never-repeating-never-leaving": (
+        "Same word, \"attractor\", <em>genuinely different object.</em>",
+        "Then one of them refused to fit"),
+    "self-rewriting-mandelbrot": (
+        "It's not a quine. It doesn't need to be. <em>It just needs to remember.</em>",
+        "Coda"),
+    "where-does-computation-end": (
+        "Not slower. Not impractical. Not astronomically expensive. <em>Uncomputable.</em>",
+        "A faster computer isn't necessarily a more powerful computer"),
+    "birthday-attack": (
+        "Halving the exponent sounds modest. <em>It isn't.</em>",
+        "From party trick to attack"),
+    "programming-an-attention-kernel-in-triton": (
+        "<em>Fewer memory round trips</em>, not fewer FLOPs, is often the real lever for speed on a GPU.",
+        "Why bother: the thing PyTorch hides"),
+    "understanding-alphafolds-plddt-pae-and-ptm": (
+        "pLDDT is a self-assessment, <em>not a measurement.</em>",
+        "What pLDDT actually is"),
+}
+
+# The sections of style.css that style site.js's widgets, copied into
+# widgets.css at build time so they can never drift from site.js.
+WIDGET_SECTIONS = (
+    "prose tables", "grokking figure", "segmented switch indicator",
+    "Lorenz divergence figure", "sphere-tracing figure",
+    "birthday-collision figures", "colormap carousel",
+    "in-app browser banner", "3D structure viewer",
+)
+
+# A post can swap one section for a hand-built scroll figure kept in
+# partials/<slug>.html, with its script in partials/<slug>.js. The figure
+# replaces the post's HTML from `start` up to, not including, `end`. Both
+# must appear exactly once, so an edit that moves either anchor fails the
+# build instead of silently duplicating or dropping text.
+SCROLLY = {
+    "programming-an-attention-kernel-in-triton": {
+        "start": "<h2>The wall, named honestly</h2>",
+        "end": "<p>Naming that clearly",
+    },
+}
+PARTIALS = ROOT / "partials"
+
+LATEST = 4        # the mosaic is a fixed shelf; it never grows
+MIN_FILTER = 2    # a topic earns a filter button once two posts share it
+ACRONYMS = {"gpu": "GPU", "ml": "ML", "ai": "AI"}
+
+
+def esc(s):
+    return html.escape(s, quote=False)
+
+
+def tag_label(tag):
+    words = [ACRONYMS.get(w, w) for w in tag.replace("-", " ").split()]
+    label = " ".join(words)
+    return label[:1].upper() + label[1:]
+
+
+def first_tag(post):
+    """The label a tile leads with: the post's first topic, if it has one."""
+    return tag_label(post["tags"][0]) if post["tags"] else "Log"
+
+
+def short_desc(desc):
+    """Whole sentences, stopping once there's enough to say something:
+    a one-line question alone reads as a teaser, not a summary."""
+    out = ""
+    for sentence in re.split(r"(?<=[.?!])\s+", desc):
+        out = (out + " " + sentence).strip()
+        if len(out) >= 60:
+            break
+    return out
+
+
+def href(post):
+    return f'{post["slug"]}.html'
+
+
+def widget_css():
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    parts = re.split(r"(?m)^(?=/\* ---- )", css)
+    keep = [p for p in parts if any(p.startswith("/* ---- " + n) for n in WIDGET_SECTIONS)]
+    found = {n for n in WIDGET_SECTIONS for p in keep if p.startswith("/* ---- " + n)}
+    missing = set(WIDGET_SECTIONS) - found
+    if missing:
+        raise SystemExit(f"style.css sections not found: {sorted(missing)}")
+    return ("/* GENERATED by build.py from style.css - do not edit.\n"
+            "   Only the sections that style site.js's widgets. */\n\n" + "".join(keep))
+
+
 def page_head(title, desc, path, og_type="website", base="", jsonld=None, noindex=False,
-              extra_css=None, og_image=None, md_href=None, published=None):
-    robots = ('  <meta name="robots" content="noindex,follow">\n' if noindex
-              else '  <meta name="robots" content="index,follow">\n')
+              og_image=None, md_href=None, published=None):
+    """base is "" for pages at the root and "/" for the 404, which GitHub
+    Pages serves at whatever depth the missing URL had."""
+    robots = "noindex,follow" if noindex else "index,follow"
+    url = html.escape(absolute_url(path))
     # published is the post's own parsed date (an aware datetime), passed in
-    # directly by the caller. The old approach regex-searched the *output*
-    # path for a date, which build.py deliberately strips from every slug,
-    # so it was structurally guaranteed to always return "".
-    article_meta = (f'  <meta property="article:published_time" content="{html.escape(published.isoformat())}">\n'
+    # directly by the caller rather than recovered from the output path.
+    article_meta = (f'<meta property="article:published_time" content="{html.escape(published.isoformat())}">\n'
                     if og_type == "article" and published else "")
-    og_image_tag = (f'  <meta property="og:image" content="{html.escape(og_image)}">\n'
-                     if og_image else "")
-    md_link = (f'  <link rel="alternate" type="text/markdown" href="{base}{md_href}">\n'
-               if md_href else "")
-    head = (
-        '<!doctype html>\n<html lang="en">\n<head>\n'
-        '  <meta charset="utf-8">\n'
-        '  <meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        f'  <meta http-equiv="Content-Security-Policy" content="{CSP}">\n'
-        '  <meta name="referrer" content="strict-origin-when-cross-origin">\n'
-        f'  <title>{html.escape(title)}</title>\n'
-        f'  <meta name="description" content="{html.escape(desc)}">\n{robots}'
-        f'  <link rel="canonical" href="{html.escape(absolute_url(path))}">\n'
-        f'  <meta property="og:site_name" content="{html.escape(SITE_TITLE)}">\n'
-        f'  <meta property="og:title" content="{html.escape(title)}">\n'
-        f'  <meta property="og:description" content="{html.escape(desc)}">\n'
-        f'  <meta property="og:type" content="{og_type}">\n'
-        f'  <meta property="og:url" content="{html.escape(absolute_url(path))}">\n'
-        f'{og_image_tag}'
-        f'{article_meta}'
-        f'{md_link}'
-        f'  <link rel="alternate" type="application/rss+xml" title="{html.escape(SITE_TITLE)}" href="{base}feed.xml">\n'
-        f'  <link rel="icon" href="{FAVICON}">\n{FONTS}\n'
-        f'  <link rel="stylesheet" href="{base}style.css?v={CSS_VERSION}">\n'
-        f'  <script src="{base}site.js?v={JS_VERSION}" defer></script>\n')
-    if extra_css:
-        head += f'  <link rel="stylesheet" href="{base}{extra_css}?v={HOME_CSS_VERSION}">\n'
+    og_image_tag = f'<meta property="og:image" content="{html.escape(og_image)}">\n' if og_image else ""
+    md_link = f'<link rel="alternate" type="text/markdown" href="{base}{md_href}">\n' if md_href else ""
+    head = ('<!doctype html>\n<html lang="en">\n<head>\n'
+            '<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+            '<meta name="color-scheme" content="light dark">\n'
+            f'<meta http-equiv="Content-Security-Policy" content="{CSP}">\n'
+            '<meta name="referrer" content="strict-origin-when-cross-origin">\n'
+            f'<title>{html.escape(title)}</title>\n'
+            f'<meta name="description" content="{html.escape(desc)}">\n'
+            f'<meta name="robots" content="{robots}">\n'
+            f'<link rel="canonical" href="{url}">\n'
+            f'<meta property="og:site_name" content="{html.escape(SITE_TITLE)}">\n'
+            f'<meta property="og:title" content="{html.escape(title)}">\n'
+            f'<meta property="og:description" content="{html.escape(desc)}">\n'
+            f'<meta property="og:type" content="{og_type}">\n'
+            f'<meta property="og:url" content="{url}">\n'
+            f'{og_image_tag}{article_meta}{md_link}'
+            f'<link rel="alternate" type="application/rss+xml" title="{html.escape(SITE_TITLE)}" href="{base}feed.xml">\n'
+            f'<link rel="icon" href="{FAVICON}">\n'
+            f'{FONTS}'
+            f'<link rel="stylesheet" href="{base}design.css?v={version("design.css")}">\n'
+            f'<link rel="stylesheet" href="{base}widgets.css?v={version("widgets.css")}">\n'
+            f'<link rel="stylesheet" href="{base}transitions.css?v={version("transitions.css")}">\n'
+            # not deferred: it puts the saved theme on <html> before first paint
+            f'<script src="{base}chrome.js?v={version("chrome.js")}"></script>\n')
     if jsonld:
         head += jsonld_script(jsonld)
-    head += CLARITY_SCRIPT
-    return head + '</head>\n<body>\n<div class="wrap">\n'
+    return head + CLARITY_SCRIPT + '</head>\n<body>\n\n'
 
 
-WORDMARK_HTML = ('<span class="wordmark-text">LOG</span>'
-                  '<span class="wordmark-cursor" aria-hidden="true"></span>')
+def masthead(base="", sound=False, current=""):
+    # The sound control only appears on pages with something to hear (a post
+    # whose front matter sets sound: true), hidden until site.js confirms the
+    # browser can synthesise the tick.
+    buttons = ('\n    <button type="button" class="sound-toggle" hidden aria-pressed="false" '
+               'aria-label="Turn on sound">sound</button>') if sound else ""
+    buttons += ('\n    <button type="button" class="mode-toggle" hidden '
+                'aria-label="Switch theme">dark</button>')
+    here = ' aria-current="page"'
+    links = "".join(
+        f'    <a href="{base}{page}.html"{here if page == current else ""}>{label}</a>\n'
+        for page, label in (("index", "Index"), ("projects", "Projects"), ("about", "About")))
+    return ('<header class="masthead">\n'
+            f'  <a class="mark" href="{base}index.html">{MARK_SVG}LOG</a>\n'
+            '  <nav class="label">\n'
+            f'{links.rstrip(chr(10))}{buttons}\n'
+            '  </nav>\n'
+            '</header>\n\n')
 
 
-def page_header(base="", sound=False):
-    # The sound control only appears on pages with something to hear -
-    # opt in per page (the homepage tape, and any post whose front
-    # matter sets sound: true) rather than site-wide, so it isn't a
-    # button that does nothing on every page without a ticking widget.
-    # Hidden until site.js has confirmed the browser can actually
-    # synthesise the tick, the same as every other widget here. One
-    # engine and one on/off preference behind it (see siteSound in
-    # site.js), shared by whichever widgets the page actually has.
-    sound_button = ('      <button type="button" class="sound-toggle" hidden '
-                    'aria-pressed="false" aria-label="Turn on sound">'
-                    'sound</button>' + chr(10)) if sound else ''
-
-    return ('\n  <header class="site">\n'
-            f'    <a class="wordmark" href="{base}index.html" aria-label="{SITE_NAME}">{WORDMARK_HTML}</a>\n'
-            '    <nav>\n'
-            f'      <a href="{base}projects.html">Projects</a>\n'
-            f'      <a href="{base}about.html">About</a>\n'
-            f'{sound_button}'
-            '      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>\n'
-            '    </nav>\n  </header>\n')
+def tile(post, label):
+    return ('    <a class="tile-post" href="' + href(post) + '">\n'
+            f'      <span class="label">{esc(label)}</span>\n'
+            f'      <h3>{esc(post["title"])}</h3>\n'
+            f'      <p>{esc(short_desc(post["description"]))}</p>\n'
+            f'      <span class="meta label">{post["date"]:%d.%m.%y}</span>\n'
+            '    </a>\n')
 
 
-def page_foot(link_html):
-    return (f'\n  <footer class="site">\n    <span>{SITE_NAME} · {datetime.now().year}</span>\n'
-            f'    <a href="{GITHUB_URL}" rel="noopener">GitHub</a>\n    {link_html}\n  </footer>\n\n</div>\n</body>\n</html>\n')
+def mosaic(title, count_html, tiles_html):
+    return ('<section class="mosaic-wrap">\n'
+            '  <div class="mosaic-head">\n'
+            f'    <h2>{title}</h2>\n'
+            f'    {count_html}\n'
+            '  </div>\n\n'
+            '  <div class="mosaic" id="mosaic">\n'
+            f'{tiles_html}'
+            '  </div>\n'
+            '</section>\n\n')
 
 
-def simple_page(slug, h1, meta_line, paragraphs_html, description):
-    """A plain single-article static page (About/Contact/Privacy): same
-    head/header/footer as every other page, one h1, a few paragraphs."""
-    body = ('\n  <article class="post">\n'
-            f'    <h1>{html.escape(h1)}</h1>\n'
-            f'    <p class="post-meta">{html.escape(meta_line)}</p>\n'
-            f'{paragraphs_html}\n  </article>\n')
-    return (page_head(f'{h1} · {SITE_NAME}', description, f'{slug}.html', md_href=f'{slug}.md') +
-            page_header() + body + page_foot('<a href="index.html">Index</a>'))
+def foot(base=""):
+    return ('<footer class="foot">\n'
+            f'  <span class="label">{SITE_NAME} · {datetime.now().year}</span>\n'
+            f'  <span class="label"><a href="{GITHUB_URL}" rel="noopener">GitHub</a> · '
+            f'<a href="{base}index.html">Index</a></span>\n'
+            '</footer>\n\n')
+
+
+def scripts(base="", site_js=False):
+    """Lenis and GSAP, then the shared motion. site.js only on posts, where
+    its widgets live."""
+    out = ('<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>\n'
+           '<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>\n'
+           '<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>\n'
+           f'<script src="{base}design.js?v={version("design.js")}"></script>\n')
+    if site_js:
+        out += f'<script src="{base}site.js?v={version("site.js")}"></script>\n'
+    return out
+
+
+def simple_page(slug, h1, meta_line, paragraphs_html, description, posts=None,
+                base="", noindex=False):
+    """About, Contact, Privacy and the 404: a heading and the text, the first
+    paragraph a size up. Only About carries the shelf of latest entries; the
+    pull-quote band belongs to the writing and appears nowhere else."""
+    hero = ('<section class="hero">\n'
+            f'  <p class="label kicker">{esc(meta_line)}</p>\n'
+            f'  <h1>{esc(h1)}</h1>\n'
+            '</section>\n\n')
+    paras = paragraphs_html.replace("<p>", '<p class="lead">', 1)
+    body = f'<article class="prose post prose-after">\n{paras}\n</article>\n\n'
+    shelf = ""
+    if posts:
+        tiles = "".join(tile(p, first_tag(p)) for p in posts[:LATEST])
+        shelf = mosaic("Latest in the log",
+                       f'<a class="label" href="index.html#archive">All {len(posts)} in the archive →</a>', tiles)
+    return (page_head(f"{h1} · {SITE_NAME}", description, f"{slug}.html", base=base, noindex=noindex,
+                      md_href=None if noindex else f"{slug}.md") +
+            masthead(base, current=slug) + hero + body + shelf + foot(base) +
+            scripts(base) + '\n</body>\n</html>\n')
 
 
 def parse_post(path):
@@ -269,18 +339,15 @@ def parse_post(path):
             raise SystemExit(f"{path.name}: front matter needs '{required}'")
     slug = re.sub(r"^\d{4}-\d{2}-\d{2}-", "", path.stem)
     body = m.group(2)
-    defaults = COVER_DEFAULTS.get(slug, {})
+    # a post's share-preview image, if one has been drawn for it
+    default_cover = f"images/covers/{slug}.svg"
     return {
         "slug": slug,
         "title": meta["title"],
         "date": datetime.strptime(meta["date"], "%Y-%m-%d"),
         "tags": [t.strip() for t in meta.get("tags", "").split(",") if t.strip()],
         "description": meta.get("description", ""),
-        "cover": meta.get("cover", defaults.get("cover", "")),
-        "cover_kicker": meta.get("cover_kicker", defaults.get("kicker", "")),
-        "cover_quote": meta.get("cover_quote", defaults.get("quote", "")),
-        "cover_quote_author": meta.get("cover_quote_author", defaults.get("author", "")),
-        "diagram_label": meta.get("diagram_label", defaults.get("diagram_label", "")),
+        "cover": meta.get("cover", default_cover if (ROOT / default_cover).exists() else ""),
         "repo": meta.get("repo", ""),
         "sound": meta.get("sound", "").strip().lower() == "true",
         "body_md": body,
@@ -298,29 +365,88 @@ def render_body(body_md):
     return re.sub(r"(<pre><code[^>]*>)(.*?)(</code></pre>)", mute, out, flags=re.DOTALL)
 
 
-def build_post(post, newer, older):
-    tags = (f'\n      <span class="tags">{html.escape(", ".join(post["tags"]))}</span>'
-            if post["tags"] else "")
-    # An article about code should say where the code is. Only posts
-    # that name a repo carry this; the conceptual ones have none.
-    source = (f'\n      <a class="post-source" href="{GITHUB_URL}/{post["repo"]}"'
-              f' rel="noopener">source &#8599;</a>'
-              if post["repo"] else "")
-    share = ('\n      <button type="button" class="share-button" '
-             'aria-label="Copy link to this article">share</button>')
-    body = ('\n  <article class="post entry">\n'
-            f'    <h1>{html.escape(post["title"])}</h1>\n'
-            '    <p class="post-meta">\n'
-            f'      <time datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%B %d, %Y}</time>{tags}{source}{share}\n'
-            '    </p>\n\n'
-            f'{render_body(post["body_md"])}\n  </article>\n')
-    old_link = (f'<a class="older" href="{older["slug"]}.html">← {html.escape(older["title"])}</a>'
-                if older else '<span></span>')
-    new_link = (f'<a class="newer" href="{newer["slug"]}.html">{html.escape(newer["title"])} →</a>'
-                if newer else '<span></span>')
-    nav = f'\n  <nav class="post-nav">\n    {old_link}\n    {new_link}\n  </nav>\n'
-    description = post["description"] or post["title"]
+def body_html(post):
+    out = render_body(post["body_md"])
+    # wheel over the 3D viewer zooms it and trackpads swipe the carousel,
+    # so Lenis must leave both alone rather than scroll the page
+    out = out.replace('class="structure-viewer"', 'class="structure-viewer" data-lenis-prevent')
+    out = out.replace('class="colormap-track"', 'class="colormap-track" data-lenis-prevent')
+    # overflow-x on <math> itself is ignored, so a wide equation pushed the
+    # whole page sideways on phones; a plain wrapper can scroll instead
+    return re.sub(r'(<math display="block">.*?</math>)', r'<div class="math-scroll">\1</div>',
+                  out, flags=re.DOTALL)
+
+
+def build_post(post, posts, i):
+    newer = posts[i - 1] if i > 0 else None
+    older = posts[i + 1] if i + 1 < len(posts) else None
     post_url = absolute_url(f'{post["slug"]}.html')
+
+    tags = " · ".join(tag_label(t) for t in post["tags"])
+    # An article about code says where the code is; the conceptual ones
+    # show their reading time instead.
+    source = (f'<a class="label" href="{GITHUB_URL}/{post["repo"]}" rel="noopener">Source ↗</a>'
+              if post["repo"] else f'<span class="label">{post["read_time"]} min read</span>')
+    hero = ('<section class="hero">\n'
+            f'  <p class="label kicker">{esc(tags)}</p>\n'
+            f'  <h1>{esc(post["title"])}</h1>\n'
+            f'  <p class="standfirst">{esc(post["description"])}</p>\n'
+            '  <p class="byline">\n'
+            f'    <time class="label" datetime="{post["date"]:%Y-%m-%d}">{post["date"]:%B %d, %Y}</time>\n'
+            f'    <span class="byline-links">{source}'
+            f'<button type="button" class="share label" data-url="{html.escape(post_url)}" '
+            'aria-label="Share this article">Share</button></span>\n'
+            '  </p>\n'
+            '</section>\n\n')
+
+    body = body_html(post)
+    figure = after = script = ""
+    scrolly = SCROLLY.get(post["slug"])
+    if scrolly:
+        for key in ("start", "end"):
+            if body.count(scrolly[key]) != 1:
+                raise SystemExit(f'{post["slug"]}: scroll figure anchor {scrolly[key]!r} '
+                                 f'must appear exactly once in the post')
+        a, b = body.index(scrolly["start"]), body.index(scrolly["end"])
+        body, after = body[:a], body[b:]
+        figure = (PARTIALS / f'{post["slug"]}.html').read_text(encoding="utf-8")
+        script = (PARTIALS / f'{post["slug"]}.js').read_text(encoding="utf-8")
+
+    # the pull quote goes in front of the second section; the end mark goes
+    # on whichever article is last
+    fin = "" if scrolly else " fin"
+    pull = ""
+    if post["slug"] in PULLS:
+        text, attrib = PULLS[post["slug"]]
+        pull = ('<section class="pull">\n'
+                f'  <blockquote id="pullquote">{text}</blockquote>\n'
+                f'  <p class="attrib"><span class="label">{esc(attrib)}</span></p>\n'
+                '</section>\n\n')
+    h2s = [m.start() for m in re.finditer(r"<h2[ >]", body)]
+    if pull and len(h2s) >= 2:
+        first, rest = body[:h2s[1]], body[h2s[1]:]
+        article = (f'<article class="prose post">\n{first}</article>\n\n{pull}'
+                   f'<article class="prose post prose-after{fin}">\n{rest}</article>\n\n')
+    else:
+        article = f'{pull}<article class="prose post prose-after{fin}">\n{body}</article>\n\n'
+    if scrolly:
+        article += f'{figure}\n<article class="prose post prose-after fin">\n{after}</article>\n\n'
+
+    # next, previous, then the most recent others to fill the shelf
+    picks = []
+    if newer:
+        picks.append((newer, "Next · " + first_tag(newer)))
+    if older:
+        picks.append((older, "Previous · " + first_tag(older)))
+    for p in posts:
+        if len(picks) == LATEST:
+            break
+        if p is not post and all(p is not q for q, _ in picks):
+            picks.append((p, first_tag(p)))
+    tiles = "".join(tile(p, label) for p, label in picks)
+    more = f'<a class="label" href="index.html#archive">All {len(posts)} entries →</a>'
+
+    description = post["description"] or post["title"]
     published = post["date"].replace(tzinfo=timezone.utc)
     jsonld = {"@context":"https://schema.org","@type":"BlogPosting","headline":post["title"],
               "description":description,"url":post_url,"mainEntityOfPage":{"@type":"WebPage","@id":post_url},
@@ -334,103 +460,136 @@ def build_post(post, newer, older):
     return (page_head(f'{post["title"]} · {SITE_NAME}', description, f'{post["slug"]}.html',
                       og_type="article", jsonld=jsonld, og_image=og_image,
                       md_href=f'{post["slug"]}.md', published=published) +
-            page_header(sound=post["sound"]) + body + nav +
-            page_foot('<a href="index.html">Index</a>'))
+            masthead(sound=post["sound"]) + hero + article +
+            mosaic("Elsewhere in the log", more, tiles) + foot() +
+            scripts(site_js=True) + (f'<script>\n{script}</script>\n' if script else "") +
+            '\n</body>\n</html>\n')
 
 
-def panel_figure(post, index):
-    """The article's diagram, with its FIG_ chrome, as the right-hand
-    column of an entry panel. The SVG is inlined rather than referenced
-    via <img> so its draw-in <animate>/CSS hooks stay reachable."""
-    if not post["cover"]:
-        return '<div class="entry-figure" aria-hidden="true"></div>'
-    svg = read_cover_svg(post["cover"]).replace(
-        '<svg ', '<svg class="cover-svg" aria-hidden="true" ', 1)
-    label = post["diagram_label"] or ", ".join(post["tags"][:2]).upper()
-    return ('<div class="entry-figure">'
-            '<div class="cover-fig-chrome">'
-            f'<span>FIG_{index + 1:03d}</span>'
-            f'<span>[ {html.escape(label)} ]</span>'
-            '</div>'
-            f'{svg}</div>')
+def archive(posts):
+    """Every post, one row each, grouped by year. The filter buttons are
+    only the topics that recur, so the row of buttons grows with the log
+    rather than one button per one-off tag."""
+    counts = {}
+    for p in posts:
+        for t in p["tags"]:
+            counts[t] = counts.get(t, 0) + 1
+    topics = sorted((t for t, n in counts.items() if n >= MIN_FILTER),
+                    key=lambda t: (-counts[t], t))
+    buttons = (f'      <button type="button" data-tag="" aria-pressed="true">All<span>{len(posts)}</span></button>\n' +
+               "".join(f'      <button type="button" data-tag="{html.escape(t)}" aria-pressed="false">'
+                       f'{esc(tag_label(t))}<span>{counts[t]}</span></button>\n' for t in topics))
+
+    years = {}
+    for p in posts:
+        years.setdefault(p["date"].year, []).append(p)
+    groups = ""
+    for year in sorted(years, reverse=True):
+        rows = "".join(
+            f'      <li data-tags="{html.escape("|".join(p["tags"]))}"><a href="{href(p)}">'
+            f'<time class="d" datetime="{p["date"]:%Y-%m-%d}">{p["date"]:%d.%m}</time>'
+            f'<span class="t">{esc(p["title"])}</span>'
+            f'<span class="tags label">{esc(" · ".join(tag_label(t) for t in p["tags"][:2]))}</span>'
+            '</a></li>\n' for p in years[year])
+        groups += (f'  <div class="year">\n    <h3 class="year-label">{year}</h3>\n'
+                   f'    <ol class="rows">\n{rows}    </ol>\n  </div>\n')
+
+    return ('<section class="archive" id="archive">\n'
+            '  <div class="archive-head">\n'
+            '    <h2>Archive</h2>\n'
+            f'    <div class="filters" role="group" aria-label="Filter by topic">\n{buttons}    </div>\n'
+            '  </div>\n'
+            f'{groups}'
+            '  <p class="archive-empty" hidden>Nothing under that topic yet.</p>\n'
+            '</section>\n\n')
+
+
+def entry_state(i, n):
+    return "Latest" if i == 0 else f"{n - i:02d} of {n:02d}"
+
+
+def log_hero(posts):
+    """The index opens on the log itself: one entry shown large, and a
+    strip underneath with a cell for every day from the first entry to the
+    day the site was built. Entry days take the "done" ink, the one being
+    shown the "now" ink. Everything comes from the posts' real dates, so
+    the strip is the log's actual cadence, gaps included."""
+    n = len(posts)
+    first = min(p["date"] for p in posts).date()
+    end = max(date.today(), max(p["date"] for p in posts).date())
+    days = (end - first).days + 1
+
+    newest_on = {}  # posts are newest first, so the first seen per day wins
+    for i, p in enumerate(posts):
+        newest_on.setdefault(p["date"].date(), i)
+
+    months, cells = "", ""
+    for k in range(days):
+        day = first + timedelta(days=k)
+        if k == 0 or day.day == 1:
+            nxt = date(day.year + day.month // 12, day.month % 12 + 1, 1)
+            span = min((nxt - day).days, days - k)
+            months += f'<span class="lh-month" style="grid-column: {k + 1} / span {span}">{day:%b}</span>'
+        if day in newest_on:
+            i = newest_on[day]
+            p = posts[i]
+            cur = " is-current" if i == 0 else ""
+            cells += (f'<a class="cell is-entry{cur}" href="{href(p)}" data-i="{i}" '
+                      f'aria-label="{day:%d.%m.%y}: {html.escape(p["title"])}"></a>')
+        else:
+            today = " is-today" if day == date.today() else ""
+            cells += f'<span class="cell{today}" aria-hidden="true"></span>'
+
+    data = json.dumps([{"t": p["title"], "d": f'{p["date"]:%d.%m.%y}', "tag": first_tag(p),
+                        "desc": short_desc(p["description"]), "href": href(p),
+                        "state": entry_state(i, n)} for i, p in enumerate(posts)],
+                      ensure_ascii=False).replace("</", "<\\/")
+    top = posts[0]
+    return ('<section class="hero log-hero">\n'
+            '  <div class="lh-ident">\n'
+            '    <span class="label">Engineering notes on ML, graphics, computation</span>\n'
+            f'    <span class="label">{esc(MOTTO)}</span>\n'
+            '  </div>\n\n'
+            '  <div class="lh-entry" id="lh-entry" aria-live="polite">\n'
+            f'    <p class="label kicker"><span data-f="state">{entry_state(0, n)}</span> · '
+            f'<span data-f="date">{top["date"]:%d.%m.%y}</span> · '
+            f'<span data-f="tag">{esc(first_tag(top))}</span></p>\n'
+            f'    <h1><a data-f="title" href="{href(top)}">{esc(top["title"])}</a></h1>\n'
+            f'    <p class="standfirst" data-f="desc">{esc(short_desc(top["description"]))}</p>\n'
+            f'    <a class="lh-read label" data-f="read" href="{href(top)}">Read →</a>\n'
+            '  </div>\n\n'
+            f'  <div class="lh-strip" style="--days: {days}">\n'
+            '    <div class="lh-scroll">\n'
+            f'      <div class="lh-months" aria-hidden="true">{months}</div>\n'
+            f'      <div class="lh-cells">{cells}</div>\n'
+            '    </div>\n'
+            '    <div class="lh-ends">\n'
+            f'      <span class="label">{first:%d.%m.%y}</span>\n'
+            f'      <span class="label">Today · {end:%d.%m.%y}</span>\n'
+            '    </div>\n'
+            '  </div>\n\n'
+            '  <div class="lh-foot">\n'
+            f'    <p>{esc(INTRO)}</p>\n'
+            f'    <span class="label">{n} entries · {days} days · <a href="feed.xml">RSS ↗</a></span>\n'
+            '  </div>\n'
+            f'  <script type="application/json" id="log-data">{data}</script>\n'
+            '</section>\n\n')
 
 
 def build_index(posts):
-    tape_cells = []
-    cards = []
-    # posts arrives newest-first (everywhere else - feed, sitemap, prev/next
-    # nav - relies on that order). The tape itself reads left-to-right like
-    # an actual tape: oldest cell first, newest last.
-    #
-    # The head starts on the oldest post, at the left-hand end, so the tape
-    # is read the way it was written - the reader arrives at the start of
-    # the log and moves forward through it, rather than at the end facing
-    # backwards. It also means the tape opens with somewhere to go.
-    tape_posts = list(reversed(posts))
-    first = 0
-    for i, p in enumerate(tape_posts):
-        bit = "01011"[i % 5]
-        is_active = i == first
-        # The cell carries only its bit: a tape is cells, not a labelled
-        # list. Title and date live in the panel below, for whichever cell
-        # is currently under the head.
-        tape_cells.append(
-            f'<button class="tape-cell{" is-active" if is_active else ""}" '
-            f'data-index="{i}" aria-label="Open {html.escape(p["title"])}" '
-            f'aria-current="{"true" if is_active else "false"}">'
-            f'<span class="tape-bit" aria-hidden="true">{bit}</span>'
-            f'</button>')
-        tags = ', '.join(p["tags"][:4])
-        # Every panel is rendered into the HTML and hidden with CSS rather
-        # than injected on demand, so crawlers and agents still see all
-        # five articles' text on the homepage.
-        cards.append(
-            f'<article class="entry-panel{" is-active" if is_active else ""}" '
-            f'data-index="{i}" aria-hidden="{"false" if is_active else "true"}">'
-            '<div class="entry-text">'
-            f'<p class="entry-meta">ARTICLE NO. {i + 1:02d} · {p["date"]:%d %b %Y} · '
-            f'{p["read_time"]} min read</p>'
-            f'<h2 class="entry-title"><a href="{p["slug"]}.html">{html.escape(p["title"])}</a></h2>'
-            f'<p class="entry-desc">{html.escape(p["description"])}</p>'
-            f'<p class="entry-tags">{html.escape(tags)}</p>'
-            '</div>'
-            f'{panel_figure(p, i)}'
-            '</article>')
+    # the hero already shows the latest entry, so the shelf starts after it
+    tiles = "".join(tile(p, first_tag(p)) for p in posts[1:1 + LATEST])
+    to_archive = f'<a class="label" href="#archive">All {len(posts)} in the archive ↓</a>'
     jsonld = {"@context":"https://schema.org","@type":"Blog","name":SITE_TITLE,
               "description":SITE_DESC,"url":SITE_URL,"author":{"@type":"Person","name":SITE_NAME,"url":SITE_URL}}
-    # The head is fixed at the centre and the tape scrolls beneath it, the
-    # way a real reader works: the head doesn't chase the tape.
-    tape = (
-        '<section class="tape-nav" aria-label="Article navigation">'
-        '<div class="tape-head" aria-hidden="true"></div>'
-        # The blank run-out either side is two real, empty elements with a
-        # real width. Everything cleverer than this has failed on some
-        # engine: percentage padding, vw padding, and pseudo-element flex
-        # items all collapsed to nothing, leaving the end cells stranded
-        # past the end of the scroll range. A plain box with a width is
-        # the one thing every layout engine agrees on.
-        '<div class="tape-viewport"><div class="tape-track" role="list">'
-        '<div class="tape-runout" aria-hidden="true"></div>'
-        + ''.join(tape_cells) +
-        '<div class="tape-runout" aria-hidden="true"></div>'
-        '</div></div>'
-        '<button class="tape-arrow tape-prev" type="button" aria-label="Previous article">←</button>'
-        '<button class="tape-arrow tape-next" type="button" aria-label="Next article">→</button>'
-        '</section>')
-    # sr-only: the tape/panel layout has no single visible page heading
-    # (the panel titles are h2s), so this gives screen readers and agents
-    # one real heading plus a plain-text summary of the whole site up
-    # front, not just its newest post.
-    agent_summary = (f'<h1 class="sr-only">{html.escape(SITE_TITLE)}</h1>\n'
-                      f'<p class="sr-only agent-home-summary">{html.escape(AGENT_SUMMARY)}</p>\n')
-    body = (page_header(sound=True) + agent_summary + f'<p class="identity">{IDENTITY}</p>\n'
-            '<main class="home-stage">' + tape +
-            '<section class="panel-stage" aria-live="polite">' + ''.join(cards) + '</section>'
-            '</main>')
     og_image = absolute_url(posts[0]["cover"]) if posts and posts[0]["cover"] else None
-    return (page_head(SITE_TITLE, SITE_DESC, "", jsonld=jsonld, extra_css="home.css",
-                      og_image=og_image, md_href="index.md") + body +
-            page_foot('<a href="feed.xml">RSS</a>'))
+    # a plain-text summary of the whole site up front for screen readers and
+    # agents, not just its newest post
+    summary = f'<p class="sr-only">{esc(AGENT_SUMMARY)}</p>\n\n'
+    return (page_head(SITE_TITLE, SITE_DESC, "", jsonld=jsonld, og_image=og_image, md_href="index.md") +
+            masthead(current="index") + summary + log_hero(posts) +
+            mosaic("Before that", to_archive, tiles) + archive(posts) + foot() +
+            scripts() + '\n</body>\n</html>\n')
 
 
 GITHUB_USER = "Shaurya-34"
@@ -487,45 +646,40 @@ PROJECTS_INTRO = (
 )
 
 
-def project_row(project):
-    repo_url = GITHUB_URL + "/" + project["repo"]
-    entry = ""
-    if project["slug"]:
-        entry = ('<p class="project-entry">'
-                 f'<a href="{project["slug"]}.html">Read the log entry &rarr;</a>'
-                 '</p>')
-    return ('<li class="project">'
-            '<p class="project-head">'
-            f'<a class="project-name" href="{repo_url}" rel="noopener">'
-            f'{html.escape(project["name"])} &#8599;</a>'
-            f'<span class="project-stack">{html.escape(project["stack"])}</span>'
-            '</p>'
-            f'<p class="project-blurb">{html.escape(project["blurb"])}</p>'
-            f'{entry}'
-            '</li>')
-
-
 def build_projects():
+    """PROJECTS in its given order (by weight, not date) and unnumbered,
+    as the comment on that list asks."""
     written = sum(1 for pr in PROJECTS if pr["slug"])
-    meta = f"{len(PROJECTS)} projects \u00b7 {written} written up"
-    rows = "".join(project_row(pr) for pr in PROJECTS)
-    body = ('\n  <article class="post">\n'
-            '    <h1>Projects</h1>\n'
-            f'    <p class="post-meta">{meta}</p>\n'
-            f'    <p>{html.escape(PROJECTS_INTRO)}</p>\n'
-            f'    <ul class="project-list">{rows}</ul>\n'
-            f'    <p class="project-more">Everything else lives on '
-            f'<a href="{GITHUB_URL}" rel="noopener">GitHub</a>.</p>\n'
-            '  </article>\n')
-    return (page_head(f"Projects \u00b7 {SITE_NAME}",
-                      "Software Shaurya has built: research tools, renderers "
-                      "and experiments, with links to the code and the "
-                      "write-ups.",
-                      "projects.html", md_href="projects.md") +
-            page_header() + body + page_foot('<a href="index.html">Index</a>'))
+    hero = ('<section class="hero">\n'
+            f'  <p class="label kicker">{len(PROJECTS)} projects · {written} written up</p>\n'
+            '  <h1>Projects</h1>\n'
+            f'  <p class="standfirst">{esc(PROJECTS_INTRO)}</p>\n'
+            '</section>\n\n')
+    rows = ""
+    for pr in PROJECTS:
+        entry = (f'\n      <a class="project-entry label" href="{pr["slug"]}.html">Read the log entry →</a>'
+                 if pr["slug"] else "")
+        rows += ('  <li class="project">\n'
+                 f'    <a class="project-name" href="{GITHUB_URL}/{pr["repo"]}" rel="noopener">'
+                 f'{esc(pr["name"])}<span aria-hidden="true"> ↗</span></a>\n'
+                 '    <div class="project-body">\n'
+                 f'      <p class="project-blurb">{esc(pr["blurb"])}</p>{entry}\n'
+                 '    </div>\n'
+                 f'    <span class="project-stack label">{esc(pr["stack"])}</span>\n'
+                 '  </li>\n')
+    listing = ('<section class="projects">\n'
+               f'<ul class="project-list">\n{rows}</ul>\n'
+               f'<p class="project-more">Everything else lives on '
+               f'<a href="{GITHUB_URL}" rel="noopener">GitHub</a>.</p>\n'
+               '</section>\n\n')
+    return (page_head(f"Projects · {SITE_NAME}",
+                      "Software Shaurya has built: research tools, renderers and experiments, "
+                      "with links to the code and the write-ups.", "projects.html", md_href="projects.md") +
+            masthead(current="projects") + hero + listing + foot() +
+            scripts() + '\n</body>\n</html>\n')
 
 
-def build_about():
+def build_about(posts):
     paragraphs = (
         "<p>Hi, I'm Shaurya. I'm a student who writes software and keeps this log as a "
         "record of the things I build, read, and try to understand. There isn't a bigger "
@@ -548,7 +702,7 @@ def build_about():
         "explains how to reach me.</p>"
     )
     return simple_page("about", "About", "Updated September 2026", paragraphs,
-                        "About Shaurya and the purpose of this engineering log.")
+                        "About Shaurya and the purpose of this engineering log.", posts=posts)
 
 
 def build_contact():
@@ -674,12 +828,12 @@ def build_robots():
 
 def build_404():
     base = urlparse(SITE_URL).path.rstrip("/") + "/"
-    body = ('\n  <article class="post">\n    <h1>404</h1>\n    <p class="post-meta">Nothing here</p>\n'
-            '    <p>This page does not exist or has moved. Start at the '
-            f'<a href="{base}index.html">index</a>, browse the '
-            f'<a href="{base}sitemap.xml">sitemap</a>, or read the '
-            f'<a href="{base}llms.txt">agent guide</a>.</p>\n  </article>\n')
-    return page_head(f"404 · {SITE_NAME}", "Nothing here.", "404.html", base=base, noindex=True) + page_header(base) + body + page_foot(f'<a href="{base}index.html">Index</a>')
+    paragraphs = ('<p>This page does not exist or has moved. Start at the '
+                  f'<a href="{base}index.html">index</a>, browse the '
+                  f'<a href="{base}sitemap.xml">sitemap</a>, or read the '
+                  f'<a href="{base}llms.txt">agent guide</a>.</p>')
+    return simple_page("404", "404", "Nothing here", paragraphs, "Nothing here.",
+                       base=base, noindex=True)
 
 
 def markdown_sibling(slug, title, date_str, description, canonical_path, body_md):
@@ -767,13 +921,12 @@ def write_markdown_files(posts):
 
 def main():
     posts = sorted((parse_post(p) for p in POSTS_DIR.glob("*.md")), key=lambda p: p["date"], reverse=True)
+    (ROOT / "widgets.css").write_text(widget_css(), encoding="utf-8")
     for i, post in enumerate(posts):
-        newer = posts[i - 1] if i > 0 else None
-        older = posts[i + 1] if i + 1 < len(posts) else None
-        (ROOT / f'{post["slug"]}.html').write_text(build_post(post, newer, older), encoding="utf-8")
+        (ROOT / f'{post["slug"]}.html').write_text(build_post(post, posts, i), encoding="utf-8")
     (ROOT / "index.html").write_text(build_index(posts), encoding="utf-8")
     (ROOT / "projects.html").write_text(build_projects(), encoding="utf-8")
-    (ROOT / "about.html").write_text(build_about(), encoding="utf-8")
+    (ROOT / "about.html").write_text(build_about(posts), encoding="utf-8")
     (ROOT / "contact.html").write_text(build_contact(), encoding="utf-8")
     (ROOT / "privacy.html").write_text(build_privacy(), encoding="utf-8")
     (ROOT / "feed.xml").write_text(build_feed(posts), encoding="utf-8")

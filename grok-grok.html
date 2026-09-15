@@ -1,29 +1,32 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>grok.....grok ? · Shaurya</title>
-  <meta name="description" content="What happens when you push a model past generalization? Does it know the rule, or just the data?">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://shauryasharma.tech/grok-grok.html">
-  <meta property="og:site_name" content="Shaurya · Log">
-  <meta property="og:title" content="grok.....grok ? · Shaurya">
-  <meta property="og:description" content="What happens when you push a model past generalization? Does it know the rule, or just the data?">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://shauryasharma.tech/grok-grok.html">
-  <meta property="og:image" content="https://shauryasharma.tech/images/covers/grok-grok.svg">
-  <meta property="article:published_time" content="2026-07-20T00:00:00+00:00">
-  <link rel="alternate" type="text/markdown" href="grok-grok.md">
-  <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cstyle%3Epath,rect%7Bfill:%23161513%7D@media(prefers-color-scheme:dark)%7Bpath,rect%7Bfill:%23eae5db%7D%7D%3C/style%3E%3Cpath d='M22 10h20l-10 14z'/%3E%3Crect x='4' y='31' width='56' height='6'/%3E%3Crect x='4' y='47' width='56' height='6'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700&display=swap">
-  <link rel="stylesheet" href="style.css?v=a2ff6719">
-  <script src="site.js?v=b8d0ed4c" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>grok.....grok ? · Shaurya</title>
+<meta name="description" content="What happens when you push a model past generalization? Does it know the rule, or just the data?">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/grok-grok.html">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="grok.....grok ? · Shaurya">
+<meta property="og:description" content="What happens when you push a model past generalization? Does it know the rule, or just the data?">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shauryasharma.tech/grok-grok.html">
+<meta property="og:image" content="https://shauryasharma.tech/images/covers/grok-grok.svg">
+<meta property="article:published_time" content="2026-07-20T00:00:00+00:00">
+<link rel="alternate" type="text/markdown" href="grok-grok.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="design.css?v=0c021ac6">
+<link rel="stylesheet" href="widgets.css?v=268ce49f">
+<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<script src="chrome.js?v=ef3ae2bd"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"grok.....grok ?","description":"What happens when you push a model past generalization? Does it know the rule, or just the data?","url":"https://shauryasharma.tech/grok-grok.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/grok-grok.html"},"datePublished":"2026-07-20T00:00:00+00:00","dateModified":"2026-07-20T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["research","machine learning","physics"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -34,26 +37,28 @@
   </script>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="site">
-    <a class="wordmark" href="index.html" aria-label="Shaurya"><span class="wordmark-text">LOG</span><span class="wordmark-cursor" aria-hidden="true"></span></a>
-    <nav>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About</a>
-      <button type="button" class="theme-toggle" aria-label="Toggle color theme">dark</button>
-    </nav>
-  </header>
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
 
-  <article class="post entry">
-    <h1>grok.....grok ?</h1>
-    <p class="post-meta">
-      <time datetime="2026-07-20">July 20, 2026</time>
-      <span class="tags">research, machine learning, physics</span>
-      <a class="post-source" href="https://github.com/Shaurya-34/catapult" rel="noopener">source &#8599;</a>
-      <button type="button" class="share-button" aria-label="Copy link to this article">share</button>
-    </p>
+<section class="hero">
+  <p class="label kicker">Research · Machine learning · Physics</p>
+  <h1>grok.....grok ?</h1>
+  <p class="standfirst">What happens when you push a model past generalization? Does it know the rule, or just the data?</p>
+  <p class="byline">
+    <time class="label" datetime="2026-07-20">July 20, 2026</time>
+    <span class="byline-links"><a class="label" href="https://github.com/Shaurya-34/catapult" rel="noopener">Source ↗</a><button type="button" class="share label" data-url="https://shauryasharma.tech/grok-grok.html" aria-label="Share this article">Share</button></span>
+  </p>
+</section>
 
+<article class="prose post">
 <p>There's a strange thing neural networks sometimes do called grokking. You train a
 network on some task, and for a long time it looks basically done: the loss on
 its training data has already hit zero, and nothing seems to be happening. Then,
@@ -116,7 +121,7 @@ and see what it was doing, not just that it worked.</p>
 <p>The trick itself is neat. Map each number onto an angle on a circle, and
 adding two numbers mod p turns into adding two angles. There's a plain
 trig identity for that:</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mtable>
     <mtr>
       <mtd columnalign="right"><mi>cos</mi><mo>(</mo><mi>A</mi><mo>+</mo><mi>B</mi><mo>)</mo></mtd>
@@ -137,7 +142,7 @@ trig identity for that:</p>
       </mtd>
     </mtr>
   </mtable>
-</math>
+</math></div>
 
 <p>which a network can compute with nothing more exotic than multiplication
 and addition. Those sharp spikes in the spectrum are the fingerprint of a
@@ -164,12 +169,20 @@ stable, at least for this kind of task. What I hadn't tested was the actual
 question: does that "something real" generalize to inputs way outside the
 training range. Modular arithmetic doesn't really have an "outside the range,"
 so I needed a different kind of problem to test that.</p>
+</article>
+
+<section class="pull">
+  <blockquote id="pullquote">The true physical law keeps curving. <em>The network structurally cannot.</em></blockquote>
+  <p class="attrib"><span class="label">The real answer</span></p>
+</section>
+
+<article class="prose post prose-after fin">
 <h2>Building the actual test</h2>
 <p>For Wedge 1 I switched to physics: functions with a known, exact formula, where
 I could train a network on one range of inputs and then check its predictions
 somewhere it had never seen. Lennard-Jones potential was the main one, which
 describes how atoms attract and repel depending on distance:</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mrow>
     <mi>V</mi><mo>(</mo><mi>r</mi><mo>)</mo>
     <mo>=</mo>
@@ -177,7 +190,7 @@ describes how atoms attract and repel depending on distance:</p>
     <mo>&#8722;</mo>
     <mfrac><mi>B</mi><msup><mi>r</mi><mn>6</mn></msup></mfrac>
   </mrow>
-</math>
+</math></div>
 
 <p>Two terms: one repulsive (<code>r^-12</code>, wins up close), one attractive (<code>r^-6</code>,
 wins further out), and two positive constants that just set the strength and
@@ -268,7 +281,7 @@ the fix is to stop making it invent one. Instead of a free-form network, I built
 a fixed menu of candidate ingredients, things like different powers of distance
 and different exponential decay rates, and let a plain linear model choose how
 much of each ingredient to use:</p>
-<math display="block">
+<div class="math-scroll"><math display="block">
   <mrow>
     <mi>V</mi><mo>(</mo><mi>r</mi><mo>)</mo>
     <mo>=</mo>
@@ -278,7 +291,7 @@ much of each ingredient to use:</p>
     <mo>+</mo><mo>&#8943;</mo><mo>+</mo>
     <msub><mi>w</mi><mi>n</mi></msub><msub><mi>f</mi><mi>n</mi></msub><mo>(</mo><mi>r</mi><mo>)</mo>
   </mrow>
-</math>
+</math></div>
 
 <p>Each <code>f</code> is one menu item (<code>r^-12</code>, <code>r^-6</code>, <code>r^-4</code>, <code>exp(-r)</code>, and so on), and
 each <code>w</code> is a weight the model is free to learn. The true Lennard-Jones
@@ -361,20 +374,52 @@ premise had failed, and stopping instead of grinding on. That's a less
 satisfying ending than a paper. It's still the right one.</p>
 <h2>Further reading</h2>
 <p><a href="https://gwern.net/llm-catapult">gwern.net/llm-catapult</a>: the original
-hypothesis this whole detour, and catapult's name, borrows from.</p>
-  </article>
+hypothesis this whole detour, and catapult's name, borrows from.</p></article>
 
-  <nav class="post-nav">
-    <span></span>
-    <a class="newer" href="marching-with-rays.html">Marching with rays →</a>
-  </nav>
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Elsewhere in the log</h2>
+    <a class="label" href="index.html#archive">All 8 entries →</a>
+  </div>
 
-  <footer class="site">
-    <span>Shaurya · 2026</span>
-    <a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a>
-    <a href="index.html">Index</a>
-  </footer>
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="marching-with-rays.html">
+      <span class="label">Next · Graphics</span>
+      <h3>Marching with rays</h3>
+      <p>Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</p>
+      <span class="meta label">21.07.26</span>
+    </a>
+    <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="label">Machine learning</span>
+      <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
+      <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+      <span class="meta label">10.09.26</span>
+    </a>
+    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
+      <span class="label">GPU programming</span>
+      <h3>Programming an attention kernel in Triton</h3>
+      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+      <span class="meta label">08.09.26</span>
+    </a>
+    <a class="tile-post" href="birthday-attack.html">
+      <span class="label">Cryptography</span>
+      <h3>Twenty-three people, 256 bits</h3>
+      <p>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
+      <span class="meta label">02.09.26</span>
+    </a>
+  </div>
+</section>
 
-</div>
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="design.js?v=700dc3e8"></script>
+<script src="site.js?v=b8d0ed4c"></script>
+
 </body>
 </html>

@@ -1,0 +1,164 @@
+<!-- The scroll figure for "The wall, named honestly". build.py puts this
+     in place of that section of the post; the step paragraphs are the
+     post's own sentences, split, so edit both together. -->
+<nav class="rail" id="rail" aria-label="Section progress"></nav>
+
+<section class="scrolly" id="scrolly">
+  <div class="scrolly-head">
+    <span class="label">Figure · the diagram follows your scroll</span>
+    <h2>The wall, named honestly</h2>
+    <p>Here's what this kernel is not: it is not FlashAttention, and it's worth
+       being precise about why, rather than letting the name imply more than the
+       code does.</p>
+  </div>
+
+  <div class="scrolly-inner">
+
+    <!-- LEFT: the steps. The paragraphs are the post's own, split at
+         sentence boundaries; only the step headings are added. -->
+    <div class="steps" id="steps">
+
+      <article class="step" data-step="1">
+        <p class="step-n">Step 01</p>
+        <h3>All of K and V, in one shot</h3>
+        <p>This kernel loads the entire K and V into fast on-chip memory
+           (<span class="term" tabindex="0">SRAM<span class="term-preview">The GPU's small, extremely fast on-chip memory, as opposed to its much larger but far slower off-chip global memory.</span></span>)
+           in one shot before doing anything else.</p>
+      </article>
+
+      <article class="step" data-step="2">
+        <p class="step-n">Step 02</p>
+        <h3>SRAM runs out</h3>
+        <p>That's fine at the sequence lengths tested here, but SRAM is small (tens of
+           kilobytes per streaming multiprocessor, not gigabytes), and K/V grow linearly
+           with sequence length. At some sequence length, "all of K and V" simply stops
+           fitting, and this kernel breaks, not gracefully, it just runs out of room.</p>
+      </article>
+
+      <article class="step" data-step="3">
+        <p class="step-n">Step 03</p>
+        <h3>Chunks, and a running max and sum</h3>
+        <p>The real FlashAttention trick is to never need all of K/V in SRAM at once:
+           process it in chunks, and keep a running max and running sum as you go,
+           correcting the accumulated output every time a new chunk reveals a bigger
+           max than anything seen so far.</p>
+      </article>
+
+      <article class="step" data-step="4">
+        <p class="step-n">Step 04</p>
+        <h3>The rung not yet climbed</h3>
+        <p>That's a genuinely different, harder algorithm than anything in this post,
+           the online-softmax rescaling has no analogue in kernels 1 through 4, and it's
+           the specific thing I haven't built yet.</p>
+      </article>
+
+    </div>
+
+    <!-- RIGHT: the sticky panel -->
+    <div class="sticky-col">
+      <div class="panel" id="panel" data-step="1">
+
+        <div class="panel-bar">
+          <span>Score matrix Q·Kᵀ</span>
+          <span class="state" id="panelState">Step 01 / 04</span>
+        </div>
+
+        <div class="legend">
+          <span><i class="k-q"></i>Query block</span>
+          <span><i class="k-live"></i>Live tile</span>
+          <span><i class="k-done"></i>Accumulated</span>
+          <span class="k-plan-item"><i class="k-plan"></i>Not built</span>
+        </div>
+
+        <figure>
+          <!--
+            SCHEMATIC DIAGRAM
+            =================
+            A 4x4 grid of score tiles: query blocks down, key blocks across. The
+            SRAM box is schematic, not to scale. The running max and sum in the
+            readout are computed for real, online softmax over one example row
+            of scores (SCORES in the script), and the last step checks the result
+            against the one-shot softmax denominator.
+
+            Tiles are addressed by (row, col) and their state is set purely
+            through the CSS classes is-materialised / is-ghost / is-queued /
+            is-active / is-done, via setTiles(fn). A truer diagram can replace
+            the <g id="grid"> contents without touching the scroll logic below.
+          -->
+          <svg viewBox="0 0 420 400" role="img" aria-labelledby="figTitle">
+            <title id="figTitle">Score tiles for the attention kernel, highlighted as the text advances</title>
+
+            <defs>
+              <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <rect width="6" height="6" fill="#f4f0e6"></rect>
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#13120f" stroke-width="1.6" stroke-opacity="0.32"></line>
+              </pattern>
+            </defs>
+
+            <!-- K labels across the top -->
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#6d6c68">
+              <text x="140" y="58" text-anchor="middle">K₁</text>
+              <text x="208" y="58" text-anchor="middle">K₂</text>
+              <text x="276" y="58" text-anchor="middle">K₃</text>
+              <text x="344" y="58" text-anchor="middle">K₄</text>
+              <text x="96"  y="104" text-anchor="end">Q₁</text>
+              <text x="96"  y="172" text-anchor="end">Q₂</text>
+              <text x="96"  y="240" text-anchor="end">Q₃</text>
+              <text x="96"  y="308" text-anchor="end">Q₄</text>
+              <text x="106" y="34"  font-size="9" letter-spacing="1.4">KEYS →</text>
+              <text x="30"  y="104" font-size="9" letter-spacing="1.4" transform="rotate(-90 30 104)">QUERIES →</text>
+            </g>
+
+            <!-- the grid of tiles -->
+            <g id="grid"></g>
+
+            <!-- SRAM capacity bracket, shown on step 2 -->
+            <g id="sramBox">
+              <rect x="104" y="68" width="72" height="72" fill="none" stroke="#0d0d0c" stroke-width="2"></rect>
+            </g>
+            <g id="sramLabel" font-family="JetBrains Mono, monospace" font-size="9" fill="#0d0d0c">
+              <line x1="176" y1="104" x2="200" y2="104" stroke="#0d0d0c" stroke-width="1"></line>
+              <text x="204" y="101">SRAM HOLDS</text>
+              <text x="204" y="113">ABOUT THIS MUCH</text>
+            </g>
+
+            <!-- active query block bracket, steps 1 to 3 -->
+            <g id="qBracket">
+              <path d="M100 70 H92 V140 H100" fill="none" stroke="#0d0d0c" stroke-width="2"></path>
+            </g>
+
+            <!-- output column, steps 3 and 4 -->
+            <g id="outCol" font-family="JetBrains Mono, monospace" font-size="10" fill="#6d6c68">
+              <text x="399" y="58" text-anchor="middle">O</text>
+              <rect x="386" y="70"  width="26" height="60" fill="#ebe9e4" stroke="#0d0d0c" stroke-width="1"></rect>
+              <rect x="386" y="138" width="26" height="60" fill="none"    stroke="#0d0d0c" stroke-width="1" stroke-opacity=".3"></rect>
+              <rect x="386" y="206" width="26" height="60" fill="none"    stroke="#0d0d0c" stroke-width="1" stroke-opacity=".3"></rect>
+              <rect x="386" y="274" width="26" height="60" fill="none"    stroke="#0d0d0c" stroke-width="1" stroke-opacity=".3"></rect>
+            </g>
+
+            <!-- how much of K/V has to sit in SRAM at once. The mark is a
+                 fixed capacity: it never moves, the need does. -->
+            <g font-family="JetBrains Mono, monospace" font-size="9" fill="#6d6c68">
+              <text x="104" y="362" letter-spacing="1.4">K/V NEEDED IN SRAM</text>
+              <rect x="104" y="374" width="240" height="6" fill="none" stroke="#0d0d0c" stroke-width="1" stroke-opacity=".35"></rect>
+              <rect id="trafficBar"  x="104" y="374" width="120" height="6" fill="#0d0d0c"></rect>
+              <rect id="trafficOver" x="254" y="374" width="0"   height="6" fill="#e5482c"></rect>
+              <line x1="254" y1="369" x2="254" y2="385" stroke="#0d0d0c" stroke-width="1"></line>
+              <text x="254" y="396" text-anchor="middle" font-size="8">SRAM LIMIT</text>
+            </g>
+          </svg>
+
+          <figcaption id="caption"></figcaption>
+        </figure>
+
+        <dl class="readout">
+          <div><dt>Running max <i>m</i></dt><dd id="roM">—</dd></div>
+          <div><dt>Running sum <i>ℓ</i></dt><dd id="roL">—</dd></div>
+          <div><dt>K/V blocks in SRAM</dt><dd id="roT">4 / 4</dd></div>
+        </dl>
+
+      </div>
+    </div>
+
+  </div>
+</section>
