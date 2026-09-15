@@ -180,7 +180,8 @@ html.lenis, html.lenis body { height: auto; }
 .masthead nav a:hover { color: var(--blue); }
 /* the theme switch reads like the nav links beside it; its label is the
    mode it would switch to, the same convention as the live site */
-.masthead nav .mode-toggle {
+.masthead nav .mode-toggle,
+.masthead nav .mute-toggle {
   font: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
@@ -190,7 +191,8 @@ html.lenis, html.lenis body { height: auto; }
   padding: 0;
   cursor: pointer;
 }
-.masthead nav .mode-toggle:hover { color: var(--blue); }
+.masthead nav .mode-toggle:hover,
+.masthead nav .mute-toggle:hover { color: var(--blue); }
 
 .masthead nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--red); text-decoration-thickness: 2px; text-underline-offset: 0.45em; }
 

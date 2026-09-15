@@ -83,11 +83,12 @@
      as a mechanism.
 
      One rule for the whole site, enforced once here rather than once
-     per widget: silent until asked for, remembered after that. A
-     reader who came to read should never be made a noise at.
+     per widget: on unless muted from the nav (chrome.js owns that
+     control), and only ever in answer to something the reader did.
      ------------------------------------------------------------ */
   var siteSound = (function () {
-    var on = safeStore.get("tape-sound") === "on";
+    /* read live, so muting in the nav applies at once */
+    function on() { return safeStore.get("tape-sound") !== "off"; }
     var audio = null;
     var noise = null;
     /* Wall clock, in ms, deliberately negative to start - see burst().
@@ -130,7 +131,7 @@
        (a collision) that only ever fires once per run and must never be
        swallowed by something that ticked a moment earlier. */
     function burst(freq, q, peak, dur, floorMs) {
-      if (!on || !ensure()) {
+      if (!on() || !ensure()) {
         return;
       }
 
@@ -164,9 +165,8 @@
     }
 
     return {
-      isOn: function () { return on; },
+      isOn: on,
       setOn: function (v) {
-        on = v;
         safeStore.set("tape-sound", v ? "on" : "off");
       },
       ensure: ensure,
@@ -203,6 +203,20 @@
       }
     };
   })();
+
+  /* Audio may only start inside a gesture, so wake the engine on the
+     first press of the visit; a widget that ticks from a timer after
+     that (the birthday demo's auto-run) can then be heard. */
+  run(function () {
+    if (!(window.AudioContext || window.webkitAudioContext)) return;
+    var arm = function () {
+      if (siteSound.isOn()) siteSound.ensure();
+      document.removeEventListener("pointerdown", arm);
+      document.removeEventListener("keydown", arm);
+    };
+    document.addEventListener("pointerdown", arm);
+    document.addEventListener("keydown", arm);
+  });
 
   /* ------------------------------------------------------------
      Sound toggle

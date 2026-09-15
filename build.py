@@ -242,14 +242,14 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
     return head + CLARITY_SCRIPT + '</head>\n<body>\n\n'
 
 
-def masthead(base="", sound=False, current=""):
-    # The sound control only appears on pages with something to hear (a post
-    # whose front matter sets sound: true), hidden until site.js confirms the
-    # browser can synthesise the tick.
-    buttons = ('\n    <button type="button" class="sound-toggle" hidden aria-pressed="false" '
-               'aria-label="Turn on sound">sound</button>') if sound else ""
-    buttons += ('\n    <button type="button" class="mode-toggle" hidden '
-                'aria-label="Switch theme">dark</button>')
+def masthead(base="", current=""):
+    # Both switches stay hidden until chrome.js has wired them: sound (the
+    # click on tiles, rows and filters, and the post widgets' ticks) and the
+    # theme. Each label names what pressing it would do.
+    buttons = ('\n    <button type="button" class="mute-toggle" hidden aria-pressed="false" '
+               'aria-label="Mute sound">mute</button>'
+               '\n    <button type="button" class="mode-toggle" hidden '
+               'aria-label="Switch theme">dark</button>')
     here = ' aria-current="page"'
     links = "".join(
         f'    <a href="{base}{page}.html"{here if page == current else ""}>{label}</a>\n'
@@ -349,7 +349,6 @@ def parse_post(path):
         "description": meta.get("description", ""),
         "cover": meta.get("cover", default_cover if (ROOT / default_cover).exists() else ""),
         "repo": meta.get("repo", ""),
-        "sound": meta.get("sound", "").strip().lower() == "true",
         "body_md": body,
         "read_time": max(1, round(len(re.findall(r"\b\w+\b", body)) / 220)),
     }
@@ -460,7 +459,7 @@ def build_post(post, posts, i):
     return (page_head(f'{post["title"]} · {SITE_NAME}', description, f'{post["slug"]}.html',
                       og_type="article", jsonld=jsonld, og_image=og_image,
                       md_href=f'{post["slug"]}.md', published=published) +
-            masthead(sound=post["sound"]) + hero + article +
+            masthead() + hero + article +
             mosaic("Elsewhere in the log", more, tiles) + foot() +
             scripts(site_js=True) + (f'<script>\n{script}</script>\n' if script else "") +
             '\n</body>\n</html>\n')
