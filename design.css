@@ -558,14 +558,35 @@ html.lenis, html.lenis body { height: auto; }
 .prose ul { padding-left: 1.2rem; }
 .prose li { margin-bottom: 0.5rem; }
 
+/* Section headings break out to the wide measure, the left edge the code
+   blocks and figures share, so they hang past the text and read as the
+   start of a section rather than a large paragraph. The numbered label
+   and hairline echo the Triton figure's step headings. The count runs
+   across the article halves either side of the pull quote and on
+   through a scroll figure's heading. */
+body { counter-reset: section; }
+.prose h2, .scrolly-head h2 { counter-increment: section; }
+.prose h2::before,
+.scrolly-head h2::before {
+  content: counter(section, decimal-leading-zero);
+  display: block;
+  margin-bottom: 0.9rem;
+  font: 0.66rem/1 var(--mono);
+  letter-spacing: 0.18em;
+  color: var(--red-text);
+}
+
 .prose h2 {
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(1.7rem, 3.2vw, 2.4rem);
-  letter-spacing: -0.03em;
-  line-height: 1.08;
-  margin: 3.5rem 0 1.1rem;
-  max-width: 20ch;
+  font-size: clamp(1.9rem, 4vw, 3.1rem);
+  letter-spacing: -0.032em;
+  line-height: 1.04;
+  margin: 5rem 0 1.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  max-width: 48rem;
+  text-wrap: balance;
 }
 
 .prose a, .step a { color: inherit; text-decoration-color: var(--ink-30); text-underline-offset: 0.2em; }
