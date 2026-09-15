@@ -1152,3 +1152,15 @@ html.lenis, html.lenis body { height: auto; }
 /* text for screen readers and agents only, like the index's site summary */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Articles read down the middle of the page. Each direct child of an
+   article centres in its own width: the text at its 34rem measure, and
+   the wider code blocks, figures and widgets spread evenly either side
+   of it rather than only to the right. The selector outranks the
+   widgets' own `article.post .grok-demo { margin: x 0 }` rules, so none
+   of them pulls a figure back to the left; only the side margins are
+   set, so vertical spacing is untouched. Phones are narrower than the
+   measure, so nothing changes there. */
+body article.prose.post > *,
+body article.prose.post.fin::after { margin-left: auto; margin-right: auto; }
+.prose.post.fin::after { max-width: var(--measure); }
