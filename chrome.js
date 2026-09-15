@@ -60,7 +60,7 @@
     if (!Ctx) return null;
     if (!audio) {
       audio = new Ctx();
-      crack = audio.createBuffer(1, Math.floor(audio.sampleRate * 0.04), audio.sampleRate);
+      crack = audio.createBuffer(1, Math.floor(audio.sampleRate * 0.12), audio.sampleRate);
       var d = crack.getChannelData(0);
       for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     }
@@ -116,6 +116,37 @@
     noiseBurst(audio.currentTime, 3400, 1.8, 0.035, 0.018);
   }
 
+  /* Moving onto an entry on the index's log strip sets a block down: a
+     low knock with some grit, pitched a little differently each time the
+     way Minecraft varies its placing sound. Entry days only, so sweeping
+     across the empty days stays quiet. */
+  var lastPlace = 0;
+
+  function place() {
+    if (!soundOn() || !audio || audio.state !== "running") return;
+    var now = performance.now();
+    if (now - lastPlace < 60) return;
+    lastPlace = now;
+    var t = audio.currentTime, pitch = 0.92 + Math.random() * 0.16;
+    var body = audio.createOscillator();
+    body.type = "sine";
+    body.frequency.setValueAtTime(210 * pitch, t);
+    body.frequency.exponentialRampToValueAtTime(95 * pitch, t + 0.07);
+    envelope(body, t, 0.3, 0.09);
+    body.start(t);
+    body.stop(t + 0.1);
+    var grit = audio.createBufferSource(), low = audio.createBiquadFilter();
+    grit.buffer = crack;
+    grit.playbackRate.value = pitch;
+    low.type = "lowpass";
+    low.frequency.value = 1100 * pitch;
+    low.Q.value = 0.8;
+    grit.connect(low);
+    envelope(low, t, 0.32, 0.08);
+    grit.start(t);
+    grit.stop(t + 0.09);
+  }
+
   var wake = function () {
     if (soundOn() && engine() && audio.state === "suspended") audio.resume();
   };
@@ -124,6 +155,7 @@
 
   document.addEventListener("pointerover", function (e) {
     if (e.pointerType === "touch" || !e.target.closest) return;
+    if (e.target.closest(".lh-cells .cell.is-entry")) return place();
     var el = e.target.closest(SOUND_TARGETS);
     if (el && !(e.relatedTarget && el.contains(e.relatedTarget))) hover();
   });
