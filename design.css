@@ -230,10 +230,9 @@ html.lenis, html.lenis body { height: auto; }
 .hero .byline a { text-decoration: none; }
 .hero .byline a:hover { color: var(--blue); }
 .byline-links { display: inline-flex; gap: 1.5rem; }
+/* the button takes its type from .label, like the date and the Source
+   link beside it; only the button chrome is reset here */
 .hero .byline .share {
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
   color: var(--ink-60);
   background: none;
   border: 0;
