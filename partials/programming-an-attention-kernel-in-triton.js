@@ -105,7 +105,8 @@
     2: function () {
       setTiles(function (row, c) {
         if (row !== 0) return "";
-        return c === 0 ? "is-active" : "is-ghost";
+        /* one block fits; the other three are wanted at the same time */
+        return c === 0 ? "is-active" : "is-needed";
       });
       caption.innerHTML = "The box is what fits. Kernel 4 still needs all four key blocks at once, and they grow with the sequence: double the length and the need runs past the limit.";
       set(roM, "—"); set(roL, "—"); set(roT, "4 / 4");

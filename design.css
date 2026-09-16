@@ -441,7 +441,10 @@ html.lenis, html.lenis body { height: auto; }
   background: repeating-linear-gradient(45deg, var(--paper) 0 2.5px, color-mix(in srgb, var(--ink) 34%, var(--paper)) 2.5px 4px); }
 /* only the last step draws anything hatched, and on a phone the legend
    wraps to a second line, so it earns its space only there */
+.legend .k-need { background: none; border: 1px dashed var(--red); }
+.legend .k-need-item,
 .legend .k-plan-item { display: none; }
+.panel[data-step="2"] .k-need-item { display: inline-flex; }
 .panel[data-step="4"] .k-plan-item { display: inline-flex; }
 
 .panel-bar { flex: 0 0 auto; }
@@ -512,7 +515,10 @@ html.lenis, html.lenis body { height: auto; }
 
 .tile.is-materialised .cell { fill: url(#hatch); stroke-opacity: 0.55; }
 .tile.is-materialised .cellText { fill: var(--ink); fill-opacity: 0.45; }
-.tile.is-ghost       .cell { fill: var(--paper); stroke-opacity: 0.22; stroke-dasharray: 3 3; }
+/* needed at the same time, with no room for it: outlined in the live
+   ink rather than faded, so step 2 shows four blocks wanted and one box
+   of space, not one block and three near-invisible ones */
+.tile.is-needed      .cell { fill: none; stroke: var(--red); stroke-opacity: 0.85; stroke-dasharray: 4 3; }
 .tile.is-queued      .cell { fill: var(--blue-tint); stroke: var(--blue); stroke-opacity: 1; }
 .tile.is-done        .cell { fill: var(--saffron); stroke: var(--ink); stroke-opacity: 0.6; }
 .tile.is-active      .cell { fill: var(--red); stroke: var(--red); stroke-opacity: 1; }

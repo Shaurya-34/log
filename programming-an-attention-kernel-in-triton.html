@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="design.css?v=a6ffc06c">
+<link rel="stylesheet" href="design.css?v=b4e58334">
 <link rel="stylesheet" href="widgets.css?v=268ce49f">
 <link rel="stylesheet" href="transitions.css?v=4ce300e1">
 <script src="chrome.js?v=e9231792"></script>
@@ -357,6 +357,7 @@ optional, it's the only reason I can trust this one.</p>
           <span><i class="k-q"></i>Query block</span>
           <span><i class="k-live"></i>Live tile</span>
           <span><i class="k-done"></i>Accumulated</span>
+          <span class="k-need-item"><i class="k-need"></i>Needed, no room</span>
           <span class="k-plan-item"><i class="k-plan"></i>Not built</span>
         </div>
 
@@ -371,7 +372,7 @@ optional, it's the only reason I can trust this one.</p>
             against the one-shot softmax denominator.
 
             Tiles are addressed by (row, col) and their state is set purely
-            through the CSS classes is-materialised / is-ghost / is-queued /
+            through the CSS classes is-materialised / is-needed / is-queued /
             is-active / is-done, via setTiles(fn). A truer diagram can replace
             the <g id="grid"> contents without touching the scroll logic below.
           -->
@@ -444,7 +445,7 @@ optional, it's the only reason I can trust this one.</p>
         <dl class="readout">
           <div><dt>Running max <i>m</i></dt><dd id="roM">—</dd></div>
           <div><dt>Running sum <i>ℓ</i></dt><dd id="roL">—</dd></div>
-          <div><dt>K/V blocks in SRAM</dt><dd id="roT">4 / 4</dd></div>
+          <div><dt>K/V blocks at once</dt><dd id="roT">4 / 4</dd></div>
         </dl>
 
       </div>
@@ -618,7 +619,8 @@ yet.</p></article>
     2: function () {
       setTiles(function (row, c) {
         if (row !== 0) return "";
-        return c === 0 ? "is-active" : "is-ghost";
+        /* one block fits; the other three are wanted at the same time */
+        return c === 0 ? "is-active" : "is-needed";
       });
       caption.innerHTML = "The box is what fits. Kernel 4 still needs all four key blocks at once, and they grow with the sequence: double the length and the need runs past the limit.";
       set(roM, "—"); set(roL, "—"); set(roT, "4 / 4");
