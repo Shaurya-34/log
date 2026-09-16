@@ -130,6 +130,10 @@ PULLS = {
     "understanding-alphafolds-plddt-pae-and-ptm": (
         "pLDDT is a self-assessment, <em>not a measurement.</em>",
         "What pLDDT actually is"),
+    "fly-circuit-vs-cnn": (
+        "LPLC2 and LC4 detect looming, and <em>nothing in them checks whether "
+        "the looming thing is on a collision course.</em>",
+        "Why the fly loses"),
 }
 
 # The sections of style.css that style site.js's widgets, copied into

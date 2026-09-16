@@ -1,7 +1,7 @@
 ---
 title: A fly's escape reflex, flying a drone
 date: 2026-09-16
-tags: machine learning, neuroscience, typescript
+tags: machine learning, neuroscience
 description: A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.
 repo: FlyvsCNN
 ---

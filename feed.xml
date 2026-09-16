@@ -11,7 +11,7 @@
       <guid>https://shauryasharma.tech/fly-circuit-vs-cnn.html</guid>
       <pubDate>Wed, 16 Sep 2026 00:00:00 GMT</pubDate>
       <description>A hardwired model of the fruit fly&#x27;s looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.</description>
-      <category>machine learning, neuroscience, typescript</category>
+      <category>machine learning, neuroscience</category>
     </item>
     <item>
       <title>Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM</title>

@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="widgets.css?v=268ce49f">
 <link rel="stylesheet" href="transitions.css?v=4ce300e1">
 <script src="chrome.js?v=e9231792"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"A fly's escape reflex, flying a drone","description":"A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.","url":"https://shauryasharma.tech/fly-circuit-vs-cnn.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/fly-circuit-vs-cnn.html"},"datePublished":"2026-09-16T00:00:00+00:00","dateModified":"2026-09-16T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["machine learning","neuroscience","typescript"]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"A fly's escape reflex, flying a drone","description":"A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.","url":"https://shauryasharma.tech/fly-circuit-vs-cnn.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/fly-circuit-vs-cnn.html"},"datePublished":"2026-09-16T00:00:00+00:00","dateModified":"2026-09-16T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["machine learning","neuroscience"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -49,7 +49,7 @@
 </header>
 
 <section class="hero">
-  <p class="label kicker">Machine learning · Neuroscience · Typescript</p>
+  <p class="label kicker">Machine learning · Neuroscience</p>
   <h1>A fly's escape reflex, flying a drone</h1>
   <p class="standfirst">A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.</p>
   <p class="byline">
@@ -58,7 +58,7 @@
   </p>
 </section>
 
-<article class="prose post prose-after fin">
+<article class="prose post">
 <p>A fruit fly's fastest escapes run through a pair of large neurons called the
 Giant Fibers. Almost all of the visual input reaching them comes from two
 cell types, LPLC2 and LC4: between them, 99.4% of the Giant Fiber's direct
@@ -85,6 +85,14 @@ and the circuit measures motion on that grid. A drone flying forward sees
 everything expand, obstacles or not, so a radial motion opponency step
 (RMO) subtracts the expansion that forward flight alone would produce.
 The largest connected patch of whatever survives is treated as the object.</p>
+</article>
+
+<section class="pull">
+  <blockquote id="pullquote">LPLC2 and LC4 detect looming, and <em>nothing in them checks whether the looming thing is on a collision course.</em></blockquote>
+  <p class="attrib"><span class="label">Why the fly loses</span></p>
+</section>
+
+<article class="prose post prose-after fin">
 <h2>Two drones, one camera</h2>
 <p>Both drones fly the same procedurally generated corridor, 120 m long and
 8 m wide, full of poles and boxes, at 4 m/s. Each sees only a 64 by 48
@@ -274,7 +282,7 @@ past, and a network trained on two and a half minutes of flying can.</p></articl
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="design.js?v=700dc3e8"></script>
 <script src="site.js?v=4dfdffba"></script>
-<script type="module" src="vendor/flyvscnn.js?v=cb117837"></script>
+<script type="module" src="vendor/flyvscnn.js?v=881a5bdb"></script>
 
 </body>
 </html>
