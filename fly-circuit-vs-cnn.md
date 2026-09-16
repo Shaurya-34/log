@@ -44,6 +44,11 @@ Both drones fly the same procedurally generated corridor, 120 m long and
 8 m wide, full of poles and boxes, at 4 m/s. Each sees only a 64 by 48
 grayscale frame from a camera on its nose. Neither gets obstacle positions.
 
+The "drone" is deliberately simple. It flies forward at a constant speed and
+a fixed height, and the only thing a controller can change is how hard it
+steers sideways. There are no rotors, no tilting and no aerodynamics, so
+this tests seeing and deciding, not flying a real quadcopter.
+
 The second drone is flown by a CNN with about 35,000 parameters. It takes
 the last four frames and outputs a steering value. It learned by copying a
 scripted expert that *is* allowed to see obstacle positions and plans a
