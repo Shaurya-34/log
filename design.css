@@ -827,16 +827,19 @@ body { counter-reset: section; }
   white-space: nowrap;
 }
 
-.cell {
+/* Scoped to the strip: the Triton figure's score tiles are also .cell, and
+   height is a real geometry property on an SVG rect, so an unscoped rule
+   here halved every tile in that figure. */
+.lh-cells .cell {
   display: block;
   position: relative;
   height: 30px;
   border: 1px solid var(--line);
 }
-.cell.is-entry { background: var(--saffron); border-color: var(--saffron); }
-.cell.is-today { border-color: var(--ink); }
-.cell.is-current { background: var(--red); border-color: var(--red); }
-.cell.is-current::after {
+.lh-cells .cell.is-entry { background: var(--saffron); border-color: var(--saffron); }
+.lh-cells .cell.is-today { border-color: var(--ink); }
+.lh-cells .cell.is-current { background: var(--red); border-color: var(--red); }
+.lh-cells .cell.is-current::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -846,7 +849,7 @@ body { counter-reset: section; }
   border-top: 0;
   border-bottom-color: var(--red);
 }
-.cell:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.lh-cells .cell:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 .lh-ends { display: flex; justify-content: space-between; margin-top: 0.5rem; }
 
