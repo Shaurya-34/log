@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>A fly&#x27;s escape reflex, flying a drone · Shaurya</title>
+<meta name="description" content="A hardwired model of the fruit fly&#x27;s looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/fly-circuit-vs-cnn.html">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="A fly&#x27;s escape reflex, flying a drone · Shaurya">
+<meta property="og:description" content="A hardwired model of the fruit fly&#x27;s looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shauryasharma.tech/fly-circuit-vs-cnn.html">
+<meta property="article:published_time" content="2026-09-16T00:00:00+00:00">
+<link rel="alternate" type="text/markdown" href="fly-circuit-vs-cnn.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="design.css?v=f6128f1d">
+<link rel="stylesheet" href="widgets.css?v=268ce49f">
+<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<script src="chrome.js?v=e9231792"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"A fly's escape reflex, flying a drone","description":"A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.","url":"https://shauryasharma.tech/fly-circuit-vs-cnn.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/fly-circuit-vs-cnn.html"},"datePublished":"2026-09-16T00:00:00+00:00","dateModified":"2026-09-16T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["machine learning","neuroscience","typescript"]}</script>
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yajiq3aa14");
+  </script>
+</head>
+<body>
+
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <button type="button" class="mute-toggle" hidden aria-pressed="false" aria-label="Mute sound">mute</button>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <p class="label kicker">Machine learning · Neuroscience · Typescript</p>
+  <h1>A fly's escape reflex, flying a drone</h1>
+  <p class="standfirst">A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.</p>
+  <p class="byline">
+    <time class="label" datetime="2026-09-16">September 16, 2026</time>
+    <span class="byline-links"><a class="label" href="https://github.com/Shaurya-34/FlyvsCNN" rel="noopener">Source ↗</a><button type="button" class="share label" data-url="https://shauryasharma.tech/fly-circuit-vs-cnn.html" aria-label="Share this article">Share</button></span>
+  </p>
+</section>
+
+<article class="prose post prose-after fin">
+<p>A fruit fly's fastest escapes run through a pair of large neurons called the
+Giant Fibers. Almost all of the visual input reaching them comes from two
+cell types, LPLC2 and LC4: between them, 99.4% of the Giant Fiber's direct
+synapses from the optic lobe.</p>
+<p>That's a very small circuit doing something that looks a lot like obstacle
+avoidance. I wanted to know how far it gets if you wire it to a drone and
+race it against a neural network that learned the same job from examples.</p>
+<h2>The circuit, straight from the paper</h2>
+<p>Ache et al. (2019, <em>Current Biology</em>) fit a simple model to recordings from
+the Giant Fiber while a fly watched a disc expand on a screen. It has two
+terms. LPLC2 responds to how big the object looks, with a log-normal tuning
+curve that peaks at 42 degrees. LC4 responds to how fast it's growing,
+roughly linearly. The Giant Fiber's drive is a weighted sum of the two:</p>
+<pre><code>V_GF = 1.45 · V_LPLC2(size) + 1.62 · V_LC4(growth rate)
+</code></pre>
+<p>Those constants are published, and I never tuned them. The paper also has
+two inhibitory terms, which I dropped for now. Everything on top of the sum
+is mine: the threshold where drive becomes an escape, the dodge that
+follows, and the steering. The paper's model was fit on trials where the
+fiber didn't fire, so it says nothing about when an escape should happen.</p>
+<p>The camera image gets averaged down to a 16 by 12 grid of
+<span class="term" tabindex="0">ommatidia<span class="term-preview">The individual facets of an insect's compound eye. Here, one cell of a coarse grid over the camera image.</span></span>,
+and the circuit measures motion on that grid. A drone flying forward sees
+everything expand, obstacles or not, so a radial motion opponency step
+(RMO) subtracts the expansion that forward flight alone would produce.
+The largest connected patch of whatever survives is treated as the object.</p>
+<h2>Two drones, one camera</h2>
+<p>Both drones fly the same procedurally generated corridor, 120 m long and
+8 m wide, full of poles and boxes, at 4 m/s. Each sees only a 64 by 48
+grayscale frame from a camera on its nose. Neither gets obstacle positions.</p>
+<p>The second drone is flown by a CNN with about 35,000 parameters. It takes
+the last four frames and outputs a steering value. It learned by copying a
+scripted expert that <em>is</em> allowed to see obstacle positions and plans a
+path around them. The CNN only ever sees the frames the expert flew
+through.</p>
+<p>I set one rule before any results existed: calibrate the fly once, and
+never tune anything on the corridors used for the final evaluation. The
+CNN gets a real training budget too, so the comparison isn't against a
+network starved of data.</p>
+<figure>
+  <div data-fly-vs-cnn data-weights="assets/flyvscnn-cnn.bin"></div>
+  <figcaption>Both drones, live, on the same corridor. The small inset in each panel is the whole input its controller gets. Under the fly is its Giant Fiber drive against the escape threshold; under the CNN, its steering. Turn motion opponency off and the fly's drive pins itself above the line: that's the drone's own forward motion, read as a threat. On a narrow screen, the last button swaps between the two drones.</figcaption>
+</figure>
+
+<h2>The renderer lied twice</h2>
+<p>All of this first ran on a cheap analytic renderer, and the fly's numbers
+looked respectable. Moving to the real Three.js renderer turned up two bugs
+in how frames came back from the GPU. They were too dark, because the
+read-back was in linear color. They were also mirrored left to right. The
+fly picks its dodge direction from which side of the view the threat is
+on, so with mirrored frames it was carefully steering <em>into</em> obstacles.</p>
+<p>The CNN would have learned from mirrored frames without complaint, since
+its training data was mirrored the same way. The fly couldn't, because its
+wiring assumes the left of the image is the left of the world. In this case
+the hand-built model was the easier one to debug: it failed loudly.</p>
+<h2>A hundred corridors nobody tuned on</h2>
+<p>With both bugs fixed and everything frozen, both drones flew 100 held-out
+corridors once:</p>
+<table>
+<thead>
+<tr>
+<th>controller</th>
+<th>training episodes</th>
+<th>collisions</th>
+<th>average steering</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>no controller</td>
+<td>-</td>
+<td>665</td>
+<td>0.79</td>
+</tr>
+<tr>
+<td>fly circuit</td>
+<td>0</td>
+<td>288</td>
+<td>0.76</td>
+</tr>
+<tr>
+<td>fly circuit, tuned</td>
+<td>0</td>
+<td>195</td>
+<td>0.52</td>
+</tr>
+<tr>
+<td>CNN</td>
+<td>2</td>
+<td>373</td>
+<td>0.10</td>
+</tr>
+<tr>
+<td>CNN</td>
+<td>5</td>
+<td>213</td>
+<td>0.12</td>
+</tr>
+<tr>
+<td>CNN</td>
+<td>20</td>
+<td>81</td>
+<td>0.13</td>
+</tr>
+<tr>
+<td>CNN</td>
+<td>200</td>
+<td>49</td>
+<td>0.12</td>
+</tr>
+<tr>
+<td>expert (sees obstacles)</td>
+<td>-</td>
+<td>25</td>
+<td>0.14</td>
+</tr>
+</tbody>
+</table>
+<p>With no training at all, the fly cuts collisions by more than half, so the
+circuit does work. A CNN trained on five demonstration flights, about two
+and a half minutes of flying, already beats it, and it keeps improving with
+more data.</p>
+<p>"Tuned" means a random search over the seven constants I made up (the
+threshold, the dodge length and the rest) on 20 training corridors, with
+the biology held fixed. My first attempt scored on collisions alone and
+found a fly that was dodging 94% of the time, so the search now also pays
+for steering effort. Tuning helps, and the gain holds on unseen corridors:
+288 down to 195. That's worth about as much as five episodes are to the
+CNN.</p>
+<figure>
+  <img src="images/fly-circuit-vs-cnn/data_efficiency.png" alt="Line chart of CNN collisions on 20 benchmark corridors against training episodes on a log scale: 77 at 2 episodes, 26 at 5, 14 at 20, 10 at 50 and 11 at 200. Horizontal lines mark the untuned fly circuit at 48, the tuned fly at 31, no controller at 118 and the obstacle-reading expert at 6." loading="lazy">
+  <figcaption>Collisions on 20 benchmark corridors against the number of demonstration flights the CNN learned from. The dashed and dotted blue lines are the fly, untuned and tuned. The CNN crosses the untuned fly between two and five episodes.</figcaption>
+</figure>
+
+<h2>Why the fly loses</h2>
+<p>The steering column gives it away. The fly steers hard most of the time,
+and the CNN barely steers at all. I assumed the fly was spotting obstacles
+too late, so I logged what it reported at every step and checked it
+against the real corridor geometry.</p>
+<p>It wasn't late. It escaped from 94% of the obstacles it was actually
+heading for, at a median of 5.5 m, with time to get clear. The trouble was
+everything else it escaped from. Only 17% of its escapes were at something
+it would have hit, and 7% happened with nothing in view at all. The other
+76% were at obstacles in plain sight that it was going to miss anyway.</p>
+<p>That is the circuit doing what it evolved to do. LPLC2 and LC4 detect
+looming, and nothing in them checks whether the looming thing is on a
+collision course. For a fly that's probably the right trade, since a
+wasted jump is cheap and a missed predator isn't. A drone in a cluttered
+corridor pays for every false alarm with a swerve.</p>
+<p>The obvious patch is the old sailor's rule: something you're about to hit
+holds its bearing as it grows, and something you'll pass slides sideways,
+so ignore the sliders. It cut the escapes by about two thirds. It also
+started missing 39% of the real threats, up from 6%, most likely because
+once the drone swerves, everything in view slides. Collisions on the
+benchmark corridors went from 48 to 111, and I took it back out.</p>
+<h2>Honest complication</h2>
+<p>Some of this is weaker than the table makes it look. Each CNN point is a
+single training run. The expert it copies cheats, so the CNN learns from
+better information than the fly ever gets. The fly's size estimate runs at
+about a third of the true angular size, because flat-shaded obstacles only
+produce motion at their edges. Treating the bounding box of that outline as
+a filled shape helped (52 collisions down to 48 on the benchmark), but it's
+still a workaround. And I dropped the paper's two inhibitory terms, which
+are my best guess for what would calm the circuit down.</p>
+<h2>Close</h2>
+<p>The fly circuit is a real controller: one published equation and seven
+constants I chose more than halve a drone's collisions with no data at
+all. What surprised me was where it fails. It sees obstacles early and
+reliably, but it can't tell something coming at it from something going
+past, and a network trained on two and a half minutes of flying can.</p></article>
+
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Elsewhere in the log</h2>
+    <a class="label" href="index.html#archive">All 9 entries →</a>
+  </div>
+
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="label">Previous · Machine learning</span>
+      <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
+      <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+      <span class="meta label">10.09.26</span>
+    </a>
+    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
+      <span class="label">GPU programming</span>
+      <h3>Programming an attention kernel in Triton</h3>
+      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+      <span class="meta label">08.09.26</span>
+    </a>
+    <a class="tile-post" href="birthday-attack.html">
+      <span class="label">Cryptography</span>
+      <h3>Twenty-three people, 256 bits</h3>
+      <p>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
+      <span class="meta label">02.09.26</span>
+    </a>
+    <a class="tile-post" href="where-does-computation-end.html">
+      <span class="label">Computation</span>
+      <h3>Where Does Computation End?</h3>
+      <p>A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.</p>
+      <span class="meta label">18.08.26</span>
+    </a>
+  </div>
+</section>
+
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="design.js?v=700dc3e8"></script>
+<script src="site.js?v=4dfdffba"></script>
+<script type="module" src="vendor/flyvscnn.js?v=cb117837"></script>
+
+</body>
+</html>

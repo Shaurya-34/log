@@ -4,6 +4,7 @@
 
 ## Articles
 
+- [A fly's escape reflex, flying a drone](https://shauryasharma.tech/fly-circuit-vs-cnn.html) — A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a drone from the same 64x48 camera. The fly more than halves its collisions with no training, a CNN beats it after about five demonstration flights, and the reason it loses is that it flees from everything that looms.
 - [Understanding AlphaFold's pLDDT, PAE, and pTM](https://shauryasharma.tech/understanding-alphafolds-plddt-pae-and-ptm.html) — AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer. What GFP's one real dip and beta-casein's disorder actually show, and what the ranking formula does when a protein has no fixed shape to find.
 - [Programming an attention kernel in Triton](https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html) — Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.
 - [Twenty-three people, 256 bits](https://shauryasharma.tech/birthday-attack.html) — A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.
