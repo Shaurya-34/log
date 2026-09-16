@@ -29,6 +29,7 @@ documentation. No em dashes. Numbers come from real runs.
 | File | What it is |
 |---|---|
 | `build.py` | The only generator. Every HTML page, the Markdown siblings, `feed.xml`, `sitemap.xml`, `robots.txt`, `llms.txt`, `index.md` and `widgets.css`. No template engine; shared markup is a function here. |
+| `README.md` | The repo's landing page. Written by hand except the post list, which `build.py` rewrites between the `<!-- posts -->` markers. |
 | `posts/*.md` | Post sources. Front matter: `title`, `date` (required), `tags`, `description`, `repo`, `cover`. |
 | `design.css` | Tokens, page layout, the Triton scroll figure. Loaded by every page. |
 | `style.css` | Styles for `site.js`'s widgets only. Never linked; `build.py` copies each section named in `WIDGET_SECTIONS` into `widgets.css`. |

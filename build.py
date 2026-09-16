@@ -980,6 +980,19 @@ def write_markdown_files(posts):
         (ROOT / f'{slug}.md').write_text(text, encoding="utf-8")
 
 
+def update_readme(posts):
+    """The repo README's post list, rewritten between its two markers so it
+    can't fall behind the site. Everything else in the README is by hand."""
+    path = ROOT / "README.md"
+    text = path.read_text(encoding="utf-8")
+    start, end = "<!-- posts -->", "<!-- /posts -->"
+    if text.count(start) != 1 or text.count(end) != 1:
+        raise SystemExit("README.md needs exactly one <!-- posts --> ... <!-- /posts --> block")
+    rows = "".join(f'- [{p["title"]}]({absolute_url(href(p))}) · {p["date"]:%d %b %Y}\n' for p in posts)
+    head, rest = text.split(start)
+    path.write_text(f"{head}{start}\n{rows}{end}{rest.split(end)[1]}", encoding="utf-8")
+
+
 def main():
     posts = sorted((parse_post(p) for p in POSTS_DIR.glob("*.md")), key=lambda p: p["date"], reverse=True)
     (ROOT / "widgets.css").write_text(widget_css(), encoding="utf-8")
@@ -996,6 +1009,7 @@ def main():
     (ROOT / "404.html").write_text(build_404(), encoding="utf-8")
     (ROOT / "llms.txt").write_text(build_llms(posts), encoding="utf-8")
     write_markdown_files(posts)
+    update_readme(posts)
     print(f"built {len(posts)} posts + index/about/projects/contact/privacy + feed/sitemap/robots/404 "
           f"+ llms.txt + {len(posts) + 5} markdown siblings")
 
