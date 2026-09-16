@@ -3,7 +3,7 @@
   <channel>
     <title>Shaurya · Log</title>
     <link>https://shauryasharma.tech</link>
-    <description>Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.</description>
+    <description>Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.</description>
     <language>en</language>
     <item>
       <title>A fly&#x27;s escape reflex, flying a drone</title>

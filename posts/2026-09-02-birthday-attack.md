@@ -3,7 +3,6 @@ title: Twenty-three people, 256 bits
 date: 2026-09-02
 tags: cryptography, probability, python
 description: A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.
-sound: true
 ---
 In a room of 23 people, including you, there's a better than 50% chance two of
 them share a birthday.

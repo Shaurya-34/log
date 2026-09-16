@@ -1,7 +1,8 @@
 /* ============================================================
-   Tiling attention — scrollytelling prototype
-   Cream paper, ink type, three spot inks.
+   The site's design: tokens, page layout and the Triton post's
+   scroll figure. Warm paper, ink type, three cold spot inks.
    Lenis + GSAP/ScrollTrigger via CDN, Helvetica served locally.
+   See DESIGN.md for the reasoning.
    ============================================================ */
 
 /* Helvetica Now Display is tried first via local(): it is a paid
@@ -1030,9 +1031,9 @@ body { counter-reset: section; }
 }
 
 /* ---- generated post pages ------------------------------------- */
-/* Everything below is only exercised by the other seven posts: plain
-   figures, blockquotes, tables, MathML and sub-headings that the
-   Triton post doesn't have. */
+/* Plain figures, blockquotes, tables, MathML and sub-headings: what the
+   posts other than Triton use, since that one is mostly its scroll
+   figure. */
 
 .prose > figure,
 .prose > .colormap-carousel { max-width: 48rem; margin: 2.5rem 0; }
@@ -1120,19 +1121,6 @@ body { counter-reset: section; }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
-
-/* the sound control, only on posts whose widget can make a noise */
-.masthead nav .sound-toggle {
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
-  color: var(--ink-60);
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-}
-.masthead nav .sound-toggle:hover { color: var(--blue); }
 
 /* ---- footer -------------------------------------------------- */
 

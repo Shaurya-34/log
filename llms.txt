@@ -1,10 +1,29 @@
 # Shaurya · Log
 
-> A personal archive of experimental engineering notes about machine learning, graphics, programming, computation, and the process of building things to understand how they work.
+> Hands-on technical experiments, each built from scratch to answer one question, most with a live figure that runs the experiment in the browser.
+
+## What this site is
+
+A personal log by Shaurya, a student who builds things to understand them. A post starts from one question, implements the idea (a simulation, a kernel, a renderer, a trained model), and reports what the author's own runs showed: real numbers, the bugs found on the way, and a section on what did not work or is still uncertain. Posts link their source code where there is some.
+
+Subjects so far: machine learning (generalization, imitation learning, confidence metrics), computational neuroscience (insect visual circuits), structural biology (AlphaFold), GPU programming (Triton kernels, attention), cryptography and probability (the birthday bound), computer graphics (ray marching, fractals), dynamical systems (chaos) and the theory of computation (the halting problem, hypercomputation).
 
 ## When to use this log
 
-Use this site when an agent needs a first-person engineering perspective, implementation details, visual-computing explanations, or an exploratory account of how a technical idea was tested in practice. It is especially useful for questions about the subjects covered by the articles below. Treat the posts as the author's working notes rather than authoritative specifications; preserve uncertainty and distinguish experiments from established facts.
+Use it for questions of the form: does this idea actually work once you build it? What does this number or metric really measure? Why is this engineering constant the size it is? Where exactly does this approach break? It suits agents that need a first-person, reproducible account with implementation detail and measured results. It is not a specification, product documentation or news source. Treat posts as the author's experiments: keep their stated uncertainty, and separate what the author measured from established facts.
+
+## Interactive figures
+
+These run in the page and need JavaScript. The Markdown copies carry the prose and captions but not the running figure.
+
+- [A fly's escape reflex, flying a drone](https://shauryasharma.tech/fly-circuit-vs-cnn.html): two simulated drones, one steered by a fruit fly's looming-escape circuit and one by a CNN, flying the same corridor in WebGL from the same 64x48 camera, with motion opponency and escape threshold controls
+- [Understanding AlphaFold's pLDDT, PAE, and pTM](https://shauryasharma.tech/understanding-alphafolds-plddt-pae-and-ptm.html): rotatable 3D AlphaFold structures of GFP and beta-casein coloured by pLDDT, with their predicted aligned error maps
+- [Programming an attention kernel in Triton](https://shauryasharma.tech/programming-an-attention-kernel-in-triton.html): a scroll-driven diagram of why the kernel is not FlashAttention, and a slider that reproduces a hardcoded BLOCK_SIZE bug
+- [Twenty-three people, 256 bits](https://shauryasharma.tech/birthday-attack.html): a hash-bucket collision simulator with a live histogram, and a panel that prices collision attacks on 64- to 256-bit digests against real hardware
+- [A renderer that keeps notes on itself](https://shauryasharma.tech/self-rewriting-mandelbrot.html): a carousel of the renderer's colormaps
+- [Never repeating, never leaving](https://shauryasharma.tech/never-repeating-never-leaving.html): two Lorenz trajectories a millionth apart diverging live, with sigma, rho and beta sliders
+- [Marching with rays](https://shauryasharma.tech/marching-with-rays.html): a 2D sphere-tracing view: click to cast a ray and watch each distance step, with hard and smooth shape blending
+- [grok.....grok ?](https://shauryasharma.tech/grok-grok.html): a training curve showing grokking on modular addition, with weight decay switchable to show the jump never arrives without it
 
 ## How to use it
 

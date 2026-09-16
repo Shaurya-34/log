@@ -1,319 +1,276 @@
 # Design system
 
-Reference for how this site actually looks and why — extracted from the live
-code, not aspirational. Update this file whenever a real design decision is
-made; a stale doc is worse than none, since it actively misleads.
+How this site looks and behaves, and why, taken from the code as it is now.
+Update it in the same commit as any real design change. A stale design doc
+is worse than none, because it gets followed.
 
-## The core idea
+## The idea
 
-The site is a Turing tape, not a blog. The homepage's navigator is a strip of
-bordered cells, each one a tape cell holding one entry; a read head scans
-across it. The tagline states the physics directly: *"A head scans a tape.
-One cell at a time. The machine moves. The log remains."* Every other design
-decision should trace back to this or not be made.
+The site is a log, not a magazine: a running record of things built to
+understand them. Pages are editorial (big Helvetica titles, a serif reading
+column, small mono labels) and every post carries its own working evidence,
+usually a live figure that runs the experiment.
 
-Practical test before adding anything new: does it extend the tape/machine
-metaphor, or is it decoration placed near it? The latter gets cut. (Concrete
-precedent: an orbit/radar diagram was removed from the homepage early on for
-exactly this reason — well-drawn, but not part of the argument the page was
-making.)
+Two tests for anything new:
 
-Writing voice matches: honest, curiosity-driven, no hype. The About page
-states the actual method — "I get bored, end up somewhere on the internet,
-find something that snags my attention, and if it's still interesting a few
-days later, I write it down." Article prose should read the same way:
-first-person, working notes rather than polished documentation, willing to
-say when something didn't work.
+- Does it do real work for the reader, or is it decoration placed near the
+  content? Decoration gets cut. Motion is allowed when it explains something
+  (a figure that follows the scroll, a strip you can read along), not to
+  look lively.
+- Is it honest? Posts report the author's own runs, say what failed, and
+  usually end on an "Honest complication" section and a short "Close".
+  Design should never make a result look firmer than the text says it is.
+
+Writing voice: first person, plain, working notes rather than polished
+documentation. No em dashes. Numbers come from real runs.
+
+## Files
+
+| File | What it is |
+|---|---|
+| `build.py` | The only generator. Every HTML page, the Markdown siblings, `feed.xml`, `sitemap.xml`, `robots.txt`, `llms.txt`, `index.md` and `widgets.css`. No template engine; shared markup is a function here. |
+| `posts/*.md` | Post sources. Front matter: `title`, `date` (required), `tags`, `description`, `repo`, `cover`. |
+| `design.css` | Tokens, page layout, the Triton scroll figure. Loaded by every page. |
+| `style.css` | Styles for `site.js`'s widgets only. Never linked; `build.py` copies each section named in `WIDGET_SECTIONS` into `widgets.css`. |
+| `widgets.css` | Generated. Do not edit. |
+| `transitions.css` | Cross-document view transitions. |
+| `chrome.js` | Page chrome on every page, loaded in `<head>` without `defer` so the saved theme applies before first paint: theme toggle, mute toggle, UI sounds, share button, widget repaint on theme change. |
+| `design.js` | Shared motion: Lenis smooth scroll, GSAP/ScrollTrigger, the index strip, the archive filter. |
+| `site.js` | Post widgets and their shared sound engine. Loaded on posts only. |
+| `partials/<slug>.html` + `.js` | A hand-built scroll figure spliced into one post (see `SCROLLY`). |
+| `vendor/` | Third-party or separately built bundles: `3Dmol-min.js`, and `flyvscnn.js` from the FlyvsCNN repo (see `POST_BUNDLES`). |
+| `assets/` | Data a widget fetches (PDB files, PAE maps, CNN weights). |
+| `images/<slug>/` | Post images. `images/covers/<slug>.svg` is a post's share image. |
+| `fonts/` | TeX Gyre Heros, the local Helvetica. |
+| `cloudflare/markdown-worker.js` | Optional edge worker for Markdown content negotiation, which static Pages files cannot do. |
+| `tests/` | `python -m unittest discover -s tests`: agent-readiness checks. |
+| `publish.ps1` | Builds, commits and pushes. The live branch is `redesign-circular-home`. |
+
+`dev/` is gitignored scratch space.
+
+## Type
+
+Three families, each with one job:
+
+```css
+--display: "Heros", Helvetica, "Helvetica Neue", Arial, sans-serif;
+--serif:   "Source Serif 4", Georgia, serif;
+--mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
+```
+
+- `--display`: titles, section headings, tile titles, the pull quote, the
+  wordmark. Helvetica Now Display is used if it is installed; otherwise TeX
+  Gyre Heros loads from `fonts/`. "Heros" comes first in the stack because
+  Windows maps the name "Helvetica" to Arial.
+- `--serif`: body text, 18px, line height 1.62, on a `34rem` measure.
+- `--mono`: labels, dates, captions, code, widget chrome. Labels are
+  uppercase, 0.66rem, tracked 0.18em.
+
+Optical weight: display sizes are Regular, tightly tracked (about -0.03em).
+Helvetica at 6rem already reads heavy. Under about 2rem, display text is
+Bold, because Regular goes limp beside the serif.
+
+Section headings (`.prose h2`) break out to the `48rem` wide measure, sit
+under a hairline, and carry a two-digit counter in the "now" ink. The count
+runs through the pull quote and any scroll figure.
+
+**Term previews.** A recurring piece of jargon gets a hover/focus card:
+`<span class="term" tabindex="0">word<span class="term-preview">definition</span></span>`.
+CSS only. Wrap the first occurrence, and move the inline definition into the
+card rather than keeping both. Skip it where the concept is already the
+subject of the prose around it. On phones the card pins to the bottom of the
+screen.
+
+**MathML** renders in a bordered `.math-scroll` block that scrolls sideways
+on its own. It needs no script and follows the theme.
+
+## Colour
+
+Palette "lagoon", cold inks only: no orange, red, yellow or pink anywhere.
+The token names are roles left over from an earlier palette, so read them as
+roles, not hues:
+
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--paper` | `#f4f0e6` | `#15130f` | ground |
+| `--ink` | `#13120f` | `#ebe5d8` | text, strong rules |
+| `--ink-60` / `--ink-30` | `#6b675e` / `#b2ada2` | `#a29b8e` / `#5c574e` | secondary / tertiary text |
+| `--line` | `#dcd6c9` | `#2d2922` | hairlines |
+| `--panel` | `#ebe6da` | `#1e1b16` | code, cards |
+| `--blue` | `#134e6f` petrol | `#6fb8d9` | the thing being worked on; links on hover |
+| `--red` | `#5b5bd6` periwinkle | `#9a9cff` | now: the active step, the current entry |
+| `--saffron` | `#a9dcd9` pale aqua | same | done: results, days with an entry |
+| `--blue-deep` | `#134e6f` | `#134e6f` | blue as a surface (pull band, hovered tile) |
+
+Dark mode is a second token set, not a filter. It follows the OS unless the
+toggle stored a choice (`localStorage` key `theme`), which wins both ways.
+Only tokens change between themes; rules read tokens. `--blue-deep` stays
+deep in both themes so the pull band is the same object, while `--blue` as
+text lightens to stay readable. Small "now" text uses `--red-text` to keep
+4.5:1 contrast.
+
+`site.js` widgets read the old token names (`--grey`, `--faint`,
+`--hairline`, `--code-bg`) with `getPropertyValue`, so `design.css` points
+those at the palette.
+
+Images in posts are greyscale unless the figure is marked `.color`. In the
+dark theme they are dimmed slightly, since most charts are white-backed.
 
 ## The mark
 
-The favicon is the read head above the tape, reduced to three shapes: a
-triangle and two rails. It is the homepage's own mechanism at 16 pixels,
-and it follows the same test as everything else here - does it extend the
-tape metaphor, or is it decoration placed near it?
+Two overlapping squares: petrol (working) and pale aqua (done), with the
+overlap in periwinkle (now). It is the same three states the figures use.
+`MARK_SVG` and `FAVICON` in `build.py`. Rules for any icon:
 
-Three rules came out of drawing it, and they apply to any future icon:
+- Drawn, never typeset. A data-URI icon cannot load the site's fonts.
+- No background of its own, so it sits correctly on the browser's chrome in
+  both themes. The favicon switches inks under `prefers-color-scheme`.
+- Check it at 16px. Fine detail turns to mush.
 
-- **Drawn, never typeset.** A data-URI icon can't load Space Mono, so a
-  letterform renders in whatever fallback the reader has. The previous
-  favicon was an `S` in Courier New - a shape the site didn't control,
-  and the wrong letter besides once the wordmark became LOG.
-- **No background rectangle.** A transparent icon sits on the browser's
-  own chrome, which is already correct in both themes. The old one
-  hardcoded `#faf9f7` and rendered as a white tile on a dark tab strip,
-  breaking the ink/paper swap the rest of the site obeys.
-- **16px is the only test that matters.** Outlined boxes fill in, interior
-  detail mushes, and sub-pixel dots blur to grey bands. Marks that need
-  more room - a bordered cell, the sprocket cross-section - belong on a
-  180px touch icon, not in a tab.
+## Pages
 
-## Typography
+Every page: masthead (mark, Index, Projects, About, mute, theme), content,
+footer. `--pad` gives the side gutters.
 
-Two font stacks, both monospace, no serif or humanist sans anywhere on the
-site:
+- **Index.** The log hero shows one entry large, above a strip with one cell
+  per day from the first entry to today. Days with an entry are pale aqua;
+  the entry on show is periwinkle with a pointer. Pointing along the strip
+  swaps the entry; `design.js` reserves the entry block's height for the
+  longest title so the strip never moves under the pointer. Below it, the
+  mosaic of the latest four (`LATEST`), then the archive.
+- **Archive.** One row per post, grouped by year, with topic filters. A
+  topic earns a filter once two posts share it (`MIN_FILTER`). This is the
+  answer to "what happens at a hundred posts": the mosaic stays four tiles.
+- **Article.** Hero (kicker of tags, title, standfirst, byline with date,
+  source link and Share), then the prose. A post with an entry in `PULLS`
+  gets the pull band in front of its second section. The article ends with
+  a `∎` mark and an "Elsewhere in the log" mosaic.
+- **Projects.** One ruled row per project, generated from `PROJECTS`. The
+  name links to the code; a write-up, where there is one, is marked in the
+  "done" ink. Nothing is numbered, because the projects have no order.
+- **About, Contact, Privacy, 404.** `simple_page()`: heading and text, the
+  first paragraph a size up. No pull band; that belongs to articles.
 
-```css
---display: "Space Mono", "Courier Prime", "Courier New", monospace;
---mono:    "Courier Prime", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
-```
+Articles read down the centre. Each child of the article centres in its own
+width: text at `34rem`, code, figures and widgets at up to `48rem`.
 
-- `--display` — wordmark, article h1 (3.5rem), tape-cell titles. The
-  "voice" font.
-- `--mono` — everything else: body copy, labels, meta lines, figure
-  captions, UI chrome (`ARTICLE NO. 01`, `FIG_001`).
+**The pull band** is the one full-bleed block of colour on a page: deep
+petrol, a sentence from the post in display type, emphasis in pale aqua with
+no extra weight. It is always the post's own sentence, credited to its
+section. Every article has one.
 
-No font size or weight decision should introduce a third family. If
-something needs emphasis, use weight, letter-spacing, or uppercase — not a
-different typeface.
+**The mosaic** is a 6-column grid repeating 4+2 / 2+4 spans, so the same
+grid holds four tiles or eight. Tiles fill petrol on hover.
 
-**One deliberate exception: MathML.** A displayed derivation (fraction
-bars, radicals, superscripts) needs glyph variants a monospace face
-doesn't have, and the browser's own math renderer is the only way to get
-real ones without a JS dependency the site's CSP wouldn't allow anyway
-(`script-src` is `'self'` plus Clarity only — no KaTeX/MathJax CDN, and
-vendoring one contradicts "vanilla JS, no framework"). `<math
-display="block">` needs no script and no CSP change, and its `color`
-still inherits `var(--ink)` normally, so dark mode needs nothing extra.
-Styled as its own bordered register (`--code-bg` background), the same
-move as a code block — a visible, deliberate exception reads as honest;
-the same typeface quietly failing to hold would not.
+**Covers.** Each post gets `images/covers/<slug>.svg`, used as its
+`og:image`; the index uses the newest post's. Covers are line drawings in
+ink on a transparent ground: thin strokes, a few mono callouts that name the
+mechanism rather than describe the picture. Draw everything statically
+visible; nothing animates a cover any more.
 
-**Term previews.** A recurring piece of jargon — `weight decay`, `oracle`,
-`hypercomputation` — gets a hover/focus card instead of an inline aside,
-when the alternative was either repeating the definition every time the
-term comes up or making the reader hold it in their head from one
-mention forty paragraphs back. `<span class="term" tabindex="0">word
-<span class="term-preview">definition</span></span>`, CSS-only (`:hover`,
-`:focus`, no JS), so it costs nothing the MathML rule above doesn't
-already justify. Rules for using it:
+Breakpoints: `900px` (single-column mosaic, scroll figure stacks),
+`700px` (archive rows), `600px` (term cards, tables scroll), `420px`
+(masthead tightens). Add another only for a layout that needs it.
 
-- Wrap the *first* occurrence only, where the definition used to sit
-  inline (a parenthetical or an appositive) — move that text into the
-  card rather than leaving both, or the sentence just says the same
-  thing twice.
-- Skip it where the concept is already the subject of real explanatory
-  prose (the Halting Problem in `where-does-computation-end`, grokking
-  itself in `grok-grok`) — a card would compete with an explanation
-  that's already doing the job better.
-- The card is a quick-reference for the *second* mention onward, not a
-  replacement for the *first* one — don't strip the surrounding
-  sentence down to nothing on the assumption the card covers it.
+## Figures and widgets
 
-## Color
+A widget has to demonstrate the post's claim, not decorate it. It earns its
+place when the idea is a relationship between a parameter and a result
+(weight decay on or off, a threshold, a digest length) or a process worth
+watching (a ray stepping, trajectories diverging). A post with no such
+relationship has no widget.
 
-CSS custom properties only — never a hardcoded hex outside `:root` (canvas
-widgets are the one exception, discussed below, and even they read the
-tokens at draw time via `getComputedStyle`).
+Three ways a post gets one:
 
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| `--ink` | `#161513` | `#eae5db` | primary text, borders, active state |
-| `--paper` | `#faf9f7` | `#17150f` | background |
-| `--grey` | `#6f6a62` | `#a29c8f` | secondary text, inactive tape borders |
-| `--faint` | `#77726b` | `#8f8a82` | tertiary/meta text |
-| `--hairline` | `#e7e3dc` | `#2d2a23` | dividers, thin rules |
-| `--code-bg` | `#f1eee8` | `#201d17` | code block background |
+1. **In `site.js`.** Markup is a raw `<figure class="{name}-demo" id="{name}-demo">`
+   in the post's Markdown; the script and its `style.css` section do the
+   rest. Most widgets live here.
+2. **A scroll figure** in `partials/`, spliced in by `SCROLLY` between two
+   anchor strings. The build fails if an anchor appears zero or two times,
+   so an edit cannot silently duplicate or drop text.
+3. **A separate bundle** in `vendor/`, mapped to one post in `POST_BUNDLES`
+   and loaded only there as a module. Use this when a widget is too heavy
+   for `site.js`: the fly-vs-CNN simulation is Three.js plus a CNN, about
+   136KB gzipped. The bundle mounts into an element in the post
+   (`<div data-fly-vs-cnn ...>`), brings its own scoped styles, and pauses
+   whenever it is off screen or the tab is hidden.
 
-Dark mode isn't a filter — it's a full second token set (`:root[data-theme=
-"dark"]`), plus a `prefers-color-scheme` media query for users who haven't
-made an explicit choice. **`--ink` and `--paper` swap roles between themes**
-(ink is light-on-dark in dark mode) — this bit a real bug once: a component
-styled with `background: var(--ink)` for "emphasis" rendered as a light bar
-on a dark page, because the emphasis pattern assumed ink was always dark.
-Test any inverted-contrast treatment in both themes before shipping it.
+`INTERACTIVE` in `build.py` describes each post's live figure for
+`llms.txt`. Add an entry when a post gets one.
 
-Article images: `filter: grayscale(1)` — no photo or screenshot renders in
-color on this site, full stop.
+Rules for all of them:
 
-## Grid and layout
+- **Never open on nothing.** A figure with an empty starting state seeds
+  itself with a real result as soon as it is ready, so the point is visible
+  before the reader touches anything.
+- **Read colours at draw time** from the CSS tokens, and redraw on theme
+  change (`chrome.js` nudges each widget). Cache expensive redraws on the
+  inputs that actually change them.
+- **Hide until ready.** A widget is invisible until its script has
+  initialised it, and a `<noscript>` fallback covers the no-JS case.
+- **Don't block the main thread.** Scrolling is smoothed by Lenis, which
+  needs the thread every frame. A widget that stalls it makes the page
+  stutter; the fly simulation reads its GPU frames asynchronously for this
+  reason.
+- **Captions** are mono, 0.72rem, in prose voice: what the reader is
+  looking at and what to try.
+- **Controls** get real `aria-label`s, `aria-pressed` on toggles, and
+  `aria-live="polite"` on readouts. Single-select button groups share the
+  sliding indicator from `site.js`; groups of independent actions do not.
+- **Phones.** Test at 375px. Nothing may widen the page.
 
-- Site-wide max-width: `41rem` (`.wrap`), tightened further inside prose.
-- Article pages get a **wider shell** (`56rem`) with an asymmetric split:
-  prose stays centered at `46rem` (a real reading measure, 68 characters in
-  the body monospace — measured directly, not eyeballed: the column was
-  originally set to `34rem` on the assumption that it read as ~68
-  characters, and actually measured out to 50. A figure-heavy post made the
-  gap between a narrow paragraph and a full-width table impossible to miss,
-  which is what caught it). Figures break out to the full width, both
-  sharing one center axis. Code blocks, data tables and `<hr>` stay in the
-  prose column — they were measured (41 of 42 code blocks across every post
-  fit under 400px) and only look worse stretched to figure width.
-- Interactive canvas/SVG widgets use a fixed intrinsic size — `852×420` or
-  `852×480` — held responsive via `aspect-ratio` in CSS, not fixed pixels.
-- Homepage tape strip: five visible cells on desktop, three on mobile
-  (`--tape-visible`), each cell bordered `1px solid var(--grey)`
-  (`var(--ink)` when active). The tape reads oldest → newest, left to
-  right, like an actual tape being written forward in time, and the head
-  starts on the oldest cell at the left-hand end - the reader arrives at
-  the start of the log and moves forward through it, rather than at the
-  end facing backwards. It also means the tape opens with somewhere to
-  go, instead of against its own stop.
-- Projects page: a hairline-separated list, not a grid of cards. Each
-  band is name plus stack on one line, what the thing is underneath, and
-  a link to its log entry only where one exists. Nothing is numbered - a
-  numbered list would claim a sequence these projects do not have. The
-  list lives as `PROJECTS` in `build.py` and generates both the HTML and
-  the Markdown sibling, so the two cannot drift.
-- An article about code links to that code: posts carry an optional
-  `repo:` in their front matter, which renders as a `source` link in the
-  article's meta line, in the same quiet register as the date and tags.
-  Conceptual posts have no repo and show nothing.
-- Single mobile breakpoint: `max-width: 600px`. A second tier at `1050px`
-  handles tablet-width reflow. Don't invent a third without a concrete
-  layout that needs it.
+## Motion
 
-## The figure system
-
-Every diagram-bearing figure carries the same chrome, regardless of
-whether it's a static SVG or a live canvas:
-
-```
-FIG_00N                              [ CAPTION IN BRACKETS ]
-──────────────────────────────────────────────────────────
-                  (the actual figure)
-──────────────────────────────────────────────────────────
-Figcaption in prose voice, explaining what the reader is
-looking at and why it's drawn the way it is.
-```
-
-Line art is thin (`stroke-width` 1–2), monochrome, labeled with short
-mono-font leader-line callouts (`BOUNDED`, `ESCAPES →`) rather than dense
-annotation. A label should name the mechanism, not describe the picture.
-
-## Interactive widgets
-
-Three built so far (`grok-demo`, `chaos-demo`, `ray-demo` in `site.js`), all
-following the same shape:
-
-- A `.{name}-head` row: a control (toggle buttons or a slider) on the left,
-  a live text readout on the right, `justify-content: space-between`.
-- The figure itself (`<svg>` or `<canvas>`) below the head.
-- Hidden (`display:none`) until JS has actually initialized it —
-  `.{name}-demo.is-ready` gates visibility, so a JS failure shows nothing
-  rather than a broken static frame. A `<noscript>` fallback image covers
-  the no-JS case.
-- Colors read from CSS custom properties **at draw time**, via
-  `getComputedStyle`, never hardcoded — this is what makes a canvas widget
-  survive a theme toggle. Cache expensive redraws (e.g. a ~350,000-pixel
-  fill) keyed on whatever inputs actually change the output (theme, mode),
-  not recomputed on every interaction — one widget shipped an 85–90ms
-  regression this way before being caught.
-- A widget demonstrates the article's own stated claim rather than
-  illustrating it. Rule of thumb from this session: interactivity is
-  earned when the concept is a parameter-to-result relationship (weight
-  decay on/off, sigma/rho/beta, ray-cast toward a click) — not added
-  because motion would look good. An article with no such relationship
-  (e.g. a conceptual argument piece) correctly has no widget at all.
-
-## Animation
-
-- Global kill switch already exists — respect it, don't duplicate it:
-  ```css
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition: none !important; animation: none !important; }
-  }
-  ```
-  Any animation that sets a *starting* state via the animation itself
-  (e.g. `width: 0` animating to full) must add an explicit reduced-motion
-  override restoring the end state — otherwise disabling the animation
-  freezes the element at its invisible starting point. This has bitten a
-  draw-in effect and a typewriter effect both; check for it on every new
-  CSS animation.
-- One-shot reveals (diagram draw-ins) use a CSS `@keyframes` on
-  `stroke-dashoffset`, triggered by adding a class from JS — not SMIL
-  `beginElement()`, which proved unreliable when triggered from script.
-- Looping decoration (a blinking cursor) should stop itself after a bounded
-  number of iterations, not run `infinite` — indefinite motion in a page
-  header reads as distracting, not lively. Land on a solid, legible end
-  state, not mid-cycle.
-- The tape has mass. It can be grabbed and thrown with a mouse, it
-  coasts, and it always comes to rest with a cell under the head rather
-  than parked between two - a thrown tape is aimed at a detent up front
-  rather than left to run down and snapped afterwards, which is what
-  keeps it reading as one movement instead of two. Travel time scales
-  with distance; a constant duration makes a four-cell flick feel
-  weightless and a one-cell nudge feel sluggish. Past either end the
-  tape stretches on a transform and springs back - never scrollLeft,
-  which would make the give depend on leftover run-out and so vary with
-  the window width.
-- Touch is left to the browser. Native scrolling already has momentum
-  tuned to the platform; the pointer physics exists because a mouse gets
-  none of that from overflow-x on its own.
+- Lenis smooths scrolling on every page and drives GSAP's ticker. The
+  Triton scroll figure subscribes to the same instance
+  (`window.lenisInstance`).
+- One eased curve for interface motion: `cubic-bezier(.16,.78,.18,1)` in
+  transitions, `cubic-bezier(0.22, 0.61, 0.36, 1)` for small UI moves. No
+  bounce, no overshoot.
+- Page changes use cross-document view transitions. The index's current
+  entry title morphs into the article title.
+- `prefers-reduced-motion` turns off Lenis and cuts every animation and
+  transition to near zero. Any animation that starts from a hidden state
+  must still land visible under reduced motion.
 
 ## Sound
 
-One rule: the site is silent until someone asks for it, and it remembers
-the answer. A reader who came to read should never be made a noise at.
+On unless muted, and only ever in answer to something the reader did.
+Audio cannot start before a gesture, so both engines wake on the first
+press of a visit.
 
-The tape ticks once per cell passing the head, like a dial going round.
-It is synthesised in Web Audio rather than loaded - a sample would be
-another request on a page that costs 23KB, and a generated click can
-take its brightness and level from how fast the tape is actually
-travelling. Filtered noise, never a tone: a tone reads as a beep, noise
-reads as a mechanism.
+- `chrome.js`: a click when a tile, archive row or filter is pressed, a
+  faint tick on hover, and a low knock moving along the index strip.
+  Links wait 90ms so the click is heard.
+- `site.js`: `siteSound`, the widgets' engine, with `tick(pace)` and
+  `thunk()`. Filtered noise, never a tone.
 
-Two things that are easy to get wrong here, both found by measuring:
+Both read one preference, the `localStorage` key `tape-sound` (a name left
+over from the old homepage, kept so visitors' choices survive). The mute
+control is in the masthead. Throttle on the wall clock, not
+`AudioContext.currentTime`, which stays frozen until the context runs.
 
-- **Throttle perceptual timing on the wall clock, not `currentTime`.**
-  An AudioContext that hasn't been resumed keeps `currentTime` frozen,
-  so a floor measured against it makes every tick look simultaneous and
-  drops all of them.
-- **A fresh context starts its clock at zero**, so a "last fired at"
-  counter initialised to 0 swallows the first tick of the visit,
-  including the one that answers the toggle. Start it negative.
+## Machine readers
 
-The control only appears on a page that has something to hear - opt in
-per page via `sound: true` in a post's front matter, not site-wide - and
-stays hidden until JS confirms the browser can actually synthesise the
-tick, same gating as every widget here.
+The site is meant to be easy for agents to use correctly:
 
-One engine, `siteSound` in `site.js`, not one per widget: a single
-AudioContext, noise buffer and on/off preference, shared by the tape and
-by any figure below it. The two lessons above only had to be solved
-once this way. A widget that wants its own timbre calls the shared
-`tick(pace)` or `thunk()` rather than building its own oscillator graph.
+- `llms.txt` says what the site is, when to use it, which posts have live
+  figures, and lists every article. `index.md` carries `AGENT_SUMMARY`,
+  which also sits on the homepage as screen-reader text.
+- Every page with a Markdown version links it with
+  `rel="alternate" type="text/markdown"`, written in the same build pass as
+  the HTML so the two cannot drift.
+- Posts carry `BlogPosting` JSON-LD; the index carries `Blog`.
+- `tests/test_agent_readiness.py` checks the homepage's structure and share
+  image, the trust pages, the agent files and the 404's recovery links.
 
-## Never open on nothing
+## Constraints
 
-An interactive figure that shows an empty canvas until the reader finds
-the right button is not demonstrating anything yet - it reads as broken,
-not quiet. The birthday-collision demo learned this the hard way: a
-first-time visitor saw a blank grid and a blank histogram, with no cue
-that either does something. The fix generalizes past that one widget -
-any figure with an empty starting state should seed itself with a real
-result the instant it's ready, silently and without animation, so
-whatever is being demonstrated is already visible before the reader
-touches anything. Interaction adds to that state; it doesn't have to
-create it from nothing.
-
-- Motion should be quiet: no bounce, no overshoot easing on anything
-  chrome-level. `cubic-bezier(.16,.78,.18,1)` is the one eased curve used
-  for interface motion (tape read-head, feature-card transitions); most
-  animation on the site is a plain linear reveal or step function instead.
-
-## Accessibility conventions
-
-- `.sr-only` utility lives in `style.css` (not `home.css`) so every page
-  can use it, not just the homepage.
-- Every custom interactive control gets a real `aria-label`,
-  `aria-pressed`/`aria-current` for toggles, and `aria-live="polite"` on
-  any text readout that updates without a page reload.
-- Decorative figures get `aria-hidden="true"` on the ornamental parts and
-  a real, specific `aria-label` on the figure/canvas itself describing what
-  it shows.
-
-## File conventions
-
-- `build.py` is the single source of truth for every HTML page — there is
-  no template engine, no second build script. If a piece of markup
-  appears on multiple pages, it's a function in `build.py`, called from
-  each page builder — never copy-pasted.
-- Every page that has one advertises a Markdown sibling
-  (`rel="alternate" type="text/markdown"`) generated from the *same*
-  parsed data as the HTML in the same build pass, so the two can't drift.
-- No inline `<style>` blocks in post Markdown — the site's CSP doesn't
-  allow inline styles, and one shipped this way before being caught only
-  because it silently collapsed a whole widget. New CSS goes in
-  `style.css` or `home.css`.
-- Content images: `loading="lazy"` on every `<img>` in article bodies,
-  always. This was a real, measured cause of slow mobile loads.
+- **CSP** is a meta tag, the only kind GitHub Pages allows:
+  `default-src 'self'`, scripts from self plus Clarity, jsDelivr and cdnjs
+  (Lenis, GSAP), and inline scripts and styles allowed (the index strip and
+  the scroll figure need them). Anything that fetches must be same-origin,
+  which is why widget data lives in `assets/`.
+- **Images** in posts are `loading="lazy"`, always.
+- **One generator.** If markup appears on two pages, it is a function in
+  `build.py`, never copied.

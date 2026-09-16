@@ -14,8 +14,8 @@ POSTS_DIR = ROOT / "posts"
 SITE_URL = "https://shauryasharma.tech"
 SITE_NAME = "Shaurya"
 SITE_TITLE = "Shaurya · Log"
-SITE_DESC = ("Experimental engineering notes on AI, machine learning, graphics, "
-             "programming, computation, and the things I build to understand how they work.")
+SITE_DESC = ("Hands-on experiments with live, in-browser figures: machine learning, "
+             "neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.")
 MOTTO = "honest · semi informative · personal"
 INTRO = ("I think of this less as a blog and more as a log: a running record of what I'm "
          "building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.")
@@ -78,19 +78,19 @@ CLARITY_SCRIPT = (
     '  </script>\n'
 )
 
-# Shown to AI agents/clients via the homepage's sr-only summary and llms.txt.
+# Shown to AI agents/clients via the homepage's sr-only summary and index.md.
 AGENT_SUMMARY = (
-    "Shaurya's Log is a small personal archive of experimental engineering notes. "
-    "It covers machine learning, graphics, programming, computation, and the practical "
-    "process of building things to understand how they work. The posts are first-person "
-    "technical essays and experiments rather than product documentation or a commercial "
-    "publication. Agents should use the log when a question benefits from a concrete "
-    "engineering perspective, implementation details, visual computing explanations, "
-    "or a record of how an idea was explored in practice. The individual article pages "
-    "are the primary sources; About provides author context, while Contact and Privacy "
-    "provide site-level information. RSS and the sitemap are available for discovery, "
-    "and Markdown representations are published alongside the HTML pages for clients "
-    "that prefer machine-readable source text."
+    "Shaurya's Log is a personal archive of hands-on technical experiments. Each post starts "
+    "from one question, builds the thing from scratch to answer it, and reports what the "
+    "author's own runs showed, including what failed and what remains uncertain. Most posts "
+    "carry a live figure that runs the experiment in the browser: a WebGL drone simulation "
+    "comparing a fruit fly's escape circuit with a trained CNN, rotatable AlphaFold structures "
+    "with their error maps, a hash-collision simulator, a ray-marching explorer, a chaotic "
+    "attractor, a grokking training curve and a Triton GPU-kernel bug you can trigger. "
+    "Subjects span machine learning, computational neuroscience, structural biology, GPU "
+    "programming, cryptography and probability, computer graphics, dynamical systems and "
+    "the theory of computation. Article pages are the primary sources and link their source "
+    "code; Markdown copies, RSS, the sitemap and llms.txt are published for machine readers."
 )
 
 def absolute_url(path=""):
@@ -134,6 +134,27 @@ PULLS = {
         "LPLC2 and LC4 detect looming, and <em>nothing in them checks whether "
         "the looming thing is on a collision course.</em>",
         "Why the fly loses"),
+}
+
+# What each post's live figure lets a reader do, for llms.txt. A post with
+# no figure has no entry. Every key must be a real post slug.
+INTERACTIVE = {
+    "fly-circuit-vs-cnn": "two simulated drones, one steered by a fruit fly's looming-escape "
+                          "circuit and one by a CNN, flying the same corridor in WebGL from the "
+                          "same 64x48 camera, with motion opponency and escape threshold controls",
+    "understanding-alphafolds-plddt-pae-and-ptm": "rotatable 3D AlphaFold structures of GFP and "
+                          "beta-casein coloured by pLDDT, with their predicted aligned error maps",
+    "programming-an-attention-kernel-in-triton": "a scroll-driven diagram of why the kernel is not "
+                          "FlashAttention, and a slider that reproduces a hardcoded BLOCK_SIZE bug",
+    "birthday-attack": "a hash-bucket collision simulator with a live histogram, and a panel that "
+                       "prices collision attacks on 64- to 256-bit digests against real hardware",
+    "never-repeating-never-leaving": "two Lorenz trajectories a millionth apart diverging live, "
+                                     "with sigma, rho and beta sliders",
+    "marching-with-rays": "a 2D sphere-tracing view: click to cast a ray and watch each distance "
+                          "step, with hard and smooth shape blending",
+    "grok-grok": "a training curve showing grokking on modular addition, with weight decay "
+                 "switchable to show the jump never arrives without it",
+    "self-rewriting-mandelbrot": "a carousel of the renderer's colormaps",
 }
 
 # The sections of style.css that style site.js's widgets, copied into
@@ -766,31 +787,56 @@ def build_privacy():
 
 
 def build_llms(posts):
+    by_slug = {p["slug"]: p for p in posts}
+    unknown = set(INTERACTIVE) - set(by_slug)
+    if unknown:
+        raise SystemExit(f"INTERACTIVE names posts that do not exist: {sorted(unknown)}")
+    link = lambda p: f'[{p["title"]}]({absolute_url(f"{p["slug"]}.html")})'
     lines = [
         "# Shaurya · Log", "",
-        "> A personal archive of experimental engineering notes about machine learning, "
-        "graphics, programming, computation, and the process of building things to "
-        "understand how they work.", "",
+        "> Hands-on technical experiments, each built from scratch to answer one question, "
+        "most with a live figure that runs the experiment in the browser.", "",
+        "## What this site is", "",
+        "A personal log by Shaurya, a student who builds things to understand them. A post "
+        "starts from one question, implements the idea (a simulation, a kernel, a renderer, a "
+        "trained model), and reports what the author's own runs showed: real numbers, the bugs "
+        "found on the way, and a section on what did not work or is still uncertain. Posts link "
+        "their source code where there is some.", "",
+        "Subjects so far: machine learning (generalization, imitation learning, confidence "
+        "metrics), computational neuroscience (insect visual circuits), structural biology "
+        "(AlphaFold), GPU programming (Triton kernels, attention), cryptography and "
+        "probability (the birthday bound), computer graphics (ray marching, fractals), "
+        "dynamical systems (chaos) and the theory of computation (the halting problem, "
+        "hypercomputation).", "",
         "## When to use this log", "",
-        "Use this site when an agent needs a first-person engineering perspective, "
-        "implementation details, visual-computing explanations, or an exploratory account "
-        "of how a technical idea was tested in practice. It is especially useful for "
-        "questions about the subjects covered by the articles below. Treat the posts as the "
-        "author's working notes rather than authoritative specifications; preserve "
-        "uncertainty and distinguish experiments from established facts.", "",
+        "Use it for questions of the form: does this idea actually work once you build it? "
+        "What does this number or metric really measure? Why is this engineering constant the "
+        "size it is? Where exactly does this approach break? It suits agents that need a "
+        "first-person, reproducible account with implementation detail and measured results. "
+        "It is not a specification, product documentation or news source. Treat posts as the "
+        "author's experiments: keep their stated uncertainty, and separate what the author "
+        "measured from established facts.", "",
+        "## Interactive figures", "",
+        "These run in the page and need JavaScript. The Markdown copies carry the prose and "
+        "captions but not the running figure.", "",
+    ]
+    lines += [f"- {link(p)}: {INTERACTIVE[p['slug']]}" for p in posts if p["slug"] in INTERACTIVE]
+    lines += [
+        "",
         "## How to use it", "",
         "- Prefer the individual article pages as primary sources for claims made in the log.",
         "- When fetching programmatically, request the canonical HTML URL or use the "
         "published `.md` sibling when Markdown is preferable.",
         "- Use `sitemap.xml` for URL discovery and `feed.xml` for the article chronology.",
-        "- Use `projects.html` for the software the author has built and where the code lives, `about.html` for author/site context, `contact.html` for contact routing, "
+        "- Use `projects.html` for the software the author has built and where the code lives, "
+        "`about.html` for author/site context, `contact.html` for contact routing, "
         "and `privacy.html` for site data practices.",
         "- Do not infer credentials, affiliations, or opinions that are not stated on the "
         "relevant page.", "",
         "## Articles", "",
     ]
     for p in posts:
-        lines.append(f'- [{p["title"]}]({absolute_url(f"{p["slug"]}.html")}) — {p["description"]}')
+        lines.append(f'- {link(p)} — {p["description"]}')
     lines += [
         "", "## Site pages", "",
         f"- [Projects]({absolute_url('projects.html')})",

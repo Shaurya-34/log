@@ -7,25 +7,26 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Shaurya · Log</title>
-<meta name="description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
+<meta name="description" content="Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://shauryasharma.tech/">
 <meta property="og:site_name" content="Shaurya · Log">
 <meta property="og:title" content="Shaurya · Log">
-<meta property="og:description" content="Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.">
+<meta property="og:description" content="Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://shauryasharma.tech/">
+<meta property="og:image" content="https://shauryasharma.tech/images/covers/fly-circuit-vs-cnn.svg">
 <link rel="alternate" type="text/markdown" href="index.md">
 <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="design.css?v=f6128f1d">
+<link rel="stylesheet" href="design.css?v=3280a92e">
 <link rel="stylesheet" href="widgets.css?v=268ce49f">
-<link rel="stylesheet" href="transitions.css?v=4ce300e1">
+<link rel="stylesheet" href="transitions.css?v=1416c508">
 <script src="chrome.js?v=e9231792"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Experimental engineering notes on AI, machine learning, graphics, programming, computation, and the things I build to understand how they work.","url":"https://shauryasharma.tech","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.","url":"https://shauryasharma.tech","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"}}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -47,7 +48,7 @@
   </nav>
 </header>
 
-<p class="sr-only">Shaurya's Log is a small personal archive of experimental engineering notes. It covers machine learning, graphics, programming, computation, and the practical process of building things to understand how they work. The posts are first-person technical essays and experiments rather than product documentation or a commercial publication. Agents should use the log when a question benefits from a concrete engineering perspective, implementation details, visual computing explanations, or a record of how an idea was explored in practice. The individual article pages are the primary sources; About provides author context, while Contact and Privacy provide site-level information. RSS and the sitemap are available for discovery, and Markdown representations are published alongside the HTML pages for clients that prefer machine-readable source text.</p>
+<p class="sr-only">Shaurya's Log is a personal archive of hands-on technical experiments. Each post starts from one question, builds the thing from scratch to answer it, and reports what the author's own runs showed, including what failed and what remains uncertain. Most posts carry a live figure that runs the experiment in the browser: a WebGL drone simulation comparing a fruit fly's escape circuit with a trained CNN, rotatable AlphaFold structures with their error maps, a hash-collision simulator, a ray-marching explorer, a chaotic attractor, a grokking training curve and a Triton GPU-kernel bug you can trigger. Subjects span machine learning, computational neuroscience, structural biology, GPU programming, cryptography and probability, computer graphics, dynamical systems and the theory of computation. Article pages are the primary sources and link their source code; Markdown copies, RSS, the sitemap and llms.txt are published for machine readers.</p>
 
 <section class="hero log-hero">
   <div class="lh-ident">

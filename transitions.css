@@ -16,10 +16,11 @@
   animation: page-in-transition 420ms cubic-bezier(.16,.78,.18,1) both;
 }
 
-/* The active homepage title and the article title share a visual identity,
-   so supported browsers can morph between them instead of cross-fading only. */
-.feature-card.is-active h1,
-article.post h1 {
+/* The entry shown on the index and an article's title share a visual identity,
+   so supported browsers can morph between them instead of cross-fading only.
+   Only article heroes carry a byline, which keeps About and Projects out of it. */
+.lh-entry h1,
+.hero:has(.byline) h1 {
   view-transition-name: article-title;
 }
 

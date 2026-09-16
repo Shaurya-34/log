@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <!-- The corridor in perspective: floor edges and grid lines running to
+       the vanishing point, which is also the focus of expansion. -->
+  <g stroke="#17150f" opacity=".16">
+    <path d="M500 250L60 600"/>
+    <path d="M500 250L940 600"/>
+    <path d="M500 250L330 600"/>
+    <path d="M500 250L670 600"/>
+    <path d="M232 463H768"/>
+    <path d="M318 395H682"/>
+    <path d="M372 352H628"/>
+    <path d="M60 250H940"/>
+  </g>
+
+  <!-- Obstacles at different depths. The one on the right is off course:
+       it will slide past, and it looms anyway. -->
+  <g fill="#17150f">
+    <rect x="455" y="196" width="10" height="58"/>
+    <rect x="542" y="210" width="8" height="44"/>
+    <rect x="392" y="262" width="16" height="92"/>
+    <rect x="690" y="248" width="40" height="178"/>
+  </g>
+
+  <!-- Looming: the same outline at three sizes, growing as it closes in. -->
+  <g stroke="#17150f" stroke-width="1">
+    <rect x="684" y="238" width="52" height="198" opacity=".45"/>
+    <rect x="674" y="222" width="72" height="230" opacity=".25"/>
+    <rect x="662" y="204" width="96" height="266" opacity=".12"/>
+  </g>
+
+  <!-- The drone's track, swerving away from something it was never
+       going to hit. -->
+  <path
+    d="M500 610 C500 560 520 520 470 480 C430 448 440 400 480 360 C505 335 492 300 500 262"
+    stroke="#17150f"
+    stroke-width="1.2"/>
+  <path d="M492 604L500 590L508 604Z" fill="#17150f"/>
+
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="770" y="340">← LOOMING</text>
+    <text x="770" y="364">NOT ON COURSE</text>
+    <text x="90" y="600">ESCAPE ANYWAY</text>
+  </g>
+</svg>
