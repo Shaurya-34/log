@@ -154,6 +154,12 @@ SCROLLY = {
 }
 PARTIALS = ROOT / "partials"
 
+# A widget too heavy to live in site.js gets its own built bundle in vendor/, loaded only by the post that
+# uses it. The bundle mounts itself into that post's own element, so the post body just carries the element.
+POST_BUNDLES = {
+    "fly-circuit-vs-cnn": "vendor/flyvscnn.js",
+}
+
 LATEST = 4        # the mosaic is a fixed shelf; it never grows
 MIN_FILTER = 2    # a topic earns a filter button once two posts share it
 ACRONYMS = {"gpu": "GPU", "ml": "ML", "ai": "AI"}
@@ -325,6 +331,11 @@ def simple_page(slug, h1, meta_line, paragraphs_html, description, posts=None,
             scripts(base) + '\n</body>\n</html>\n')
 
 
+def post_bundle(slug):
+    src = POST_BUNDLES.get(slug)
+    return f'<script type="module" src="{src}?v={version(src)}"></script>\n' if src else ""
+
+
 def parse_post(path):
     text = path.read_text(encoding="utf-8")
     m = re.match(r"---\n(.*?)\n---\n(.*)", text, re.DOTALL)
@@ -462,6 +473,7 @@ def build_post(post, posts, i):
             masthead() + hero + article +
             mosaic("Elsewhere in the log", more, tiles) + foot() +
             scripts(site_js=True) + (f'<script>\n{script}</script>\n' if script else "") +
+            post_bundle(post["slug"]) +
             '\n</body>\n</html>\n')
 
 
