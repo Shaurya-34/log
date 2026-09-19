@@ -12,34 +12,77 @@
 <meta property="og:image" content="https://shauryasharma.tech/images/coinflip-og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <style>
-:root{--bg:#f4f6f8;--ink:#0f1a24;--mute:#5b6b7a;--line:#d5dde5;--acc:#2b5cff;--ok:#0f9d8a;--card:#fff;--vio:#6b4cff}
-@media (prefers-color-scheme:dark){:root{--bg:#0b1118;--ink:#e6edf3;--mute:#8a9aab;--line:#1f2a36;--acc:#7c9cff;--ok:#3fd1b8;--card:#111a24;--vio:#a08cff}}
+:root{--bg:#f4f6f8;--ink:#0f1a24;--mute:#5b6b7a;--line:#d5dde5;--acc:#2b5cff;--ok:#0f9d8a;--teal:#0b7d6e;--card:#fff;--vio:#6b4cff;
+  --paper:#fff;--rule:#c9d6ff;--carbonbg:#eef2ff;--carbon:#4a67d6;--mono:ui-monospace,Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1118;--ink:#e6edf3;--mute:#8a9aab;--line:#1f2a36;--acc:#7c9cff;--ok:#3fd1b8;--teal:#3fd1b8;--card:#111a24;--vio:#a08cff;
+  --paper:#101923;--rule:#26345c;--carbonbg:#121b33;--carbon:#8ea2ff}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;padding:48px 16px 120px;overflow-x:hidden}
-main{max-width:640px;margin:0 auto;position:relative}
-small{color:var(--mute);letter-spacing:.08em;text-transform:uppercase;font-size:11px}
-h1{font-weight:400;font-size:clamp(34px,7vw,56px);line-height:1.02;letter-spacing:-.02em;margin:8px 0 12px}
-h2{font-weight:400;font-size:22px;margin:40px 0 8px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;padding:0 16px 120px;overflow-x:hidden}
+main{max-width:720px;margin:0 auto;position:relative}
+h1{font-weight:400;font-size:clamp(36px,7vw,60px);line-height:1.02;letter-spacing:-.02em;margin:10px 0 14px}
+h2{font-weight:400;font-size:24px;letter-spacing:-.01em;margin:0 0 6px}
 p{color:var(--mute);line-height:1.5}
-label{display:block;margin:20px 0 6px;font-size:13px}
-input,select{width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;border-radius:6px}
-.err{color:var(--vio);font-size:12px;margin-top:6px;min-height:1em}
-button{margin-top:24px;padding:14px 22px;border:0;border-radius:6px;background:var(--acc);color:#fff;font:inherit;cursor:pointer}
-button.ghost{background:none;color:var(--acc);border:1px solid var(--line);margin-left:8px}
+button{padding:14px 22px;border:0;border-radius:4px;background:var(--acc);color:#fff;font:inherit;cursor:pointer}
+button.ghost{background:none;color:var(--acc);border:1px solid var(--line)}
+button.link{background:none;color:var(--acc);padding:0;text-decoration:underline;text-underline-offset:3px;font-size:inherit}
 button:disabled{opacity:.4;cursor:wait}
-#tos{height:120px;overflow:auto;border:1px solid var(--line);background:var(--card);padding:12px;font-size:12px;color:var(--mute);border-radius:6px;line-height:1.6}
-#queue{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--bg);padding:12px 16px;font-size:13px;display:flex;justify-content:space-between;gap:12px;z-index:5}
-#queue b{font-weight:500;font-variant-numeric:tabular-nums}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;max-width:340px}
-.grid div{aspect-ratio:1;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;font-size:12px;text-align:center;padding:6px;cursor:pointer;color:var(--mute);border-radius:4px;user-select:none}
-.grid div.on{border-color:var(--acc);color:var(--acc);background:color-mix(in srgb,var(--acc) 8%,var(--card))}
-#log{margin-top:32px;border-top:1px solid var(--line)}
-.row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;animation:in .3s ease}
-.row span:last-child{color:var(--mute);text-align:right}
-.row.done span:last-child{color:var(--ok)}
-.row.bad span:last-child{color:var(--vio)}
+.mono{font-family:var(--mono)}
+
+/* 7. national statistics strip */
+.stats{max-width:720px;margin:0 auto;padding:14px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 22px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.stats b{font-family:var(--mono);font-weight:400;color:var(--ink);letter-spacing:0;margin-left:6px;font-size:12px}
+.stats .lbl{color:var(--ink)}
+
+/* 1. the printed form */
+.stack{position:relative;margin-top:28px}
+.sheet{position:relative;z-index:1;background:var(--paper);border:1px solid var(--line);padding:28px 28px 32px 44px;transition:transform .7s cubic-bezier(.5,0,.75,0),opacity .7s}
+.sheet::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:1px;background:var(--rule)}
+.formhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border-bottom:2px solid var(--ink);padding-bottom:8px}
+.top{display:grid;grid-template-columns:1fr 190px;gap:20px;align-items:start;margin-top:14px}
+.official{border:1px solid var(--ink);font-family:var(--mono);font-size:10px;margin-top:14px}
+.official .h{background:var(--ink);color:var(--paper);padding:4px 8px;letter-spacing:.1em;text-transform:uppercase}
+.official dl{margin:0;display:grid;grid-template-columns:auto 1fr}
+.official dt,.official dd{margin:0;padding:6px 8px;border-top:1px solid var(--line);min-height:26px}
+.official dt{color:var(--mute);text-transform:uppercase;letter-spacing:.06em;border-right:1px solid var(--line)}
+.official dd{color:var(--acc);text-transform:uppercase}
+.fields{list-style:none;margin:8px 0 0;padding:0}
+.fields>li{padding:18px 0 4px;border-top:1px solid var(--line)}
+.fields label,.fields .q{display:flex;gap:10px;align-items:baseline;font-size:13px;margin-bottom:8px}
+.no{font-family:var(--mono);font-size:10px;color:var(--mute);border:1px solid var(--line);padding:1px 5px;flex:none}
+.fields input,.fields select{width:100%;padding:6px 0;border:0;border-bottom:1px solid var(--ink);border-radius:0;background:transparent;color:var(--ink);font:inherit;font-size:20px;outline:none}
+.fields input:focus,.fields select:focus{border-bottom-color:var(--acc)}
+.fields select option{background:var(--paper)}
+.err{color:var(--vio);font-size:12px;margin-top:6px;min-height:1em}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:340px}
+.grid div{aspect-ratio:1;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;text-align:center;padding:6px;cursor:pointer;color:var(--mute);user-select:none}
+.grid div.on{border-color:var(--acc);color:var(--acc);background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.tos{height:120px;overflow:auto;border:1px solid var(--line);padding:12px;font-size:12px;color:var(--mute);line-height:1.6}
+.sign{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px}
+
+/* 2. carbon copy left behind */
+.sheet.filed{transform:translateY(-40px) rotate(-1.5deg);opacity:0}
+.carbon{position:absolute;inset:0;z-index:0;background:var(--carbonbg);pointer-events:none;user-select:none;overflow:hidden}
+.carbon.settled{position:relative}
+.carbon *{color:var(--carbon)!important;border-color:var(--carbon)!important;background:transparent!important}
+.carbon .official .h{background:var(--carbon)!important;color:var(--carbonbg)!important}
+.carbon .formhead{border-bottom-color:var(--carbon)!important}
+.carbon::before{background:var(--carbon);opacity:.4}
+.carbon::after{content:"Duplicate · retain for your records";position:absolute;left:50%;top:44%;width:90%;transform:translate(-50%,-50%) rotate(-14deg);text-align:center;font:700 clamp(16px,4.2vw,30px)/1.1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--carbon);opacity:.28}
+.appeal-mark{position:absolute;right:24px;font:700 13px/1 var(--mono);letter-spacing:.1em;border:2px solid;padding:5px 8px;transform:rotate(var(--r));color:var(--vio)!important;border-color:var(--vio)!important}
+
+/* 4. the docket */
+#log{margin-top:36px}
+#log:empty{display:none}
+.row{display:grid;grid-template-columns:74px 1fr auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;animation:in .3s ease}
+.row .st{color:var(--mute);text-align:right;font-size:13px}
+.row.done .st{color:var(--teal)}
+.row.bad .st{color:var(--vio)}
+.dk{justify-self:start;font:700 9px/1.25 var(--mono);letter-spacing:.06em;text-transform:uppercase;border:1.5px solid currentColor;padding:3px 5px;border-radius:2px;opacity:0;transform:rotate(var(--r)) scale(1.8)}
+.dk.inked{opacity:.9;transform:rotate(var(--r)) scale(1);transition:transform .18s cubic-bezier(.2,1.4,.4,1),opacity .1s}
 @keyframes in{from{opacity:0;transform:translateY(4px)}}
+
 .stage{perspective:800px;height:0;transition:height .4s;display:grid;place-items:center}
+.stage:not(.show){visibility:hidden}
 .stage.show{height:200px}
 .coin{width:120px;height:120px;position:relative;transform-style:preserve-3d}
 .coin div{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;backface-visibility:hidden;font-size:15px;letter-spacing:.1em;border:6px double var(--acc);background:var(--card);color:var(--acc)}
@@ -48,86 +91,193 @@ button:disabled{opacity:.4;cursor:wait}
 @keyframes spin{0%{transform:translateY(0) rotateY(0)}50%{transform:translateY(-120px) rotateY(1800deg)}100%{transform:translateY(0) rotateY(var(--end))}}
 #verdict{font-size:clamp(64px,18vw,140px);font-weight:400;letter-spacing:-.04em;margin:16px 0 0;min-height:1em}
 #fine{font-size:12px}
-.stamp{position:fixed;font-size:clamp(36px,9vw,72px);font-weight:700;letter-spacing:.06em;border:5px solid;padding:4px 18px;border-radius:8px;pointer-events:none;opacity:.8;animation:stamp .25s cubic-bezier(.2,1.4,.4,1);z-index:4;mix-blend-mode:multiply}
-@media (prefers-color-scheme:dark){.stamp{mix-blend-mode:screen}}
+.stamp{position:fixed;font-size:clamp(36px,9vw,72px);font-weight:700;letter-spacing:.06em;border:5px solid;padding:4px 18px;border-radius:8px;pointer-events:none;opacity:.8;animation:stamp .25s cubic-bezier(.2,1.4,.4,1);z-index:4}
 @keyframes stamp{from{transform:scale(2.4) rotate(var(--r));opacity:0}to{transform:scale(1) rotate(var(--r))}}
-#receipt{display:none;margin-top:32px;background:var(--card);border:1px dashed var(--line);padding:20px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.7;white-space:pre-wrap}
+
+/* 3. receipt printer */
+.printer{margin-top:32px;width:min(100%,340px)}
+.slot{background:var(--ink);color:var(--bg);font:10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:9px 12px 14px;border-radius:6px 6px 2px 2px;position:relative}
+.slot::after{content:"";position:absolute;left:10px;right:10px;bottom:5px;height:3px;background:#000;border-radius:2px}
+.win{height:0;overflow:hidden;margin:0 14px;transition:height .07s linear}
+.win.ready{overflow:visible;cursor:grab;touch-action:none}
+.win.ready:active{cursor:grabbing}
+.receipt{background:var(--card);border:1px solid var(--line);border-top:0;padding:14px 14px 18px;font:12px/1.7 var(--mono);color:var(--ink);white-space:pre;box-shadow:0 1px 0 var(--line)}
+.receipt .hl{color:var(--acc);font-weight:700}
+.hint{font-size:12px;margin:10px 0 0}
+#torn{position:relative;margin-top:18px;width:min(100%,312px);min-height:0}
+#torn .receipt{margin-bottom:-60%;transition:transform .5s cubic-bezier(.2,1.2,.4,1)}
+#torn .receipt:last-child{margin-bottom:0}
+
+/* 8. register */
+.register{margin-top:56px;padding-top:18px;border-top:2px solid var(--ink)}
+.register table{width:100%;border-collapse:collapse;font-size:14px;margin-top:14px}
+.register th{font:10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);text-align:right;padding:8px 0;border-bottom:1px solid var(--ink)}
+.register th:first-child,.register td:first-child{text-align:left}
+.register td{padding:10px 0;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono);font-size:13px}
+.register td:first-child{font-family:inherit;font-size:14px;padding-right:10px}
+.register .note{font-size:12px;margin-top:10px}
+
+/* 5. the queue */
+#queue{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--bg);padding:10px 16px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:5}
+#queue button{padding:6px 10px;font-size:13px}
+#qn{background:none;color:var(--bg);border:1px dashed color-mix(in srgb,var(--bg) 40%,transparent);font-family:var(--mono);font-variant-numeric:tabular-nums}
+#qpay{background:var(--acc)}
+#qno{background:none;color:var(--bg);border:1px solid color-mix(in srgb,var(--bg) 40%,transparent)}
+.qr{display:flex;gap:8px;flex:none}
+
+@media (max-width:560px){
+  .sheet{padding:20px 16px 24px 30px}
+  .sheet::before{left:18px}
+  .top{grid-template-columns:1fr}
+  .official{margin-top:0}
+  .row{grid-template-columns:60px 1fr;row-gap:2px}
+  .row .st{grid-column:2;text-align:left}
+}
 </style>
 </head>
 <body>
+
+<div class="stats" id="stats">
+  <span class="lbl">National statistics</span>
+  <span>Petitions filed<b id="s-pet">—</b></span>
+  <span>Appeals<b id="s-app">—</b></span>
+  <span>Overturned<b id="s-ovr">—</b></span>
+  <span>Coins in custody<b>1</b></span>
+</div>
+
 <main>
-<small>Form BBO-7(c) · Request for Stochastic Determination</small>
-<h1>Bureau of<br>Binary Outcomes</h1>
-<p>You have requested a coin flip. Coin flips are a regulated activity. Please complete all fields. Processing time: 40 seconds to 6 business eternities.</p>
-<p id="appeals" hidden>Appeals filed with the Bureau to date: <b id="ac" style="color:var(--ink)"></b></p>
+<div class="stack" id="stack">
+<section class="sheet" id="sheet">
+  <div class="formhead"><span>Bureau of Binary Outcomes</span><span>Form BBO-7(c) · Rev. 03/2026</span></div>
+  <div class="top">
+    <div>
+      <h1>Request for Stochastic Determination</h1>
+      <p>You have requested a coin flip. Coin flips are a regulated activity. Please complete all fields. Processing time: 40 seconds to 6 business eternities.</p>
+    </div>
+    <aside class="official">
+      <div class="h">For Bureau use only</div>
+      <dl><dt>Case no.</dt><dd id="u-case"></dd><dt>Received</dt><dd id="u-rec"></dd><dt>Clerk</dt><dd id="u-clerk"></dd><dt>Disposition</dt><dd id="u-disp"></dd></dl>
+    </aside>
+  </div>
+  <ol class="fields">
+    <li><label for="name"><span class="no">1a</span>Full name of petitioner</label>
+      <input id="name" placeholder="As it appears on your birth certificate" autocomplete="off">
+      <div class="err" id="nameErr"></div></li>
+    <li><label for="stakes"><span class="no">1b</span>Nature of the decision riding on this coin</label>
+      <select id="stakes">
+        <option>What to eat for dinner</option>
+        <option>Whether to text them back</option>
+        <option>Career-defining life choice</option>
+        <option>Tabs vs spaces</option>
+      </select><div class="err"></div></li>
+    <li><label for="pref"><span class="no">1c</span>Preferred outcome (non-binding, will be ignored)</label>
+      <select id="pref"><option>Heads</option><option>Tails</option><option>Edge</option></select><div class="err"></div></li>
+    <li><div class="q"><span class="no">2</span>Prove you are a human with free will: select every square containing uncertainty</div>
+      <div class="grid" id="grid"></div>
+      <div class="err" id="gridErr"></div></li>
+    <li><div class="q"><span class="no">3</span>Terms of Flipping (scroll to the bottom to accept)</div>
+      <div id="tos" class="tos"></div>
+      <div class="err" id="tosErr"></div></li>
+  </ol>
+</section>
+</div>
 
-<label>Full name of petitioner</label>
-<input id="name" placeholder="As it appears on your birth certificate">
-<div class="err" id="nameErr"></div>
-
-<label>Nature of the decision riding on this coin</label>
-<select id="stakes">
-  <option>What to eat for dinner</option>
-  <option>Whether to text them back</option>
-  <option>Career-defining life choice</option>
-  <option>Tabs vs spaces</option>
-</select>
-
-<label>Preferred outcome (non-binding, will be ignored)</label>
-<select><option>Heads</option><option>Tails</option><option>Edge</option></select>
-
-<label>Prove you are a human with free will: select every square containing uncertainty</label>
-<div class="grid" id="grid"></div>
-<div class="err" id="gridErr"></div>
-
-<label>Terms of Flipping (scroll to the bottom to accept)</label>
-<div id="tos"></div>
-<div class="err" id="tosErr"></div>
-
-<button id="go">Submit for flipping</button><button class="ghost" id="hold">♪ Hold music</button>
+<div class="sign"><button id="go">Sign and submit</button><button class="ghost" id="hold">♪ Hold music</button></div>
 
 <div id="log"></div>
 <div class="stage" id="stage"><div class="coin" id="coin"><div>HEADS</div><div>TAILS</div></div></div>
 <div id="verdict"></div>
 <p id="fine"></p>
-<div id="receipt"></div>
+
+<div class="printer" id="printer" hidden>
+  <div class="slot">BBO receipt printer · Model 2-B</div>
+  <div class="win" id="win"></div>
+  <p class="hint" id="hint"></p>
+</div>
+<div id="torn"></div>
+
+<section class="register">
+  <h2>Public Register of Outcomes</h2>
+  <p style="margin:0;font-size:13px">Final rulings, after review by the Oversight Board, as filed by every petitioner to date.</p>
+  <table>
+    <thead><tr><th>Matter</th><th>Heads</th><th>Tails</th><th>Overturned</th></tr></thead>
+    <tbody id="reg"></tbody>
+  </table>
+  <p class="note">Edge rulings are sealed.</p>
+</section>
 </main>
 
-<div id="queue"><span>Your position in the flipping queue</span><b id="qn">#48,213</b></div>
+<div id="queue">
+  <span id="qmsg">Your position in the flipping queue</span>
+  <span class="qr"><button id="qn" title="Expedite">#48,213</button><button id="qpay" hidden>Pay $2.00</button><button id="qno" hidden>No thanks</button></span>
+</div>
 
 <script>
 const $=s=>document.querySelector(s), wait=ms=>new Promise(r=>setTimeout(r,ms)), pick=a=>a[Math.random()*a.length|0];
+const matters=[...$('#stakes').options].map(o=>o.text);
 
-/* queue: moves forward, then gets shoved back */
-let q=48213;
-setInterval(()=>{q-=Math.random()*900|0; if(q<40||Math.random()<.06){q+=Math.random()*30000|0} $('#qn').textContent='#'+Math.max(q,1).toLocaleString()},900);
+/* sound: one shared context, created on the first click */
+let ac;
+const audio=()=>ac||(ac=new AudioContext());
+function blip(f,d,v,type){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=type||'square';o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+d+.02)}
+function rip(){if(!ac)return;const n=ac.sampleRate*.3|0,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n)*(Math.random()<.3?1:.25);const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='bandpass';f.frequency.value=2600;g.gain.value=.35;s.buffer=b;s.connect(f).connect(g).connect(ac.destination);s.start()}
 
-/* captcha */
+/* 7 + 8. shared counters: stats strip and register stay at "—" if the service is down */
+const API='https://abacus.jasoncameron.dev', NS='shauryasharma-tech';
+const getC=k=>fetch(`${API}/get/${NS}/${k}`).then(r=>r.status===404?{value:0}:r.ok?r.json():Promise.reject()).then(d=>d.value);
+const hitC=k=>fetch(`${API}/hit/${NS}/${k}`).then(r=>r.ok?r.json():Promise.reject()).then(d=>d.value);
+const setN=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.textContent=Number(v).toLocaleString()};
+const track=(k,id)=>hitC(k).then(v=>setN(id,v)).catch(()=>{});
+$('#reg').innerHTML=matters.map((m,i)=>`<tr><td>${m}</td><td id="r${i}h">—</td><td id="r${i}t">—</td><td id="r${i}o">—</td></tr>`).join('');
+[['coinflip-petitions','s-pet'],['coinflip-appeals','s-app'],['coinflip-overturned','s-ovr'],
+ ...matters.flatMap((_,i)=>[[`coinflip-m${i}-heads`,`r${i}h`],[`coinflip-m${i}-tails`,`r${i}t`],[`coinflip-m${i}-overturned`,`r${i}o`]])]
+  .forEach(([k,id])=>getC(k).then(v=>setN(id,v)).catch(()=>{}));
+
+/* 5. queue: drifts forward, gets shoved back, and paying makes it worse */
+let q=48213, priority=false, qBusy=false;
+const qText=()=>'#'+Math.max(q,1).toLocaleString()+(priority?' · priority':'');
+setInterval(()=>{q-=Math.random()*900|0;if(q<40||Math.random()<.06)q+=Math.random()*30000|0;if(!qBusy)$('#qn').textContent=qText()},900);
+function qMode(mode,msg){
+  qBusy=mode!=='idle';
+  $('#qmsg').textContent=msg||'Your position in the flipping queue';
+  $('#qn').hidden=mode==='offer';$('#qpay').hidden=$('#qno').hidden=mode!=='offer';
+  if(mode==='idle')$('#qn').textContent=qText();
+}
+$('#qn').onclick=()=>qMode('offer','Expedited processing is available for $2.00.');
+$('#qno').onclick=()=>qMode('idle');
+$('#qpay').onclick=async()=>{
+  q+=18000+(Math.random()*9000|0);priority=true;
+  qMode('msg','Payment received. Priority petitions are processed in reverse order.');$('#qn').textContent=qText();
+  await wait(3200);qMode('idle');
+};
+
+/* 2. captcha */
 const tiles=["tomorrow","a cat in a box","the stock market","a sealed envelope","a firm handshake","your group chat","a weather forecast","a Schrödinger","a ceiling fan"];
 tiles.forEach(t=>{const d=document.createElement('div');d.textContent=t;d.onclick=()=>d.classList.toggle('on');$('#grid').append(d)});
 
-/* terms */
+/* 3. terms */
 let tosRead=false;
 const clauses=["The coin is not liable for outcomes.","The petitioner waives the right to be happy with the result.","Heads and Tails are trademarks of the Bureau.","Flips performed under Earth gravity. Results on the Moon may vary.","The coin may be used again for other petitioners. Do not grow attached.","The Bureau reserves the right to flip the coin upside down retroactively.","Any attempt to call 'best of three' will be treated as an appeal.","The coin has not read these terms either.","By scrolling this far you agree that you scrolled this far."];
 $('#tos').innerHTML=Array.from({length:3},()=>clauses).flat().map((c,i)=>`§${i+1}. ${c}`).join('<br>')+'<br><br><b>END OF TERMS.</b> Thank you. You may now proceed. Probably.';
 $('#tos').onscroll=e=>{const t=e.target;if(t.scrollTop+t.clientHeight>=t.scrollHeight-4)tosRead=true};
 
 /* hold music: an endless beepy muzak loop */
-let ac,playing=false,timer;
+let playing=false,timer;
 $('#hold').onclick=()=>{
-  ac=ac||new AudioContext();
-  playing=!playing; $('#hold').textContent=playing?'■ Stop hold music':'♪ Hold music';
+  audio();
+  playing=!playing;$('#hold').textContent=playing?'■ Stop hold music':'♪ Hold music';
   if(!playing){clearInterval(timer);return}
   const tune=[523,659,784,659,587,698,880,698,523,659,784,1047,988,784,659,587];let i=0;
-  timer=setInterval(()=>{const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=tune[i++%tune.length]*(Math.random()<.05?1.06:1);g.gain.setValueAtTime(.08,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.28);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.3)},300);
+  timer=setInterval(()=>blip(tune[i++%tune.length]*(Math.random()<.05?1.06:1),.28,.08,'triangle'),300);
 };
 
-/* stamps */
+/* big stamps */
 function stamp(text,color){
   const s=document.createElement('div');s.className='stamp';s.textContent=text;
   s.style.color=s.style.borderColor=color;s.style.setProperty('--r',(Math.random()*30-15)+'deg');
-  s.style.left=(10+Math.random()*50)+'vw';s.style.top=(15+Math.random()*55)+'vh';
-  document.body.append(s);setTimeout(()=>s.remove(),1800);
+  s.style.top=(15+Math.random()*55)+'vh';
+  document.body.append(s);s.style.left=(8+Math.random()*Math.max(0,innerWidth-s.offsetWidth-16))+'px';
+  setTimeout(()=>s.remove(),1800);
 }
 
 function validate(){
@@ -136,18 +286,68 @@ function validate(){
   if(n.length<2){$('#nameErr').textContent='Name too short. The Bureau requires at least 2 characters of identity.';ok=false}
   else if(!/[aeiou]/i.test(n)){$('#nameErr').textContent='Name must contain at least one vowel. Please buy a vowel and resubmit.';ok=false}
   else if(n.length>30){$('#nameErr').textContent='Name too long. The Bureau only has 30 boxes of ink.';ok=false}
-  const on=[...document.querySelectorAll('.grid .on')].length;
+  const on=document.querySelectorAll('.grid .on').length;
   if(on<9){$('#gridErr').textContent=on?`Incorrect. ${9-on} square${9-on>1?'s':''} still contain uncertainty. Everything contains uncertainty.`:'Please select at least one square. Or all of them. Hint: all of them.';ok=false}
   if(!tosRead){$('#tosErr').textContent='You have not read the terms. The Bureau can tell.';ok=false}
   return ok;
 }
 
-/* appeals counter: shared across everyone, stays hidden if the counter service is down */
-const COUNTER='https://abacus.jasoncameron.dev/%s/shauryasharma-tech/coinflip-appeals';
-function showAppeals(n){$('#ac').textContent=n.toLocaleString();$('#appeals').hidden=false}
-fetch(COUNTER.replace('%s','get')).then(r=>r.status===404?{value:0}:r.json()).then(d=>showAppeals(d.value)).catch(()=>{});
+/* 2. file the original, keep the carbon */
+async function fileOriginal(){
+  const sheet=$('#sheet'),copy=sheet.cloneNode(true);
+  copy.querySelectorAll('input,select').forEach((el,i)=>{
+    const src=sheet.querySelectorAll('input,select')[i];
+    if(el.tagName==='INPUT')el.setAttribute('value',src.value);else el.selectedIndex=src.selectedIndex;
+    el.disabled=true;
+  });
+  copy.querySelectorAll('[id]').forEach(el=>{if(!el.id.startsWith('u-'))el.removeAttribute('id')});
+  copy.removeAttribute('id');copy.className='sheet carbon';copy.id='carbon';copy.inert=true;
+  sheet.after(copy);
+  sheet.querySelectorAll('[id^="u-"]').forEach(el=>el.removeAttribute('id'));
+  requestAnimationFrame(()=>sheet.classList.add('filed'));
+  await wait(700);
+  sheet.remove();copy.classList.add('settled');
+}
 
-let appeals=0, caseNo=()=>'BBO-'+(Math.random()*1e6|0).toString().padStart(6,'0');
+/* 4. docket stamps */
+const clerks=['JW','MK','RB','TS','AL','DP','HN'];
+const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase();
+function ink(el,html,color){el.innerHTML=html;el.style.color=color;el.style.setProperty('--r',(Math.random()*14-7)+'deg');el.classList.remove('inked');void el.offsetWidth;el.classList.add('inked');blip(90,.08,.25,'sine')}
+
+/* 3. receipt printer */
+const line=(l,r,w=30)=>l+' '.repeat(Math.max(1,w-l.length-r.length))+r;
+async function printReceipt(lines){
+  const win=$('#win'),r=document.createElement('div');
+  r.className='receipt';win.className='win';win.innerHTML='';win.style.height='0px';win.append(r);
+  $('#printer').hidden=false;$('#hint').textContent='Printing…';
+  $('#printer').scrollIntoView({block:'center',behavior:'smooth'});
+  for(const l of lines){
+    const d=document.createElement('div');d.textContent=l||' ';if(l.startsWith('TOTAL'))d.className='hl';r.append(d);
+    win.style.height=r.offsetHeight+'px';blip(1800+Math.random()*400,.018,.05);await wait(70);
+  }
+  win.classList.add('ready');
+  $('#hint').innerHTML='Drag the receipt down to tear it off, or <button class="link" id="tear">tear here</button>.';
+  $('#tear').onclick=()=>tear(r);
+  let y0=null,dy=0;
+  win.onpointerdown=e=>{y0=e.clientY;dy=0;win.setPointerCapture(e.pointerId);r.style.transition='none'};
+  win.onpointermove=e=>{if(y0===null)return;dy=Math.max(0,e.clientY-y0);r.style.transform=`translateY(${dy*.45}px) rotate(${dy*.012}deg)`};
+  win.onpointerup=win.onpointercancel=()=>{if(y0===null)return;y0=null;if(dy>90)tear(r);else{r.style.transition='transform .35s cubic-bezier(.2,1.4,.4,1)';r.style.transform=''}};
+}
+function tear(r){
+  const win=$('#win');if(!win.contains(r))return;
+  rip();
+  win.onpointerdown=win.onpointermove=win.onpointerup=win.onpointercancel=null;
+  const pts=['0 7px'];for(let x=3;x<=100;x+=3)pts.push(`${x}% ${x%6?0:7}px`);pts.push('100% 100%','0 100%');
+  r.style.clipPath=`polygon(${pts.join(',')})`;r.style.transition='none';r.style.transform='translateY(-60px)';
+  $('#torn').append(r);
+  win.className='win';win.style.height='0px';
+  $('#hint').textContent='Retain for your records.';
+  requestAnimationFrame(()=>{r.style.transition='';r.style.transform=`rotate(${(Math.random()*4-2).toFixed(2)}deg)`});
+  const all=$('#torn').children;while(all.length>3)all[0].remove();
+}
+
+let appeals=0, petition=null;
+const caseNo=()=>'BBO-'+(Math.random()*1e6|0).toString().padStart(6,'0');
 const baseSteps=()=>[
  ["Notarising coin","verified: is round"],
  ["Environmental impact assessment","air displaced: 0.4 cm³"],
@@ -171,21 +371,35 @@ const appealSteps=[
 ];
 
 $('#go').onclick=async()=>{
-  if(!validate()){stamp('INCOMPLETE','var(--vio)');return}
-  const b=$('#go'),name=$('#name').value.trim(),id=caseNo();
-  b.disabled=true;$('#log').innerHTML='';$('#verdict').textContent='';$('#fine').textContent='';$('#receipt').style.display='none';
+  audio();
+  if(!petition){
+    if(!validate()){stamp('INCOMPLETE','var(--vio)');return}
+    petition={name:$('#name').value.trim(),m:$('#stakes').selectedIndex};
+  }
+  const b=$('#go'),{name,m}=petition,id=caseNo(),setU=(k,v)=>{const el=$('#u-'+k);if(el)el.textContent=v};
+  b.disabled=true;$('#log').innerHTML='';$('#verdict').textContent='';$('#fine').textContent='';
   $('#stage').classList.remove('show');$('#coin').classList.remove('spin');
-  stamp('RECEIVED','var(--acc)');
-  if(appeals>0) fetch(COUNTER.replace('%s','hit')).then(r=>r.json()).then(d=>showAppeals(d.value)).catch(()=>{});
+  setU('case',id);setU('rec',new Date().toTimeString().slice(0,5)+' '+today);setU('clerk','');setU('disp','Pending');
+  if(!$('#carbon'))await fileOriginal();
+  else{const a=document.createElement('div');a.className='appeal-mark';a.textContent='Appeal no. '+appeals;a.style.setProperty('--r',(Math.random()*16-8)+'deg');a.style.bottom=(24+appeals*40)+'px';$('#carbon').append(a)}
+  stamp(appeals?'APPEAL FILED':'RECEIVED','var(--acc)');
+  track('coinflip-petitions','s-pet');
+  if(appeals>0)track('coinflip-appeals','s-app');
   let steps=baseSteps();
-  if($('#stakes').selectedIndex===3) steps.splice(5,0,["Tabs vs spaces detected","convening war tribunal"],["War tribunal","verdict: both parties are wrong"]);
-  if($('#stakes').selectedIndex===1) steps.splice(2,0,["Reading the message they sent","… yeah that's a flip"]);
+  if(m===3)steps.splice(5,0,["Tabs vs spaces detected","convening war tribunal"],["War tribunal","verdict: both parties are wrong"]);
+  if(m===1)steps.splice(2,0,["Reading the message they sent","… yeah that's a flip"]);
   steps.push(...appealSteps.slice(0,Math.min(appeals*2,appealSteps.length)));
+  setU('clerk',pick(clerks));
   for(const [a,z] of steps){
-    const r=document.createElement('div');r.className='row';r.innerHTML=`<span>${a}</span><span>pending</span>`;$('#log').append(r);
+    const r=document.createElement('div');r.className='row';
+    r.innerHTML=`<span class="dk"></span><span>${a}</span><span class="st">pending</span>`;$('#log').append(r);
     r.scrollIntoView({block:'nearest',behavior:'smooth'});
     await wait(600+Math.random()*1200);
-    if(Math.random()<.12){r.lastChild.textContent='form misplaced';r.classList.add('bad');stamp('LOST','var(--vio)');await wait(1400);r.lastChild.textContent='found under desk';r.classList.remove('bad')}
+    if(Math.random()<.12){
+      r.lastChild.textContent='form misplaced';r.classList.add('bad');ink(r.firstChild,'Lost<br>'+today,'var(--vio)');stamp('LOST','var(--vio)');
+      await wait(1400);r.lastChild.textContent='found under desk';r.classList.remove('bad');
+      ink(r.firstChild,'Found<br>'+today,'var(--vio)');await wait(500);
+    }else ink(r.firstChild,`OK · ${pick(clerks)}<br>${today}`,pick(['var(--acc)','var(--teal)','var(--vio)']));
     r.lastChild.textContent=z;r.classList.add('done');
   }
   const x=Math.random(),res=x<.004?'Edge':x<.502?'Heads':'Tails';
@@ -194,35 +408,27 @@ $('#go').onclick=async()=>{
   void c.offsetWidth;c.classList.add('spin');
   $('#stage').scrollIntoView({block:'center',behavior:'smooth'});
   await wait(3200);
-  $('#verdict').textContent=res+'.';stamp('APPROVED','var(--ok)');
+  $('#verdict').textContent=res+'.';stamp('APPROVED','var(--ok)');setU('disp',res+' (provisional)');
   $('#fine').textContent=`Issued to ${name}. This result is provisional and subject to review by the Oversight Board. A 2% reversal fee applies. Do not flip the result.`;
-  const d=new Date();
-  $('#receipt').textContent=
-`BUREAU OF BINARY OUTCOMES — OFFICIAL RECEIPT
-------------------------------------------
-Case no.          ${id}
-Petitioner        ${name}
-Matter            ${$('#stakes').value}
-Appeal no.        ${appeals}
-Date              ${d.toDateString()}
-Committee size    ${3+appeals*2}
-Result            ${res.toUpperCase()}
-------------------------------------------
-Flipping fee                     $0.25
-Thumb depreciation               $0.03
-Filibuster catering              $41.00
-Environmental offset (1 leaf)    $0.10
-Appeals surcharge                $${(appeals**2*12.5).toFixed(2)}
-------------------------------------------
-TOTAL DUE                        $${(41.38+appeals**2*12.5).toFixed(2)}
-
-Payable in coins. Coins will be flipped
-before acceptance. Tails = rejected.
-`;
-  $('#receipt').style.display='block';
+  const due=(41.38+appeals**2*12.5).toFixed(2);
+  await printReceipt([
+    'BUREAU OF BINARY OUTCOMES','OFFICIAL RECEIPT','-'.repeat(30),
+    line('Case no.',id),line('Petitioner',name.slice(0,18)),'Matter','  '+matters[m],
+    line('Appeal no.',String(appeals)),line('Date',new Date().toDateString()),
+    line('Committee size',String(3+appeals*2)),line('Result',res.toUpperCase()),'-'.repeat(30),
+    line('Flipping fee','$0.25'),line('Thumb depreciation','$0.03'),line('Filibuster catering','$41.00'),
+    line('Environmental offset','$0.10'),line('Appeals surcharge','$'+(appeals**2*12.5).toFixed(2)),'-'.repeat(30),
+    line('TOTAL DUE','$'+due),'','Payable in coins. Coins will be','flipped before acceptance.','Tails = rejected.'
+  ]);
   await wait(3500);
-  if(Math.random()<.2){$('#fine').textContent+=' UPDATE: The Oversight Board has overturned the result.';$('#verdict').textContent=(res==='Heads'?'Tails':'Heads')+'.';stamp('OVERTURNED','var(--vio)')}
-  else $('#fine').textContent+=' UPDATE: Oversight Board upheld the result, reluctantly.';
+  let final=res;
+  if(Math.random()<.2){
+    final=res==='Heads'?'Tails':'Heads';
+    $('#fine').textContent+=' UPDATE: The Oversight Board has overturned the result. Your receipt is now invalid.';
+    $('#verdict').textContent=final+'.';stamp('OVERTURNED','var(--vio)');setU('disp',final+' (overturned)');
+    track('coinflip-overturned','s-ovr');track(`coinflip-m${m}-overturned`,`r${m}o`);
+  }else{$('#fine').textContent+=' UPDATE: Oversight Board upheld the result, reluctantly.';setU('disp',res+' (final)')}
+  if(final!=='Edge')track(`coinflip-m${m}-${final.toLowerCase()}`,`r${m}${final[0].toLowerCase()}`);
   appeals++;b.disabled=false;
   b.textContent=appeals>=4?'Petition the Galactic Senate':appeals>=2?'Escalate to the Supreme Court of Coins':'File an appeal (flip again)';
 };
