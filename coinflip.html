@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bureau of Binary Outcomes</title>
+<meta name="description" content="A coin flip that requires government approval. Forms, a filibuster, a committee vote, and an Oversight Board that may overturn your result.">
+<meta property="og:title" content="Bureau of Binary Outcomes">
+<meta property="og:description" content="A coin flip that requires government approval.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shauryasharma.tech/coinflip.html">
+<meta property="og:image" content="https://shauryasharma.tech/images/coinflip-og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{--bg:#f4f6f8;--ink:#0f1a24;--mute:#5b6b7a;--line:#d5dde5;--acc:#2b5cff;--ok:#0f9d8a;--card:#fff;--vio:#6b4cff}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1118;--ink:#e6edf3;--mute:#8a9aab;--line:#1f2a36;--acc:#7c9cff;--ok:#3fd1b8;--card:#111a24;--vio:#a08cff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;padding:48px 16px 120px;overflow-x:hidden}
+main{max-width:640px;margin:0 auto;position:relative}
+small{color:var(--mute);letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+h1{font-weight:400;font-size:clamp(34px,7vw,56px);line-height:1.02;letter-spacing:-.02em;margin:8px 0 12px}
+h2{font-weight:400;font-size:22px;margin:40px 0 8px}
+p{color:var(--mute);line-height:1.5}
+label{display:block;margin:20px 0 6px;font-size:13px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;border-radius:6px}
+.err{color:var(--vio);font-size:12px;margin-top:6px;min-height:1em}
+button{margin-top:24px;padding:14px 22px;border:0;border-radius:6px;background:var(--acc);color:#fff;font:inherit;cursor:pointer}
+button.ghost{background:none;color:var(--acc);border:1px solid var(--line);margin-left:8px}
+button:disabled{opacity:.4;cursor:wait}
+#tos{height:120px;overflow:auto;border:1px solid var(--line);background:var(--card);padding:12px;font-size:12px;color:var(--mute);border-radius:6px;line-height:1.6}
+#queue{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--bg);padding:12px 16px;font-size:13px;display:flex;justify-content:space-between;gap:12px;z-index:5}
+#queue b{font-weight:500;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;max-width:340px}
+.grid div{aspect-ratio:1;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;font-size:12px;text-align:center;padding:6px;cursor:pointer;color:var(--mute);border-radius:4px;user-select:none}
+.grid div.on{border-color:var(--acc);color:var(--acc);background:color-mix(in srgb,var(--acc) 8%,var(--card))}
+#log{margin-top:32px;border-top:1px solid var(--line)}
+.row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;animation:in .3s ease}
+.row span:last-child{color:var(--mute);text-align:right}
+.row.done span:last-child{color:var(--ok)}
+.row.bad span:last-child{color:var(--vio)}
+@keyframes in{from{opacity:0;transform:translateY(4px)}}
+.stage{perspective:800px;height:0;transition:height .4s;display:grid;place-items:center}
+.stage.show{height:200px}
+.coin{width:120px;height:120px;position:relative;transform-style:preserve-3d}
+.coin div{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;backface-visibility:hidden;font-size:15px;letter-spacing:.1em;border:6px double var(--acc);background:var(--card);color:var(--acc)}
+.coin div+div{transform:rotateY(180deg)}
+.coin.spin{animation:spin 3s cubic-bezier(.2,.6,.3,1) forwards}
+@keyframes spin{0%{transform:translateY(0) rotateY(0)}50%{transform:translateY(-120px) rotateY(1800deg)}100%{transform:translateY(0) rotateY(var(--end))}}
+#verdict{font-size:clamp(64px,18vw,140px);font-weight:400;letter-spacing:-.04em;margin:16px 0 0;min-height:1em}
+#fine{font-size:12px}
+.stamp{position:fixed;font-size:clamp(36px,9vw,72px);font-weight:700;letter-spacing:.06em;border:5px solid;padding:4px 18px;border-radius:8px;pointer-events:none;opacity:.8;animation:stamp .25s cubic-bezier(.2,1.4,.4,1);z-index:4;mix-blend-mode:multiply}
+@media (prefers-color-scheme:dark){.stamp{mix-blend-mode:screen}}
+@keyframes stamp{from{transform:scale(2.4) rotate(var(--r));opacity:0}to{transform:scale(1) rotate(var(--r))}}
+#receipt{display:none;margin-top:32px;background:var(--card);border:1px dashed var(--line);padding:20px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.7;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<main>
+<small>Form BBO-7(c) · Request for Stochastic Determination</small>
+<h1>Bureau of<br>Binary Outcomes</h1>
+<p>You have requested a coin flip. Coin flips are a regulated activity. Please complete all fields. Processing time: 40 seconds to 6 business eternities.</p>
+<p id="appeals" hidden>Appeals filed with the Bureau to date: <b id="ac" style="color:var(--ink)"></b></p>
+
+<label>Full name of petitioner</label>
+<input id="name" placeholder="As it appears on your birth certificate">
+<div class="err" id="nameErr"></div>
+
+<label>Nature of the decision riding on this coin</label>
+<select id="stakes">
+  <option>What to eat for dinner</option>
+  <option>Whether to text them back</option>
+  <option>Career-defining life choice</option>
+  <option>Tabs vs spaces</option>
+</select>
+
+<label>Preferred outcome (non-binding, will be ignored)</label>
+<select><option>Heads</option><option>Tails</option><option>Edge</option></select>
+
+<label>Prove you are a human with free will: select every square containing uncertainty</label>
+<div class="grid" id="grid"></div>
+<div class="err" id="gridErr"></div>
+
+<label>Terms of Flipping (scroll to the bottom to accept)</label>
+<div id="tos"></div>
+<div class="err" id="tosErr"></div>
+
+<button id="go">Submit for flipping</button><button class="ghost" id="hold">♪ Hold music</button>
+
+<div id="log"></div>
+<div class="stage" id="stage"><div class="coin" id="coin"><div>HEADS</div><div>TAILS</div></div></div>
+<div id="verdict"></div>
+<p id="fine"></p>
+<div id="receipt"></div>
+</main>
+
+<div id="queue"><span>Your position in the flipping queue</span><b id="qn">#48,213</b></div>
+
+<script>
+const $=s=>document.querySelector(s), wait=ms=>new Promise(r=>setTimeout(r,ms)), pick=a=>a[Math.random()*a.length|0];
+
+/* queue: moves forward, then gets shoved back */
+let q=48213;
+setInterval(()=>{q-=Math.random()*900|0; if(q<40||Math.random()<.06){q+=Math.random()*30000|0} $('#qn').textContent='#'+Math.max(q,1).toLocaleString()},900);
+
+/* captcha */
+const tiles=["tomorrow","a cat in a box","the stock market","a sealed envelope","a firm handshake","your group chat","a weather forecast","a Schrödinger","a ceiling fan"];
+tiles.forEach(t=>{const d=document.createElement('div');d.textContent=t;d.onclick=()=>d.classList.toggle('on');$('#grid').append(d)});
+
+/* terms */
+let tosRead=false;
+const clauses=["The coin is not liable for outcomes.","The petitioner waives the right to be happy with the result.","Heads and Tails are trademarks of the Bureau.","Flips performed under Earth gravity. Results on the Moon may vary.","The coin may be used again for other petitioners. Do not grow attached.","The Bureau reserves the right to flip the coin upside down retroactively.","Any attempt to call 'best of three' will be treated as an appeal.","The coin has not read these terms either.","By scrolling this far you agree that you scrolled this far."];
+$('#tos').innerHTML=Array.from({length:3},()=>clauses).flat().map((c,i)=>`§${i+1}. ${c}`).join('<br>')+'<br><br><b>END OF TERMS.</b> Thank you. You may now proceed. Probably.';
+$('#tos').onscroll=e=>{const t=e.target;if(t.scrollTop+t.clientHeight>=t.scrollHeight-4)tosRead=true};
+
+/* hold music: an endless beepy muzak loop */
+let ac,playing=false,timer;
+$('#hold').onclick=()=>{
+  ac=ac||new AudioContext();
+  playing=!playing; $('#hold').textContent=playing?'■ Stop hold music':'♪ Hold music';
+  if(!playing){clearInterval(timer);return}
+  const tune=[523,659,784,659,587,698,880,698,523,659,784,1047,988,784,659,587];let i=0;
+  timer=setInterval(()=>{const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=tune[i++%tune.length]*(Math.random()<.05?1.06:1);g.gain.setValueAtTime(.08,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.28);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.3)},300);
+};
+
+/* stamps */
+function stamp(text,color){
+  const s=document.createElement('div');s.className='stamp';s.textContent=text;
+  s.style.color=s.style.borderColor=color;s.style.setProperty('--r',(Math.random()*30-15)+'deg');
+  s.style.left=(10+Math.random()*50)+'vw';s.style.top=(15+Math.random()*55)+'vh';
+  document.body.append(s);setTimeout(()=>s.remove(),1800);
+}
+
+function validate(){
+  let ok=true;const n=$('#name').value.trim();
+  $('#nameErr').textContent=$('#gridErr').textContent=$('#tosErr').textContent='';
+  if(n.length<2){$('#nameErr').textContent='Name too short. The Bureau requires at least 2 characters of identity.';ok=false}
+  else if(!/[aeiou]/i.test(n)){$('#nameErr').textContent='Name must contain at least one vowel. Please buy a vowel and resubmit.';ok=false}
+  else if(n.length>30){$('#nameErr').textContent='Name too long. The Bureau only has 30 boxes of ink.';ok=false}
+  const on=[...document.querySelectorAll('.grid .on')].length;
+  if(on<9){$('#gridErr').textContent=on?`Incorrect. ${9-on} square${9-on>1?'s':''} still contain uncertainty. Everything contains uncertainty.`:'Please select at least one square. Or all of them. Hint: all of them.';ok=false}
+  if(!tosRead){$('#tosErr').textContent='You have not read the terms. The Bureau can tell.';ok=false}
+  return ok;
+}
+
+/* appeals counter: shared across everyone, stays hidden if the counter service is down */
+const COUNTER='https://abacus.jasoncameron.dev/%s/shauryasharma-tech/coinflip-appeals';
+function showAppeals(n){$('#ac').textContent=n.toLocaleString();$('#appeals').hidden=false}
+fetch(COUNTER.replace('%s','get')).then(r=>r.status===404?{value:0}:r.json()).then(d=>showAppeals(d.value)).catch(()=>{});
+
+let appeals=0, caseNo=()=>'BBO-'+(Math.random()*1e6|0).toString().padStart(6,'0');
+const baseSteps=()=>[
+ ["Notarising coin","verified: is round"],
+ ["Environmental impact assessment","air displaced: 0.4 cm³"],
+ ["Consulting the Heads Lobby","donation received"],
+ ["Consulting the Tails Caucus","filibustering…"],
+ ["Tails Caucus filibuster","ended (fell asleep)"],
+ ["Calibrating thumb","thumb 94% nominal"],
+ ["Checking coin for existential doubt",pick(["coin is fine","coin is fine","coin requested a moment","coin asked what it all means"])],
+ [`Committee of ${3+appeals*2} votes on whether to flip`,`${2+appeals+1}–${1+appeals}, motion carries`],
+ ["Appeal by dissenting members","denied"],
+];
+const appealSteps=[
+ ["Locating original coin","found in couch"],
+ ["Interviewing coin about previous flip","coin pleads the fifth"],
+ ["Summoning Court of Appeals for Small Change","quorum: 2 nickels, 1 penny"],
+ ["Escalating to the Supreme Court of Coins","justices in session (all heads)"],
+ ["Supreme Court recusal (all heads, conflict of interest)","replaced with tails"],
+ ["Referral to the International Tribunal of Randomness","The Hague says hi"],
+ ["Consulting a second, independent coin","second coin refuses to comment on colleague"],
+ ["Galactic Senate of Probability","vote postponed until heat death"],
+];
+
+$('#go').onclick=async()=>{
+  if(!validate()){stamp('INCOMPLETE','var(--vio)');return}
+  const b=$('#go'),name=$('#name').value.trim(),id=caseNo();
+  b.disabled=true;$('#log').innerHTML='';$('#verdict').textContent='';$('#fine').textContent='';$('#receipt').style.display='none';
+  $('#stage').classList.remove('show');$('#coin').classList.remove('spin');
+  stamp('RECEIVED','var(--acc)');
+  if(appeals>0) fetch(COUNTER.replace('%s','hit')).then(r=>r.json()).then(d=>showAppeals(d.value)).catch(()=>{});
+  let steps=baseSteps();
+  if($('#stakes').selectedIndex===3) steps.splice(5,0,["Tabs vs spaces detected","convening war tribunal"],["War tribunal","verdict: both parties are wrong"]);
+  if($('#stakes').selectedIndex===1) steps.splice(2,0,["Reading the message they sent","… yeah that's a flip"]);
+  steps.push(...appealSteps.slice(0,Math.min(appeals*2,appealSteps.length)));
+  for(const [a,z] of steps){
+    const r=document.createElement('div');r.className='row';r.innerHTML=`<span>${a}</span><span>pending</span>`;$('#log').append(r);
+    r.scrollIntoView({block:'nearest',behavior:'smooth'});
+    await wait(600+Math.random()*1200);
+    if(Math.random()<.12){r.lastChild.textContent='form misplaced';r.classList.add('bad');stamp('LOST','var(--vio)');await wait(1400);r.lastChild.textContent='found under desk';r.classList.remove('bad')}
+    r.lastChild.textContent=z;r.classList.add('done');
+  }
+  const x=Math.random(),res=x<.004?'Edge':x<.502?'Heads':'Tails';
+  $('#stage').classList.add('show');
+  const c=$('#coin');c.style.setProperty('--end',res==='Tails'?'3780deg':res==='Edge'?'3690deg':'3600deg');
+  void c.offsetWidth;c.classList.add('spin');
+  $('#stage').scrollIntoView({block:'center',behavior:'smooth'});
+  await wait(3200);
+  $('#verdict').textContent=res+'.';stamp('APPROVED','var(--ok)');
+  $('#fine').textContent=`Issued to ${name}. This result is provisional and subject to review by the Oversight Board. A 2% reversal fee applies. Do not flip the result.`;
+  const d=new Date();
+  $('#receipt').textContent=
+`BUREAU OF BINARY OUTCOMES — OFFICIAL RECEIPT
+------------------------------------------
+Case no.          ${id}
+Petitioner        ${name}
+Matter            ${$('#stakes').value}
+Appeal no.        ${appeals}
+Date              ${d.toDateString()}
+Committee size    ${3+appeals*2}
+Result            ${res.toUpperCase()}
+------------------------------------------
+Flipping fee                     $0.25
+Thumb depreciation               $0.03
+Filibuster catering              $41.00
+Environmental offset (1 leaf)    $0.10
+Appeals surcharge                $${(appeals**2*12.5).toFixed(2)}
+------------------------------------------
+TOTAL DUE                        $${(41.38+appeals**2*12.5).toFixed(2)}
+
+Payable in coins. Coins will be flipped
+before acceptance. Tails = rejected.
+`;
+  $('#receipt').style.display='block';
+  await wait(3500);
+  if(Math.random()<.2){$('#fine').textContent+=' UPDATE: The Oversight Board has overturned the result.';$('#verdict').textContent=(res==='Heads'?'Tails':'Heads')+'.';stamp('OVERTURNED','var(--vio)')}
+  else $('#fine').textContent+=' UPDATE: Oversight Board upheld the result, reluctantly.';
+  appeals++;b.disabled=false;
+  b.textContent=appeals>=4?'Petition the Galactic Senate':appeals>=2?'Escalate to the Supreme Court of Coins':'File an appeal (flip again)';
+};
+</script>
+</body>
+</html>
