@@ -17,6 +17,7 @@
 @media (prefers-color-scheme:dark){:root{--bg:#0b1118;--ink:#e6edf3;--mute:#8a9aab;--line:#1f2a36;--acc:#7c9cff;--ok:#3fd1b8;--teal:#3fd1b8;--card:#111a24;--vio:#a08cff;
   --paper:#101923;--rule:#26345c;--carbonbg:#121b33;--carbon:#8ea2ff}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;padding:0 16px 120px;overflow-x:hidden}
 main{max-width:720px;margin:0 auto;position:relative}
 h1{font-weight:400;font-size:clamp(36px,7vw,60px);line-height:1.02;letter-spacing:-.02em;margin:10px 0 14px}
@@ -137,7 +138,7 @@ button:disabled{opacity:.4;cursor:wait}
 </head>
 <body>
 
-<div class="stats" id="stats">
+<div class="stats" id="stats" hidden>
   <span class="lbl">National statistics</span>
   <span>Petitions filed<b id="s-pet">—</b></span>
   <span>Appeals<b id="s-app">—</b></span>
@@ -196,7 +197,7 @@ button:disabled{opacity:.4;cursor:wait}
 </div>
 <div id="torn"></div>
 
-<section class="register">
+<section class="register" id="register" hidden>
   <h2>Public Register of Outcomes</h2>
   <p style="margin:0;font-size:13px">Final rulings, after review by the Oversight Board, as filed by every petitioner to date.</p>
   <table>
@@ -227,11 +228,14 @@ const API='https://abacus.jasoncameron.dev', NS='shauryasharma-tech';
 const getC=k=>fetch(`${API}/get/${NS}/${k}`).then(r=>r.status===404?{value:0}:r.ok?r.json():Promise.reject()).then(d=>d.value);
 const hitC=k=>fetch(`${API}/hit/${NS}/${k}`).then(r=>r.ok?r.json():Promise.reject()).then(d=>d.value);
 const setN=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.textContent=Number(v).toLocaleString()};
-const track=(k,id)=>hitC(k).then(v=>setN(id,v)).catch(()=>{});
+/* the scoreboard stays hidden until enough petitions exist to be worth showing */
+const SHOW_AT=5;
+const reveal=v=>{if(v>=SHOW_AT){$('#stats').hidden=false;$('#register').hidden=false}};
+const track=(k,id)=>hitC(k).then(v=>{setN(id,v);if(k==='coinflip-petitions')reveal(v)}).catch(()=>{});
 $('#reg').innerHTML=matters.map((m,i)=>`<tr><td>${m}</td><td id="r${i}h">—</td><td id="r${i}t">—</td><td id="r${i}o">—</td></tr>`).join('');
 [['coinflip-petitions','s-pet'],['coinflip-appeals','s-app'],['coinflip-overturned','s-ovr'],
  ...matters.flatMap((_,i)=>[[`coinflip-m${i}-heads`,`r${i}h`],[`coinflip-m${i}-tails`,`r${i}t`],[`coinflip-m${i}-overturned`,`r${i}o`]])]
-  .forEach(([k,id])=>getC(k).then(v=>setN(id,v)).catch(()=>{}));
+  .forEach(([k,id])=>getC(k).then(v=>{setN(id,v);if(k==='coinflip-petitions')reveal(v)}).catch(()=>{}));
 
 /* 5. queue: drifts forward, gets shoved back, and paying makes it worse */
 let q=48213, priority=false, qBusy=false;
