@@ -239,3 +239,108 @@
     }
   });
 })();
+
+/* ---- covers: alive on hover, morphing between pages ----
+   Runs in <head> with the rest of this file, so the pagereveal listener
+   is registered before the page first renders. */
+(function () {
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* restart a cover's animation from the top */
+  function live(el) {
+    if (!el || reduced) return;
+    el.classList.remove("cover-live");
+    void el.getBoundingClientRect();
+    el.classList.add("cover-live");
+  }
+
+  /* ---- view-transition names: exactly one "cover" per page, set at the
+     moment of navigation, because the index holds several copies of each ---- */
+  var named = [];
+  function name(el, n) { if (el) { el.style.viewTransitionName = n; named.push(el); } }
+  function clearNames() {
+    named.forEach(function (el) { el.style.viewTransitionName = ""; el.classList.remove("vt-rest"); });
+    named = [];
+  }
+  function heroCoverFor(url) {
+    /* before design.js has run, the hero shows the newest entry */
+    var c = document.querySelector('.lh-cover .cover.is-on') ||
+            document.querySelector('.lh-cover .cover[data-i="0"]');
+    if (!c || !c.parentNode.offsetParent || new URL(c.dataset.href, document.baseURI).href !== url) return null;
+    c.classList.add("is-on");
+    return c;
+  }
+  /* a tile's cover + title take the names; anything else carrying them gives them up */
+  function nameTile(tile) {
+    var cover = tile.querySelector(".tile-cover");
+    cover.classList.add("vt-rest");
+    name(cover, "cover");
+    name(tile.querySelector("h3"), "article-title");
+    name(document.querySelector(".lh-entry h1"), "none");
+    name(document.querySelector(".hero-cover"), "none");
+    name(document.querySelector(".hero:has(.byline) h1"), "none");
+  }
+  function tileFor(url) {
+    return Array.prototype.find.call(document.querySelectorAll(".tile-post"), function (t) {
+      return t.href === url && t.querySelector(".tile-cover");
+    });
+  }
+
+  var clicked = null;
+  document.addEventListener("click", function (e) {
+    clicked = e.target.closest ? e.target.closest("a") : null;
+  }, true);
+
+  addEventListener("pageswap", function (e) {
+    if (!e.viewTransition || !e.activation) return;
+    clearNames();
+    var dest = e.activation.entry.url;
+    var tile = clicked && clicked.closest(".tile-post");
+    if (tile && tile.querySelector(".tile-cover")) return nameTile(tile);
+    var hero = heroCoverFor(dest);
+    if (hero) return name(hero, "cover");
+    if (!clicked && (tile = tileFor(dest))) nameTile(tile);  /* e.g. the Back button */
+  });
+
+  addEventListener("pagereveal", function (e) {
+    clearNames();
+    if (!e.viewTransition || !window.navigation || !navigation.activation || !navigation.activation.from) return;
+    var from = navigation.activation.from.url;
+    if (document.querySelector(".hero-cover")) return;  /* a post: its hero cover is named in CSS */
+    var hero = heroCoverFor(from);
+    if (hero) return name(hero, "cover");
+    var tile = tileFor(from);
+    if (tile) nameTile(tile);
+  });
+
+  /* ---- living covers ---- */
+  document.addEventListener("DOMContentLoaded", function () {
+    Array.prototype.forEach.call(document.querySelectorAll(".tile-post"), function (t) {
+      var c = t.querySelector(".tile-cover");
+      if (!c) return;
+      t.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") live(c); });
+      t.addEventListener("pointerleave", function () { c.classList.remove("cover-live"); });
+      t.addEventListener("focusin", function () { live(c); });
+    });
+
+    /* the index hero shows whichever entry design.js has filled in: follow
+       its title link and redraw that entry's cover each time it changes */
+    var title = document.querySelector('#lh-entry [data-f="title"]');
+    if (title) {
+      var covers = Array.prototype.slice.call(document.querySelectorAll(".lh-cover .cover"));
+      var show = function () {
+        var href = title.href;
+        covers.forEach(function (c) {
+          var on = new URL(c.dataset.href, document.baseURI).href === href;
+          if (on === c.classList.contains("is-on")) return;
+          c.classList.toggle("is-on", on);
+          if (on) live(c); else c.classList.remove("cover-live");
+        });
+      };
+      new MutationObserver(show).observe(title, { attributes: true, attributeFilter: ["href"] });
+      show();
+    }
+
+    live(document.querySelector(".hero-cover"));
+  });
+})();

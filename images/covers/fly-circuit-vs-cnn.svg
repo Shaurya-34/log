@@ -31,6 +31,7 @@
   <!-- The drone's track, swerving away from something it was never
        going to hit. -->
   <path
+    class="draw-path"
     d="M500 610 C500 560 520 520 470 480 C430 448 440 400 480 360 C505 335 492 300 500 262"
     stroke="#17150f"
     stroke-width="1.2"/>

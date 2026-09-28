@@ -37,6 +37,23 @@
   animation: title-in 500ms cubic-bezier(.16,.78,.18,1) both;
 }
 
+/* A post's cover and the same cover on the tile or index entry that led to
+   it. The post names its own statically; on the index there are several
+   copies of each, so chrome.js names the right one at the moment of leaving
+   or arriving. */
+.hero-cover {
+  view-transition-name: cover;
+}
+
+::view-transition-group(cover) {
+  animation-duration: 560ms;
+  animation-timing-function: cubic-bezier(.16,.78,.18,1);
+}
+
+/* the same drawing on both sides: morph it, don't cross-fade two copies */
+::view-transition-old(cover) { animation: none; opacity: 0; }
+::view-transition-new(cover) { animation: none; }
+
 @keyframes page-out {
   from { opacity: 1; transform: translateY(0); }
   to { opacity: 0; transform: translateY(-10px); }
@@ -59,7 +76,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(root),
-  ::view-transition-group(article-title) {
+  ::view-transition-group(article-title),
+  ::view-transition-group(cover) {
     animation-duration: 1ms;
   }
 }

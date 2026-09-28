@@ -1183,3 +1183,127 @@ body { counter-reset: section; }
 body article.prose.post > *,
 body article.prose.post.fin::after { margin-left: auto; margin-right: auto; }
 .prose.post.fin::after { max-width: var(--measure); }
+
+/* ---- covers: drawn inline, alive on hover, morphing between pages ---- */
+/* Each post's cover SVG is inlined by build.py (cover_svg). A tile's cover
+   redraws when the pointer arrives, the index hero redraws the entry on
+   show, and a post's cover draws in as the page opens. chrome.js adds
+   .cover-live to restart it; the morph itself is in transitions.css. */
+
+:root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); --ease-draw: cubic-bezier(0.65, 0, 0.35, 1); }
+
+/* ---- the cover drawing ------------------------------------------------ */
+/* Ink follows the text colour, paper fills follow the page, and the one line
+   each cover is about is drawn in the accent. */
+[data-cover] { display: block; color: var(--ink); --cover-bg: var(--paper); }
+[data-cover] svg { display: block; width: 100%; height: auto; }
+[data-cover] svg text { font-family: var(--mono); }
+[data-cover] .draw-path { stroke: var(--blue); stroke-dasharray: 1; stroke-dashoffset: 0; }
+
+/* ---- tiles ------------------------------------------------------------ */
+.tile-cover { margin: 0 0 1.2rem; }
+.tile-post:hover .tile-cover { --cover-bg: var(--blue-deep); }
+.tile-post:hover .tile-cover .draw-path { stroke: var(--saffron); }
+
+/* wide tiles: text left, drawing right, so a 4-column tile isn't all picture */
+@media (min-width: 901px) {
+  .tile-post:nth-child(4n+1), .tile-post:nth-child(4n+4) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 46%);
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 2rem;
+  }
+  .tile-post:nth-child(4n+1) > *, .tile-post:nth-child(4n+4) > * { grid-column: 1; }
+  .tile-post:nth-child(4n+1) .tile-cover, .tile-post:nth-child(4n+4) .tile-cover {
+    grid-column: 2; grid-row: 1 / -1; align-self: center; margin: 0;
+  }
+  .tile-post:nth-child(4n+1) .meta, .tile-post:nth-child(4n+4) .meta { align-self: end; }
+}
+
+/* ---- index hero: the drawing of the entry on show ---------------------- */
+.lh-cover { display: none; }
+@media (min-width: 901px) {
+  .lh-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
+    column-gap: clamp(2rem, 5vw, 5rem);
+    align-content: start;
+  }
+  .lh-entry > * { grid-column: 1; }
+  .lh-cover { display: grid; grid-column: 2; grid-row: 1 / span 4; align-self: center; }
+  .lh-cover > .cover { grid-area: 1 / 1; visibility: hidden; }
+  .lh-cover > .cover.is-on { visibility: visible; }
+}
+
+.hero-cover { margin: clamp(2rem, 5vw, 3.5rem) 0 0; max-width: 44rem; }
+
+/* the snapshot is taken at rest, not in the tile's hover colours */
+.vt-rest { color: var(--ink) !important; --cover-bg: var(--paper) !important; }
+.vt-rest .draw-path { stroke: var(--blue) !important; }
+
+/* ---- living: what happens when a cover comes alive ------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .cover-live .draw-path { animation: cover-draw 1100ms var(--ease-draw) both; }
+  .cover-live[data-cover="never-repeating-never-leaving"] .draw-path { animation-duration: 2200ms; }
+
+  /* birthday: the two draws collide, then the ring lands on them */
+  .cover-live[data-cover="birthday-attack"] circle[r="20"] {
+    transform-box: view-box; transform-origin: 575px 305px;
+    animation: pop 420ms var(--ease-out) 820ms both;
+  }
+
+  /* fly: the off-course obstacle looms anyway */
+  .cover-live[data-cover="fly-circuit-vs-cnn"] g:nth-of-type(3) rect {
+    transform-box: view-box; transform-origin: 710px 337px;
+    animation: loom 700ms var(--ease-out) both;
+  }
+  .cover-live[data-cover="fly-circuit-vs-cnn"] g:nth-of-type(3) rect:nth-child(2) { animation-delay: 110ms; }
+  .cover-live[data-cover="fly-circuit-vs-cnn"] g:nth-of-type(3) rect:nth-child(3) { animation-delay: 220ms; }
+
+  /* marching: the sphere-trace steps land one after another along the ray */
+  .cover-live[data-cover="marching-with-rays"] g:nth-of-type(2) circle {
+    transform-box: fill-box; transform-origin: center;
+    animation: pop 360ms var(--ease-out) both;
+  }
+  /* dots are three rays of steps (5, 4, 4): the same step lands on every ray together */
+  .cover-live[data-cover="marching-with-rays"] g:nth-of-type(2) circle:is(:nth-child(2), :nth-child(7), :nth-child(11)) { animation-delay: 90ms; }
+  .cover-live[data-cover="marching-with-rays"] g:nth-of-type(2) circle:is(:nth-child(3), :nth-child(8), :nth-child(12)) { animation-delay: 180ms; }
+  .cover-live[data-cover="marching-with-rays"] g:nth-of-type(2) circle:is(:nth-child(4), :nth-child(9), :nth-child(13)) { animation-delay: 270ms; }
+  .cover-live[data-cover="marching-with-rays"] g:nth-of-type(2) circle:nth-child(5) { animation-delay: 360ms; }
+
+  /* mandelbrot: the nested frames zoom, each one becoming the one outside it */
+  .cover-live[data-cover="self-rewriting-mandelbrot"] g:nth-of-type(2),
+  .cover-live[data-cover="self-rewriting-mandelbrot"] g:nth-of-type(3) {
+    transform-box: view-box; transform-origin: 510px 325px;
+    animation: zoom 1500ms linear var(--loops, infinite);
+  }
+
+  /* triton: the four kernels built light up rung by rung; the fifth doesn't */
+  .cover-live[data-cover="programming-an-attention-kernel-in-triton"] g:nth-of-type(2) path:nth-child(n+3) {
+    animation: rung 640ms var(--ease-out) both;
+  }
+  .cover-live[data-cover="programming-an-attention-kernel-in-triton"] g:nth-of-type(2) path:nth-child(5) { animation-delay: 110ms; }
+  .cover-live[data-cover="programming-an-attention-kernel-in-triton"] g:nth-of-type(2) path:nth-child(4) { animation-delay: 220ms; }
+  .cover-live[data-cover="programming-an-attention-kernel-in-triton"] g:nth-of-type(2) path:nth-child(3) { animation-delay: 330ms; }
+  .cover-live[data-cover="programming-an-attention-kernel-in-triton"] g:nth-of-type(2) path:nth-child(6) { animation-delay: 0ms; }
+
+  /* computation: the rings spread outward from the centre */
+  .cover-live[data-cover="where-does-computation-end"] g:first-of-type circle {
+    transform-box: view-box; transform-origin: 500px 325px;
+    animation: ripple 700ms var(--ease-out) both;
+  }
+  .cover-live[data-cover="where-does-computation-end"] g:first-of-type circle:nth-of-type(2) { animation-delay: 80ms; }
+  .cover-live[data-cover="where-does-computation-end"] g:first-of-type circle:nth-of-type(3) { animation-delay: 160ms; }
+  .cover-live[data-cover="where-does-computation-end"] g:first-of-type circle:nth-of-type(4) { animation-delay: 240ms; }
+}
+
+/* the index hero and a post's own cover play once; only a hovered tile loops */
+.lh-cover, .hero-cover { --loops: 1; }
+
+@keyframes cover-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes pop { from { transform: scale(0); opacity: 0; } }
+@keyframes loom { from { transform: scale(0.72); opacity: 0; } }
+@keyframes ripple { from { transform: scale(0.55); opacity: 0; } }
+@keyframes zoom { to { transform: scale(1.76); } }
+@keyframes rung { 45% { stroke: var(--red); stroke-width: 3.5; } }
+.tile-post:hover .cover-live[data-cover="programming-an-attention-kernel-in-triton"] { --red: var(--saffron); }

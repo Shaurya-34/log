@@ -23,10 +23,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="design.css?v=3280a92e">
+<link rel="stylesheet" href="design.css?v=11e572e1">
 <link rel="stylesheet" href="widgets.css?v=268ce49f">
-<link rel="stylesheet" href="transitions.css?v=1416c508">
-<script src="chrome.js?v=e9231792"></script>
+<link rel="stylesheet" href="transitions.css?v=202bccaa">
+<script src="chrome.js?v=6c8613fd"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Never repeating, never leaving","description":"Four chaotic systems, one Python framework, and the one that refused to fit it.","url":"https://shauryasharma.tech/never-repeating-never-leaving.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/never-repeating-never-leaving.html"},"datePublished":"2026-07-24T00:00:00+00:00","dateModified":"2026-07-24T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["chaos","python","visualization"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -57,6 +57,69 @@
     <time class="label" datetime="2026-07-24">July 24, 2026</time>
     <span class="byline-links"><a class="label" href="https://github.com/Shaurya-34/strange_attractors" rel="noopener">Source ↗</a><button type="button" class="share label" data-url="https://shauryasharma.tech/never-repeating-never-leaving.html" aria-label="Share this article">Share</button></span>
   </p>
+  <figure class="hero-cover" data-cover="never-repeating-never-leaving"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" opacity=".16">
+    <path d="M90 520H910"/>
+    <path d="M500 70V580"/>
+    <path d="M150 500L850 120"/>
+    <path d="M150 120L850 500"/>
+  </g>
+
+  <g fill="currentColor">
+    <circle cx="180" cy="450" r="3"/>
+    <circle cx="270" cy="390" r="2"/>
+    <circle cx="760" cy="180" r="3"/>
+    <circle cx="820" cy="430" r="2"/>
+    <circle cx="680" cy="520" r="2"/>
+  </g>
+
+  <path
+    d="M145 470
+       C205 430 275 405 345 390
+       C410 376 455 340 475 285
+       C500 220 575 165 655 185
+       C730 204 760 280 710 335
+       C665 385 565 380 520 330
+       C470 275 500 205 585 170
+       C680 132 785 190 790 280
+       C796 365 720 430 625 425
+       C530 420 470 350 500 275
+       C530 195 650 155 735 215
+       C820 275 780 390 690 420
+       C600 450 505 405 495 335
+       C485 265 555 220 630 235
+       C705 250 735 325 690 365
+       C645 405 560 390 535 340
+       C510 290 545 250 600 255
+       C655 260 680 310 650 340
+       C620 370 570 355 560 320"
+    class="draw-path" pathLength="1"
+    stroke="currentColor"
+    stroke-width="1.4"/>
+
+  <path
+    d="M145 470
+       C230 420 320 400 400 365
+       C480 330 500 250 580 205"
+    stroke="currentColor"
+    stroke-width=".8"
+    opacity=".35"/>
+
+  <circle cx="560" cy="320" r="5" fill="currentColor"/>
+
+  <g stroke="currentColor" stroke-width="1">
+    <circle cx="145" cy="470" r="4" fill="var(--cover-bg)"/>
+    <circle cx="790" cy="280" r="4" fill="var(--cover-bg)"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1">
+    <path d="M565 320H610" opacity=".55"/>
+  </g>
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="615" y="324">ATTRACTOR</text>
+    <text x="100" y="440">NEVER CLOSES →</text>
+  </g>
+</svg></figure>
 </section>
 
 <article class="prose post">
@@ -341,24 +404,207 @@ attractor would be maybe six of them.</p>
 
   <div class="mosaic" id="mosaic">
     <a class="tile-post" href="self-rewriting-mandelbrot.html">
+      <span class="tile-cover" data-cover="self-rewriting-mandelbrot"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" stroke-width="1" opacity=".22">
+    <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
+    <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1.6">
+    <rect x="360" y="145" width="300" height="360"/>
+    <rect x="425" y="220" width="170" height="210"/>
+    <rect x="463" y="268" width="95" height="120"/>
+    <rect x="485" y="292" width="50" height="72"/>
+    <rect x="497" y="307" width="26" height="42"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1.2" opacity=".65">
+    <path d="M360 145L660 505"/>
+    <path d="M660 145L360 505"/>
+    <path d="M425 220L595 430"/>
+    <path d="M595 220L425 430"/>
+  </g>
+
+  <path class="draw-path" pathLength="1" d="M145 490
+           C205 450 235 400 250 345
+           C265 290 300 250 355 240
+           C405 230 445 245 470 275"
+        stroke="currentColor" stroke-width="2"/>
+
+  <g fill="currentColor">
+    <rect x="350" y="135" width="10" height="10"/>
+    <rect x="655" y="495" width="10" height="10"/>
+    <rect x="492" y="302" width="8" height="8"/>
+  </g>
+
+  <path d="M145 490L110 520M145 490L115 475"
+        stroke="currentColor" stroke-width="1.2"/>
+
+  <g stroke="currentColor" stroke-width="1">
+    <path d="M558 307H605" opacity=".55"/>
+  </g>
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="610" y="311">SELF-SIMILAR</text>
+    <text x="120" y="440">REWRITES →</text>
+  </g>
+</svg></span>
       <span class="label">Next · Python</span>
       <h3>A renderer that keeps notes on itself</h3>
       <p>A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.</p>
       <span class="meta label">06.08.26</span>
     </a>
     <a class="tile-post" href="marching-with-rays.html">
+      <span class="tile-cover" data-cover="marching-with-rays"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" stroke-width="1.3">
+    <circle cx="720" cy="325" r="55"/>
+    <circle cx="720" cy="325" r="105"/>
+    <circle cx="720" cy="325" r="155" stroke-dasharray="7 7" opacity=".55"/>
+    <circle cx="720" cy="325" r="205" stroke-dasharray="2 8" opacity=".35"/>
+
+    <path d="M80 325H940" opacity=".2"/>
+    <path d="M720 70V580" opacity=".2"/>
+
+    <path class="draw-path" pathLength="1" d="M95 325L665 325M95 325L655 225M95 325L655 425M95 325L630 160M95 325L630 490"/>
+
+    <path d="M665 325l-12-6M665 325l-12 6"/>
+    <path d="M655 225l-12-4M655 225l-9 9"/>
+    <path d="M655 425l-12 4M655 425l-9-9"/>
+  </g>
+
+  <g fill="var(--cover-bg)" stroke="currentColor" stroke-width="1.3">
+    <circle cx="190" cy="325" r="5"/>
+    <circle cx="300" cy="325" r="5"/>
+    <circle cx="405" cy="325" r="5"/>
+    <circle cx="500" cy="325" r="5"/>
+    <circle cx="575" cy="325" r="5"/>
+
+    <circle cx="205" cy="306" r="4"/>
+    <circle cx="320" cy="286" r="4"/>
+    <circle cx="430" cy="266" r="4"/>
+    <circle cx="525" cy="248" r="4"/>
+
+    <circle cx="205" cy="344" r="4"/>
+    <circle cx="320" cy="364" r="4"/>
+    <circle cx="430" cy="384" r="4"/>
+    <circle cx="525" cy="402" r="4"/>
+  </g>
+
+  <circle cx="720" cy="325" r="6" fill="currentColor"/>
+
+  <g stroke="currentColor" stroke-width="1">
+    <path d="M665 290H695M665 360H695" opacity=".5"/>
+    <path d="M705 325H735" opacity=".5"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1">
+    <path d="M300 300H345" opacity=".55"/>
+    <path d="M740 325H785" opacity=".55"/>
+  </g>
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="350" y="304">RAY</text>
+    <text x="790" y="329">STEP</text>
+  </g>
+</svg></span>
       <span class="label">Previous · Graphics</span>
       <h3>Marching with rays</h3>
       <p>Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.</p>
       <span class="meta label">21.07.26</span>
     </a>
     <a class="tile-post" href="fly-circuit-vs-cnn.html">
+      <span class="tile-cover" data-cover="fly-circuit-vs-cnn"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" opacity=".16">
+    <path d="M500 250L60 600"/>
+    <path d="M500 250L940 600"/>
+    <path d="M500 250L330 600"/>
+    <path d="M500 250L670 600"/>
+    <path d="M232 463H768"/>
+    <path d="M318 395H682"/>
+    <path d="M372 352H628"/>
+    <path d="M60 250H940"/>
+  </g>
+
+  <g fill="currentColor">
+    <rect x="455" y="196" width="10" height="58"/>
+    <rect x="542" y="210" width="8" height="44"/>
+    <rect x="392" y="262" width="16" height="92"/>
+    <rect x="690" y="248" width="40" height="178"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1">
+    <rect x="684" y="238" width="52" height="198" opacity=".45"/>
+    <rect x="674" y="222" width="72" height="230" opacity=".25"/>
+    <rect x="662" y="204" width="96" height="266" opacity=".12"/>
+  </g>
+
+  <path
+    class="draw-path" pathLength="1"
+    d="M500 610 C500 560 520 520 470 480 C430 448 440 400 480 360 C505 335 492 300 500 262"
+    stroke="currentColor"
+    stroke-width="1.2"/>
+  <path d="M492 604L500 590L508 604Z" fill="currentColor"/>
+
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="770" y="340">← LOOMING</text>
+    <text x="770" y="364">NOT ON COURSE</text>
+    <text x="90" y="600">ESCAPE ANYWAY</text>
+  </g>
+</svg></span>
       <span class="label">Machine learning</span>
       <h3>A fly's escape reflex, flying a drone</h3>
       <p>A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera.</p>
       <span class="meta label">16.09.26</span>
     </a>
     <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="tile-cover" data-cover="understanding-alphafolds-plddt-pae-and-ptm"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" opacity=".15">
+    <path d="M120 110H880"/>
+    <path d="M120 580H880"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1" opacity=".22">
+    <path d="M202 175V435M254 175V435M306 175V435M358 175V435"/>
+    <path d="M150 227H410M150 279H410M150 331H410M150 383H410"/>
+    <path d="M642 175V435M694 175V435M746 175V435M798 175V435"/>
+    <path d="M590 227H850M590 279H850M590 331H850M590 383H850"/>
+  </g>
+  <g stroke="currentColor" stroke-width="1.4">
+    <path d="M150 175H410V435H150Z"/>
+    <path d="M590 175H850V435H590Z"/>
+  </g>
+
+  <path
+    d="M150 175L410 435"
+    class="draw-path" pathLength="1"
+    stroke="currentColor"
+    stroke-width="24"
+    stroke-linecap="round"
+    opacity=".82"/>
+
+  <path d="M590 175L850 435" stroke="currentColor" stroke-width="2.5" opacity=".28"/>
+  <g fill="currentColor" opacity=".3">
+    <circle cx="640" cy="220" r="2.4"/>
+    <circle cx="700" cy="340" r="2.4"/>
+    <circle cx="760" cy="260" r="2.4"/>
+    <circle cx="810" cy="400" r="2.4"/>
+    <circle cx="620" cy="360" r="2.4"/>
+    <circle cx="790" cy="200" r="2.4"/>
+  </g>
+
+  <g fill="currentColor">
+    <circle cx="150" cy="175" r="3.5"/>
+    <circle cx="410" cy="435" r="3.5"/>
+  </g>
+
+  <g fill="currentColor" font-family="monospace" font-size="15" letter-spacing=".05em">
+    <text x="150" y="150">GFP &middot; WELL-FOLDED</text>
+    <text x="590" y="150">BETA-CASEIN &middot; DISORDERED</text>
+    <text x="120" y="460" opacity=".55">j</text>
+    <text x="272" y="458" opacity=".55">i</text>
+    <text x="560" y="460" opacity=".55">j</text>
+    <text x="712" y="458" opacity=".55">i</text>
+    <text x="120" y="620">CONFIDENT, NOT THE SAME AS CORRECT</text>
+  </g>
+</svg></span>
       <span class="label">Machine learning</span>
       <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
       <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>

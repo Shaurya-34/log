@@ -293,8 +293,31 @@ def masthead(base="", current=""):
             '</header>\n\n')
 
 
+@functools.cache
+def cover_svg(cover_rel):
+    """A post's cover inline, so CSS can recolour it with the theme and
+    animate it: ink and paper become currentColor and --cover-bg, and the
+    one line the drawing is about (.draw-path) gets pathLength=1 so a
+    single rule can draw any of them in."""
+    if not cover_rel.endswith(".svg"):
+        return ""
+    svg = (ROOT / cover_rel).read_text(encoding="utf-8")
+    svg = re.sub(r"<!--.*?-->\s*", "", svg, flags=re.S)
+    svg = svg.replace("#17150f", "currentColor").replace("#faf9f7", "var(--cover-bg)")
+    svg = re.sub(r'\s*stroke-dasharray="\d{3,}"\s*stroke-dashoffset="\d+"', "", svg)
+    svg = svg.replace('class="draw-path"', 'class="draw-path" pathLength="1"')
+    return svg.replace("<svg ", '<svg aria-hidden="true" focusable="false" ', 1).strip()
+
+
+def cover_el(post, tag, cls, extra=""):
+    svg = cover_svg(post["cover"])
+    return f'<{tag} class="{cls}" data-cover="{post["slug"]}"{extra}>{svg}</{tag}>' if svg else ""
+
+
 def tile(post, label):
+    cover = cover_el(post, "span", "tile-cover")
     return ('    <a class="tile-post" href="' + href(post) + '">\n'
+            + (f'      {cover}\n' if cover else '') +
             f'      <span class="label">{esc(label)}</span>\n'
             f'      <h3>{esc(post["title"])}</h3>\n'
             f'      <p>{esc(short_desc(post["description"]))}</p>\n'
@@ -432,6 +455,7 @@ def build_post(post, posts, i):
             f'<button type="button" class="share label" data-url="{html.escape(post_url)}" '
             'aria-label="Share this article">Share</button></span>\n'
             '  </p>\n'
+            + (f'  {cover_el(post, "figure", "hero-cover")}\n' if cover_svg(post["cover"]) else '') +
             '</section>\n\n')
 
     body = body_html(post)
@@ -581,6 +605,9 @@ def log_hero(posts):
                         "state": entry_state(i, n)} for i, p in enumerate(posts)],
                       ensure_ascii=False).replace("</", "<\\/")
     top = posts[0]
+    # every entry's cover, stacked; chrome.js shows the one on show
+    stack = "".join(cover_el(p, "span", "cover", f' data-i="{i}" data-href="{href(p)}"')
+                    for i, p in enumerate(posts))
     return ('<section class="hero log-hero">\n'
             '  <div class="lh-ident">\n'
             '    <span class="label">Engineering notes on ML, graphics, computation</span>\n'
@@ -593,6 +620,7 @@ def log_hero(posts):
             f'    <h1><a data-f="title" href="{href(top)}">{esc(top["title"])}</a></h1>\n'
             f'    <p class="standfirst" data-f="desc">{esc(short_desc(top["description"]))}</p>\n'
             f'    <a class="lh-read label" data-f="read" href="{href(top)}">Read →</a>\n'
+            f'    <div class="lh-cover" aria-hidden="true">{stack}</div>\n'
             '  </div>\n\n'
             f'  <div class="lh-strip" style="--days: {days}">\n'
             '    <div class="lh-scroll">\n'
