@@ -253,3 +253,57 @@
   update();
 
 })();
+
+/* ---- index strip: swells toward the cursor, like the dock -----------
+   Each cell's height follows a bell curve around the pointer; entry days
+   rise higher than empty ones, so the posts stand out of the wave as you
+   pass. Values ease toward their targets frame by frame instead of
+   snapping to the pointer, and the loop stops once everything has
+   settled. Fine pointers only; off under reduced motion. */
+(function () {
+  var strip = document.querySelector(".lh-cells");
+  if (!strip || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+  var cells = Array.prototype.slice.call(strip.querySelectorAll(".cell"));
+  var PEAK_ENTRY = 0.7, PEAK_DAY = 0.3;   /* extra height at the pointer: 30px -> 51px / 39px */
+  var SIGMA = 46;                          /* px: about four cells either side */
+  var TAU = 70;                            /* ms: how quickly a cell catches up */
+  var centers = [], cur = cells.map(function () { return 0; });
+  var peak = cells.map(function (c) { return c.classList.contains("is-entry") ? PEAK_ENTRY : PEAK_DAY; });
+  var px = null, running = false, last = 0;
+
+  function measure() {
+    var left = strip.getBoundingClientRect().left;
+    centers = cells.map(function (c) { var b = c.getBoundingClientRect(); return b.left - left + b.width / 2; });
+  }
+
+  function frame(t) {
+    var dt = last ? Math.min(t - last, 50) : 16;
+    last = t;
+    var k = 1 - Math.exp(-dt / TAU), moving = false;
+    for (var i = 0; i < cells.length; i++) {
+      var d = px === null ? Infinity : centers[i] - px;
+      var target = px === null ? 0 : peak[i] * Math.exp(-(d * d) / (2 * SIGMA * SIGMA));
+      var v = cur[i] + (target - cur[i]) * k;
+      if (Math.abs(target - v) < 0.002) v = target; else moving = true;
+      if (v !== cur[i]) { cur[i] = v; cells[i].style.setProperty("--s", (1 + v).toFixed(3)); }
+    }
+    if (moving || px !== null) requestAnimationFrame(frame);
+    else { running = false; last = 0; }
+  }
+  function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
+
+  strip.addEventListener("pointerenter", function (e) {
+    if (e.pointerType === "touch") return;
+    measure();
+  });
+  strip.addEventListener("pointermove", function (e) {
+    if (e.pointerType === "touch") return;
+    px = e.clientX - strip.getBoundingClientRect().left;
+    kick();
+  });
+  strip.addEventListener("pointerleave", function () { px = null; kick(); });
+  addEventListener("resize", measure);
+  measure();
+})();

@@ -855,15 +855,27 @@ body { counter-reset: section; }
 /* Scoped to the strip: the Triton figure's score tiles are also .cell, and
    height is a real geometry property on an SVG rect, so an unscoped rule
    here halved every tile in that figure. */
+/* The cells swell toward the cursor (design.js sets --s), growing upward
+   into the headroom above them, since the scroller clips anything outside
+   its box. The look is on ::before so only the fill scales and the current
+   entry's caret (::after) stays sharp. */
+.lh-cells { padding-top: 22px; align-items: end; }
 .lh-cells .cell {
   display: block;
   position: relative;
   height: 30px;
-  border: 1px solid var(--line);
 }
-.lh-cells .cell.is-entry { background: var(--saffron); border-color: var(--saffron); }
-.lh-cells .cell.is-today { border-color: var(--ink); }
-.lh-cells .cell.is-current { background: var(--red); border-color: var(--red); }
+.lh-cells .cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--line);
+  transform-origin: 50% 100%;
+  transform: scaleY(var(--s, 1));
+}
+.lh-cells .cell.is-entry::before { background: var(--saffron); border-color: var(--saffron); }
+.lh-cells .cell.is-today::before { border-color: var(--ink); }
+.lh-cells .cell.is-current::before { background: var(--red); border-color: var(--red); }
 .lh-cells .cell.is-current::after {
   content: "";
   position: absolute;
