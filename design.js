@@ -136,3 +136,120 @@
     });
   }
 })();
+
+/* ---- index hero: Conway's Life, seeded from the log ------------------
+   A torus seeded with an R-pentomino (five cells that churn for a long
+   time) on every day the strip marks as an entry. One ink; cells fade in
+   as they're born and out as they die, so a step reads as motion rather
+   than flicker. A click drops a glider in. Paused off-screen and in a
+   hidden tab; a still frame under reduced motion. */
+(function () {
+  var box = document.getElementById("lh-live");
+  if (!box) return;
+  var canvas = box.querySelector("canvas"), ctx = canvas.getContext("2d");
+  var read = box.querySelector(".lh-live-read");
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var CELL = 7, GAP = 2, P = CELL + GAP, STEP_MS = 190;
+  var W = 0, H = 0, ink = "";
+  var cols, rows, cur, prev, gen, seedTurn = 0, quiet = 0, history = [];
+  var lastStep = 0;
+
+  var cells = document.querySelectorAll(".lh-cells .cell");
+  var days = cells.length || 1;
+  var entryDays = Array.prototype.map.call(cells, function (c, i) {
+    return c.classList.contains("is-entry") ? i : -1;
+  }).filter(function (i) { return i >= 0; });
+  var G = [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]];   /* glider */
+  var RP = [[1, 0], [2, 0], [0, 1], [1, 1], [1, 2]];  /* R-pentomino */
+
+  function idx(c, r) { return ((r + rows) % rows) * cols + ((c + cols) % cols); }
+
+  function seed() {
+    cur = new Uint8Array(cols * rows); prev = new Uint8Array(cols * rows);
+    gen = 0; quiet = 0; history = [];
+    var flip = seedTurn++ % 2 ? -1 : 1;
+    entryDays.forEach(function (d, k) {
+      var c = Math.floor((d + 0.5) / days * cols), r = Math.floor(rows / 2) + (k % 2 ? -3 : 2);
+      RP.forEach(function (q) { cur[idx(c + q[0] * flip, r + q[1])] = 1; });
+    });
+  }
+
+  function step() {
+    var next = new Uint8Array(cols * rows), alive = 0, h = 0;
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
+      var n = 0;
+      for (var dr = -1; dr <= 1; dr++) for (var dc = -1; dc <= 1; dc++) if (dr || dc) n += cur[idx(c + dc, r + dr)];
+      var i = r * cols + c;
+      if (cur[i] ? n === 2 || n === 3 : n === 3) { next[i] = 1; alive++; h = (h * 31 + i) | 0; }
+    }
+    prev = cur; cur = next; gen++;
+    /* stuck in a short cycle, emptied, or down to a lone drifting glider: start over */
+    var key = alive + ":" + h;
+    history.push(key); if (history.length > 40) history.shift();
+    quiet = alive < 16 ? quiet + 1 : 0;
+    if (!alive || quiet > 90 || history.filter(function (k) { return k === key; }).length > 6) seed();
+    read.textContent = "Life · seeded from " + entryDays.length + " entry days · gen " + gen;
+  }
+
+  /* t runs 0..1 across a step: births fade in, deaths fade out */
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = ink;
+    var ox = (W - cols * P + GAP) / 2, oy = (H - rows * P + GAP) / 2;
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
+      var i = r * cols + c, a = cur[i] ? (prev[i] ? 1 : t) : (prev[i] ? 1 - t : 0);
+      if (!a) continue;
+      ctx.globalAlpha = a;
+      ctx.fillRect(ox + c * P, oy + r * P, CELL, CELL);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function layout() {
+    var dpr = Math.min(devicePixelRatio || 1, 2), b = canvas.getBoundingClientRect();
+    W = b.width; H = b.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.max(8, Math.floor((W + GAP) / P)); rows = Math.max(6, Math.floor((H + GAP) / P));
+    seedTurn = 0; seed();
+    prev = cur.slice();  /* the first frame shows the seed as it stands */
+  }
+  function paintInk() { ink = getComputedStyle(document.documentElement).getPropertyValue("--blue").trim(); }
+
+  var visible = true, running = false;
+  function frame(t) {
+    if (!running) return;
+    if (t - lastStep >= STEP_MS) { lastStep = t; step(); }
+    draw(Math.min(1, (t - lastStep) / (STEP_MS * 0.8)));
+    requestAnimationFrame(frame);
+  }
+  function update() {
+    var go = visible && !document.hidden && !reduced;
+    if (go && !running) { running = true; requestAnimationFrame(frame); }
+    else if (!go) running = false;
+  }
+
+  paintInk(); layout(); draw(1);
+  read.textContent = "Life · seeded from " + entryDays.length + " entry days · click to add a glider";
+  requestAnimationFrame(function () { box.classList.add("is-ready"); });
+
+  canvas.addEventListener("pointerdown", function (e) {
+    var b = canvas.getBoundingClientRect();
+    var ox = (W - cols * P + GAP) / 2, oy = (H - rows * P + GAP) / 2;
+    var c = Math.floor((e.clientX - b.left - ox) / P), r = Math.floor((e.clientY - b.top - oy) / P);
+    var fx = Math.random() < 0.5 ? -1 : 1, fy = Math.random() < 0.5 ? -1 : 1;
+    G.forEach(function (g) { cur[idx(c + g[0] * fx, r + g[1] * fy)] = 1; });
+    quiet = 0;
+    if (reduced) { prev = cur.slice(); draw(1); }
+  });
+
+  new IntersectionObserver(function (es) { visible = es[0].isIntersecting; update(); }).observe(box);
+  document.addEventListener("visibilitychange", update);
+  var rt;
+  addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); draw(1); }, 150); });
+  var repaint = function () { paintInk(); draw(1); };
+  new MutationObserver(repaint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", repaint);
+  update();
+
+})();

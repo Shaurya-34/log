@@ -340,6 +340,7 @@ def mosaic(title, count_html, tiles_html):
 def foot(base=""):
     return ('<footer class="foot">\n'
             f'  <span class="label">{SITE_NAME} · {datetime.now().year}</span>\n'
+            f'  <span class="label">{esc(MOTTO)}</span>\n'
             f'  <span class="label"><a href="{GITHUB_URL}" rel="noopener">GitHub</a> · '
             f'<a href="{base}index.html">Index</a></span>\n'
             '</footer>\n\n')
@@ -609,9 +610,11 @@ def log_hero(posts):
     stack = "".join(cover_el(p, "span", "cover", f' data-i="{i}" data-href="{href(p)}"')
                     for i, p in enumerate(posts))
     return ('<section class="hero log-hero">\n'
-            '  <div class="lh-ident">\n'
-            '    <span class="label">Engineering notes on ML, graphics, computation</span>\n'
-            f'    <span class="label">{esc(MOTTO)}</span>\n'
+            # Conway's Life, seeded from the entry days in the strip below (design.js)
+            '  <div class="lh-live" id="lh-live">\n'
+            '    <canvas role="img" aria-label="Conway\'s Game of Life, seeded from the days '
+            'this log has an entry. Click to drop in a glider."></canvas>\n'
+            '    <p class="lh-live-read label" aria-hidden="true"></p>\n'
             '  </div>\n\n'
             '  <div class="lh-entry" id="lh-entry" aria-live="polite">\n'
             f'    <p class="label kicker"><span data-f="state">{entry_state(0, n)}</span> · '
