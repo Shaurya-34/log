@@ -23,10 +23,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="design.css?v=16ed7e86">
+<link rel="stylesheet" href="design.css?v=c6f35774">
 <link rel="stylesheet" href="widgets.css?v=268ce49f">
-<link rel="stylesheet" href="transitions.css?v=202bccaa">
-<script src="chrome.js?v=6c8613fd"></script>
+<link rel="stylesheet" href="transitions.css?v=c2694236">
+<script src="chrome.js?v=a63fbfab"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Never repeating, never leaving","description":"Four chaotic systems, one Python framework, and the one that refused to fit it.","url":"https://shauryasharma.tech/never-repeating-never-leaving.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/never-repeating-never-leaving.html"},"datePublished":"2026-07-24T00:00:00+00:00","dateModified":"2026-07-24T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["chaos","python","visualization"]}</script>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -320,9 +320,19 @@ complicated system with six parameters and a cubic term:</p>
 <p>took one new step function and one new line in a list. Zero changes to
 anything structural. It produces a layered, shell-like spiral that looks
 like something turned on a lathe.</p>
-<figure>
-  <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form." loading="lazy">
-  <figcaption>Four systems, one framework, one animation clock. Lorenz, Rössler, Aizawa, Thomas.</figcaption>
+<figure class="attractor-demo" id="attractor-demo">
+  <div class="ray-head att-head">
+    <div class="ray-switch att-switch" role="group" aria-label="System">
+      <button type="button" data-sys="lorenz" aria-pressed="true">Lorenz</button><button type="button" data-sys="rossler" aria-pressed="false">Rössler</button><button type="button" data-sys="aizawa" aria-pressed="false">Aizawa</button><button type="button" data-sys="thomas" aria-pressed="false">Thomas</button>
+    </div>
+    <p class="ray-readout att-readout" aria-live="off">spread <b data-out="spread">-</b></p>
+    <button type="button" class="chaos-restart att-release">release</button>
+  </div>
+  <canvas class="att-canvas" role="img" aria-label="Sixteen hundred runs of one of four strange attractors, drawn in 3D; drag to turn the view."></canvas>
+  <figcaption>Four systems, one integrator: each button swaps only the step function and its time step, the way the framework does. Every dot is its own run of the equations, so the shape is simply where they all go. Release drops them into a ball a hundredth of the shape's width: watch how fast each system pulls neighbours apart, and that none of them ever leaves. Drag to turn it.</figcaption>
+  <noscript>
+    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form." loading="lazy">
+  </noscript>
 </figure>
 
 <h2>Then one of them refused to fit</h2>
@@ -622,8 +632,8 @@ attractor would be maybe six of them.</p>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="design.js?v=f32c6ae5"></script>
-<script src="site.js?v=6656d204"></script>
+<script src="design.js?v=f4c01fbc"></script>
+<script src="site.js?v=d85a52f3"></script>
 
 </body>
 </html>

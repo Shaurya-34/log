@@ -307,3 +307,118 @@
   addEventListener("resize", measure);
   measure();
 })();
+
+/* ---- headings in motion, and widget hints ----------------------------
+   A post's title rises in on a fresh load (chrome.js decides that in
+   <head>); section headings arrive as they scroll in; untouched widgets
+   show once what they do. */
+(function () {
+  "use strict";
+  var doc = document.documentElement;
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- a post's title rises in, line by line ---------------------------
+     Words are measured into their lines, each line slides up out of a
+     clip, then the original markup goes back so nothing is left wrapped. */
+  var h1 = document.querySelector(".hero:has(.byline) h1");
+  if (h1 && doc.classList.contains("title-rise")) {
+    var original = h1.innerHTML;
+    var esc = function (s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
+    var words = h1.textContent.trim().split(/\s+/);
+    h1.innerHTML = words.map(function (w) { return '<span class="tr-w">' + esc(w) + "</span>"; }).join(" ");
+    var lines = [];
+    Array.prototype.forEach.call(h1.querySelectorAll(".tr-w"), function (s) {
+      var top = s.offsetTop, last = lines[lines.length - 1];
+      if (!last || Math.abs(last.top - top) > 2) lines.push(last = { top: top, words: [] });
+      last.words.push(s.textContent);
+    });
+    h1.innerHTML = lines.map(function (l, i) {
+      return '<span class="tr-line"><span class="tr-in" style="animation-delay:' + i * 80 + 'ms">' +
+             l.words.map(esc).join(" ") + "</span></span>";
+    }).join("");
+    var hero = h1.closest(".hero");
+    hero.style.setProperty("--after", (lines.length - 1) * 80 + 280 + "ms");
+    hero.classList.add("hero-rise");
+    doc.classList.remove("title-rise");
+    /* put the plain heading back when the last line lands, or after the
+       time it should have taken, whichever comes first (animationend never
+       arrives in a tab that was hidden throughout) */
+    var restore = function () { if (h1.querySelector(".tr-line")) h1.innerHTML = original; };
+    h1.querySelector(".tr-line:last-child .tr-in").addEventListener("animationend", restore);
+    setTimeout(restore, (lines.length - 1) * 80 + 1200);
+  }
+
+  /* ---- section headings arrive as they scroll in ---------------------- */
+  if (doc.classList.contains("motion-ok") && "IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -12% 0px" });
+    document.querySelectorAll(".prose h2, .scrolly-head h2").forEach(function (h) { io.observe(h); });
+  } else {
+    document.querySelectorAll(".prose h2, .scrolly-head h2").forEach(function (h) { h.classList.add("is-in"); });
+  }
+
+  /* ---- widget hints ------------------------------------------------------
+     The first time an untouched widget is well in view, it shows what it
+     does once, with its own controls: a slider glides a fifth of its range
+     and back (the figure answers every step), or a switch flips to the
+     next option and back. Anything the reader does stops it at once.
+     Widgets that already move by themselves get nothing. */
+  var HINTS = { "grok-demo": "range", "birthday-demo": "range", "blocksize-demo": "range",
+                "ray-demo": "switch", "birthday-scale-demo": "switch" };
+  var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+
+  function glide(fig, input, state) {
+    var min = +input.min, max = +input.max, v0 = +input.value, step = +input.step || 1;
+    var d = (max - min) * 0.2 * (max - v0 >= v0 - min ? 1 : -1);
+    var T = 2000, t0 = performance.now(), lastV = v0;
+    function set(v) {
+      v = Math.round(v / step) * step;
+      if (v === lastV) return;
+      lastV = v; input.value = v;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    (function frame(now) {
+      if (state.touched) return;
+      var t = (now - t0) / T;
+      /* out 45%, hold 15%, back 40% */
+      var s = t < 0.45 ? ease(t / 0.45) : t < 0.6 ? 1 : t < 1 ? 1 - ease((t - 0.6) / 0.4) : 0;
+      set(v0 + d * s);
+      if (t < 1) requestAnimationFrame(frame);
+      else input.dispatchEvent(new Event("change", { bubbles: true }));
+    })(t0);
+  }
+
+  function flip(fig, state) {
+    var group = fig.querySelector('[aria-pressed="true"]');
+    if (!group) return;
+    var buttons = Array.prototype.slice.call(group.parentNode.querySelectorAll("button[aria-pressed]"));
+    var home = group, other = buttons[(buttons.indexOf(home) + 1) % buttons.length];
+    other.click();
+    setTimeout(function () { if (!state.touched) home.click(); }, 1200);
+  }
+
+  if (!reduced && "IntersectionObserver" in window) {
+    Object.keys(HINTS).forEach(function (id) {
+      var fig = document.getElementById(id);
+      if (!fig) return;
+      var state = { touched: false, done: false }, timer;
+      var touch = function () { state.touched = true; };
+      ["pointerdown", "keydown", "wheel"].forEach(function (ev) { fig.addEventListener(ev, touch, { passive: true }); });
+      var seen = new IntersectionObserver(function (es) {
+        var e = es[0];
+        clearTimeout(timer);
+        if (!e.isIntersecting || state.done || state.touched) return;
+        timer = setTimeout(function () {
+          if (state.touched || !fig.classList.contains("is-ready")) return;
+          state.done = true; seen.disconnect();
+          var input = fig.querySelector('input[type="range"]');
+          if (HINTS[id] === "range" && input) glide(fig, input, state); else flip(fig, state);
+        }, 600);
+      }, { threshold: 0.6 });
+      seen.observe(fig);
+    });
+  }
+})();

@@ -2003,3 +2003,203 @@
     document.head.appendChild(script);
   });
 })();
+
+(function () {
+  "use strict";
+  var doc = document.documentElement;
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- 3D attractors ----------------------------------------------------
+     Sixteen hundred particles under one of four systems, integrated live
+     (RK4) and drawn with short tails in 3D. Each system is just a step
+     function and a time step: the figure's own version of the post's
+     integrate(step_fn, ...). The dots start spread along one long run, so
+     the shape is there at once; "release" drops them all into a ball a
+     hundredth of the shape wide instead, and the readout is their spread.
+     Drag to orbit (it keeps turning with the flick and slows); it drifts
+     round on its own until touched. */
+  var fig = document.getElementById("attractor-demo");
+  if (!fig) return;
+  var canvas = fig.querySelector(".att-canvas"), ctx = canvas.getContext("2d");
+  var out = fig.querySelector('[data-out="spread"]');
+  var N = 1600, TAIL = 7;
+
+  var SYSTEMS = {
+    lorenz: { dt: 0.004, sub: 3, start: [1, 1, 1],
+      f: function (x, y, z, o) { o[0] = 10 * (y - x); o[1] = x * (28 - z) - y; o[2] = x * y - 8 / 3 * z; } },
+    rossler: { dt: 0.03, sub: 5, start: [1, 1, 0],
+      f: function (x, y, z, o) { o[0] = -y - z; o[1] = x + 0.2 * y; o[2] = 0.2 + z * (x - 5.7); } },
+    aizawa: { dt: 0.015, sub: 6, start: [0.1, 0, 0],
+      f: function (x, y, z, o) {
+        o[0] = (z - 0.7) * x - 3.5 * y; o[1] = 3.5 * x + (z - 0.7) * y;
+        o[2] = 0.6 + 0.95 * z - z * z * z / 3 - (x * x + y * y) * (1 + 0.25 * z) + 0.1 * z * x * x * x;
+      } },
+    thomas: { dt: 0.1, sub: 3, start: [0.1, 0, 0],
+      f: function (x, y, z, o) { var b = 0.208186; o[0] = Math.sin(y) - b * x; o[1] = Math.sin(z) - b * y; o[2] = Math.sin(x) - b * z; } }
+  };
+
+  var sys, C = [0, 0, 0], S = 1, P = new Float64Array(N * 3), H = new Float32Array(N * TAIL * 3), head = 0, filled = 0;
+  var k1 = [0, 0, 0], k2 = [0, 0, 0], k3 = [0, 0, 0], k4 = [0, 0, 0];
+
+  function rk4(i, dt) {
+    var x = P[i], y = P[i + 1], z = P[i + 2], h = dt / 2;
+    sys.f(x, y, z, k1);
+    sys.f(x + k1[0] * h, y + k1[1] * h, z + k1[2] * h, k2);
+    sys.f(x + k2[0] * h, y + k2[1] * h, z + k2[2] * h, k3);
+    sys.f(x + k3[0] * dt, y + k3[1] * dt, z + k3[2] * dt, k4);
+    P[i] = x + dt / 6 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]);
+    P[i + 1] = y + dt / 6 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]);
+    P[i + 2] = z + dt / 6 * (k1[2] + 2 * k2[2] + 2 * k3[2] + k4[2]);
+  }
+
+  /* one long run, sampled every few steps: the shape, and its frame */
+  function seed() {
+    P[0] = sys.start[0]; P[1] = sys.start[1]; P[2] = sys.start[2];
+    for (var s = 0; s < 3000; s++) rk4(0, sys.dt);
+    var lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9];
+    for (var i = 1; i < N; i++) {
+      P[i * 3] = P[i * 3 - 3]; P[i * 3 + 1] = P[i * 3 - 2]; P[i * 3 + 2] = P[i * 3 - 1];
+      for (var k = 0; k < 12; k++) rk4(i * 3, sys.dt);
+    }
+    for (var j = 0; j < N * 3; j++) { lo[j % 3] = Math.min(lo[j % 3], P[j]); hi[j % 3] = Math.max(hi[j % 3], P[j]); }
+    C = [0, 1, 2].map(function (a) { return (lo[a] + hi[a]) / 2; });
+    S = 1 / Math.max(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]) * 2;
+    head = 0; filled = 0;
+    record();
+  }
+  function release() {
+    /* every dot into a ball a hundredth of the shape wide, around one of them */
+    var r = 0.01 / S;
+    for (var i = 1; i < N; i++) {
+      P[i * 3] = P[0] + (Math.random() - 0.5) * r;
+      P[i * 3 + 1] = P[1] + (Math.random() - 0.5) * r;
+      P[i * 3 + 2] = P[2] + (Math.random() - 0.5) * r;
+    }
+    head = 0; filled = 0;
+    record();
+  }
+  function advance() {
+    for (var s = 0; s < sys.sub; s++) for (var i = 0; i < N * 3; i += 3) rk4(i, sys.dt);
+    record();
+  }
+  function record() {
+    head = (head + 1) % TAIL; filled = Math.min(filled + 1, TAIL);
+    var c = C, k = S;
+    for (var i = 0; i < N; i++) {
+      var o = (i * TAIL + head) * 3;
+      H[o] = (P[i * 3] - c[0]) * k; H[o + 1] = (P[i * 3 + 1] - c[1]) * k; H[o + 2] = (P[i * 3 + 2] - c[2]) * k;
+    }
+  }
+  function spread() {
+    var mx = 0, my = 0, mz = 0, i, d = 0;
+    for (i = 0; i < N; i++) { var o = (i * TAIL + head) * 3; mx += H[o]; my += H[o + 1]; mz += H[o + 2]; }
+    mx /= N; my /= N; mz /= N;
+    for (i = 0; i < N; i++) { var q = (i * TAIL + head) * 3; d += Math.hypot(H[q] - mx, H[q + 1] - my, H[q + 2] - mz); }
+    return d / N;
+  }
+
+  /* view */
+  var W = 0, Hh = 0, yaw = 0.6, pitch = -0.35, vyaw = 0, vpitch = 0, dragging = false, touchedView = false;
+  var inks = [];
+  function readInks() {
+    var cs = getComputedStyle(doc);
+    inks = ["--blue", "--red", "--saffron"].map(function (k) { return cs.getPropertyValue(k).trim(); });
+  }
+  function size() {
+    var dpr = Math.min(devicePixelRatio || 1, 2), b = canvas.getBoundingClientRect();
+    W = b.width; Hh = b.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(Hh * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, Hh);
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var scale = Math.min(W, Hh) * 0.4, ox = W / 2, oy = Hh / 2, F = 3.2;
+    ctx.lineWidth = 1; ctx.lineCap = "round"; ctx.globalAlpha = 0.6;
+    for (var g = 0; g < 3; g++) {
+      ctx.strokeStyle = inks[g];
+      ctx.beginPath();
+      for (var i = g; i < N; i += 3) {
+        for (var t = 0; t < filled; t++) {
+          var o = (i * TAIL + ((head - t + TAIL) % TAIL)) * 3;
+          /* z is up: turn about it (yaw), then tilt toward the viewer (pitch) */
+          var x = H[o] * cy - H[o + 1] * sy, y = H[o] * sy + H[o + 1] * cy, z = H[o + 2];
+          var y2 = y * cp - z * sp, z2 = y * sp + z * cp;
+          var p = F / (F + y2), X = ox + x * scale * p, Y = oy - z2 * scale * p;
+          if (t) ctx.lineTo(X, Y); else ctx.moveTo(X, Y);
+        }
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    var s = spread();
+    out.textContent = s < 0.01 ? s.toFixed(4) : s.toFixed(2);
+  }
+
+  function use(name) {
+    sys = SYSTEMS[name];
+    fig.querySelectorAll("[data-sys]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.sys === name)); });
+    seed();
+    draw();
+  }
+
+  var visible = false, running = false, last = 0;
+  function frame(t) {
+    if (!running) return;
+    var dt = last ? Math.min((t - last) / 1000, 0.05) : 0.016;
+    last = t;
+    if (!dragging) {
+      if (Math.abs(vyaw) > 0.0005 || Math.abs(vpitch) > 0.0005) {
+        yaw += vyaw; pitch = Math.max(-1.3, Math.min(1.3, pitch + vpitch));
+        var damp = Math.pow(0.9, dt * 60); vyaw *= damp; vpitch *= damp;
+      } else if (!touchedView) yaw += 0.12 * dt;
+    }
+    advance(); draw();
+    requestAnimationFrame(frame);
+  }
+  function update() {
+    var go = visible && !document.hidden && !reduced;
+    if (go && !running) { running = true; last = 0; requestAnimationFrame(frame); }
+    else if (!go) running = false;
+  }
+
+  /* orbit: pointer capture so a drag keeps going off the canvas; the last
+     movement becomes the flick velocity */
+  var px = 0, py = 0;
+  canvas.addEventListener("pointerdown", function (e) {
+    if (dragging) return;
+    dragging = true; touchedView = true; px = e.clientX; py = e.clientY; vyaw = vpitch = 0;
+    canvas.setPointerCapture(e.pointerId); canvas.classList.add("is-dragging");
+  });
+  canvas.addEventListener("pointermove", function (e) {
+    if (!dragging) return;
+    var dx = (e.clientX - px) * 0.008, dy = (e.clientY - py) * 0.008;
+    px = e.clientX; py = e.clientY;
+    yaw += dx; pitch = Math.max(-1.3, Math.min(1.3, pitch + dy));
+    vyaw = dx; vpitch = dy;
+    if (reduced) draw();
+  });
+  var end = function () { dragging = false; canvas.classList.remove("is-dragging"); };
+  canvas.addEventListener("pointerup", end);
+  canvas.addEventListener("pointercancel", end);
+
+  fig.querySelectorAll("[data-sys]").forEach(function (b) {
+    b.addEventListener("click", function () { use(b.dataset.sys); });
+  });
+  fig.querySelector(".att-release").addEventListener("click", function () {
+    release();
+    if (reduced) { for (var i = 0; i < 400; i++) advance(); }
+    draw();
+  });
+
+  readInks();
+  fig.classList.add("is-ready");
+  size();
+  use("lorenz");
+  new IntersectionObserver(function (es) { visible = es[0].isIntersecting; update(); }).observe(canvas);
+  document.addEventListener("visibilitychange", update);
+  addEventListener("resize", function () { size(); draw(); });
+  var repaint = function () { readInks(); draw(); };
+  document.addEventListener("themechange", repaint);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", repaint);
+})();

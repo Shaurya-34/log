@@ -17,6 +17,17 @@
   } catch (e) {}
 
 
+  /* Motion that needs its starting state hidden before first paint. A
+     post's title rises in on a fresh load; an arrival through a view
+     transition has already moved the title, so it opts out. */
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    doc.classList.add("motion-ok", "title-rise");
+    addEventListener("pagereveal", function (e) {
+      if (e.viewTransition) doc.classList.remove("title-rise");
+    });
+    setTimeout(function () { doc.classList.remove("title-rise"); }, 3000);
+  }
+
   function mode() {
     return doc.getAttribute("data-theme") || (darkQuery.matches ? "dark" : "light");
   }
@@ -205,10 +216,32 @@
       toggle.hidden = false;
       toggle.addEventListener("click", function () {
         var next = mode() === "dark" ? "light" : "dark";
-        doc.setAttribute("data-theme", next);
-        try { localStorage.setItem("theme", next); } catch (e) {}
-        paint();
-        repaintWidgets();
+        var apply = function () {
+          doc.setAttribute("data-theme", next);
+          try { localStorage.setItem("theme", next); } catch (e) {}
+          paint();
+          repaintWidgets();
+        };
+        /* the new theme wipes out in a circle from the switch; named
+           elements (covers, titles) are flattened into the page for it,
+           so the whole page changes as one surface */
+        if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          apply();
+          return;
+        }
+        var r = toggle.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+        var reach = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+        doc.classList.add("theme-vt");
+        var vt = document.startViewTransition(apply);
+        var done = function () { doc.classList.remove("theme-vt"); };
+        vt.finished.then(done, done);
+        setTimeout(done, 1500);  /* never leave the page's view-transition names switched off */
+        vt.ready.then(function () {
+          doc.animate({ clipPath: ["circle(0px at " + x + "px " + y + "px)",
+                                   "circle(" + reach + "px at " + x + "px " + y + "px)"] },
+                      { duration: 560, easing: "cubic-bezier(0.77, 0, 0.175, 1)",
+                        pseudoElement: "::view-transition-new(root)" });
+        }, function () {});
       });
       paint();
     }

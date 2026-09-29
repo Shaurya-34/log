@@ -228,9 +228,19 @@ took one new step function and one new line in a list. Zero changes to
 anything structural. It produces a layered, shell-like spiral that looks
 like something turned on a lathe.
 
-<figure>
-  <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form." loading="lazy">
-  <figcaption>Four systems, one framework, one animation clock. Lorenz, Rössler, Aizawa, Thomas.</figcaption>
+<figure class="attractor-demo" id="attractor-demo">
+  <div class="ray-head att-head">
+    <div class="ray-switch att-switch" role="group" aria-label="System">
+      <button type="button" data-sys="lorenz" aria-pressed="true">Lorenz</button><button type="button" data-sys="rossler" aria-pressed="false">Rössler</button><button type="button" data-sys="aizawa" aria-pressed="false">Aizawa</button><button type="button" data-sys="thomas" aria-pressed="false">Thomas</button>
+    </div>
+    <p class="ray-readout att-readout" aria-live="off">spread <b data-out="spread">-</b></p>
+    <button type="button" class="chaos-restart att-release">release</button>
+  </div>
+  <canvas class="att-canvas" role="img" aria-label="Sixteen hundred runs of one of four strange attractors, drawn in 3D; drag to turn the view."></canvas>
+  <figcaption>Four systems, one integrator: each button swaps only the step function and its time step, the way the framework does. Every dot is its own run of the equations, so the shape is simply where they all go. Release drops them into a ball a hundredth of the shape's width: watch how fast each system pulls neighbours apart, and that none of them ever leaves. Drag to turn it.</figcaption>
+  <noscript>
+    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form." loading="lazy">
+  </noscript>
 </figure>
 
 ## Then one of them refused to fit

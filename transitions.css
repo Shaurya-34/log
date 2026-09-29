@@ -81,3 +81,10 @@
     animation-duration: 1ms;
   }
 }
+
+/* The theme switch wipes the new theme out in a circle from the toggle
+   (chrome.js). */
+/* the page's own cross-document fades must not run for a theme switch */
+:root.theme-vt::view-transition-old(root),
+:root.theme-vt::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+:root.theme-vt * { view-transition-name: none !important; }
