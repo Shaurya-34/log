@@ -97,6 +97,59 @@ def absolute_url(path=""):
     return f"{SITE_URL}/" if not path else f"{SITE_URL}/{path.lstrip('/')}"
 
 
+_SVG_HTML_ENTITIES = {"middot": "·", "nbsp": " ", "mdash": "—", "ndash": "–",
+                      "hellip": "…", "rsquo": "’", "lsquo": "‘",
+                      "rdquo": "”", "ldquo": "“"}
+
+
+OG_W, OG_H, OG_ZOOM = 1200, 630, 2
+OG_DIR = ROOT / "images" / "og"
+
+
+def cover_for_og(cover_rel):
+    """og:image needs a raster image (Reddit, X and LinkedIn don't render SVG
+    previews), at the 1.91:1 they crop to. So the cover is drawn onto a
+    1200x630 paper card with the mark and domain in a corner, its main line
+    shown drawn (the SVG hides it for the draw-in) in the site's petrol,
+    and rasterised. The filename carries a hash of the card, so a changed
+    cover gets a new URL and the platforms fetch it afresh."""
+    if not cover_rel or not cover_rel.endswith(".svg"):
+        return cover_rel
+    svg = (ROOT / cover_rel).read_text(encoding="utf-8")
+    # resvg's strict XML parser only knows XML's 5 built-in entities;
+    # covers sometimes use HTML named entities (e.g. &middot;) that
+    # browsers render fine but resvg rejects, so resolve the common ones.
+    svg = re.sub(r"&(\w+);", lambda m: _SVG_HTML_ENTITIES.get(m.group(1), m.group(0)), svg)
+    svg = re.sub(r'\s*stroke-dasharray="\d{3,}"\s*stroke-dashoffset="\d+"', "", svg)
+    view_box = re.search(r'viewBox="([^"]+)"', svg).group(1)
+    inner = svg[svg.index(">", svg.index("<svg")) + 1:svg.rindex("</svg>")]
+    ch = 540
+    vb = [float(v) for v in view_box.split()]
+    cw = ch * vb[2] / vb[3]
+    card = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{OG_W}" height="{OG_H}" viewBox="0 0 {OG_W} {OG_H}">'
+            '<style>.draw-path{stroke:#134e6f;stroke-width:2.2}</style>'
+            f'<rect width="{OG_W}" height="{OG_H}" fill="#f4f0e6"/>'
+            f'<svg x="{(OG_W - cw) / 2:.1f}" y="24" width="{cw:.1f}" height="{ch}" viewBox="{view_box}" fill="none">'
+            f'{inner}</svg>'
+            '<g transform="translate(44 578) scale(0.78)">'
+            '<rect x="1" y="1" width="22" height="22" fill="#134e6f"/>'
+            '<rect x="13" y="13" width="22" height="22" fill="#a9dcd9"/>'
+            '<rect x="13" y="13" width="10" height="10" fill="#5b5bd6"/></g>'
+            '<text x="82" y="599" fill="#6b675e" font-family="monospace" font-size="15" '
+            f'letter-spacing="1.5">{urlparse(SITE_URL).netloc}</text></svg>')
+    slug = Path(cover_rel).stem
+    name = f'{slug}-{hashlib.sha1(card.encode("utf-8")).hexdigest()[:10]}.png'
+    png = OG_DIR / name
+    if not png.exists():
+        import resvg_py
+        OG_DIR.mkdir(exist_ok=True)
+        for stale in OG_DIR.glob(f"{slug}-*.png"):
+            if re.fullmatch(rf"{re.escape(slug)}-[0-9a-f]{{10}}\.png", stale.name):
+                stale.unlink()
+        png.write_bytes(bytes(resvg_py.svg_to_bytes(svg_string=card, zoom=OG_ZOOM)))
+    return f"images/og/{name}"
+
+
 def jsonld_script(data):
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     return f'  <script type="application/ld+json">{payload}</script>\n'
@@ -242,7 +295,14 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
     # directly by the caller rather than recovered from the output path.
     article_meta = (f'<meta property="article:published_time" content="{html.escape(published.isoformat())}">\n'
                     if og_type == "article" and published else "")
-    og_image_tag = f'<meta property="og:image" content="{html.escape(og_image)}">\n' if og_image else ""
+    # X shows a large image only with summary_large_image; the size lets the
+    # platforms lay the card out before they've fetched the image
+    og_image_tag = (f'<meta property="og:image" content="{html.escape(og_image)}">\n'
+                    f'<meta property="og:image:width" content="{OG_W * OG_ZOOM}">\n'
+                    f'<meta property="og:image:height" content="{OG_H * OG_ZOOM}">\n'
+                    f'<meta property="og:image:alt" content="{html.escape("Cover drawing for " + title.removesuffix(" · " + SITE_NAME))}">\n'
+                    '<meta name="twitter:card" content="summary_large_image">\n'
+                    if og_image else '<meta name="twitter:card" content="summary">\n')
     md_link = f'<link rel="alternate" type="text/markdown" href="{base}{md_href}">\n' if md_href else ""
     head = ('<!doctype html>\n<html lang="en">\n<head>\n'
             '<meta charset="utf-8">\n'
@@ -516,7 +576,7 @@ def build_post(post, posts, i):
               "publisher":{"@type":"Person","name":SITE_NAME}}
     if post["tags"]:
         jsonld["keywords"] = post["tags"]
-    og_image = absolute_url(post["cover"]) if post["cover"] else None
+    og_image = absolute_url(cover_for_og(post["cover"])) if post["cover"] else None
     return (page_head(f'{post["title"]} · {SITE_NAME}', description, f'{post["slug"]}.html',
                       og_type="article", jsonld=jsonld, og_image=og_image,
                       md_href=f'{post["slug"]}.md', published=published) +
@@ -649,7 +709,7 @@ def build_index(posts):
     to_archive = f'<a class="label" href="#archive">All {len(posts)} in the archive ↓</a>'
     jsonld = {"@context":"https://schema.org","@type":"Blog","name":SITE_TITLE,
               "description":SITE_DESC,"url":SITE_URL,"author":{"@type":"Person","name":SITE_NAME,"url":SITE_URL}}
-    og_image = absolute_url(posts[0]["cover"]) if posts and posts[0]["cover"] else None
+    og_image = absolute_url(cover_for_og(posts[0]["cover"])) if posts and posts[0]["cover"] else None
     # a plain-text summary of the whole site up front for screen readers and
     # agents, not just its newest post
     summary = f'<p class="sr-only">{esc(AGENT_SUMMARY)}</p>\n\n'

@@ -29,6 +29,20 @@ class AgentReadinessTests(unittest.TestCase):
             self.assertTrue((ROOT / name).exists(), name)
         self.assertIn("When to use this log", (ROOT / "llms.txt").read_text(encoding="utf-8"))
 
+    def test_share_images_are_raster(self):
+        # every page with a share image points at a raster image that exists
+        # (social crawlers don't render SVG previews)
+        import re
+        pages = [p for p in ROOT.glob("*.html") if 'property="og:image"' in p.read_text(encoding="utf-8")]
+        self.assertGreater(len(pages), 5)
+        for page in pages:
+            html = page.read_text(encoding="utf-8")
+            url = re.search(r'property="og:image" content="([^"]+)"', html).group(1)
+            rel = url.split("shauryasharma.tech/", 1)[1]
+            self.assertTrue(rel.endswith((".png", ".jpg", ".jpeg")), page.name)
+            self.assertTrue((ROOT / rel).exists(), f"{page.name}: {rel}")
+            self.assertIn('name="twitter:card" content="summary_large_image"', html, page.name)
+
     def test_404_has_recovery_links(self):
         html = (ROOT / "404.html").read_text(encoding="utf-8")
         self.assertIn("sitemap.xml", html)
