@@ -1,26 +1,16 @@
-/* Shared motion for every page: Lenis smooth scroll, the scrubbed pull
-   quote, and the mosaic's staggered entrance. A post's scroll figure
-   (partials/) runs after this and subscribes to the same instance on
-   window.lenisInstance. */
+/* Shared motion for every page: Lenis smooth scroll and the mosaic's
+   staggered entrance (the pull quote's scrub is pure CSS). A post's
+   scroll figure (partials/) runs after this and subscribes to the same
+   instance on window.lenisInstance. */
 (function () {
   "use strict";
 
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var hasGsap = typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
-
-  if (hasGsap) gsap.registerPlugin(ScrollTrigger);
 
   if (typeof Lenis !== "undefined" && !reduced) {
     var lenis = new Lenis({ duration: 1.05, smoothWheel: true });
     window.lenisInstance = lenis;
-
-    if (hasGsap) {
-      lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
-      gsap.ticker.lagSmoothing(0);
-    } else {
-      requestAnimationFrame(function raf(t) { lenis.raf(t); requestAnimationFrame(raf); });
-    }
+    requestAnimationFrame(function raf(t) { lenis.raf(t); requestAnimationFrame(raf); });
   }
 
   /* ---- index hero: reading along the log ----------------------- */
@@ -111,29 +101,19 @@
           if (any) shown++;
         });
         if (empty) empty.hidden = shown > 0;
-        if (window.ScrollTrigger) ScrollTrigger.refresh();
       });
     });
   }
 
-  if (!hasGsap || reduced) return;
-
-  if (document.getElementById("pullquote")) {
-    gsap.fromTo("#pullquote",
-      { scale: 0.86, opacity: 0, yPercent: 8 },
-      {
-        scale: 1, opacity: 1, yPercent: 0, ease: "none",
-        scrollTrigger: { trigger: ".pull", start: "top 88%", end: "center 46%", scrub: 0.6 }
-      }
-    );
-  }
-
-  if (document.getElementById("mosaic")) {
-    gsap.from("#mosaic .tile-post", {
-      opacity: 0, yPercent: 12, scale: 0.985,
-      duration: 0.7, ease: "power2.out", stagger: 0.09,
-      scrollTrigger: { trigger: "#mosaic", start: "top 82%", once: true }
-    });
+  /* the mosaic's tiles rise in, staggered, once its top is 82% down the view */
+  var mosaic = document.getElementById("mosaic");
+  if (mosaic && "IntersectionObserver" in window) {
+    var seen = new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting) { mosaic.classList.add("is-in"); seen.disconnect(); }
+    }, { rootMargin: "0px 0px -18% 0px" });
+    seen.observe(mosaic);
+  } else if (mosaic) {
+    mosaic.classList.add("is-in");
   }
 })();
 

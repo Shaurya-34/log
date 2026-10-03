@@ -1,7 +1,7 @@
 /* ============================================================
    The site's design: tokens, page layout and the Triton post's
    scroll figure. Warm paper, ink type, three cold spot inks.
-   Lenis + GSAP/ScrollTrigger via CDN, Helvetica served locally.
+   Lenis via CDN, Helvetica served locally.
    See DESIGN.md for the reasoning.
    ============================================================ */
 
@@ -705,6 +705,19 @@ body { counter-reset: section; }
 
 .pull .attrib { margin-top: 2rem; display: flex; gap: 1rem; }
 
+/* The quote scrubs up to full size as the band crosses the view, tied to
+   scroll position: from the band's top 88% down the view to its centre
+   at 46%. Browsers without scroll-driven animations show it at rest. */
+@supports (animation-timeline: view()) {
+  .motion-ok .pull { view-timeline: --pull block; }
+  .motion-ok #pullquote {
+    animation: pull-in linear both;
+    animation-timeline: --pull;
+    animation-range: cover 12vh cover calc(50% + 4vh);
+  }
+}
+@keyframes pull-in { from { scale: 0.86; opacity: 0; translate: 0 8%; } }
+
 /* ---- mosaic -------------------------------------------------- */
 
 .mosaic-wrap { padding: clamp(4rem, 9vw, 7rem) var(--pad) clamp(5rem, 10vw, 9rem); border-top: 1px solid var(--line); }
@@ -771,6 +784,14 @@ body { counter-reset: section; }
 
 .tile-post p { margin: 0.7rem 0 0; font-size: 0.94rem; color: var(--ink-60); max-width: 44ch; }
 .tile-post .meta { margin-top: auto; padding-top: 1.5rem; }
+
+/* the tiles rise in, staggered, when design.js marks the mosaic is-in */
+.motion-ok .mosaic .tile-post { opacity: 0; }
+.motion-ok .mosaic.is-in .tile-post { animation: tile-in 700ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.motion-ok .mosaic.is-in .tile-post:nth-child(2) { animation-delay: 90ms; }
+.motion-ok .mosaic.is-in .tile-post:nth-child(3) { animation-delay: 180ms; }
+.motion-ok .mosaic.is-in .tile-post:nth-child(n+4) { animation-delay: 270ms; }
+@keyframes tile-in { from { opacity: 0; translate: 0 12%; scale: 0.985; } to { opacity: 1; } }
 
 /* ---- index: the log hero ---------------------------------------- */
 /* One entry shown large, and under it a strip with a cell per day from

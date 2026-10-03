@@ -1,13 +1,7 @@
-/* The post widgets and their shared sound engine. Page chrome (theme, share, mute) lives in chrome.js. */
+/* The post widgets. Page chrome (theme, share, mute, and the sound engine the widgets tick through) lives in chrome.js. */
 (function () {
   var doc = document.documentElement;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  var safeStore = {
-    get: function (k) {
-      try { return localStorage.getItem(k); } catch (e) { return null; }
-    }
-  };
 
   function run(fn) {
     try { fn(); } catch (e) {}
@@ -64,132 +58,6 @@
 
     return place;
   }
-
-  /* ------------------------------------------------------------
-     Sound
-
-     One synthesised-noise engine, shared by every widget that wants a
-     tick. The "tape-sound" storage key is a leftover name from the old
-     homepage, kept because chrome.js's mute control shares it. A sample
-     would be another request on a page that costs 23KB, and a
-     generated click can take its brightness and level from the caller
-     (how fast, how hard, how final) the way a file never could.
-     Filtered noise, never a tone - a tone reads as a beep, noise reads
-     as a mechanism.
-
-     One rule for the whole site, enforced once here rather than once
-     per widget: on unless muted from the nav (chrome.js owns that
-     control), and only ever in answer to something the reader did.
-     ------------------------------------------------------------ */
-  var siteSound = (function () {
-    /* read live, so muting in the nav applies at once */
-    function on() { return safeStore.get("tape-sound") !== "off"; }
-    var audio = null;
-    var noise = null;
-    /* Wall clock, in ms, deliberately negative to start - see burst().
-       A fresh AudioContext's own clock starts at zero, which would make
-       a floor measured against it swallow the very first sound of the
-       visit; measuring real time instead avoids that, and also survives
-       a context that hasn't been resumed yet (whose own clock stays
-       frozen at zero until it has). */
-    var lastAt = -1000;
-
-    function ensure() {
-      var Ctx = window.AudioContext || window.webkitAudioContext;
-
-      if (!Ctx) {
-        return false;
-      }
-
-      if (!audio) {
-        audio = new Ctx();
-
-        var length = Math.floor(audio.sampleRate * 0.06);
-        noise = audio.createBuffer(1, length, audio.sampleRate);
-
-        var data = noise.getChannelData(0);
-        for (var i = 0; i < length; i++) {
-          data[i] = Math.random() * 2 - 1;
-        }
-      }
-
-      if (audio.state === "suspended") {
-        audio.resume();
-      }
-
-      return true;
-    }
-
-    /* freq/q shape the timbre, peak/dur shape the envelope. floorMs is
-       the minimum gap between two bursts - 30ms or so for a rapid tick
-       that would otherwise smear into a buzz, 0 for a one-off event
-       (a collision) that only ever fires once per run and must never be
-       swallowed by something that ticked a moment earlier. */
-    function burst(freq, q, peak, dur, floorMs) {
-      if (!on() || !ensure()) {
-        return;
-      }
-
-      var wall = performance.now();
-
-      if (floorMs && wall - lastAt < floorMs) {
-        return;
-      }
-
-      lastAt = wall;
-
-      var now = audio.currentTime;
-      var source = audio.createBufferSource();
-      var band = audio.createBiquadFilter();
-      var gain = audio.createGain();
-
-      source.buffer = noise;
-      band.type = "bandpass";
-      band.frequency.value = freq;
-      band.Q.value = q;
-
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(peak, now + 0.002);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-      source.connect(band);
-      band.connect(gain);
-      gain.connect(audio.destination);
-      source.start(now);
-      source.stop(now + dur + 0.01);
-    }
-
-    return {
-      isOn: on,
-      ensure: ensure,
-      /* A light tick - one draw landing in a bucket. pace in [0,1] brightens and loudens
-         it, for callers where "how hard" means something. */
-      tick: function (pace) {
-        var hard = Math.max(0, Math.min(1, pace || 0));
-        burst(1500 + hard * 900, 1.4, 0.05 + hard * 0.09, 0.05, 30);
-      },
-      /* A lower, longer hit for the moment something actually lands -
-         currently just a collision. No floor: it is rare enough by
-         construction that it can never need one. */
-      thunk: function () {
-        burst(650, 2.2, 0.17, 0.16, 0);
-      }
-    };
-  })();
-
-  /* Audio may only start inside a gesture, so wake the engine on the
-     first press of the visit; a widget that ticks from a timer after
-     that (the birthday demo's auto-run) can then be heard. */
-  run(function () {
-    if (!(window.AudioContext || window.webkitAudioContext)) return;
-    var arm = function () {
-      if (siteSound.isOn()) siteSound.ensure();
-      document.removeEventListener("pointerdown", arm);
-      document.removeEventListener("keydown", arm);
-    };
-    document.addEventListener("pointerdown", arm);
-    document.addEventListener("keydown", arm);
-  });
 
   /* ------------------------------------------------------------
      Lorenz divergence figure
@@ -1243,12 +1111,12 @@
       if (filled[value]) {
         collisionAt = draws;
         if (!silent) {
-          siteSound.thunk();
+          window.tapeSound(650, 2.2, 0.17, 0.16, 0);  /* the collision: lower, longer */
         }
       } else {
         filled[value] = 1;
         if (!silent) {
-          siteSound.tick(0.4);
+          window.tapeSound(1860, 1.4, 0.086, 0.05, 30);  /* a draw landing */
         }
       }
 

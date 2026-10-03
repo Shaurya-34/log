@@ -55,8 +55,10 @@
      A chunky menu click when a tile, an archive row or a topic filter is
      pressed, and a faint tick as the pointer moves onto one. Synthesised
      here, a pitched blip falling fast over a crack of noise, rather than
-     sampled. On unless muted; the choice lives in site.js's "tape-sound"
-     key, so the one control silences the post widgets too. Browsers only
+     sampled. On unless muted; the choice lives in the "tape-sound" key
+     (a leftover name from the old homepage), and the post widgets'
+     ticks go through tapeSound below, so the one control silences them
+     too. Browsers only
      allow audio after a gesture, so the hover tick starts once the
      visitor has clicked or pressed a key. */
   var SOUND_TARGETS = ".tile-post, .rows a, .filters button";
@@ -126,6 +128,20 @@
     lastTick = now;
     noiseBurst(audio.currentTime, 3400, 1.8, 0.035, 0.018);
   }
+
+  /* The post widgets (site.js) tick through this same engine, so the one
+     mute control and the one gesture rule cover them too. floorMs is the
+     least gap between two bursts: ~30ms keeps a rapid tick from smearing
+     into a buzz, 0 for a one-off that must never be swallowed. */
+  var lastWidget = -1000;
+  window.tapeSound = function (freq, q, peak, dur, floorMs) {
+    if (!soundOn() || !engine()) return;
+    var wall = performance.now();
+    if (floorMs && wall - lastWidget < floorMs) return;
+    lastWidget = wall;
+    if (audio.state === "suspended") audio.resume();
+    noiseBurst(audio.currentTime, freq, q, peak, dur);
+  };
 
   /* Moving onto an entry on the index's log strip sets a block down: a
      low knock with some grit, pitched a little differently each time the

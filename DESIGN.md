@@ -30,21 +30,19 @@ documentation. No em dashes. Numbers come from real runs.
 |---|---|
 | `build.py` | The only generator. Every HTML page, the Markdown siblings, `feed.xml`, `sitemap.xml`, `robots.txt`, `llms.txt`, `index.md` and `widgets.css`. No template engine; shared markup is a function here. |
 | `README.md` | The repo's landing page. Written by hand except the post list, which `build.py` rewrites between the `<!-- posts -->` markers. |
-| `posts/*.md` | Post sources. Front matter: `title`, `date` (required), `tags`, `description`, `repo`, `cover`. |
+| `posts/*.md` | Post sources. Front matter: `title`, `date` (required), `tags`, `description`, `repo`, `cover`, `bundle`. |
 | `design.css` | Tokens, page layout, the Triton scroll figure. Loaded by every page. |
-| `style.css` | Styles for `site.js`'s widgets only. Never linked; `build.py` copies each section named in `WIDGET_SECTIONS` into `widgets.css`. |
-| `widgets.css` | Generated. Do not edit. |
+| `widgets.css` | Styles for `site.js`'s widgets only. Loaded by every page. |
 | `transitions.css` | Cross-document view transitions. |
-| `chrome.js` | Page chrome on every page, loaded in `<head>` without `defer` so the saved theme applies before first paint: theme toggle, mute toggle, UI sounds, share button, widget repaint on theme change. |
-| `design.js` | Shared motion: Lenis smooth scroll, GSAP/ScrollTrigger, the index strip, the archive filter. |
-| `site.js` | Post widgets and their shared sound engine. Loaded on posts only. |
+| `chrome.js` | Page chrome on every page, loaded in `<head>` without `defer` so the saved theme applies before first paint: theme toggle, mute toggle, the one sound engine (UI sounds, and `tapeSound` for the widgets), share button, widget repaint on theme change. |
+| `design.js` | Shared motion: Lenis smooth scroll, the mosaic's entrance, the index strip, the archive filter. |
+| `site.js` | Post widgets. Loaded on posts only. |
 | `partials/<slug>.html` + `.js` | A hand-built scroll figure spliced into one post (see `SCROLLY`). |
-| `vendor/` | Third-party or separately built bundles: `3Dmol-min.js`, and `flyvscnn.js` from the FlyvsCNN repo (see `POST_BUNDLES`). |
+| `vendor/` | Third-party or separately built bundles: `3Dmol-min.js`, and `flyvscnn.js` from the FlyvsCNN repo (a post's `bundle:`). |
 | `assets/` | Data a widget fetches (PDB files, PAE maps, CNN weights). |
 | `images/<slug>/` | Post images. `images/covers/<slug>.svg` is a post's share image. |
 | `fonts/` | TeX Gyre Heros, the local Helvetica. |
-| `cloudflare/markdown-worker.js` | Optional edge worker for Markdown content negotiation, which static Pages files cannot do. |
-| `tests/` | `python -m unittest discover -s tests`: agent-readiness checks. |
+| `tests/` | `python -m unittest discover -s tests`: agent-readiness, share images, one sound engine, no GSAP. |
 | `publish.ps1` | Builds, commits and pushes. The live branch is `redesign-circular-home`. |
 
 `dev/` is gitignored scratch space.
@@ -184,13 +182,13 @@ relationship has no widget.
 Three ways a post gets one:
 
 1. **In `site.js`.** Markup is a raw `<figure class="{name}-demo" id="{name}-demo">`
-   in the post's Markdown; the script and its `style.css` section do the
+   in the post's Markdown; the script and its `widgets.css` section do the
    rest. Most widgets live here.
 2. **A scroll figure** in `partials/`, spliced in by `SCROLLY` between two
    anchor strings. The build fails if an anchor appears zero or two times,
    so an edit cannot silently duplicate or drop text.
-3. **A separate bundle** in `vendor/`, mapped to one post in `POST_BUNDLES`
-   and loaded only there as a module. Use this when a widget is too heavy
+3. **A separate bundle** in `vendor/`, named by the post's `bundle:` front
+   matter and loaded only there as a module. Use this when a widget is too heavy
    for `site.js`: the fly-vs-CNN simulation is Three.js plus a CNN, about
    136KB gzipped. The bundle mounts into an element in the post
    (`<div data-fly-vs-cnn ...>`), brings its own scoped styles, and pauses
@@ -222,9 +220,12 @@ Rules for all of them:
 
 ## Motion
 
-- Lenis smooths scrolling on every page and drives GSAP's ticker. The
-  Triton scroll figure subscribes to the same instance
-  (`window.lenisInstance`).
+- Lenis smooths scrolling on every page. The Triton scroll figure
+  subscribes to the same instance (`window.lenisInstance`).
+- The pull quote scrubs in with a CSS scroll-driven animation
+  (`animation-timeline`), the mosaic's tiles rise in staggered off an
+  IntersectionObserver. Browsers without scroll timelines show the quote
+  at rest.
 - One eased curve for interface motion: `cubic-bezier(.16,.78,.18,1)` in
   transitions, `cubic-bezier(0.22, 0.61, 0.36, 1)` for small UI moves. No
   bounce, no overshoot.
@@ -243,10 +244,11 @@ press of a visit.
 - `chrome.js`: a click when a tile, archive row or filter is pressed, a
   faint tick on hover, and a low knock moving along the index strip.
   Links wait 90ms so the click is heard.
-- `site.js`: `siteSound`, the widgets' engine, with `tick(pace)` and
-  `thunk()`. Filtered noise, never a tone.
+- Widgets tick through `chrome.js`'s same engine: `window.tapeSound(freq,
+  q, peak, dur, floorMs)`, filtered noise, never a tone. One AudioContext
+  for the whole page.
 
-Both read one preference, the `localStorage` key `tape-sound` (a name left
+Everything reads one preference, the `localStorage` key `tape-sound` (a name left
 over from the old homepage, kept so visitors' choices survive). The mute
 control is in the masthead. Throttle on the wall clock, not
 `AudioContext.currentTime`, which stays frozen until the context runs.
@@ -268,8 +270,8 @@ The site is meant to be easy for agents to use correctly:
 ## Constraints
 
 - **CSP** is a meta tag, the only kind GitHub Pages allows:
-  `default-src 'self'`, scripts from self plus Clarity, jsDelivr and cdnjs
-  (Lenis, GSAP), and inline scripts and styles allowed (the index strip and
+  `default-src 'self'`, scripts from self plus Clarity and jsDelivr
+  (Lenis), and inline scripts and styles allowed (the index strip and
   the scroll figure need them). Anything that fetches must be same-origin,
   which is why widget data lives in `assets/`.
 - **Images** in posts are `loading="lazy"`, always.

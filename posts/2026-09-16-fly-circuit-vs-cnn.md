@@ -4,6 +4,7 @@ date: 2026-09-16
 tags: machine learning, neuroscience
 description: A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera. With no training the fly cuts collisions by about a quarter, a CNN trained on two demonstration flights already beats it, and the circuit's weak point turns out to be reacting too late.
 repo: FlyvsCNN
+bundle: vendor/flyvscnn.js
 ---
 A fruit fly's fastest escapes run through a pair of large neurons called the
 Giant Fibers. Almost all of the visual input reaching them comes from two
