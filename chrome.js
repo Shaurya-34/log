@@ -28,6 +28,45 @@
     setTimeout(function () { doc.classList.remove("title-rise"); }, 3000);
   }
 
+  /* A post's title rises in, line by line. build.py calls this from an
+     inline script right after the post's header, so it starts with the
+     first paint instead of after the page's other scripts; it waits only
+     for the display face (preloaded), so the lines are measured in the
+     real type, and one frame more, by which time an arrival through a
+     view transition has had its pagereveal and opted out. Each line
+     slides up out of a clip, then the plain heading goes back. */
+  window.riseTitle = function () {
+    var h1 = document.querySelector(".hero:has(.byline) h1");
+    if (!h1 || !doc.classList.contains("title-rise")) return;
+    var ready = document.fonts && document.fonts.load ? document.fonts.load('400 1em "Heros"') : Promise.resolve();
+    var go = function () {
+      if (!doc.classList.contains("title-rise")) return;
+      var original = h1.innerHTML;
+      var esc = function (s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
+      h1.innerHTML = h1.textContent.trim().split(/\s+/)
+        .map(function (w) { return '<span class="tr-w">' + esc(w) + "</span>"; }).join(" ");
+      var lines = [];
+      Array.prototype.forEach.call(h1.querySelectorAll(".tr-w"), function (s) {
+        var top = s.offsetTop, last = lines[lines.length - 1];
+        if (!last || Math.abs(last.top - top) > 2) lines.push(last = { top: top, words: [] });
+        last.words.push(s.textContent);
+      });
+      h1.innerHTML = lines.map(function (l, i) {
+        return '<span class="tr-line"><span class="tr-in" style="animation-delay:' + i * 80 + 'ms">' +
+               l.words.map(esc).join(" ") + "</span></span>";
+      }).join("");
+      h1.closest(".hero").classList.add("hero-rise");
+      doc.classList.remove("title-rise");
+      /* the plain heading goes back when the last line lands, or after the
+         time that should take (animationend never comes in a hidden tab) */
+      var restore = function () { if (h1.querySelector(".tr-line")) h1.innerHTML = original; };
+      h1.querySelector(".tr-line:last-child .tr-in").addEventListener("animationend", restore);
+      setTimeout(restore, (lines.length - 1) * 80 + 1200);
+    };
+    var next = function () { requestAnimationFrame(go); };
+    ready.then(next, next);
+  };
+
   function mode() {
     return doc.getAttribute("data-theme") || (darkQuery.matches ? "dark" : "light");
   }

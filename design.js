@@ -297,37 +297,6 @@
   var doc = document.documentElement;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---- a post's title rises in, line by line ---------------------------
-     Words are measured into their lines, each line slides up out of a
-     clip, then the original markup goes back so nothing is left wrapped. */
-  var h1 = document.querySelector(".hero:has(.byline) h1");
-  if (h1 && doc.classList.contains("title-rise")) {
-    var original = h1.innerHTML;
-    var esc = function (s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
-    var words = h1.textContent.trim().split(/\s+/);
-    h1.innerHTML = words.map(function (w) { return '<span class="tr-w">' + esc(w) + "</span>"; }).join(" ");
-    var lines = [];
-    Array.prototype.forEach.call(h1.querySelectorAll(".tr-w"), function (s) {
-      var top = s.offsetTop, last = lines[lines.length - 1];
-      if (!last || Math.abs(last.top - top) > 2) lines.push(last = { top: top, words: [] });
-      last.words.push(s.textContent);
-    });
-    h1.innerHTML = lines.map(function (l, i) {
-      return '<span class="tr-line"><span class="tr-in" style="animation-delay:' + i * 80 + 'ms">' +
-             l.words.map(esc).join(" ") + "</span></span>";
-    }).join("");
-    var hero = h1.closest(".hero");
-    hero.style.setProperty("--after", (lines.length - 1) * 80 + 280 + "ms");
-    hero.classList.add("hero-rise");
-    doc.classList.remove("title-rise");
-    /* put the plain heading back when the last line lands, or after the
-       time it should have taken, whichever comes first (animationend never
-       arrives in a tab that was hidden throughout) */
-    var restore = function () { if (h1.querySelector(".tr-line")) h1.innerHTML = original; };
-    h1.querySelector(".tr-line:last-child .tr-in").addEventListener("animationend", restore);
-    setTimeout(restore, (lines.length - 1) * 80 + 1200);
-  }
-
   /* ---- section headings arrive as they scroll in ---------------------- */
   if (doc.classList.contains("motion-ok") && "IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (es) {

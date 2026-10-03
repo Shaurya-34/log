@@ -35,10 +35,10 @@ FAVICON = "data:image/svg+xml," + quote(
     "<rect class='w' x='1' y='1' width='22' height='22'/>"
     "<rect class='d' x='13' y='13' width='22' height='22'/>"
     "<rect class='n' x='13' y='13' width='10' height='10'/></svg>", safe=" ='/:;.,()-")
-FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
-         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:'
-         'opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">\n')
+# The two faces the first screen is set in (titles, then standfirst and
+# body), fetched alongside the stylesheet instead of after it. On a phone
+# the text waits for them; this was most of a post's load time.
+PRELOAD_FONTS = ("fonts/heros-regular.woff", "fonts/source-serif-4-latin.woff2")
 
 
 @functools.cache
@@ -60,8 +60,8 @@ def version(name):
 # attributes.
 CSP = ("default-src 'self'; "
        "script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net; "
-       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-       "font-src 'self' https://fonts.gstatic.com https://*.clarity.ms; "
+       "style-src 'self' 'unsafe-inline'; "
+       "font-src 'self' https://*.clarity.ms; "
        "img-src 'self' data: https://*.clarity.ms https://c.bing.com; "
        "connect-src 'self' https://*.clarity.ms https://c.bing.com; "
        "frame-src 'none'; object-src 'none'; base-uri 'self';")
@@ -294,7 +294,8 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
             f'{og_image_tag}{article_meta}{md_link}'
             f'<link rel="alternate" type="application/rss+xml" title="{html.escape(SITE_TITLE)}" href="{base}feed.xml">\n'
             f'<link rel="icon" href="{FAVICON}">\n'
-            f'{FONTS}'
+            + "".join(f'<link rel="preload" href="{base}{f}" as="font" type="font/{f.rsplit(".", 1)[1]}" crossorigin>\n'
+                      for f in PRELOAD_FONTS) +
             f'<link rel="stylesheet" href="{base}design.css?v={version("design.css")}">\n'
             f'<link rel="stylesheet" href="{base}widgets.css?v={version("widgets.css")}">\n'
             f'<link rel="stylesheet" href="{base}transitions.css?v={version("transitions.css")}">\n'
@@ -481,7 +482,10 @@ def build_post(post, posts, i):
             'aria-label="Share this article">Share</button></span>\n'
             '  </p>\n'
             + (f'  {cover_el(post, "figure", "hero-cover")}\n' if cover_svg(post["cover"]) else '') +
-            '</section>\n\n')
+            '</section>\n'
+            # start the title's rise (chrome.js) with the first paint, not
+            # after the scripts at the end of the page
+            '<script>window.riseTitle && riseTitle()</script>\n\n')
 
     body = body_html(post)
     figure = after = script = ""

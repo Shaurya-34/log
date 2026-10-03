@@ -41,7 +41,7 @@ documentation. No em dashes. Numbers come from real runs.
 | `vendor/` | Third-party or separately built bundles: `3Dmol-min.js`, and `flyvscnn.js` from the FlyvsCNN repo (a post's `bundle:`). |
 | `assets/` | Data a widget fetches (PDB files, PAE maps, CNN weights). |
 | `images/<slug>/` | Post images. `images/covers/<slug>.svg` is a post's share image. |
-| `fonts/` | TeX Gyre Heros, the local Helvetica. |
+| `fonts/` | Every web font: TeX Gyre Heros (the local Helvetica), Source Serif 4, JetBrains Mono. |
 | `tests/` | `python -m unittest discover -s tests`: agent-readiness, share images, one sound engine, no GSAP. |
 | `publish.ps1` | Builds, commits and pushes. The live branch is `redesign-circular-home`. |
 
@@ -64,6 +64,23 @@ Three families, each with one job:
 - `--serif`: body text, 18px, line height 1.62, on a `34rem` measure.
 - `--mono`: labels, dates, captions, code, widget chrome. Labels are
   uppercase, 0.66rem, tracked 0.18em.
+
+All three are served from `fonts/`, never from a font CDN: on a phone the
+text waits for its font, and Google Fonts' stylesheet plus files on two
+other domains cost a post about 2 seconds of its load (Lighthouse, mobile).
+
+- Heros is cut to Latin, punctuation and arrows (26KB a weight, from 133KB)
+  with fontTools from the full `.otf` faces, which are in git history
+  (`git log -- fonts/heros-regular.otf`), if it ever needs more glyphs:
+  `pyftsubset heros-regular.otf --unicodes="U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2190-21FF,U+20AC,U+2122,U+2212,U+2215,U+FEFF,U+FFFD" --flavor=woff --layout-features='*'`
+  (WOFF, not WOFF2, only because WOFF2 needs the `brotli` package).
+- Source Serif 4 and JetBrains Mono are Google's own variable WOFF2 files,
+  one per alphabet, declared with Google's `unicode-range`s in `design.css`,
+  so a page fetches only the alphabets it uses.
+- `build.py` preloads the two the first screen is set in (`PRELOAD_FONTS`).
+- A post's title rise starts from an inline call right after its header,
+  not from `design.js`: waiting for the end-of-page scripts cost about a
+  second and a half of load on phones.
 
 Optical weight: display sizes are Regular, tightly tracked (about -0.03em).
 Helvetica at 6rem already reads heavy. Under about 2rem, display text is
