@@ -35,10 +35,6 @@ FAVICON = "data:image/svg+xml," + quote(
     "<rect class='w' x='1' y='1' width='22' height='22'/>"
     "<rect class='d' x='13' y='13' width='22' height='22'/>"
     "<rect class='n' x='13' y='13' width='10' height='10'/></svg>", safe=" ='/:;.,()-")
-# The two faces the first screen is set in (titles, then standfirst and
-# body), fetched alongside the stylesheet instead of after it. On a phone
-# the text waits for them; this was most of a post's load time.
-PRELOAD_FONTS = ("fonts/heros-regular.woff", "fonts/source-serif-4-latin.woff2")
 
 
 @functools.cache
@@ -294,8 +290,6 @@ def page_head(title, desc, path, og_type="website", base="", jsonld=None, noinde
             f'{og_image_tag}{article_meta}{md_link}'
             f'<link rel="alternate" type="application/rss+xml" title="{html.escape(SITE_TITLE)}" href="{base}feed.xml">\n'
             f'<link rel="icon" href="{FAVICON}">\n'
-            + "".join(f'<link rel="preload" href="{base}{f}" as="font" type="font/{f.rsplit(".", 1)[1]}" crossorigin>\n'
-                      for f in PRELOAD_FONTS) +
             f'<link rel="stylesheet" href="{base}design.css?v={version("design.css")}">\n'
             f'<link rel="stylesheet" href="{base}widgets.css?v={version("widgets.css")}">\n'
             f'<link rel="stylesheet" href="{base}transitions.css?v={version("transitions.css")}">\n'

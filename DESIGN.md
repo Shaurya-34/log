@@ -77,7 +77,10 @@ other domains cost a post about 2 seconds of its load (Lighthouse, mobile).
 - Source Serif 4 and JetBrains Mono are Google's own variable WOFF2 files,
   one per alphabet, declared with Google's `unicode-range`s in `design.css`,
   so a page fetches only the alphabets it uses.
-- `build.py` preloads the two the first screen is set in (`PRELOAD_FONTS`).
+- No font preloads. Tried: on a throttled phone they took bandwidth from
+  the stylesheets, and the page could not draw until `design.css` landed
+  (first paint 2.35s with them, 1.9s without). With `font-display: swap`
+  the text draws in the fallback and swaps when the face arrives.
 - A post's title rise starts from an inline call right after its header,
   not from `design.js`: waiting for the end-of-page scripts cost about a
   second and a half of load on phones.
