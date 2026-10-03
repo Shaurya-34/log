@@ -1095,7 +1095,7 @@ body { counter-reset: section; }
 .prose > figure,
 .prose > .colormap-carousel { max-width: 48rem; margin: 2.5rem 0; }
 
-.prose figure img { display: block; max-width: 100%; height: auto; filter: grayscale(1); }
+.prose figure img, .prose figure video { display: block; max-width: 100%; height: auto; filter: grayscale(1); }
 /* the live site's rule: images are grey unless the post marks them .color */
 .prose figure.color img { filter: none; }
 /* the charts are white-backed PNGs; in the dark theme take the glare off */

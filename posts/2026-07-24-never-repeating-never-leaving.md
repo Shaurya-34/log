@@ -67,7 +67,7 @@ calling the butterfly.
   <canvas class="chaos-canvas" width="852" height="480" role="img" aria-label="Two Lorenz attractor trajectories, starting a millionth apart, drawn as they diverge over time"></canvas>
   <figcaption>Two runs of the same equations, same constants, starting positions a millionth apart (grey and white). They ride the same lobe for a while, then peel apart onto different loops. Nothing here is random - press restart to run it again and watch it diverge differently, from the same tiny nudge. Drag sigma, rho or beta to see how the shape itself depends on the constants, not just the starting point; reset to default returns to Lorenz's own 10, 28, 8/3.</figcaption>
   <noscript>
-    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line." loading="lazy">
+    <video src="images/attractors/attractors.mp4" autoplay loop muted playsinline aria-label="Four 3D plots side by side, each tracing out a different strange attractor as an animated line."></video>
   </noscript>
 </figure>
 
@@ -240,7 +240,7 @@ like something turned on a lathe.
   <canvas class="att-canvas" role="img" aria-label="Sixteen hundred runs of one of four strange attractors, drawn in 3D; drag to turn the view."></canvas>
   <figcaption>Four systems, one integrator: each button swaps only the step function and its time step, the way the framework does. Every dot is its own run of the equations, so the shape is simply where they all go. Release drops them into a ball a hundredth of the shape's width: watch how fast each system pulls neighbours apart, and that none of them ever leaves. Drag to turn it.</figcaption>
   <noscript>
-    <img src="images/attractors/attractors.gif" alt="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form." loading="lazy">
+    <video src="images/attractors/attractors.mp4" autoplay loop muted playsinline aria-label="Four 3D plots side by side, each tracing out a different strange attractor as an animated line: Lorenz's two-lobe butterfly, Rossler's single folded band, Aizawa's layered shell, and Thomas's rounded looping form."></video>
   </noscript>
 </figure>
 
@@ -273,7 +273,7 @@ dense, others almost never. I rendered half a million iterations as a
 single static scatter, coloured by iteration order:
 
 <figure>
-  <img src="images/attractors/clifford.png" alt="A dense static scatter plot of the Clifford attractor, forming sweeping curved bands and lobes that look like folded ribbons." loading="lazy">
+  <img src="images/attractors/clifford.webp" alt="A dense static scatter plot of the Clifford attractor, forming sweeping curved bands and lobes that look like folded ribbons." loading="lazy">
   <figcaption>The Clifford attractor. No animation, no path, no dt. Half a million points, and the shape is what the density does.</figcaption>
 </figure>
 
