@@ -74,14 +74,16 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .grok-switch,
 .ray-switch,
 .birthday-switch,
-.blocksize-switch {
+.blocksize-switch,
+.gaia-switch {
   position: relative;
 }
 
 .grok-switch button,
 .ray-switch button,
 .birthday-switch button,
-.blocksize-switch button {
+.blocksize-switch button,
+.gaia-switch button {
   position: relative;
   z-index: 1;
 }
@@ -101,7 +103,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .grok-switch:has(.switch-indicator) button[aria-pressed="true"],
 .ray-switch:has(.switch-indicator) button[aria-pressed="true"],
 .birthday-switch:has(.switch-indicator) button[aria-pressed="true"],
-.blocksize-switch:has(.switch-indicator) button[aria-pressed="true"] {
+.blocksize-switch:has(.switch-indicator) button[aria-pressed="true"],
+.gaia-switch:has(.switch-indicator) button[aria-pressed="true"] {
   background: none;
 }
 
@@ -741,4 +744,132 @@ article.post .structure-demo figcaption {
 
 @media (max-width: 700px) {
   .structure-panels { grid-template-columns: 1fr; }
+}
+
+/* ---- Gaia figures ------------------------------------------------ */
+/* The star patch, the trial explorer and the CST threshold. Hidden
+   until site.js adds .is-ready, like the other figures. */
+
+article.post .gaia-sky,
+article.post .gaia-trials,
+article.post .gaia-cst { margin: 2.75rem 0 3rem; }
+
+.gaia-sky > :not(figcaption):not(noscript),
+.gaia-trials > :not(figcaption):not(noscript),
+.gaia-cst > :not(figcaption):not(noscript) { display: none; }
+.gaia-sky.is-ready .gaia-head,
+.gaia-trials.is-ready .gaia-head,
+.gaia-cst.is-ready .gaia-head { display: flex; }
+.gaia-sky.is-ready > canvas,
+.gaia-sky.is-ready > .gaia-readout,
+.gaia-trials.is-ready > svg,
+.gaia-cst.is-ready > svg { display: block; }
+
+.gaia-head {
+  flex-wrap: wrap;
+  gap: 0.75rem 1.1rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+}
+
+.gaia-switch { display: flex; gap: 0; }
+
+.gaia-switch button,
+.gaia-btn {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.gaia-switch button + button { border-left: 0; }
+.gaia-switch button:hover,
+.gaia-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+.gaia-switch button[aria-pressed="true"],
+.gaia-btn[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.gaia-readout {
+  margin: 0;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.gaia-readout b { font-weight: 400; color: var(--ink); }
+.gaia-sky > .gaia-readout { margin-top: 0.7rem; }
+.gaia-cst .gaia-readout { flex-basis: 100%; }
+
+.gaia-canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border: 1px solid var(--hairline);
+  touch-action: pan-y;
+}
+
+.gaia-plot { width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.gaia-cst .gaia-plot { cursor: ew-resize; }
+
+.gaia-plot .gaia-grid { stroke: var(--hairline); stroke-width: 1; }
+.gaia-plot .gaia-tick { stroke: var(--grey); stroke-width: 1; }
+.gaia-plot .gaia-label {
+  fill: var(--faint);
+  font-family: var(--mono);
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.gaia-plot .gaia-label-y { text-anchor: end; }
+.gaia-plot .gaia-label-x { text-anchor: middle; }
+
+.gaia-plot .gaia-hit { fill: var(--blue); }
+.gaia-plot .gaia-miss { fill: var(--paper); stroke: var(--grey); stroke-width: 1.2; }
+.gaia-plot .gaia-band { fill: var(--blue); opacity: 0.08; }
+.gaia-plot .gaia-model { fill: none; stroke: var(--blue); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.gaia-plot .gaia-step { stroke: var(--red); stroke-width: 2.5; stroke-linecap: round; }
+.gaia-plot .gaia-hover line { stroke: var(--grey); stroke-width: 1; stroke-dasharray: 2 3; }
+.gaia-plot .gaia-hover circle { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+
+.gaia-plot .gaia-off { fill: var(--hairline); }
+.gaia-plot .gaia-on.gaia-shuffle { fill: var(--grey); }
+.gaia-plot .gaia-on.gaia-injected { fill: var(--blue); }
+.gaia-plot .gaia-on.gaia-real_known { fill: var(--red); }
+.gaia-plot .gaia-thresh { stroke: var(--ink); stroke-width: 1.5; }
+.gaia-plot .gaia-budget { stroke: var(--grey); stroke-width: 1; stroke-dasharray: 2 4; }
+
+.gaia-range {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.gaia-range output { min-width: 2.4em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.gaia-range input { width: 9rem; accent-color: var(--ink); cursor: pointer; }
+
+article.post .gaia-sky figcaption,
+article.post .gaia-trials figcaption,
+article.post .gaia-cst figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaia-switch button, .gaia-btn { transition: none; }
 }

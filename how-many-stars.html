@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clarity.ms https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' https://*.clarity.ms; img-src 'self' data: https://*.clarity.ms https://c.bing.com; connect-src 'self' https://*.clarity.ms https://c.bing.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>How many stars does it take to find a cluster? · Shaurya</title>
+<meta name="description" content="A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://shauryasharma.tech/how-many-stars.html">
+<meta property="og:site_name" content="Shaurya · Log">
+<meta property="og:title" content="How many stars does it take to find a cluster? · Shaurya">
+<meta property="og:description" content="A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shauryasharma.tech/how-many-stars.html">
+<meta property="og:image" content="https://shauryasharma.tech/images/og/how-many-stars-1eaa2f1740.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="Cover drawing for How many stars does it take to find a cluster?">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="article:published_time" content="2026-10-16T00:00:00+00:00">
+<link rel="alternate" type="text/markdown" href="how-many-stars.md">
+<link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="design.css?v=2543a082">
+<link rel="stylesheet" href="widgets.css?v=ead8cab3">
+<link rel="stylesheet" href="transitions.css?v=c2694236">
+<script src="chrome.js?v=64d6d10a"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"How many stars does it take to find a cluster?","description":"A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.","url":"https://shauryasharma.tech/how-many-stars.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://shauryasharma.tech/how-many-stars.html"},"datePublished":"2026-10-16T00:00:00+00:00","dateModified":"2026-10-16T00:00:00+00:00","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"},"publisher":{"@type":"Person","name":"Shaurya"},"keywords":["astronomy","machine learning"]}</script>
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yajiq3aa14");
+  </script>
+</head>
+<body>
+
+<header class="masthead">
+  <a class="mark" href="index.html"><svg class="mark-logo" viewBox="0 0 36 36" aria-hidden="true"><rect class="m-work" x="1" y="1" width="22" height="22"/><rect class="m-done" x="13" y="13" width="22" height="22"/><rect class="m-now" x="13" y="13" width="10" height="10"/></svg>LOG</a>
+  <nav class="label">
+    <a href="index.html">Index</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <button type="button" class="mute-toggle" hidden aria-pressed="false" aria-label="Mute sound">mute</button>
+    <button type="button" class="mode-toggle" hidden aria-label="Switch theme">dark</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <p class="label kicker">Astronomy · Machine learning</p>
+  <h1>How many stars does it take to find a cluster?</h1>
+  <p class="standfirst">A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.</p>
+  <p class="byline">
+    <time class="label" datetime="2026-10-16">October 16, 2026</time>
+    <span class="byline-links"><a class="label" href="https://github.com/Shaurya-34/Gaia" rel="noopener">Source ↗</a><button type="button" class="share label" data-url="https://shauryasharma.tech/how-many-stars.html" aria-label="Share this article">Share</button></span>
+  </p>
+  <figure class="hero-cover" data-cover="how-many-stars"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g fill="currentColor" opacity=".22">
+    <circle cx="348" cy="140" r="2.2"/>
+    <circle cx="112" cy="495" r="1.4"/>
+    <circle cx="384" cy="91" r="2.2"/>
+    <circle cx="255" cy="106" r="1.8"/>
+    <circle cx="130" cy="108" r="1.8"/>
+    <circle cx="121" cy="360" r="1.4"/>
+    <circle cx="612" cy="369" r="1.4"/>
+    <circle cx="566" cy="270" r="1.4"/>
+    <circle cx="110" cy="515" r="1.8"/>
+    <circle cx="430" cy="347" r="2.2"/>
+    <circle cx="335" cy="493" r="1.4"/>
+    <circle cx="159" cy="363" r="1.4"/>
+    <circle cx="390" cy="350" r="1.4"/>
+    <circle cx="555" cy="388" r="1.8"/>
+    <circle cx="655" cy="287" r="1.8"/>
+    <circle cx="470" cy="549" r="1.8"/>
+    <circle cx="328" cy="481" r="2.2"/>
+    <circle cx="741" cy="103" r="1.8"/>
+    <circle cx="522" cy="524" r="2.2"/>
+    <circle cx="456" cy="383" r="1.4"/>
+    <circle cx="172" cy="282" r="1.8"/>
+    <circle cx="201" cy="319" r="1.4"/>
+    <circle cx="897" cy="101" r="2.2"/>
+    <circle cx="563" cy="524" r="1.8"/>
+    <circle cx="363" cy="246" r="1.8"/>
+    <circle cx="569" cy="302" r="1.4"/>
+    <circle cx="882" cy="311" r="2.2"/>
+    <circle cx="126" cy="448" r="1.8"/>
+    <circle cx="627" cy="586" r="1.8"/>
+    <circle cx="315" cy="264" r="2.2"/>
+    <circle cx="368" cy="559" r="1.8"/>
+    <circle cx="215" cy="122" r="1.4"/>
+    <circle cx="258" cy="212" r="2.2"/>
+    <circle cx="283" cy="267" r="1.8"/>
+    <circle cx="139" cy="298" r="2.2"/>
+    <circle cx="309" cy="133" r="1.8"/>
+    <circle cx="813" cy="208" r="1.8"/>
+    <circle cx="918" cy="422" r="1.8"/>
+    <circle cx="894" cy="140" r="1.4"/>
+    <circle cx="200" cy="409" r="1.4"/>
+    <circle cx="487" cy="372" r="1.8"/>
+    <circle cx="312" cy="137" r="2.2"/>
+    <circle cx="388" cy="360" r="1.4"/>
+    <circle cx="664" cy="333" r="2.2"/>
+    <circle cx="633" cy="452" r="1.8"/>
+    <circle cx="844" cy="473" r="2.2"/>
+    <circle cx="756" cy="268" r="1.8"/>
+    <circle cx="409" cy="315" r="1.8"/>
+    <circle cx="124" cy="96" r="1.4"/>
+    <circle cx="449" cy="118" r="2.2"/>
+    <circle cx="115" cy="60" r="1.4"/>
+    <circle cx="531" cy="563" r="2.2"/>
+    <circle cx="92" cy="523" r="2.2"/>
+    <circle cx="394" cy="396" r="1.8"/>
+    <circle cx="588" cy="311" r="1.4"/>
+    <circle cx="800" cy="586" r="1.8"/>
+    <circle cx="483" cy="225" r="1.4"/>
+    <circle cx="158" cy="242" r="1.8"/>
+    <circle cx="482" cy="427" r="2.2"/>
+    <circle cx="90" cy="564" r="2.2"/>
+    <circle cx="381" cy="426" r="1.4"/>
+    <circle cx="722" cy="218" r="2.2"/>
+    <circle cx="812" cy="429" r="1.8"/>
+    <circle cx="516" cy="541" r="1.8"/>
+    <circle cx="734" cy="342" r="2.2"/>
+    <circle cx="354" cy="178" r="1.4"/>
+    <circle cx="763" cy="494" r="2.2"/>
+    <circle cx="761" cy="166" r="1.8"/>
+    <circle cx="376" cy="75" r="1.4"/>
+    <circle cx="749" cy="310" r="1.4"/>
+    <circle cx="666" cy="567" r="1.8"/>
+    <circle cx="765" cy="443" r="1.8"/>
+    <circle cx="891" cy="253" r="1.4"/>
+    <circle cx="158" cy="309" r="1.8"/>
+    <circle cx="246" cy="391" r="2.2"/>
+    <circle cx="793" cy="314" r="2.2"/>
+    <circle cx="366" cy="401" r="2.2"/>
+    <circle cx="173" cy="266" r="2.2"/>
+    <circle cx="715" cy="313" r="1.4"/>
+    <circle cx="443" cy="397" r="1.4"/>
+    <circle cx="759" cy="575" r="1.8"/>
+    <circle cx="468" cy="454" r="1.4"/>
+    <circle cx="693" cy="150" r="1.4"/>
+    <circle cx="94" cy="373" r="1.8"/>
+    <circle cx="764" cy="137" r="2.2"/>
+    <circle cx="913" cy="408" r="1.8"/>
+    <circle cx="204" cy="351" r="1.4"/>
+    <circle cx="82" cy="575" r="2.2"/>
+    <circle cx="158" cy="457" r="1.4"/>
+    <circle cx="443" cy="522" r="1.4"/>
+    <circle cx="94" cy="173" r="2.2"/>
+    <circle cx="277" cy="371" r="1.8"/>
+    <circle cx="538" cy="502" r="1.4"/>
+    <circle cx="853" cy="248" r="1.8"/>
+    <circle cx="640" cy="492" r="2.2"/>
+    <circle cx="432" cy="546" r="2.2"/>
+    <circle cx="182" cy="140" r="2.2"/>
+    <circle cx="86" cy="293" r="1.4"/>
+    <circle cx="593" cy="471" r="1.4"/>
+    <circle cx="218" cy="311" r="2.2"/>
+    <circle cx="173" cy="93" r="2.2"/>
+    <circle cx="516" cy="354" r="1.4"/>
+    <circle cx="830" cy="90" r="1.4"/>
+    <circle cx="308" cy="469" r="2.2"/>
+    <circle cx="459" cy="75" r="1.4"/>
+    <circle cx="451" cy="385" r="2.2"/>
+    <circle cx="591" cy="166" r="1.8"/>
+    <circle cx="459" cy="343" r="1.8"/>
+    <circle cx="507" cy="191" r="2.2"/>
+    <circle cx="824" cy="559" r="1.8"/>
+    <circle cx="864" cy="533" r="1.4"/>
+    <circle cx="792" cy="133" r="1.4"/>
+    <circle cx="407" cy="227" r="2.2"/>
+    <circle cx="277" cy="99" r="2.2"/>
+    <circle cx="330" cy="125" r="1.4"/>
+    <circle cx="878" cy="401" r="1.8"/>
+    <circle cx="193" cy="528" r="1.8"/>
+    <circle cx="259" cy="565" r="1.8"/>
+    <circle cx="831" cy="146" r="2.2"/>
+    <circle cx="786" cy="146" r="1.8"/>
+    <circle cx="925" cy="274" r="1.8"/>
+    <circle cx="238" cy="229" r="2.2"/>
+    <circle cx="385" cy="239" r="1.8"/>
+    <circle cx="449" cy="70" r="1.8"/>
+    <circle cx="515" cy="217" r="1.4"/>
+    <circle cx="167" cy="547" r="1.4"/>
+    <circle cx="906" cy="116" r="1.8"/>
+    <circle cx="304" cy="540" r="1.4"/>
+    <circle cx="303" cy="129" r="1.8"/>
+    <circle cx="801" cy="418" r="1.8"/>
+    <circle cx="419" cy="344" r="2.2"/>
+    <circle cx="561" cy="431" r="1.4"/>
+    <circle cx="310" cy="484" r="1.4"/>
+    <circle cx="436" cy="98" r="1.4"/>
+    <circle cx="616" cy="485" r="1.4"/>
+    <circle cx="593" cy="178" r="1.8"/>
+    <circle cx="812" cy="300" r="1.8"/>
+    <circle cx="925" cy="281" r="1.8"/>
+    <circle cx="605" cy="83" r="2.2"/>
+    <circle cx="275" cy="118" r="1.4"/>
+    <circle cx="295" cy="156" r="1.8"/>
+    <circle cx="611" cy="341" r="1.4"/>
+    <circle cx="319" cy="325" r="1.4"/>
+    <circle cx="303" cy="486" r="1.8"/>
+    <circle cx="102" cy="70" r="2.2"/>
+    <circle cx="544" cy="160" r="1.8"/>
+    <circle cx="281" cy="297" r="2.2"/>
+    <circle cx="774" cy="289" r="1.8"/>
+    <circle cx="539" cy="531" r="2.2"/>
+    <circle cx="335" cy="174" r="1.4"/>
+  </g>
+
+  <g fill="currentColor">
+    <circle cx="690" cy="124" r="3.4"/>
+    <circle cx="737" cy="182" r="2.8"/>
+    <circle cx="769" cy="154" r="3.4"/>
+    <circle cx="700" cy="144" r="2.8"/>
+    <circle cx="694" cy="143" r="2.8"/>
+    <circle cx="704" cy="147" r="3.4"/>
+    <circle cx="683" cy="118" r="2.2"/>
+    <circle cx="691" cy="152" r="2.2"/>
+    <circle cx="700" cy="150" r="2.8"/>
+    <circle cx="703" cy="150" r="3.4"/>
+    <circle cx="703" cy="148" r="2.2"/>
+    <circle cx="695" cy="155" r="2.2"/>
+    <circle cx="699" cy="155" r="3.4"/>
+    <circle cx="704" cy="159" r="3.4"/>
+    <circle cx="701" cy="148" r="2.2"/>
+    <circle cx="687" cy="157" r="2.2"/>
+    <circle cx="683" cy="137" r="2.2"/>
+    <circle cx="684" cy="143" r="3.4"/>
+    <circle cx="710" cy="144" r="3.4"/>
+    <circle cx="687" cy="158" r="2.8"/>
+    <circle cx="698" cy="155" r="3.4"/>
+    <circle cx="674" cy="127" r="2.2"/>
+    <circle cx="674" cy="148" r="2.8"/>
+    <circle cx="695" cy="113" r="3.4"/>
+    <circle cx="672" cy="149" r="2.2"/>
+    <circle cx="716" cy="128" r="3.4"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1" opacity=".45">
+    <path d="M90 325H910" stroke-dasharray="4 6"/>
+    <path d="M520 590V90" stroke-dasharray="4 6"/>
+  </g>
+
+  <path
+    class="draw-path" pathLength="1"
+    d="M110 560 L130 560 L150 559 L170 559 L190 559 L210 558 L230 558 L250 557 L270 555 L290 553 L310 550 L330 546 L350 540 L370 531 L390 520 L410 504 L430 483 L450 457 L470 425 L490 388 L510 346 L530 304 L550 262 L570 225 L590 193 L610 167 L630 146 L650 130 L670 119 L690 110 L710 104 L730 100 L750 97 L770 95 L790 93 L810 92 L830 92 L850 91 L870 91 L890 91 L910 90"
+    stroke="currentColor"
+    stroke-width="1.4"/>
+
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="100" y="315">EVEN CHANCE</text>
+    <text x="530" y="610">~10 MEMBERS</text>
+    <text x="790" y="110">FOUND</text>
+    <text x="110" y="610">MISSED</text>
+  </g>
+</svg></figure>
+</section>
+<script>window.riseTitle && riseTitle()</script>
+
+<article class="prose post prose-after fin">
+<p>I set out to look for groups of stars moving together through space within about 500 parsecs of the Sun, using Gaia DR3. Finding a new group would have been nice. What I really wanted to know was something duller and more useful: if a group like that is out there, would my pipeline actually see it?</p>
+<p>That second question turned into the whole project. Here's what I built, what it found, and the parts that didn't work.</p>
+<p>The code, the pre-registration and every figure are in the repo: <a href="https://github.com/Shaurya-34/Gaia">github.com/Shaurya-34/Gaia</a>.</p>
+<h2>Writing the rules down first</h2>
+<p>Before running anything on real data I wrote a pre-registration (<code>PREREG.md</code>, tagged <code>prereg-v1</code>). It fixes the cuts, the clustering settings, what counts as a detection, the false-positive budget and the success rule for every experiment. Whenever I changed something later, it went into a dated table at the bottom with the reason.</p>
+<p>That sounds bureaucratic for a solo project. It turned out to matter, because several results below are not what I hoped for, and the pre-registration is what stops me from quietly moving the goalposts.</p>
+<p>I also split the sky into twelve Galactic blocks: some for training, some for validation, some for testing, and one sealed block I never downloaded at all. In the end the project ran on a single block (block 6) on my laptop. Doing more needed cloud compute, and I decided to close the project at a scope I could finish rather than keep it open.</p>
+<h2>The pipeline</h2>
+<p>Each star becomes five numbers: sky position (l, b), parallax and the two proper-motion components, robustly scaled. This is the feature space Hunt &amp; Reffert used in 2021. HDBSCAN then looks for dense clumps at four minimum cluster sizes (10, 20, 40 and 80 stars), and each clump gets a cluster significance test (CST) score, using the version from the ocelot package (MIT licensed, vendored with attribution). A group counts as detected if its CST is above 3.</p>
+<figure class="gaia-sky" data-src="data/gaia.json" data-stars="assets/gaia-stars.bin">
+  <div class="gaia-head">
+    <div class="gaia-switch" role="group" aria-label="Cluster">
+      <button type="button" data-cluster="Pleiades" aria-pressed="true">Pleiades</button>
+      <button type="button" data-cluster="alpha Per" aria-pressed="false">alpha Per</button>
+    </div>
+    <div class="gaia-switch" role="group" aria-label="View">
+      <button type="button" data-view="sky" aria-pressed="true">on the sky</button>
+      <button type="button" data-view="motion" aria-pressed="false">in motion</button>
+    </div>
+    <button type="button" class="gaia-btn" data-shuffle aria-pressed="false">shuffle motions</button>
+  </div>
+  <canvas class="gaia-canvas" width="720" height="720" role="img" aria-label="Stars around the chosen cluster, plotted by sky position or by proper motion"></canvas>
+  <p class="gaia-readout" aria-live="polite"></p>
+  <figcaption>Every star that passed the cuts within three half-number radii of the cluster. On the sky the cluster barely stands out. Switch to motion and it collapses into a tight knot, because its stars share one velocity; from then on blue marks the group HDBSCAN found and violet rings the catalogue members it missed. Shuffle motions swaps proper motions between stars in the same patch of sky and parallax slice. That's the false-positive test further down, approximated here on a square grid.</figcaption>
+  <noscript>
+    <img src="images/gaia/fig2_pm_parallax.png" alt="Proper motions and parallaxes of the Pleiades and alpha Persei against field stars." loading="lazy">
+  </noscript>
+</figure>
+
+<p>Getting the data was harder than the clustering. The Gaia archive kept returning HTTP 500 errors for the queries I needed, so I switched to downloading the bulk catalogue files one at a time and filtering them on the way in.</p>
+<h2>Does it find clusters we already know?</h2>
+<p>This was the first gate. If the pipeline can't find the obvious clusters, nothing else matters. Membership overlap is measured as a Jaccard score against the Hunt &amp; Reffert catalogue:</p>
+<table>
+<thead>
+<tr>
+<th>Cluster</th>
+<th>Jaccard</th>
+<th>CST</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pleiades</td>
+<td>0.94</td>
+<td>30.1</td>
+</tr>
+<tr>
+<td>alpha Persei</td>
+<td>0.87</td>
+<td>28.2</td>
+</tr>
+<tr>
+<td>Hyades</td>
+<td>0.63</td>
+<td>18.9</td>
+</tr>
+</tbody>
+</table>
+<p>All three pass. The Hyades score is lower, which isn't surprising: it's so close that it covers a big patch of sky.</p>
+<h2>Measuring what it can see</h2>
+<p>To measure sensitivity I injected fake clusters into real Gaia fields and checked whether the pipeline got them back. Each fake cluster has a Plummer density profile. Every fake star borrows its brightness, colour and errors from a real star nearby (a "twin"), and goes through the same quality cuts as the real data. I judge recovery against the stars that survive those cuts, not the number I injected.</p>
+<p>The main run did 159 of these trials across four fields. It took about six hours. For the first 50 minutes or so each trial took around two minutes. Then the laptop ran out of memory and started swapping to disk, and trials took closer to seven and a half. The results are the same either way. It just taught me to run fewer workers.</p>
+<figure>
+  <img src="images/gaia/fig4_injection_demo.png" alt="Four injected clusters with 5, 12, 25 and 100 surviving members" loading="lazy">
+</figure>
+
+<p>The headline result: beyond 140 pc, a group needs about 10 to 11 surviving members to have an even chance of being detected. Groups with fewer than 5 surviving members were never found (0 of 12). Above about 60 members, everything was found.</p>
+<p>The surprise was the nearest distance bin. Between 50 and 140 pc a group needs about 23 members for an even chance, roughly twice as many. Nearby clusters spread over a lot of sky, so in position space they don't look like a tight clump.</p>
+<figure class="gaia-trials" data-src="data/gaia.json">
+  <div class="gaia-head">
+    <div class="gaia-switch" role="group" aria-label="Detection threshold">
+      <button type="button" data-tau="3" aria-pressed="true">CST &gt; 3</button>
+      <button type="button" data-tau="5" aria-pressed="false">&gt; 5</button>
+      <button type="button" data-tau="7" aria-pressed="false">&gt; 7</button>
+    </div>
+    <p class="gaia-readout" aria-live="polite"></p>
+  </div>
+  <svg class="gaia-plot" viewBox="0 0 660 380" role="img" aria-label="Every injection trial plotted by distance and surviving members, marked found or missed, with the fitted and measured fifty percent lines"></svg>
+  <figcaption>All 158 trials that count (one was discarded because a real cluster got into its group). Filled: found. Open: missed. The steps are where each distance bin crosses an even chance in the data; the straight line is the fitted model, which can't bend for the nearest bin. Hover or tap anywhere for the model's probability there.</figcaption>
+  <noscript>
+    <img src="images/gaia/fig5_heatmap.png" alt="Detected fraction by distance and number of surviving members" loading="lazy">
+  </noscript>
+</figure>
+
+<p>I fitted the pre-registered model to this: a logistic curve in the number of members, with terms for distance, parallax error and local star density. On 36 held-out trials it ranks well (AUC 0.92) but it's overconfident: the calibration slope is 0.51 where 1 would be right. A model with distance alone does almost as well, and the parallax-error and density terms are consistent with zero. The model also misses the nearby bump, because its distance term is a straight line. So the measured steps are the more honest summary, and the fitted line is a rough guide.</p>
+<h2>The part that didn't work: false positives</h2>
+<p>To estimate false positives I shuffled the proper motions of real stars among stars at similar sky positions and parallaxes. This kills any real co-movement while keeping the density structure of the field. Then I ran the full search on the shuffled data, three shuffles per field, twelve searches in all. The shuffle button in the star figure above does the same to one patch. alpha Per keeps only about a third of its knot, but the Pleiades keep more than half: a cluster that close fills its own parallax slices, so the shuffle mostly trades motions between members. Groups like that leak into the null, so the false-positive count, if anything, runs high.</p>
+<p>The budget I wrote down in advance was 1 false positive per million stars searched. What came out was 49 per million at CST 3, 31 at CST 5 and 24 at CST 7. No threshold comes close.</p>
+<figure class="gaia-cst" data-src="data/gaia.json">
+  <div class="gaia-head">
+    <label class="gaia-range">threshold <output>3.0</output>
+      <input type="range" min="0" max="40" step="0.1" value="3">
+    </label>
+    <p class="gaia-readout" aria-live="polite"></p>
+  </div>
+  <svg class="gaia-plot" viewBox="0 0 660 300" role="img" aria-label="CST scores of shuffled, injected and known-cluster groups, with a movable threshold"></svg>
+  <figcaption>Every group's CST score: 920 from the shuffled searches, 103 matched to injected clusters, 15 matched to known clusters. Drag the threshold. Anything to its right counts as a detection; the budget allows less than one shuffled group past it, across 799,731 stars searched. That only happens past the dotted line at 19.7, where 8 of the 103 injected clusters and none of the 15 known ones are left.</figcaption>
+  <noscript>
+    <img src="images/gaia/fig6_cst_hist.png" alt="CST scores of real, injected and shuffled groups" loading="lazy">
+  </noscript>
+</figure>
+
+<p>The real data does have more significant groups than the shuffled data: 39 above CST 3 in 4 real searches, against 39 in 12 shuffled ones, so roughly three times as many per search. Fifteen of the real groups match known clusters. But with this false-positive rate, a new group above CST 3 isn't a candidate I'd trust, and I'm not publishing a candidate list.</p>
+<h2>Can a classifier do better than the CST?</h2>
+<p>The last experiment asked whether a small LightGBM classifier, trained on HDBSCAN's own outputs plus the CST, could separate injected groups from shuffled noise better than the CST alone. The pre-registered bar was 5 more points of precision at 80% recall, with a bootstrap interval that excludes zero.</p>
+<p>On the validation set it gains 3.7 points, with an interval from -8.9 to +14.3. That doesn't pass, and the classifier leans almost entirely on the CST anyway. The test set gets scored exactly once, behind a lock file, and I haven't run it yet. Given the validation result I expect a null, and I'll report it as one.</p>
+<p>There's also a caveat that limits what this experiment can say even if it had passed. The positives are injected clusters and the negatives are shuffled real data, so the classifier learns to tell injected from shuffled. That's not the same as telling real clusters from real noise.</p>
+<h2>What I'd take away</h2>
+<p>The pipeline finds the known clusters and its sensitivity is now measured, at least in one patch of sky: roughly 10 surviving members beyond 140 pc, twice that closer in. It also produces too many false positives to trust a new detection at the thresholds I planned. All of this comes from one block of sky, and the held-out checks are held-out trials, not unseen sky.</p>
+<p>None of that is the "new cluster" headline, but it's the result I set out to measure, and the pre-registration means I can't talk myself out of the bits I don't like.</p></article>
+
+<section class="mosaic-wrap">
+  <div class="mosaic-head">
+    <h2>Elsewhere in the log</h2>
+    <a class="label" href="index.html#archive">All 10 entries →</a>
+  </div>
+
+  <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="fly-circuit-vs-cnn.html">
+      <span class="tile-cover" data-cover="fly-circuit-vs-cnn"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" opacity=".16">
+    <path d="M500 250L60 600"/>
+    <path d="M500 250L940 600"/>
+    <path d="M500 250L330 600"/>
+    <path d="M500 250L670 600"/>
+    <path d="M232 463H768"/>
+    <path d="M318 395H682"/>
+    <path d="M372 352H628"/>
+    <path d="M60 250H940"/>
+  </g>
+
+  <g fill="currentColor">
+    <rect x="455" y="196" width="10" height="58"/>
+    <rect x="542" y="210" width="8" height="44"/>
+    <rect x="392" y="262" width="16" height="92"/>
+    <rect x="690" y="248" width="40" height="178"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1">
+    <rect x="684" y="238" width="52" height="198" opacity=".45"/>
+    <rect x="674" y="222" width="72" height="230" opacity=".25"/>
+    <rect x="662" y="204" width="96" height="266" opacity=".12"/>
+  </g>
+
+  <path
+    class="draw-path" pathLength="1"
+    d="M500 610 C500 560 520 520 470 480 C430 448 440 400 480 360 C505 335 492 300 500 262"
+    stroke="currentColor"
+    stroke-width="1.2"/>
+  <path d="M492 604L500 590L508 604Z" fill="currentColor"/>
+
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="770" y="340">← LOOMING</text>
+    <text x="770" y="364">NOT ON COURSE</text>
+    <text x="90" y="600">ESCAPE ANYWAY</text>
+  </g>
+</svg></span>
+      <span class="label">Previous · Machine learning</span>
+      <h3>A fly's escape reflex, flying a drone</h3>
+      <p>A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera.</p>
+      <span class="meta label">16.09.26</span>
+    </a>
+    <a class="tile-post" href="understanding-alphafolds-plddt-pae-and-ptm.html">
+      <span class="tile-cover" data-cover="understanding-alphafolds-plddt-pae-and-ptm"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" opacity=".15">
+    <path d="M120 110H880"/>
+    <path d="M120 580H880"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1" opacity=".22">
+    <path d="M202 175V435M254 175V435M306 175V435M358 175V435"/>
+    <path d="M150 227H410M150 279H410M150 331H410M150 383H410"/>
+    <path d="M642 175V435M694 175V435M746 175V435M798 175V435"/>
+    <path d="M590 227H850M590 279H850M590 331H850M590 383H850"/>
+  </g>
+  <g stroke="currentColor" stroke-width="1.4">
+    <path d="M150 175H410V435H150Z"/>
+    <path d="M590 175H850V435H590Z"/>
+  </g>
+
+  <path
+    d="M150 175L410 435"
+    class="draw-path" pathLength="1"
+    stroke="currentColor"
+    stroke-width="24"
+    stroke-linecap="round"
+    opacity=".82"/>
+
+  <path d="M590 175L850 435" stroke="currentColor" stroke-width="2.5" opacity=".28"/>
+  <g fill="currentColor" opacity=".3">
+    <circle cx="640" cy="220" r="2.4"/>
+    <circle cx="700" cy="340" r="2.4"/>
+    <circle cx="760" cy="260" r="2.4"/>
+    <circle cx="810" cy="400" r="2.4"/>
+    <circle cx="620" cy="360" r="2.4"/>
+    <circle cx="790" cy="200" r="2.4"/>
+  </g>
+
+  <g fill="currentColor">
+    <circle cx="150" cy="175" r="3.5"/>
+    <circle cx="410" cy="435" r="3.5"/>
+  </g>
+
+  <g fill="currentColor" font-family="monospace" font-size="15" letter-spacing=".05em">
+    <text x="150" y="150">GFP &middot; WELL-FOLDED</text>
+    <text x="590" y="150">BETA-CASEIN &middot; DISORDERED</text>
+    <text x="120" y="460" opacity=".55">j</text>
+    <text x="272" y="458" opacity=".55">i</text>
+    <text x="560" y="460" opacity=".55">j</text>
+    <text x="712" y="458" opacity=".55">i</text>
+    <text x="120" y="620">CONFIDENT, NOT THE SAME AS CORRECT</text>
+  </g>
+</svg></span>
+      <span class="label">Machine learning</span>
+      <h3>Understanding AlphaFold's pLDDT, PAE, and pTM</h3>
+      <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
+      <span class="meta label">10.09.26</span>
+    </a>
+    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
+      <span class="tile-cover" data-cover="programming-an-attention-kernel-in-triton"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" opacity=".16">
+    <path d="M120 540H880"/>
+    <path d="M120 460H880"/>
+    <path d="M120 380H880"/>
+    <path d="M120 300H880"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1.4">
+    <path d="M430 580V150"/>
+    <path d="M570 580V150"/>
+    <path d="M430 540H570"/>
+    <path d="M430 460H570"/>
+    <path d="M430 380H570"/>
+    <path d="M430 300H570"/>
+  </g>
+  <path d="M430 220H570" stroke="currentColor" stroke-width="1.4" stroke-dasharray="6 8" opacity=".4"/>
+
+  <path d="M370 150H630" stroke="currentColor" stroke-width="2"/>
+  <g stroke="currentColor" stroke-width="1.2" opacity=".55">
+    <path d="M385 150L370 130"/>
+    <path d="M425 150L410 130"/>
+    <path d="M465 150L450 130"/>
+    <path d="M505 150L490 130"/>
+    <path d="M545 150L530 130"/>
+    <path d="M585 150L570 130"/>
+    <path d="M625 150L610 130"/>
+  </g>
+
+  <path
+    d="M500 580 L462 540 L538 460 L462 380 L538 300"
+    class="draw-path" pathLength="1"
+    stroke="currentColor"
+    stroke-width="1.6"/>
+
+  <g fill="currentColor">
+    <circle cx="500" cy="580" r="3"/>
+    <circle cx="462" cy="540" r="3"/>
+    <circle cx="538" cy="460" r="3"/>
+    <circle cx="462" cy="380" r="3"/>
+    <circle cx="538" cy="300" r="3.5"/>
+  </g>
+
+  <g fill="currentColor" font-family="monospace" font-size="15" letter-spacing=".05em">
+    <text x="600" y="545">1</text>
+    <text x="600" y="465">2</text>
+    <text x="600" y="385">3</text>
+    <text x="600" y="305">4</text>
+    <text x="600" y="225" opacity=".45">5</text>
+    <text x="655" y="145">← NOT YET CLIMBED</text>
+    <text x="120" y="620">FOUR RUNGS UP, ONE WALL</text>
+  </g>
+</svg></span>
+      <span class="label">GPU programming</span>
+      <h3>Programming an attention kernel in Triton</h3>
+      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
+      <span class="meta label">08.09.26</span>
+    </a>
+    <a class="tile-post" href="birthday-attack.html">
+      <span class="tile-cover" data-cover="birthday-attack"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g stroke="currentColor" opacity=".16">
+    <path d="M90 500H910"/>
+    <path d="M500 80V600"/>
+    <path d="M170 560L830 130"/>
+  </g>
+
+  <g fill="currentColor">
+    <circle cx="150" cy="180" r="2.5"/>
+    <circle cx="205" cy="240" r="2"/>
+    <circle cx="260" cy="150" r="2.5"/>
+    <circle cx="310" cy="290" r="2"/>
+    <circle cx="360" cy="200" r="2.5"/>
+    <circle cx="415" cy="340" r="2"/>
+    <circle cx="470" cy="160" r="2.5"/>
+    <circle cx="520" cy="380" r="2"/>
+    <circle cx="230" cy="410" r="2.5"/>
+    <circle cx="290" cy="470" r="2"/>
+    <circle cx="340" cy="420" r="2.5"/>
+    <circle cx="605" cy="250" r="2"/>
+    <circle cx="655" cy="320" r="2.5"/>
+    <circle cx="700" cy="220" r="2"/>
+    <circle cx="750" cy="380" r="2.5"/>
+    <circle cx="800" cy="290" r="2"/>
+    <circle cx="845" cy="430" r="2.5"/>
+    <circle cx="600" cy="470" r="2"/>
+    <circle cx="660" cy="500" r="2.5"/>
+    <circle cx="180" cy="330" r="2"/>
+    <circle cx="440" cy="470" r="2.5"/>
+    <circle cx="500" cy="520" r="2"/>
+    <circle cx="720" cy="150" r="2"/>
+    <circle cx="770" cy="490" r="2.5"/>
+  </g>
+
+  <path
+    d="M150 180 L360 200 L470 160 L605 250 L700 220 L575 305 L720 150 L575 305"
+    class="draw-path" pathLength="1"
+    stroke="currentColor"
+    stroke-width="1.2"/>
+
+  <circle cx="571" cy="301" r="3" fill="currentColor"/>
+  <circle cx="579" cy="309" r="3" fill="currentColor"/>
+  <circle cx="575" cy="305" r="20" stroke="currentColor" stroke-width="1"/>
+
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="605" y="300">← SAME BUCKET</text>
+    <text x="90" y="600">√N DRAWS, NOT N</text>
+  </g>
+</svg></span>
+      <span class="label">Cryptography</span>
+      <h3>Twenty-three people, 256 bits</h3>
+      <p>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
+      <span class="meta label">02.09.26</span>
+    </a>
+  </div>
+</section>
+
+<footer class="foot">
+  <span class="label">Shaurya · 2026</span>
+  <span class="label">honest · semi informative · personal</span>
+  <span class="label"><a href="https://github.com/Shaurya-34" rel="noopener">GitHub</a> · <a href="index.html">Index</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="design.js?v=e8912297"></script>
+<script src="site.js?v=3f805da9"></script>
+
+</body>
+</html>

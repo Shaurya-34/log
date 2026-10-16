@@ -6,6 +6,14 @@
     <description>Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.</description>
     <language>en</language>
     <item>
+      <title>How many stars does it take to find a cluster?</title>
+      <link>https://shauryasharma.tech/how-many-stars.html</link>
+      <guid>https://shauryasharma.tech/how-many-stars.html</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 GMT</pubDate>
+      <description>A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.</description>
+      <category>astronomy, machine learning</category>
+    </item>
+    <item>
       <title>A fly&#x27;s escape reflex, flying a drone</title>
       <link>https://shauryasharma.tech/fly-circuit-vs-cnn.html</link>
       <guid>https://shauryasharma.tech/fly-circuit-vs-cnn.html</guid>

@@ -1870,6 +1870,503 @@
     script.onload = boot;
     document.head.appendChild(script);
   });
+
+  /* ------------------------------------------------------------
+     Gaia post: the star patch (sky vs motion, with the shuffle
+     null), the injection-trial explorer and the CST threshold.
+     One data file, fetched once the first figure comes near the
+     screen.
+     ------------------------------------------------------------ */
+
+  run(function () {
+    var SVGNS = "http://www.w3.org/2000/svg";
+    var dataPromise = null;
+
+    function loadData(src) {
+      if (!dataPromise) {
+        dataPromise = fetch(src).then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          return r.json();
+        });
+      }
+      return dataPromise;
+    }
+
+    function whenNear(el, fn) {
+      if (!("IntersectionObserver" in window)) return fn();
+      var io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { io.disconnect(); fn(); }
+      }, { rootMargin: "600px 0px" });
+      io.observe(el);
+    }
+
+    function css(el, name) {
+      return getComputedStyle(el).getPropertyValue(name).trim();
+    }
+
+    function onTheme(fn) {
+      new MutationObserver(fn).observe(doc, { attributes: true, attributeFilter: ["data-theme"] });
+      matchMedia("(prefers-color-scheme: dark)").addEventListener("change", fn);
+    }
+
+    function pressOne(group, btn) {
+      group.querySelectorAll("button").forEach(function (b) {
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      });
+      if (group.place) group.place();
+    }
+
+    // the sliding block behind each switch's pressed button, once it has a size
+    function ready(fig) {
+      fig.classList.add("is-ready");
+      fig.querySelectorAll(".gaia-switch").forEach(function (g) {
+        g.place = mountSwitchIndicator(g);
+        g.place();
+      });
+    }
+
+    function el(tag, attrs, parent) {
+      var e = document.createElementNS(SVGNS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+
+    function fmt(n) { return n.toLocaleString("en-US"); }
+
+    function median(a) {
+      var s = Array.prototype.slice.call(a).sort(function (x, y) { return x - y; });
+      return s.length ? s[s.length >> 1] : 0;
+    }
+
+    function rng(seed) {  // mulberry32
+      return function () {
+        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+        var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    /* ---- star patch: sky vs motion, and the shuffle ----------------------- */
+
+    var CELL = 1.83;      // degrees, about a level-5 HEALPix pixel
+    var PLX_BINS = 8;     // parallax quantile slices per cell, as in config.yaml
+    var KNOT = 2;         // mas/yr: "inside the knot" for the readout
+    var PM_HALF = 12;     // mas/yr either side of the cluster's motion, as fig 2
+
+    function cluster(meta, buf) {
+      var n = meta.n, o = meta.offset;
+      var col = function (i) { return new Int16Array(buf, o + i * n * 2, n); };
+      var c = {
+        name: meta.name, n: n, l: new Float32Array(n), b: new Float32Array(n), plx: col(2),
+        pml: new Float32Array(n), pmb: new Float32Array(n), flags: new Uint8Array(buf, o + 5 * n * 2, n)
+      };
+      var dl = col(0), db = col(1), ql = col(3), qb = col(4);
+      for (var i = 0; i < n; i++) {
+        c.l[i] = meta.l0 + dl[i] / 1000; c.b[i] = meta.b0 + db[i] / 1000;
+        c.pml[i] = ql[i] / 100; c.pmb[i] = qb[i] / 100;
+      }
+      var gl = [], gb = [], gpl = [], gpb = [];
+      for (i = 0; i < n; i++) if (c.flags[i] & 1) { gl.push(c.l[i]); gb.push(c.b[i]); gpl.push(c.pml[i]); gpb.push(c.pmb[i]); }
+      c.group = gl.length;
+      c.missed = 0;
+      for (i = 0; i < n; i++) if ((c.flags[i] & 3) === 2) c.missed++;
+      c.lc = median(gl); c.bc = median(gb); c.pmlc = median(gpl); c.pmbc = median(gpb);
+      var r = 0, cosb = Math.cos(c.bc * Math.PI / 180);
+      for (i = 0; i < n; i++) r = Math.max(r, Math.abs((c.l[i] - c.lc) * cosb), Math.abs(c.b[i] - c.bc));
+      c.half = r * 1.02;
+      c.cosb = cosb;
+      return c;
+    }
+
+    // trade proper motions within each sky cell x parallax-quantile slice
+    function shuffle(c, seed) {
+      var rand = rng(seed), cells = {}, i;
+      var sl = new Float32Array(c.n), sb = new Float32Array(c.n);
+      for (i = 0; i < c.n; i++) {
+        var key = Math.floor(c.l[i] / CELL) + "," + Math.floor(c.b[i] / CELL);
+        (cells[key] || (cells[key] = [])).push(i);
+      }
+      Object.keys(cells).forEach(function (k) {
+        var idx = cells[k].sort(function (a, b) { return c.plx[a] - c.plx[b]; });
+        var m = idx.length, base = Math.floor(m / PLX_BINS), extra = m % PLX_BINS, s = 0;
+        for (var q = 0; q < PLX_BINS; q++) {  // np.array_split sizes
+          var e = s + base + (q < extra ? 1 : 0), chunk = idx.slice(s, e), perm = chunk.slice();
+          for (var j = perm.length - 1; j > 0; j--) {
+            var r = Math.floor(rand() * (j + 1)), t = perm[j]; perm[j] = perm[r]; perm[r] = t;
+          }
+          for (j = 0; j < chunk.length; j++) { sl[chunk[j]] = c.pml[perm[j]]; sb[chunk[j]] = c.pmb[perm[j]]; }
+          s = e;
+        }
+      });
+      return { pml: sl, pmb: sb };
+    }
+
+    function inKnot(c, pml, pmb) {
+      var k = 0;
+      for (var i = 0; i < c.n; i++) {
+        if ((c.flags[i] & 1) && Math.hypot(pml[i] - c.pmlc, pmb[i] - c.pmbc) < KNOT) k++;
+      }
+      return k;
+    }
+
+    function mountSky(fig, data, buf) {
+      var canvas = fig.querySelector("canvas"), ctx = canvas.getContext("2d");
+      var readout = fig.querySelector(".gaia-readout");
+      var shuffleBtn = fig.querySelector("[data-shuffle]");
+      var clusters = {};
+      data.stars.forEach(function (m) { clusters[m.name] = cluster(m, buf); });
+      var state = { name: "Pleiades", view: "sky", shuffled: false, seed: 1, seen: false };
+      var c, sh, knot0, cur = null, from = null, to = null, t0 = 0, raf = 0, colors = {};
+      // the group stays uncoloured until the motion view has shown it, so
+      // the sky view first looks the way the raw data does
+      var tint = 0, tintFrom = 0, tintTo = 0;
+
+      function readColors() {
+        colors.field = css(fig, "--ink"); colors.blue = css(fig, "--blue");
+        colors.violet = css(fig, "--red"); colors.faint = css(fig, "--faint");
+        colors.line = css(fig, "--hairline");
+      }
+
+      function size() {
+        var dpr = Math.min(devicePixelRatio || 1, 2), w = canvas.clientWidth || 600;
+        canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
+      }
+
+      // positions in 0..1 for the current view
+      function target() {
+        var n = c.n, xy = new Float32Array(n * 2), pml = state.shuffled ? sh.pml : c.pml,
+          pmb = state.shuffled ? sh.pmb : c.pmb;
+        for (var i = 0; i < n; i++) {
+          if (state.view === "sky") {
+            xy[2 * i] = 0.5 - (c.l[i] - c.lc) * c.cosb / (2 * c.half);  // l grows to the left
+            xy[2 * i + 1] = 0.5 - (c.b[i] - c.bc) / (2 * c.half);
+          } else {
+            xy[2 * i] = 0.5 + (pml[i] - c.pmlc) / (2 * PM_HALF);
+            xy[2 * i + 1] = 0.5 - (pmb[i] - c.pmbc) / (2 * PM_HALF);
+          }
+        }
+        return xy;
+      }
+
+      function draw(xy) {
+        var W = canvas.width, d = W / 600, i, x, y;
+        ctx.clearRect(0, 0, W, W);
+        ctx.fillStyle = colors.field; ctx.globalAlpha = 0.28;
+        var s = 1.6 * d;
+        for (i = 0; i < c.n; i++) {
+          if (c.flags[i] && tint === 1) continue;
+          ctx.fillRect(xy[2 * i] * W - s / 2, xy[2 * i + 1] * W - s / 2, s, s);
+        }
+        ctx.globalAlpha = tint;
+        ctx.strokeStyle = colors.violet; ctx.lineWidth = 1 * d;
+        ctx.beginPath();
+        for (i = 0; i < c.n; i++) {
+          if ((c.flags[i] & 3) !== 2) continue;
+          x = xy[2 * i] * W; y = xy[2 * i + 1] * W;
+          ctx.moveTo(x + 3.2 * d, y); ctx.arc(x, y, 3.2 * d, 0, 2 * Math.PI);
+        }
+        ctx.stroke();
+        ctx.fillStyle = colors.blue; s = 2.6 * d;
+        for (i = 0; i < c.n; i++) {
+          if (!(c.flags[i] & 1)) continue;
+          ctx.fillRect(xy[2 * i] * W - s / 2, xy[2 * i + 1] * W - s / 2, s, s);
+        }
+        ctx.globalAlpha = 1;
+        // scale bar and axis note, bottom left
+        var unit = state.view === "sky" ? 1 / (2 * c.half) : 5 / (2 * PM_HALF);
+        ctx.strokeStyle = colors.faint; ctx.fillStyle = colors.faint; ctx.lineWidth = 1 * d;
+        ctx.beginPath(); ctx.moveTo(14 * d, W - 14 * d); ctx.lineTo(14 * d + unit * W, W - 14 * d); ctx.stroke();
+        ctx.font = 11 * d + "px " + css(fig, "--mono");
+        ctx.fillText(state.view === "sky" ? "1 deg   l, b" : "5 mas/yr   pm_l, pm_b", 14 * d, W - 22 * d);
+        if (state.view === "motion") {
+          ctx.setLineDash([3 * d, 4 * d]); ctx.strokeStyle = colors.faint;
+          ctx.beginPath(); ctx.arc(W / 2, W / 2, KNOT / (2 * PM_HALF) * W, 0, 2 * Math.PI); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      function frame(now) {
+        var k = Math.min(1, (now - t0) / 750), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        for (var i = 0; i < cur.length; i++) cur[i] = from[i] + (to[i] - from[i]) * e;
+        tint = tintFrom + (tintTo - tintFrom) * e;
+        draw(cur);
+        raf = k < 1 ? requestAnimationFrame(frame) : 0;
+      }
+
+      function go(jump) {
+        to = target();
+        if (state.view === "motion") state.seen = true;
+        tintFrom = tint; tintTo = state.seen ? 1 : 0;
+        if (jump || reduced || !cur || cur.length !== to.length) {
+          cur = to.slice(); tint = tintTo; cancelAnimationFrame(raf); raf = 0; draw(cur);
+        } else {
+          from = cur.slice(); t0 = performance.now();
+          if (!raf) raf = requestAnimationFrame(frame);
+        }
+        if (!state.seen) {
+          readout.innerHTML = fmt(c.n) + " stars around the " + c.name + ". Which ones are the cluster?";
+        } else {
+          var k = state.shuffled ? inKnot(c, sh.pml, sh.pmb) : knot0;
+          readout.innerHTML = "group <b>" + fmt(c.group) + "</b> · missed <b>" + fmt(c.missed) + "</b> · inside the knot <b>" +
+            fmt(k) + "</b>" + (state.shuffled ? " (was " + fmt(knot0) + ")" : "") + " · " + fmt(c.n) + " stars";
+        }
+        shuffleBtn.setAttribute("aria-pressed", state.shuffled ? "true" : "false");
+        shuffleBtn.textContent = state.shuffled ? "unshuffle" : "shuffle motions";
+      }
+
+      function pick(name) {
+        state.name = name; c = clusters[name];
+        sh = shuffle(c, state.seed); knot0 = inKnot(c, c.pml, c.pmb);
+        state.seen = state.view === "motion";
+        go(true);
+      }
+
+      function setView(v) {
+        state.view = v;
+        pressOne(fig.querySelector("[data-view]").parentNode, fig.querySelector('[data-view="' + v + '"]'));
+      }
+
+      fig.querySelectorAll("[data-cluster]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); state.shuffled = false; pick(b.dataset.cluster); });
+      });
+      fig.querySelectorAll("[data-view]").forEach(function (b) {
+        b.addEventListener("click", function () { setView(b.dataset.view); go(); });
+      });
+      // the shuffle only shows in motion, so it takes you there
+      shuffleBtn.addEventListener("click", function () {
+        state.shuffled = !state.shuffled;
+        if (state.shuffled) { state.seed++; sh = shuffle(c, state.seed); }
+        setView("motion");
+        go();
+      });
+      addEventListener("resize", function () { size(); draw(cur); });
+      onTheme(function () { readColors(); draw(cur); });
+      readColors(); size();
+      ready(fig);
+      size();
+      pick(state.name);
+    }
+
+    /* ---- trial explorer ---------------------------------------------------- */
+
+    function mountTrials(fig, data) {
+      var svg = fig.querySelector("svg"), readout = fig.querySelector(".gaia-readout");
+      var W, H, L = 48, R = 14, T = 26, B = 40;
+      var NMIN = 2, NMAX = 2500, DMIN = 50, DMAX = 500;
+      var P = data.fit.params, ref = data.fit.ref;
+      var X = function (d) { return L + (d - DMIN) / (DMAX - DMIN) * (W - L - R); };
+      var Y = function (n) { return T + (1 - (Math.log10(n) - Math.log10(NMIN)) / (Math.log10(NMAX) - Math.log10(NMIN))) * (H - T - B); };
+      var invX = function (x) { return DMIN + (x - L) / (W - L - R) * (DMAX - DMIN); };
+      var invY = function (y) { return Math.pow(10, Math.log10(NMIN) + (1 - (y - T) / (H - T - B)) * (Math.log10(NMAX) - Math.log10(NMIN))); };
+      var a = function (d) { return P.a0 + P.a1 * d / 100 + P.a2 * Math.log10(ref.median_parallax_error) + P.a3 * Math.log10(ref.rho_data); };
+      var prob = function (n, d) { return 1 / (1 + Math.exp(-(Math.log10(n) - a(d)) / P.sigma)); };
+      var tau = 3, dots, model, hover, hx, hy, ring;
+
+      function build() {
+        svg.textContent = "";
+        W = Math.round(svg.getBoundingClientRect().width) || 660;
+        H = W < 520 ? Math.round(W * 0.95) : 380;
+        svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+        dots = [];
+        var grid = el("g", {}, svg);
+        [5, 10, 25, 60, 150, 500, 2000].forEach(function (n) {
+          el("line", { x1: L, x2: W - R, y1: Y(n), y2: Y(n), "class": "gaia-grid" }, grid);
+          el("text", { x: L - 8, y: Y(n) + 4, "class": "gaia-label gaia-label-y" }, grid).textContent = n;
+        });
+        [50, 140, 230, 320, 410, 500].forEach(function (d) {
+          el("line", { x1: X(d), x2: X(d), y1: T, y2: H - B, "class": "gaia-grid" }, grid);
+          el("text", { x: X(d), y: H - B + 18, "class": "gaia-label gaia-label-x" }, grid).textContent = d;
+        });
+        el("text", { x: (L + W - R) / 2, y: H - 4, "class": "gaia-label gaia-label-x" }, grid).textContent = "distance (pc)";
+        el("text", { x: L - 8, y: 8, "class": "gaia-label gaia-label-y" }, grid).textContent = "members";
+
+        // the model's 10-90% band and 50% line, and the measured 50% steps
+        var band = [], mid = [], k90 = P.sigma * Math.log(9);
+        model = el("g", {}, svg);
+        for (var d = DMIN; d <= DMAX; d += 5) {
+          band.push(X(d) + "," + Y(Math.pow(10, a(d) + k90)));
+          mid.push(X(d) + "," + Y(Math.pow(10, a(d))));
+        }
+        for (d = DMAX; d >= DMIN; d -= 5) band.push(X(d) + "," + Y(Math.pow(10, a(d) - k90)));
+        el("polygon", { points: band.join(" "), "class": "gaia-band" }, model);
+        el("polyline", { points: mid.join(" "), "class": "gaia-model" }, model);
+        data.fit.n50.forEach(function (b) {
+          if (!b.empirical_n50) return;
+          el("line", { x1: X(b.bin_pc[0]), x2: X(b.bin_pc[1]), y1: Y(b.empirical_n50), y2: Y(b.empirical_n50), "class": "gaia-step" }, model);
+        });
+
+        var dotG = el("g", {}, svg);
+        data.trials.forEach(function (t) {
+          var n = Math.max(NMIN, t[1]);
+          dots.push({ t: t, x: X(t[0]), y: Y(n), c: el("circle", { cx: X(t[0]), cy: Y(n), r: 3.6 }, dotG) });
+        });
+
+        hover = el("g", { "class": "gaia-hover", visibility: "hidden" }, svg);
+        hx = el("line", { y1: T, y2: H - B }, hover); hy = el("line", { x1: L, x2: W - R }, hover);
+        ring = el("circle", { r: 7 }, hover);
+      }
+
+      function paint() {
+        var found = 0, col = { 3: 2, 5: 3, 7: 4 }[tau];
+        dots.forEach(function (o) {
+          var hit = o.t[col] === 1; found += hit;
+          o.c.setAttribute("class", hit ? "gaia-hit" : "gaia-miss");
+        });
+        model.style.display = tau === 3 ? "" : "none";
+        readout.innerHTML = "found <b>" + found + "</b> of " + dots.length +
+          (tau === 3 ? "" : " · lines are fitted at CST &gt; 3 only");
+      }
+
+      function point(ev) {
+        var r = svg.getBoundingClientRect(), s = W / r.width;
+        return [(ev.clientX - r.left) * s, (ev.clientY - r.top) * s];
+      }
+
+      function show(ev) {
+        var p = point(ev);
+        if (p[0] < L || p[0] > W - R || p[1] < T || p[1] > H - B) return hide();
+        var best = null, bd = 9;
+        dots.forEach(function (o) { var dd = Math.hypot(o.x - p[0], o.y - p[1]); if (dd < bd) { bd = dd; best = o; } });
+        hover.setAttribute("visibility", "visible");
+        if (best) {
+          var t = best.t, col = { 3: 2, 5: 3, 7: 4 }[tau];
+          hx.setAttribute("visibility", "hidden"); hy.setAttribute("visibility", "hidden");
+          ring.setAttribute("visibility", "visible"); ring.setAttribute("cx", best.x); ring.setAttribute("cy", best.y);
+          readout.innerHTML = "<b>" + Math.round(t[0]) + " pc</b> · <b>" + t[1] + "</b> members · CST <b>" + t[6] +
+            "</b> · Jaccard <b>" + t[5] + "</b> · " + (t[col] ? "found" : "missed") +
+            (t[7] === "held" ? " · held out" : t[7] === "low" ? " · under 5, not fitted" : "");
+        } else {
+          var dd2 = invX(p[0]), n = invY(p[1]);
+          ring.setAttribute("visibility", "hidden");
+          hx.setAttribute("visibility", "visible"); hy.setAttribute("visibility", "visible");
+          hx.setAttribute("x1", p[0]); hx.setAttribute("x2", p[0]); hy.setAttribute("y1", p[1]); hy.setAttribute("y2", p[1]);
+          readout.innerHTML = "model: <b>" + Math.round(100 * prob(n, dd2)) + "%</b> for <b>" + Math.round(n) +
+            "</b> members at <b>" + Math.round(dd2) + " pc</b>";
+        }
+      }
+
+      function hide() { hover.setAttribute("visibility", "hidden"); paint(); }
+
+      svg.addEventListener("pointermove", show);
+      svg.addEventListener("pointerdown", show);
+      svg.addEventListener("pointerleave", hide);
+      fig.querySelectorAll("[data-tau]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); tau = +b.dataset.tau; paint(); });
+      });
+      ready(fig);
+      redrawOnResize(svg, function () { build(); paint(); });
+    }
+
+    // the plots are drawn at their real width, so text stays 11px on a phone
+    function redrawOnResize(svg, draw) {
+      var w = 0;
+      function check() {
+        var now = Math.round(svg.getBoundingClientRect().width);
+        if (now && now !== w) { w = now; draw(); }
+      }
+      check();
+      if (!w) draw();
+      addEventListener("resize", check);
+    }
+
+    /* ---- CST threshold ----------------------------------------------------- */
+
+    function mountCst(fig, data) {
+      var svg = fig.querySelector("svg"), readout = fig.querySelector(".gaia-readout");
+      var input = fig.querySelector("input"), out = fig.querySelector("output");
+      var rowsDef = [["shuffle", "shuffled (null)"], ["injected", "injected clusters"], ["real_known", "known clusters"]];
+      var all = [].concat(data.cst.shuffle, data.cst.injected, data.cst.real_known);
+      var XMAX = Math.ceil(Math.max.apply(null, all) / 5) * 5;
+      var budgetAt = Math.max.apply(null, data.cst.shuffle);  // past this, no shuffled group is left
+      input.max = XMAX;
+      var W, H, L = 14, R = 14, T = 10, B = 34, rowH, BIN = 0.5, rows, line;
+      var X = function (v) { return L + v / XMAX * (W - L - R); };
+
+      function build() {
+        svg.textContent = "";
+        W = Math.round(svg.getBoundingClientRect().width) || 660;
+        H = W < 520 ? 330 : 300;
+        rowH = (H - T - B) / 3;
+        svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+        rows = rowsDef.map(function (rd, ri) {
+          var vals = data.cst[rd[0]], nb = Math.ceil(XMAX / BIN), h = new Array(nb).fill(0);
+          vals.forEach(function (v) { h[Math.min(nb - 1, Math.floor(v / BIN))]++; });
+          var top = Math.max.apply(null, h), y0 = T + (ri + 1) * rowH - 6, g = el("g", {}, svg), bars = [];
+          h.forEach(function (c, i) {
+            if (!c) return;
+            // square-root heights, so the lone groups in a tail stay visible
+            var hh = Math.max(1.5, Math.sqrt(c / top) * (rowH - 22));
+            bars.push({ v: i * BIN, r: el("rect", { x: X(i * BIN) + 0.5, y: y0 - hh, width: Math.max(1, X(BIN) - X(0) - 1), height: hh }, g) });
+          });
+          el("line", { x1: L, x2: W - R, y1: y0, y2: y0, "class": "gaia-grid" }, g);
+          el("text", { x: L, y: y0 - rowH + 20, "class": "gaia-label" }, g).textContent = rd[1] + " · " + vals.length;
+          return { key: rd[0], vals: vals, bars: bars };
+        });
+        for (var v = 0; v <= XMAX; v += 5) {
+          el("text", { x: X(v), y: H - B + 18, "class": "gaia-label gaia-label-x" }, svg).textContent = v;
+        }
+        el("text", { x: (L + W - R) / 2, y: H - 2, "class": "gaia-label gaia-label-x" }, svg).textContent = "CST";
+        [3, 5, 7].forEach(function (p) {
+          el("line", { x1: X(p), x2: X(p), y1: H - B, y2: H - B + 5, "class": "gaia-tick" }, svg);
+        });
+        el("line", { x1: X(budgetAt), x2: X(budgetAt), y1: T, y2: H - B, "class": "gaia-budget" }, svg);
+        el("text", { x: X(budgetAt) + 6, y: T + 10, "class": "gaia-label" }, svg).textContent = "budget";
+        line = el("line", { y1: T, y2: H - B, "class": "gaia-thresh" }, svg);
+      }
+
+      function above(vals, t) { var k = 0; vals.forEach(function (x) { if (x > t) k++; }); return k; }
+
+      function update() {
+        var t = +input.value;
+        out.textContent = t.toFixed(1);
+        line.setAttribute("x1", X(t)); line.setAttribute("x2", X(t));
+        rows.forEach(function (r) {
+          r.bars.forEach(function (b) { b.r.setAttribute("class", b.v + BIN > t ? "gaia-on gaia-" + r.key : "gaia-off"); });
+        });
+        var fp = above(data.cst.shuffle, t), perM = fp / data.searches * 1e6;
+        readout.innerHTML = "false positives <b>" + (fp === 0 ? 0 : perM < 10 ? perM.toFixed(1) : Math.round(perM)) + "</b> per million" +
+          (fp === 0 ? " (within budget)" : " (budget 1)") +
+          " · injected kept <b>" + above(data.cst.injected, t) + "</b> of " + data.cst.injected.length +
+          " · known kept <b>" + above(data.cst.real_known, t) + "</b> of " + data.cst.real_known.length;
+      }
+
+      // drag on the plot as well as the slider
+      var dragging = false;
+      function fromPointer(ev) {
+        var r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) * W / r.width;
+        input.value = Math.max(0, Math.min(XMAX, (x - L) / (W - L - R) * XMAX)).toFixed(1);
+        update();
+      }
+      svg.addEventListener("pointerdown", function (ev) { dragging = true; svg.setPointerCapture(ev.pointerId); fromPointer(ev); });
+      svg.addEventListener("pointermove", function (ev) { if (dragging) fromPointer(ev); });
+      svg.addEventListener("pointerup", function () { dragging = false; });
+      input.addEventListener("input", update);
+      ready(fig);
+      redrawOnResize(svg, function () { build(); update(); });
+    }
+
+    /* ---- mount ------------------------------------------------------------- */
+
+    function mountAll(sel, fn) {
+      document.querySelectorAll(sel).forEach(function (fig) {
+        whenNear(fig, function () {
+          var stars = fig.dataset.stars ? fetch(fig.dataset.stars).then(function (r) {
+            if (!r.ok) throw new Error(r.status);
+            return r.arrayBuffer();
+          }) : Promise.resolve(null);
+          Promise.all([loadData(fig.dataset.src), stars]).then(function (res) {
+            fn(fig, res[0], res[1]);
+          }).catch(function () {});  // a failed fetch leaves the figure hidden
+        });
+      });
+    }
+
+    mountAll(".gaia-sky", mountSky);
+    mountAll(".gaia-trials", mountTrials);
+    mountAll(".gaia-cst", mountCst);
+  });
 })();
 
 (function () {

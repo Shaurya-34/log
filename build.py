@@ -187,6 +187,10 @@ PULLS = {
 # What each post's live figure lets a reader do, for llms.txt. A post with
 # no figure has no entry. Every key must be a real post slug.
 INTERACTIVE = {
+    "how-many-stars": "real Gaia DR3 stars around the Pleiades and alpha Persei switching between sky "
+                      "position and proper motion, with a button that runs the shuffle null; every "
+                      "injection trial plotted against the fitted detection model; and a draggable CST "
+                      "threshold showing the false-positive rate live",
     "fly-circuit-vs-cnn": "two simulated drones, one steered by a fruit fly's looming-escape "
                           "circuit and one by a CNN, flying the same corridor in WebGL from the "
                           "same 64x48 camera, with motion opponency and escape threshold controls",
