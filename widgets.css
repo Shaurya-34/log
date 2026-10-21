@@ -75,7 +75,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .ray-switch,
 .birthday-switch,
 .blocksize-switch,
-.gaia-switch {
+.gaia-switch,
+.dllm-switch {
   position: relative;
 }
 
@@ -83,7 +84,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .ray-switch button,
 .birthday-switch button,
 .blocksize-switch button,
-.gaia-switch button {
+.gaia-switch button,
+.dllm-switch button {
   position: relative;
   z-index: 1;
 }
@@ -104,7 +106,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .ray-switch:has(.switch-indicator) button[aria-pressed="true"],
 .birthday-switch:has(.switch-indicator) button[aria-pressed="true"],
 .blocksize-switch:has(.switch-indicator) button[aria-pressed="true"],
-.gaia-switch:has(.switch-indicator) button[aria-pressed="true"] {
+.gaia-switch:has(.switch-indicator) button[aria-pressed="true"],
+.dllm-switch:has(.switch-indicator) button[aria-pressed="true"] {
   background: none;
 }
 
@@ -872,4 +875,260 @@ article.post .gaia-cst figcaption {
 
 @media (prefers-reduced-motion: reduce) {
   .gaia-switch button, .gaia-btn { transition: none; }
+}
+
+/* ---- GPT vs dLLM figures --------------------------------------------- */
+/* The replay, fluency vs repetition, steps vs GPT loss, reveal order and
+   training curves. Hidden until site.js adds .is-ready. Confidence order
+   is violet (--red), random order blue, references ink. */
+
+article.post .dllm-replay,
+article.post .dllm-scatter,
+article.post .dllm-steps,
+article.post .dllm-reveal,
+article.post .dllm-curves { margin: 2.75rem 0 3rem; }
+
+.dllm-replay > :not(figcaption):not(noscript),
+.dllm-scatter > :not(figcaption),
+.dllm-steps > :not(figcaption),
+.dllm-reveal > :not(figcaption),
+.dllm-curves > :not(figcaption) { display: none; }
+.dllm-replay.is-ready > .dllm-head,
+.dllm-replay.is-ready > .dllm-transport { display: flex; }
+.dllm-replay.is-ready > .dllm-panels { display: grid; }
+.dllm-scatter.is-ready > *,
+.dllm-steps.is-ready > *,
+.dllm-reveal.is-ready > *,
+.dllm-curves.is-ready > * { display: block; }
+
+.dllm-head {
+  flex-wrap: wrap;
+  gap: 0.75rem 1.1rem;
+  align-items: center;
+  margin-bottom: 1.1rem;
+}
+
+.dllm-switch { display: flex; gap: 0; }
+
+.dllm-switch button,
+.dllm-btn {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.dllm-switch button + button { border-left: 0; }
+.dllm-switch button:hover,
+.dllm-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+.dllm-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.dllm-select {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.dllm-select select {
+  font: 0.7rem var(--mono);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  padding: 0.3rem 0.4rem;
+}
+
+.dllm-panels {
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .dllm-panels { grid-template-columns: 1fr; }
+}
+
+/* equal-height text boxes, so the two pass counters line up */
+.dllm-panel { display: flex; flex-direction: column; }
+.dllm-panel .dllm-text { flex: 1; align-content: start; }
+
+.dllm-name {
+  margin: 0 0 0.5rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+.dllm-name span { color: var(--faint); margin-left: 0.4rem; }
+
+/* the finished text sits invisibly under the live one, so a panel is
+   its final height from the first pass and nothing below it jumps */
+.dllm-text {
+  display: grid;
+  border: 1px solid var(--hairline);
+  padding: 0.75rem 0.85rem;
+}
+
+.dllm-text pre {
+  grid-area: 1 / 1;
+  margin: 0;
+  padding: 0;
+  background: none;
+  font: 0.72rem/1.5 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+
+.dllm-text .dllm-ghost { visibility: hidden; }
+.dllm-hid { color: var(--faint); opacity: 0.45; }
+.dllm-new { color: var(--red-text); }
+
+.dllm-count {
+  margin: 0.6rem 0 0;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+/* the pass counter is the point of the replay, so it reads at a glance */
+.dllm-count b {
+  font: 400 1.7rem/1 var(--display);
+  color: var(--ink);
+  margin-right: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.dllm-transport {
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.dllm-btn { min-width: 4.6rem; }
+.dllm-scrub { flex: 1; display: flex; }
+.dllm-scrub input { width: 100%; accent-color: var(--ink); cursor: pointer; }
+
+.dllm-readout,
+.dllm-legend {
+  margin: 0.6rem 0 0;
+  min-height: 1.2em;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.dllm-readout b { font-weight: 400; color: var(--ink); }
+.dllm-legend { margin: 0 0 0.75rem; flex-wrap: wrap; gap: 0.4rem 1.1rem; }
+.dllm-scatter.is-ready > .dllm-legend,
+.dllm-steps.is-ready > .dllm-legend { display: flex; }
+
+.dllm-key::before {
+  content: "";
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  vertical-align: -0.05rem;
+}
+
+.dllm-key-confidence::before { background: var(--red); }
+.dllm-key-random::before { background: var(--blue); }
+.dllm-key-ref::before { background: var(--ink); border-radius: 0; }
+.dllm-key-zone::before { background: color-mix(in srgb, var(--red) 16%, transparent); border-radius: 0; }
+
+.dllm-plot { width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.dllm-plot:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+
+.dllm-plot .dllm-grid { stroke: var(--hairline); stroke-width: 1; }
+.dllm-plot .dllm-label {
+  fill: var(--faint);
+  font-family: var(--mono);
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.dllm-plot .dllm-label-y { text-anchor: end; }
+.dllm-plot .dllm-label-x { text-anchor: middle; }
+.dllm-plot .dllm-name-label { fill: var(--ink); }
+.dllm-plot .dllm-ref-label { fill: var(--ink); }
+
+.dllm-plot .dllm-zone { fill: var(--red); opacity: 0.08; }
+
+.dllm-plot .dllm-line { fill: none; stroke-width: 1.5; stroke-linejoin: round; }
+.dllm-plot .dllm-line.dllm-confidence { stroke: var(--red); }
+.dllm-plot .dllm-line.dllm-random { stroke: var(--blue); }
+
+.dllm-plot .dllm-pt { stroke: var(--paper); stroke-width: 1.5; cursor: default; }
+.dllm-plot .dllm-pt.dllm-confidence { fill: var(--red); }
+.dllm-plot .dllm-pt.dllm-random { fill: var(--blue); }
+.dllm-plot .dllm-pt:focus,
+.dllm-plot .dllm-ref:focus { outline: none; stroke: var(--ink); stroke-width: 2; }
+
+.dllm-plot .dllm-ref { fill: var(--ink); }
+.dllm-plot .dllm-ref-ring { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+.dllm-plot .dllm-ref-line { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.55; }
+.dllm-plot .dllm-ref-dot { stroke-dasharray: 1 4; }
+
+.dllm-plot .dllm-band { stroke: none; opacity: 0.12; }
+.dllm-plot .dllm-band.dllm-confidence { fill: var(--red); }
+.dllm-plot .dllm-band.dllm-random { fill: var(--blue); }
+.dllm-plot .dllm-dots { opacity: 0.25; }
+.dllm-plot .dllm-dots.dllm-confidence { fill: var(--red); }
+.dllm-plot .dllm-dots.dllm-random { fill: var(--blue); }
+.dllm-plot .dllm-guide { stroke: var(--grey); stroke-width: 1; stroke-dasharray: 2 3; }
+
+.dllm-plot .dllm-whisker { stroke: var(--ink); stroke-width: 1.2; opacity: 0.6; }
+.dllm-plot .dllm-cell { fill: var(--red); }
+
+.dllm-plot .dllm-curve { fill: none; stroke-linejoin: round; }
+.dllm-plot .dllm-curve-train { stroke: var(--grey); stroke-width: 1; stroke-dasharray: 4 3; }
+.dllm-plot .dllm-curve-val { stroke: var(--ink); stroke-width: 1.5; }
+
+.dllm-watch { margin-top: 1.25rem; }
+.dllm-watch .dllm-transport { display: flex; margin: 0 0 0.75rem; }
+
+.dllm-tally { margin-top: 0.75rem; }
+
+.dllm-tally p {
+  display: grid;
+  grid-template-columns: 7rem 1fr 4.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.3rem;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.dllm-tally b { font-weight: 400; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+.dllm-meter { height: 6px; background: var(--hairline); }
+.dllm-meter i { display: block; height: 100%; width: 0; background: var(--red); }
+
+article.post .dllm-replay figcaption,
+article.post .dllm-scatter figcaption,
+article.post .dllm-steps figcaption,
+article.post .dllm-reveal figcaption,
+article.post .dllm-curves figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dllm-switch button, .dllm-btn { transition: none; }
 }

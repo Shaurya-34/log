@@ -15,7 +15,7 @@
 <meta property="og:description" content="Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://shauryasharma.tech/">
-<meta property="og:image" content="https://shauryasharma.tech/images/og/how-many-stars-1eaa2f1740.png">
+<meta property="og:image" content="https://shauryasharma.tech/images/og/gpt-vs-dllm-0fd138a93f.png">
 <meta property="og:image:width" content="2400">
 <meta property="og:image:height" content="1260">
 <meta property="og:image:alt" content="Cover drawing for Shaurya · Log">
@@ -23,8 +23,8 @@
 <link rel="alternate" type="text/markdown" href="index.md">
 <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="design.css?v=2543a082">
-<link rel="stylesheet" href="widgets.css?v=ead8cab3">
+<link rel="stylesheet" href="design.css?v=45ce3e40">
+<link rel="stylesheet" href="widgets.css?v=61a20c49">
 <link rel="stylesheet" href="transitions.css?v=c2694236">
 <script src="chrome.js?v=64d6d10a"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.","url":"https://shauryasharma.tech","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"}}</script>
@@ -58,11 +58,80 @@
   </div>
 
   <div class="lh-entry" id="lh-entry" aria-live="polite">
-    <p class="label kicker"><span data-f="state">Latest</span> · <span data-f="date">16.10.26</span> · <span data-f="tag">Astronomy</span></p>
-    <h1><a data-f="title" href="how-many-stars.html">How many stars does it take to find a cluster?</a></h1>
-    <p class="standfirst" data-f="desc">A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.</p>
-    <a class="lh-read label" data-f="read" href="how-many-stars.html">Read →</a>
-    <div class="lh-cover" aria-hidden="true"><span class="cover" data-cover="how-many-stars" data-i="0" data-href="how-many-stars.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+    <p class="label kicker"><span data-f="state">Latest</span> · <span data-f="date">21.10.26</span> · <span data-f="tag">Machine learning</span></p>
+    <h1><a data-f="title" href="gpt-vs-dllm.html">One transformer, two ways to write</a></h1>
+    <p class="standfirst" data-f="desc">I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare.</p>
+    <a class="lh-read label" data-f="read" href="gpt-vs-dllm.html">Read →</a>
+    <div class="lh-cover" aria-hidden="true"><span class="cover" data-cover="gpt-vs-dllm" data-i="0" data-href="gpt-vs-dllm.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g fill="currentColor" opacity=".14">
+    <rect x="178" y="178" width="16" height="24"/>
+    <rect x="246" y="178" width="16" height="24"/>
+    <rect x="280" y="178" width="16" height="24"/>
+    <rect x="416" y="178" width="16" height="24"/>
+    <rect x="518" y="178" width="16" height="24"/>
+    <rect x="552" y="178" width="16" height="24"/>
+    <rect x="586" y="178" width="16" height="24"/>
+    <rect x="144" y="270" width="16" height="24"/>
+    <rect x="178" y="270" width="16" height="24"/>
+    <rect x="246" y="270" width="16" height="24"/>
+    <rect x="280" y="270" width="16" height="24"/>
+    <rect x="314" y="270" width="16" height="24"/>
+    <rect x="382" y="270" width="16" height="24"/>
+    <rect x="416" y="270" width="16" height="24"/>
+    <rect x="518" y="270" width="16" height="24"/>
+    <rect x="552" y="270" width="16" height="24"/>
+    <rect x="654" y="270" width="16" height="24"/>
+    <rect x="688" y="270" width="16" height="24"/>
+    <rect x="756" y="270" width="16" height="24"/>
+    <rect x="790" y="270" width="16" height="24"/>
+    <rect x="824" y="270" width="16" height="24"/>
+    <rect x="144" y="362" width="16" height="24"/>
+    <rect x="178" y="362" width="16" height="24"/>
+    <rect x="212" y="362" width="16" height="24"/>
+    <rect x="246" y="362" width="16" height="24"/>
+    <rect x="280" y="362" width="16" height="24"/>
+    <rect x="314" y="362" width="16" height="24"/>
+    <rect x="484" y="362" width="16" height="24"/>
+    <rect x="518" y="362" width="16" height="24"/>
+    <rect x="552" y="362" width="16" height="24"/>
+    <rect x="654" y="362" width="16" height="24"/>
+    <rect x="722" y="362" width="16" height="24"/>
+    <rect x="790" y="362" width="16" height="24"/>
+    <rect x="824" y="362" width="16" height="24"/>
+    <rect x="858" y="362" width="16" height="24"/>
+    <rect x="892" y="362" width="16" height="24"/>
+  </g>
+
+  <g class="cv-letters" fill="currentColor" font-family="monospace" font-size="30">
+    <g class="cv-r" style="--d:129ms"><rect x="144" y="178" width="16" height="24" opacity="0"/><text x="140" y="200">F</text></g>
+    <g class="cv-r" style="--d:1550ms"><rect x="212" y="178" width="16" height="24" opacity="0"/><text x="208" y="200">R</text></g>
+    <g class="cv-r" style="--d:987ms"><rect x="348" y="178" width="16" height="24" opacity="0"/><text x="344" y="200">C</text></g>
+    <g class="cv-r" style="--d:250ms"><rect x="382" y="178" width="16" height="24" opacity="0"/><text x="378" y="200">I</text></g>
+    <g class="cv-r" style="--d:1308ms"><rect x="450" y="178" width="16" height="24" opacity="0"/><text x="446" y="200">I</text></g>
+    <g class="cv-r" style="--d:990ms"><rect x="484" y="178" width="16" height="24" opacity="0"/><text x="480" y="200">Z</text></g>
+    <g class="cv-r" style="--d:972ms"><rect x="212" y="270" width="16" height="24" opacity="0"/><text x="208" y="292">F</text></g>
+    <g class="cv-r" style="--d:765ms"><rect x="484" y="270" width="16" height="24" opacity="0"/><text x="480" y="292">P</text></g>
+    <g class="cv-r" style="--d:1257ms"><rect x="586" y="270" width="16" height="24" opacity="0"/><text x="582" y="292">C</text></g>
+    <g class="cv-r" style="--d:181ms"><rect x="620" y="270" width="16" height="24" opacity="0"/><text x="616" y="292">E</text></g>
+    <g class="cv-r" style="--d:704ms"><rect x="348" y="362" width="16" height="24" opacity="0"/><text x="344" y="384">R</text></g>
+    <g class="cv-r" style="--d:660ms"><rect x="382" y="362" width="16" height="24" opacity="0"/><text x="378" y="384">,</text></g>
+    <g class="cv-r" style="--d:608ms"><rect x="450" y="362" width="16" height="24" opacity="0"/><text x="446" y="384">H</text></g>
+    <g class="cv-r" style="--d:479ms"><rect x="620" y="362" width="16" height="24" opacity="0"/><text x="616" y="384">M</text></g>
+    <g class="cv-r" style="--d:1639ms"><rect x="756" y="362" width="16" height="24" opacity="0"/><text x="752" y="384">P</text></g>
+  </g>
+
+  <path
+    class="draw-path" pathLength="1"
+    d="M389 190 L627 374 L457 374 L389 374 L491 282 L219 282 L593 282 L219 190"
+    stroke="currentColor"
+    stroke-width="1.2"/>
+
+  <rect x="144" y="544" width="16" height="22" fill="currentColor" opacity=".14"/>
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="172" y="560">= [MASK]</text>
+    <text x="640" y="560">NOT LEFT TO RIGHT</text>
+  </g>
+</svg></span><span class="cover" data-cover="how-many-stars" data-i="1" data-href="how-many-stars.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="currentColor" opacity=".22">
     <circle cx="348" cy="140" r="2.2"/>
     <circle cx="112" cy="495" r="1.4"/>
@@ -262,7 +331,7 @@
     <text x="790" y="110">FOUND</text>
     <text x="110" y="610">MISSED</text>
   </g>
-</svg></span><span class="cover" data-cover="fly-circuit-vs-cnn" data-i="1" data-href="fly-circuit-vs-cnn.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="fly-circuit-vs-cnn" data-i="2" data-href="fly-circuit-vs-cnn.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M500 250L60 600"/>
     <path d="M500 250L940 600"/>
@@ -299,7 +368,7 @@
     <text x="770" y="364">NOT ON COURSE</text>
     <text x="90" y="600">ESCAPE ANYWAY</text>
   </g>
-</svg></span><span class="cover" data-cover="understanding-alphafolds-plddt-pae-and-ptm" data-i="2" data-href="understanding-alphafolds-plddt-pae-and-ptm.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="understanding-alphafolds-plddt-pae-and-ptm" data-i="3" data-href="understanding-alphafolds-plddt-pae-and-ptm.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".15">
     <path d="M120 110H880"/>
     <path d="M120 580H880"/>
@@ -348,7 +417,7 @@
     <text x="712" y="458" opacity=".55">i</text>
     <text x="120" y="620">CONFIDENT, NOT THE SAME AS CORRECT</text>
   </g>
-</svg></span><span class="cover" data-cover="programming-an-attention-kernel-in-triton" data-i="3" data-href="programming-an-attention-kernel-in-triton.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="programming-an-attention-kernel-in-triton" data-i="4" data-href="programming-an-attention-kernel-in-triton.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M120 540H880"/>
     <path d="M120 460H880"/>
@@ -400,7 +469,7 @@
     <text x="655" y="145">← NOT YET CLIMBED</text>
     <text x="120" y="620">FOUR RUNGS UP, ONE WALL</text>
   </g>
-</svg></span><span class="cover" data-cover="birthday-attack" data-i="4" data-href="birthday-attack.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="birthday-attack" data-i="5" data-href="birthday-attack.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M90 500H910"/>
     <path d="M500 80V600"/>
@@ -448,7 +517,7 @@
     <text x="605" y="300">← SAME BUCKET</text>
     <text x="90" y="600">√N DRAWS, NOT N</text>
   </g>
-</svg></span><span class="cover" data-cover="where-does-computation-end" data-i="5" data-href="where-does-computation-end.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="where-does-computation-end" data-i="6" data-href="where-does-computation-end.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" stroke-width="1.4">
     <path opacity=".18" d="M120 80H880M120 185H880M120 290H880M120 395H880M120 500H880M120 570H880"/>
     <path opacity=".18" d="M180 55V595M340 55V595M500 55V595M660 55V595M820 55V595"/>
@@ -486,7 +555,7 @@
     <text x="650" y="329">BOUNDED</text>
     <text x="820" y="55">ESCAPES →</text>
   </g>
-</svg></span><span class="cover" data-cover="self-rewriting-mandelbrot" data-i="6" data-href="self-rewriting-mandelbrot.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="self-rewriting-mandelbrot" data-i="7" data-href="self-rewriting-mandelbrot.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" stroke-width="1" opacity=".22">
     <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
     <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
@@ -529,7 +598,7 @@
     <text x="610" y="311">SELF-SIMILAR</text>
     <text x="120" y="440">REWRITES →</text>
   </g>
-</svg></span><span class="cover" data-cover="never-repeating-never-leaving" data-i="7" data-href="never-repeating-never-leaving.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="never-repeating-never-leaving" data-i="8" data-href="never-repeating-never-leaving.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M90 520H910"/>
     <path d="M500 70V580"/>
@@ -591,7 +660,7 @@
     <text x="615" y="324">ATTRACTOR</text>
     <text x="100" y="440">NEVER CLOSES →</text>
   </g>
-</svg></span><span class="cover" data-cover="marching-with-rays" data-i="8" data-href="marching-with-rays.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="marching-with-rays" data-i="9" data-href="marching-with-rays.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" stroke-width="1.3">
     <circle cx="720" cy="325" r="55"/>
     <circle cx="720" cy="325" r="105"/>
@@ -641,7 +710,7 @@
     <text x="350" y="304">RAY</text>
     <text x="790" y="329">STEP</text>
   </g>
-</svg></span><span class="cover" data-cover="grok-grok" data-i="9" data-href="grok-grok.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="grok-grok" data-i="10" data-href="grok-grok.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="currentColor">
     <circle cx="120" cy="120" r="2"/>
     <circle cx="150" cy="165" r="1.5"/>
@@ -711,31 +780,238 @@
 </svg></span></div>
   </div>
 
-  <div class="lh-strip" style="--days: 89">
+  <div class="lh-strip" style="--days: 94">
     <div class="lh-scroll">
-      <div class="lh-months" aria-hidden="true"><span class="lh-month" style="grid-column: 1 / span 12">Jul</span><span class="lh-month" style="grid-column: 13 / span 31">Aug</span><span class="lh-month" style="grid-column: 44 / span 30">Sep</span><span class="lh-month" style="grid-column: 74 / span 16">Oct</span></div>
-      <div class="lh-cells"><a class="cell is-entry" href="grok-grok.html" data-i="9" aria-label="20.07.26: grok.....grok ?"></a><a class="cell is-entry" href="marching-with-rays.html" data-i="8" aria-label="21.07.26: Marching with rays"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="never-repeating-never-leaving.html" data-i="7" aria-label="24.07.26: Never repeating, never leaving"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="self-rewriting-mandelbrot.html" data-i="6" aria-label="06.08.26: A renderer that keeps notes on itself"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="where-does-computation-end.html" data-i="5" aria-label="18.08.26: Where Does Computation End?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="birthday-attack.html" data-i="4" aria-label="02.09.26: Twenty-three people, 256 bits"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="programming-an-attention-kernel-in-triton.html" data-i="3" aria-label="08.09.26: Programming an attention kernel in Triton"></a><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="understanding-alphafolds-plddt-pae-and-ptm.html" data-i="2" aria-label="10.09.26: Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="fly-circuit-vs-cnn.html" data-i="1" aria-label="16.09.26: A fly&#x27;s escape reflex, flying a drone"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry is-current" href="how-many-stars.html" data-i="0" aria-label="16.10.26: How many stars does it take to find a cluster?"></a></div>
+      <div class="lh-months" aria-hidden="true"><span class="lh-month" style="grid-column: 1 / span 12">Jul</span><span class="lh-month" style="grid-column: 13 / span 31">Aug</span><span class="lh-month" style="grid-column: 44 / span 30">Sep</span><span class="lh-month" style="grid-column: 74 / span 21">Oct</span></div>
+      <div class="lh-cells"><a class="cell is-entry" href="grok-grok.html" data-i="10" aria-label="20.07.26: grok.....grok ?"></a><a class="cell is-entry" href="marching-with-rays.html" data-i="9" aria-label="21.07.26: Marching with rays"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="never-repeating-never-leaving.html" data-i="8" aria-label="24.07.26: Never repeating, never leaving"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="self-rewriting-mandelbrot.html" data-i="7" aria-label="06.08.26: A renderer that keeps notes on itself"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="where-does-computation-end.html" data-i="6" aria-label="18.08.26: Where Does Computation End?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="birthday-attack.html" data-i="5" aria-label="02.09.26: Twenty-three people, 256 bits"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="programming-an-attention-kernel-in-triton.html" data-i="4" aria-label="08.09.26: Programming an attention kernel in Triton"></a><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="understanding-alphafolds-plddt-pae-and-ptm.html" data-i="3" aria-label="10.09.26: Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="fly-circuit-vs-cnn.html" data-i="2" aria-label="16.09.26: A fly&#x27;s escape reflex, flying a drone"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="how-many-stars.html" data-i="1" aria-label="16.10.26: How many stars does it take to find a cluster?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry is-current" href="gpt-vs-dllm.html" data-i="0" aria-label="21.10.26: One transformer, two ways to write"></a></div>
     </div>
     <div class="lh-ends">
       <span class="label">20.07.26</span>
-      <span class="label">Today · 16.10.26</span>
+      <span class="label">Today · 21.10.26</span>
     </div>
   </div>
 
   <div class="lh-foot">
     <p>I think of this less as a blog and more as a log: a running record of what I'm building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.</p>
-    <span class="label">10 entries · 89 days · <a href="feed.xml">RSS ↗</a></span>
+    <span class="label">11 entries · 94 days · <a href="feed.xml">RSS ↗</a></span>
   </div>
-  <script type="application/json" id="log-data">[{"t": "How many stars does it take to find a cluster?", "d": "16.10.26", "tag": "Astronomy", "desc": "A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.", "href": "how-many-stars.html", "state": "Latest"}, {"t": "A fly's escape reflex, flying a drone", "d": "16.09.26", "tag": "Machine learning", "desc": "A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera.", "href": "fly-circuit-vs-cnn.html", "state": "09 of 10"}, {"t": "Understanding AlphaFold's pLDDT, PAE, and pTM", "d": "10.09.26", "tag": "Machine learning", "desc": "AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.", "href": "understanding-alphafolds-plddt-pae-and-ptm.html", "state": "08 of 10"}, {"t": "Programming an attention kernel in Triton", "d": "08.09.26", "tag": "GPU programming", "desc": "Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.", "href": "programming-an-attention-kernel-in-triton.html", "state": "07 of 10"}, {"t": "Twenty-three people, 256 bits", "d": "02.09.26", "tag": "Cryptography", "desc": "A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.", "href": "birthday-attack.html", "state": "06 of 10"}, {"t": "Where Does Computation End?", "d": "18.08.26", "tag": "Computation", "desc": "A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.", "href": "where-does-computation-end.html", "state": "05 of 10"}, {"t": "A renderer that keeps notes on itself", "d": "06.08.26", "tag": "Python", "desc": "A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.", "href": "self-rewriting-mandelbrot.html", "state": "04 of 10"}, {"t": "Never repeating, never leaving", "d": "24.07.26", "tag": "Chaos", "desc": "Four chaotic systems, one Python framework, and the one that refused to fit it.", "href": "never-repeating-never-leaving.html", "state": "03 of 10"}, {"t": "Marching with rays", "d": "21.07.26", "tag": "Graphics", "desc": "Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.", "href": "marching-with-rays.html", "state": "02 of 10"}, {"t": "grok.....grok ?", "d": "20.07.26", "tag": "Research", "desc": "What happens when you push a model past generalization? Does it know the rule, or just the data?", "href": "grok-grok.html", "state": "01 of 10"}]</script>
+  <script type="application/json" id="log-data">[{"t": "One transformer, two ways to write", "d": "21.10.26", "tag": "Machine learning", "desc": "I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare.", "href": "gpt-vs-dllm.html", "state": "Latest"}, {"t": "How many stars does it take to find a cluster?", "d": "16.10.26", "tag": "Astronomy", "desc": "A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.", "href": "how-many-stars.html", "state": "10 of 11"}, {"t": "A fly's escape reflex, flying a drone", "d": "16.09.26", "tag": "Machine learning", "desc": "A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera.", "href": "fly-circuit-vs-cnn.html", "state": "09 of 11"}, {"t": "Understanding AlphaFold's pLDDT, PAE, and pTM", "d": "10.09.26", "tag": "Machine learning", "desc": "AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.", "href": "understanding-alphafolds-plddt-pae-and-ptm.html", "state": "08 of 11"}, {"t": "Programming an attention kernel in Triton", "d": "08.09.26", "tag": "GPU programming", "desc": "Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.", "href": "programming-an-attention-kernel-in-triton.html", "state": "07 of 11"}, {"t": "Twenty-three people, 256 bits", "d": "02.09.26", "tag": "Cryptography", "desc": "A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.", "href": "birthday-attack.html", "state": "06 of 11"}, {"t": "Where Does Computation End?", "d": "18.08.26", "tag": "Computation", "desc": "A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.", "href": "where-does-computation-end.html", "state": "05 of 11"}, {"t": "A renderer that keeps notes on itself", "d": "06.08.26", "tag": "Python", "desc": "A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.", "href": "self-rewriting-mandelbrot.html", "state": "04 of 11"}, {"t": "Never repeating, never leaving", "d": "24.07.26", "tag": "Chaos", "desc": "Four chaotic systems, one Python framework, and the one that refused to fit it.", "href": "never-repeating-never-leaving.html", "state": "03 of 11"}, {"t": "Marching with rays", "d": "21.07.26", "tag": "Graphics", "desc": "Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.", "href": "marching-with-rays.html", "state": "02 of 11"}, {"t": "grok.....grok ?", "d": "20.07.26", "tag": "Research", "desc": "What happens when you push a model past generalization? Does it know the rule, or just the data?", "href": "grok-grok.html", "state": "01 of 11"}]</script>
 </section>
 
 <section class="mosaic-wrap">
   <div class="mosaic-head">
     <h2>Before that</h2>
-    <a class="label" href="#archive">All 10 in the archive ↓</a>
+    <a class="label" href="#archive">All 11 in the archive ↓</a>
   </div>
 
   <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="how-many-stars.html">
+      <span class="tile-cover" data-cover="how-many-stars"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g fill="currentColor" opacity=".22">
+    <circle cx="348" cy="140" r="2.2"/>
+    <circle cx="112" cy="495" r="1.4"/>
+    <circle cx="384" cy="91" r="2.2"/>
+    <circle cx="255" cy="106" r="1.8"/>
+    <circle cx="130" cy="108" r="1.8"/>
+    <circle cx="121" cy="360" r="1.4"/>
+    <circle cx="612" cy="369" r="1.4"/>
+    <circle cx="566" cy="270" r="1.4"/>
+    <circle cx="110" cy="515" r="1.8"/>
+    <circle cx="430" cy="347" r="2.2"/>
+    <circle cx="335" cy="493" r="1.4"/>
+    <circle cx="159" cy="363" r="1.4"/>
+    <circle cx="390" cy="350" r="1.4"/>
+    <circle cx="555" cy="388" r="1.8"/>
+    <circle cx="655" cy="287" r="1.8"/>
+    <circle cx="470" cy="549" r="1.8"/>
+    <circle cx="328" cy="481" r="2.2"/>
+    <circle cx="741" cy="103" r="1.8"/>
+    <circle cx="522" cy="524" r="2.2"/>
+    <circle cx="456" cy="383" r="1.4"/>
+    <circle cx="172" cy="282" r="1.8"/>
+    <circle cx="201" cy="319" r="1.4"/>
+    <circle cx="897" cy="101" r="2.2"/>
+    <circle cx="563" cy="524" r="1.8"/>
+    <circle cx="363" cy="246" r="1.8"/>
+    <circle cx="569" cy="302" r="1.4"/>
+    <circle cx="882" cy="311" r="2.2"/>
+    <circle cx="126" cy="448" r="1.8"/>
+    <circle cx="627" cy="586" r="1.8"/>
+    <circle cx="315" cy="264" r="2.2"/>
+    <circle cx="368" cy="559" r="1.8"/>
+    <circle cx="215" cy="122" r="1.4"/>
+    <circle cx="258" cy="212" r="2.2"/>
+    <circle cx="283" cy="267" r="1.8"/>
+    <circle cx="139" cy="298" r="2.2"/>
+    <circle cx="309" cy="133" r="1.8"/>
+    <circle cx="813" cy="208" r="1.8"/>
+    <circle cx="918" cy="422" r="1.8"/>
+    <circle cx="894" cy="140" r="1.4"/>
+    <circle cx="200" cy="409" r="1.4"/>
+    <circle cx="487" cy="372" r="1.8"/>
+    <circle cx="312" cy="137" r="2.2"/>
+    <circle cx="388" cy="360" r="1.4"/>
+    <circle cx="664" cy="333" r="2.2"/>
+    <circle cx="633" cy="452" r="1.8"/>
+    <circle cx="844" cy="473" r="2.2"/>
+    <circle cx="756" cy="268" r="1.8"/>
+    <circle cx="409" cy="315" r="1.8"/>
+    <circle cx="124" cy="96" r="1.4"/>
+    <circle cx="449" cy="118" r="2.2"/>
+    <circle cx="115" cy="60" r="1.4"/>
+    <circle cx="531" cy="563" r="2.2"/>
+    <circle cx="92" cy="523" r="2.2"/>
+    <circle cx="394" cy="396" r="1.8"/>
+    <circle cx="588" cy="311" r="1.4"/>
+    <circle cx="800" cy="586" r="1.8"/>
+    <circle cx="483" cy="225" r="1.4"/>
+    <circle cx="158" cy="242" r="1.8"/>
+    <circle cx="482" cy="427" r="2.2"/>
+    <circle cx="90" cy="564" r="2.2"/>
+    <circle cx="381" cy="426" r="1.4"/>
+    <circle cx="722" cy="218" r="2.2"/>
+    <circle cx="812" cy="429" r="1.8"/>
+    <circle cx="516" cy="541" r="1.8"/>
+    <circle cx="734" cy="342" r="2.2"/>
+    <circle cx="354" cy="178" r="1.4"/>
+    <circle cx="763" cy="494" r="2.2"/>
+    <circle cx="761" cy="166" r="1.8"/>
+    <circle cx="376" cy="75" r="1.4"/>
+    <circle cx="749" cy="310" r="1.4"/>
+    <circle cx="666" cy="567" r="1.8"/>
+    <circle cx="765" cy="443" r="1.8"/>
+    <circle cx="891" cy="253" r="1.4"/>
+    <circle cx="158" cy="309" r="1.8"/>
+    <circle cx="246" cy="391" r="2.2"/>
+    <circle cx="793" cy="314" r="2.2"/>
+    <circle cx="366" cy="401" r="2.2"/>
+    <circle cx="173" cy="266" r="2.2"/>
+    <circle cx="715" cy="313" r="1.4"/>
+    <circle cx="443" cy="397" r="1.4"/>
+    <circle cx="759" cy="575" r="1.8"/>
+    <circle cx="468" cy="454" r="1.4"/>
+    <circle cx="693" cy="150" r="1.4"/>
+    <circle cx="94" cy="373" r="1.8"/>
+    <circle cx="764" cy="137" r="2.2"/>
+    <circle cx="913" cy="408" r="1.8"/>
+    <circle cx="204" cy="351" r="1.4"/>
+    <circle cx="82" cy="575" r="2.2"/>
+    <circle cx="158" cy="457" r="1.4"/>
+    <circle cx="443" cy="522" r="1.4"/>
+    <circle cx="94" cy="173" r="2.2"/>
+    <circle cx="277" cy="371" r="1.8"/>
+    <circle cx="538" cy="502" r="1.4"/>
+    <circle cx="853" cy="248" r="1.8"/>
+    <circle cx="640" cy="492" r="2.2"/>
+    <circle cx="432" cy="546" r="2.2"/>
+    <circle cx="182" cy="140" r="2.2"/>
+    <circle cx="86" cy="293" r="1.4"/>
+    <circle cx="593" cy="471" r="1.4"/>
+    <circle cx="218" cy="311" r="2.2"/>
+    <circle cx="173" cy="93" r="2.2"/>
+    <circle cx="516" cy="354" r="1.4"/>
+    <circle cx="830" cy="90" r="1.4"/>
+    <circle cx="308" cy="469" r="2.2"/>
+    <circle cx="459" cy="75" r="1.4"/>
+    <circle cx="451" cy="385" r="2.2"/>
+    <circle cx="591" cy="166" r="1.8"/>
+    <circle cx="459" cy="343" r="1.8"/>
+    <circle cx="507" cy="191" r="2.2"/>
+    <circle cx="824" cy="559" r="1.8"/>
+    <circle cx="864" cy="533" r="1.4"/>
+    <circle cx="792" cy="133" r="1.4"/>
+    <circle cx="407" cy="227" r="2.2"/>
+    <circle cx="277" cy="99" r="2.2"/>
+    <circle cx="330" cy="125" r="1.4"/>
+    <circle cx="878" cy="401" r="1.8"/>
+    <circle cx="193" cy="528" r="1.8"/>
+    <circle cx="259" cy="565" r="1.8"/>
+    <circle cx="831" cy="146" r="2.2"/>
+    <circle cx="786" cy="146" r="1.8"/>
+    <circle cx="925" cy="274" r="1.8"/>
+    <circle cx="238" cy="229" r="2.2"/>
+    <circle cx="385" cy="239" r="1.8"/>
+    <circle cx="449" cy="70" r="1.8"/>
+    <circle cx="515" cy="217" r="1.4"/>
+    <circle cx="167" cy="547" r="1.4"/>
+    <circle cx="906" cy="116" r="1.8"/>
+    <circle cx="304" cy="540" r="1.4"/>
+    <circle cx="303" cy="129" r="1.8"/>
+    <circle cx="801" cy="418" r="1.8"/>
+    <circle cx="419" cy="344" r="2.2"/>
+    <circle cx="561" cy="431" r="1.4"/>
+    <circle cx="310" cy="484" r="1.4"/>
+    <circle cx="436" cy="98" r="1.4"/>
+    <circle cx="616" cy="485" r="1.4"/>
+    <circle cx="593" cy="178" r="1.8"/>
+    <circle cx="812" cy="300" r="1.8"/>
+    <circle cx="925" cy="281" r="1.8"/>
+    <circle cx="605" cy="83" r="2.2"/>
+    <circle cx="275" cy="118" r="1.4"/>
+    <circle cx="295" cy="156" r="1.8"/>
+    <circle cx="611" cy="341" r="1.4"/>
+    <circle cx="319" cy="325" r="1.4"/>
+    <circle cx="303" cy="486" r="1.8"/>
+    <circle cx="102" cy="70" r="2.2"/>
+    <circle cx="544" cy="160" r="1.8"/>
+    <circle cx="281" cy="297" r="2.2"/>
+    <circle cx="774" cy="289" r="1.8"/>
+    <circle cx="539" cy="531" r="2.2"/>
+    <circle cx="335" cy="174" r="1.4"/>
+  </g>
+
+  <g fill="currentColor">
+    <circle cx="690" cy="124" r="3.4"/>
+    <circle cx="737" cy="182" r="2.8"/>
+    <circle cx="769" cy="154" r="3.4"/>
+    <circle cx="700" cy="144" r="2.8"/>
+    <circle cx="694" cy="143" r="2.8"/>
+    <circle cx="704" cy="147" r="3.4"/>
+    <circle cx="683" cy="118" r="2.2"/>
+    <circle cx="691" cy="152" r="2.2"/>
+    <circle cx="700" cy="150" r="2.8"/>
+    <circle cx="703" cy="150" r="3.4"/>
+    <circle cx="703" cy="148" r="2.2"/>
+    <circle cx="695" cy="155" r="2.2"/>
+    <circle cx="699" cy="155" r="3.4"/>
+    <circle cx="704" cy="159" r="3.4"/>
+    <circle cx="701" cy="148" r="2.2"/>
+    <circle cx="687" cy="157" r="2.2"/>
+    <circle cx="683" cy="137" r="2.2"/>
+    <circle cx="684" cy="143" r="3.4"/>
+    <circle cx="710" cy="144" r="3.4"/>
+    <circle cx="687" cy="158" r="2.8"/>
+    <circle cx="698" cy="155" r="3.4"/>
+    <circle cx="674" cy="127" r="2.2"/>
+    <circle cx="674" cy="148" r="2.8"/>
+    <circle cx="695" cy="113" r="3.4"/>
+    <circle cx="672" cy="149" r="2.2"/>
+    <circle cx="716" cy="128" r="3.4"/>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1" opacity=".45">
+    <path d="M90 325H910" stroke-dasharray="4 6"/>
+    <path d="M520 590V90" stroke-dasharray="4 6"/>
+  </g>
+
+  <path
+    class="draw-path" pathLength="1"
+    d="M110 560 L130 560 L150 559 L170 559 L190 559 L210 558 L230 558 L250 557 L270 555 L290 553 L310 550 L330 546 L350 540 L370 531 L390 520 L410 504 L430 483 L450 457 L470 425 L490 388 L510 346 L530 304 L550 262 L570 225 L590 193 L610 167 L630 146 L650 130 L670 119 L690 110 L710 104 L730 100 L750 97 L770 95 L790 93 L810 92 L830 92 L850 91 L870 91 L890 91 L910 90"
+    stroke="currentColor"
+    stroke-width="1.4"/>
+
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="100" y="315">EVEN CHANCE</text>
+    <text x="530" y="610">~10 MEMBERS</text>
+    <text x="790" y="110">FOUND</text>
+    <text x="110" y="610">MISSED</text>
+  </g>
+</svg></span>
+      <span class="label">Astronomy</span>
+      <h3>How many stars does it take to find a cluster?</h3>
+      <p>A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.</p>
+      <span class="meta label">16.10.26</span>
+    </a>
     <a class="tile-post" href="fly-circuit-vs-cnn.html">
       <span class="tile-cover" data-cover="fly-circuit-vs-cnn"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
@@ -895,61 +1171,6 @@
       <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
       <span class="meta label">08.09.26</span>
     </a>
-    <a class="tile-post" href="birthday-attack.html">
-      <span class="tile-cover" data-cover="birthday-attack"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="currentColor" opacity=".16">
-    <path d="M90 500H910"/>
-    <path d="M500 80V600"/>
-    <path d="M170 560L830 130"/>
-  </g>
-
-  <g fill="currentColor">
-    <circle cx="150" cy="180" r="2.5"/>
-    <circle cx="205" cy="240" r="2"/>
-    <circle cx="260" cy="150" r="2.5"/>
-    <circle cx="310" cy="290" r="2"/>
-    <circle cx="360" cy="200" r="2.5"/>
-    <circle cx="415" cy="340" r="2"/>
-    <circle cx="470" cy="160" r="2.5"/>
-    <circle cx="520" cy="380" r="2"/>
-    <circle cx="230" cy="410" r="2.5"/>
-    <circle cx="290" cy="470" r="2"/>
-    <circle cx="340" cy="420" r="2.5"/>
-    <circle cx="605" cy="250" r="2"/>
-    <circle cx="655" cy="320" r="2.5"/>
-    <circle cx="700" cy="220" r="2"/>
-    <circle cx="750" cy="380" r="2.5"/>
-    <circle cx="800" cy="290" r="2"/>
-    <circle cx="845" cy="430" r="2.5"/>
-    <circle cx="600" cy="470" r="2"/>
-    <circle cx="660" cy="500" r="2.5"/>
-    <circle cx="180" cy="330" r="2"/>
-    <circle cx="440" cy="470" r="2.5"/>
-    <circle cx="500" cy="520" r="2"/>
-    <circle cx="720" cy="150" r="2"/>
-    <circle cx="770" cy="490" r="2.5"/>
-  </g>
-
-  <path
-    d="M150 180 L360 200 L470 160 L605 250 L700 220 L575 305 L720 150 L575 305"
-    class="draw-path" pathLength="1"
-    stroke="currentColor"
-    stroke-width="1.2"/>
-
-  <circle cx="571" cy="301" r="3" fill="currentColor"/>
-  <circle cx="579" cy="309" r="3" fill="currentColor"/>
-  <circle cx="575" cy="305" r="20" stroke="currentColor" stroke-width="1"/>
-
-  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
-    <text x="605" y="300">← SAME BUCKET</text>
-    <text x="90" y="600">√N DRAWS, NOT N</text>
-  </g>
-</svg></span>
-      <span class="label">Cryptography</span>
-      <h3>Twenty-three people, 256 bits</h3>
-      <p>A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.</p>
-      <span class="meta label">02.09.26</span>
-    </a>
   </div>
 </section>
 
@@ -957,8 +1178,8 @@
   <div class="archive-head">
     <h2>Archive</h2>
     <div class="filters" role="group" aria-label="Filter by topic">
-      <button type="button" data-tag="" aria-pressed="true">All<span>10</span></button>
-      <button type="button" data-tag="machine learning" aria-pressed="false">Machine learning<span>5</span></button>
+      <button type="button" data-tag="" aria-pressed="true">All<span>11</span></button>
+      <button type="button" data-tag="machine learning" aria-pressed="false">Machine learning<span>6</span></button>
       <button type="button" data-tag="python" aria-pressed="false">Python<span>3</span></button>
       <button type="button" data-tag="physics" aria-pressed="false">Physics<span>2</span></button>
     </div>
@@ -966,6 +1187,7 @@
   <div class="year">
     <h3 class="year-label">2026</h3>
     <ol class="rows">
+      <li data-tags="machine learning|diffusion"><a href="gpt-vs-dllm.html"><time class="d" datetime="2026-10-21">21.10</time><span class="t">One transformer, two ways to write</span><span class="tags label">Machine learning · Diffusion</span></a></li>
       <li data-tags="astronomy|machine learning"><a href="how-many-stars.html"><time class="d" datetime="2026-10-16">16.10</time><span class="t">How many stars does it take to find a cluster?</span><span class="tags label">Astronomy · Machine learning</span></a></li>
       <li data-tags="machine learning|neuroscience"><a href="fly-circuit-vs-cnn.html"><time class="d" datetime="2026-09-16">16.09</time><span class="t">A fly's escape reflex, flying a drone</span><span class="tags label">Machine learning · Neuroscience</span></a></li>
       <li data-tags="machine learning|structural biology|alphafold"><a href="understanding-alphafolds-plddt-pae-and-ptm.html"><time class="d" datetime="2026-09-10">10.09</time><span class="t">Understanding AlphaFold's pLDDT, PAE, and pTM</span><span class="tags label">Machine learning · Structural biology</span></a></li>

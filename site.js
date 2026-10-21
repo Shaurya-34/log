@@ -2367,6 +2367,451 @@
     mountAll(".gaia-trials", mountTrials);
     mountAll(".gaia-cst", mountCst);
   });
+
+  /* ------------------------------------------------------------
+     GPT vs dLLM post: the replay, fluency vs repetition, steps vs
+     GPT loss, reveal order and the training curves. One data file
+     (data/gpt-vs-dllm.json, cut from llm_vs_dllm.py's results.json
+     by dev/dllm/prep.py), fetched once the first figure comes near
+     the screen.
+     ------------------------------------------------------------ */
+
+  run(function () {
+    var SVGNS = "http://www.w3.org/2000/svg";
+    var STEPS = [256, 128, 64, 32, 16, 8, 4, 2, 1];
+    var TYPES = [["space", "space"], ["vowel", "vowel"], ["consonant", "consonant"],
+                 ["punctuation", "punctuation"], ["line_break", "line break"]];
+    var dataPromise = null;
+
+    function load(src) {
+      if (!dataPromise) {
+        dataPromise = fetch(src).then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          return r.json();
+        });
+      }
+      return dataPromise;
+    }
+
+    function whenNear(fig, fn) {
+      if (!("IntersectionObserver" in window)) return fn();
+      var io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { io.disconnect(); fn(); }
+      }, { rootMargin: "600px 0px" });
+      io.observe(fig);
+    }
+
+    function el(tag, attrs, parent, text) {
+      var e = document.createElementNS(SVGNS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (text !== undefined) e.textContent = text;
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+
+    function pressOne(group, btn) {
+      group.querySelectorAll("button").forEach(function (b) {
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      });
+      if (group.place) group.place();
+    }
+
+    function ready(fig) {
+      fig.classList.add("is-ready");
+      fig.querySelectorAll(".dllm-switch").forEach(function (g) {
+        g.place = mountSwitchIndicator(g);
+        g.place();
+      });
+    }
+
+    // plots are drawn at their real width, so 11px labels stay 11px on a phone
+    function sized(svg, height, draw) {
+      var w = 0;
+      function check() {
+        var now = Math.round(svg.getBoundingClientRect().width);
+        if (!now || now === w) return;
+        w = now;
+        var h = height(w);
+        svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+        svg.textContent = "";
+        draw(w, h);
+      }
+      check();
+      addEventListener("resize", check);
+    }
+
+    function fmt(v) { return v.toFixed(2); }
+    function pct(v) { return (100 * v).toFixed(1) + "%"; }
+
+    function charType(c) {
+      if (c === " ") return "space";
+      if (c === "\n") return "line_break";
+      if (/[aeiouAEIOU]/.test(c)) return "vowel";
+      if (/[a-zA-Z]/.test(c)) return "consonant";
+      if (/[!-\/:-@\[-`{-~]/.test(c)) return "punctuation";
+      return "other";
+    }
+
+    function esc(c) {
+      return c === "&" ? "&amp;" : c === "<" ? "&lt;" : c === ">" ? "&gt;" : c;
+    }
+
+    // a sample as HTML. state(i): 0 hidden (drawn as a dot), 1 shown,
+    // 2 revealed on this pass (CSS flashes it)
+    function textHTML(text, state) {
+      var out = "", cls = "", buf = "";
+      function flush() { out += cls ? '<span class="' + cls + '">' + buf + "</span>" : buf; }
+      for (var i = 0; i < text.length; i++) {
+        var s = state(i);
+        var k = s === 0 ? "dllm-hid" : s === 2 ? "dllm-new" : "";
+        if (k !== cls) { flush(); cls = k; buf = ""; }
+        buf += s === 0 ? "·" : esc(text[i]);
+      }
+      flush();
+      return out;
+    }
+
+    // play / pause / scrub over passes 0..max; render(t) draws pass t
+    function player(root, max, render) {
+      var btn = root.querySelector("[data-play]");
+      var input = root.querySelector('input[type="range"]');
+      var t = 0, raf = 0, last = 0, RATE = 40;  // passes per second
+      input.max = max;
+      function set(v) {
+        t = Math.max(0, Math.min(max, v));
+        input.value = Math.floor(t);
+        render(Math.floor(t));
+        btn.textContent = raf ? "pause" : t >= max ? "replay" : "play";
+      }
+      function frame(now) {
+        // capped, so a tab returning from the background resumes, not skips
+        t += Math.min(now - last, 50) / 1000 * RATE;
+        last = now;
+        if (t >= max) { raf = 0; set(max); return; }
+        raf = requestAnimationFrame(frame);
+        set(t);
+      }
+      function play() {
+        if (t >= max) t = 0;
+        last = performance.now();
+        raf = requestAnimationFrame(frame);
+        set(t);
+      }
+      function pause() { cancelAnimationFrame(raf); raf = 0; set(t); }
+      btn.addEventListener("click", function () { if (raf) pause(); else play(); });
+      input.addEventListener("input", function () {
+        var v = +input.value;  // read first: pause() redraws the slider at the old t
+        pause();
+        set(v);
+      });
+      return { set: set, play: play, now: function () { return Math.floor(t); } };
+    }
+
+    function autoplay(fig, p) {
+      if (reduced || !("IntersectionObserver" in window)) return;
+      var io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { io.disconnect(); p.play(); }
+      }, { threshold: 0.35 });
+      io.observe(fig);
+    }
+
+    /* ---- replay: the GPT writing left to right beside the dLLM filling in */
+
+    function mountReplay(fig, d) {
+      var panels = {};
+      ["gpt", "dllm"].forEach(function (m) {
+        var p = fig.querySelector('[data-model="' + m + '"]');
+        panels[m] = { live: p.querySelector(".dllm-live"), ghost: p.querySelector(".dllm-ghost"),
+                      count: p.querySelector(".dllm-count") };
+      });
+      var select = fig.querySelector("select");
+      // the select may arrive with a value the browser restored on reload
+      var st = { order: "confidence", steps: select.value, sample: 0 };
+      var trace, gpt;
+
+      function pick() {
+        trace = d.traces[st.order][st.steps][st.sample];
+        gpt = d.gpt_samples[st.sample];
+        // the finished text, invisible, holds each panel at its final height
+        panels.gpt.ghost.textContent = gpt;
+        panels.dllm.ghost.textContent = trace.text;
+      }
+
+      function render(t) {
+        var steps = +st.steps, last = gpt.length - 1;
+        // the GPT is given its first character and writes one more per pass
+        panels.gpt.live.innerHTML = textHTML(gpt, function (i) { return i > t ? 0 : i === t && t > 0 ? 2 : 1; });
+        panels.dllm.live.innerHTML = textHTML(trace.text, function (i) {
+          var r = trace.reveal_step[i];
+          return r > t ? 0 : r === t && t < 256 ? 2 : 1;
+        });
+        panels.gpt.count.innerHTML = "<b>" + Math.min(t, last) + "</b> forward passes" + (t >= last ? " · done" : "");
+        panels.dllm.count.innerHTML = "<b>" + Math.min(t, steps) + "</b> forward passes" + (t >= steps ? " · done" : "");
+      }
+
+      var p = player(fig, 256, render);
+      function redo() { pick(); p.set(p.now()); }
+      fig.querySelectorAll("[data-order]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); st.order = b.dataset.order; redo(); });
+      });
+      fig.querySelectorAll("[data-sample]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); st.sample = +b.dataset.sample; redo(); });
+      });
+      select.addEventListener("change", function () { st.steps = select.value; redo(); });
+      pick();
+      p.set(0);
+      autoplay(fig, p);
+    }
+
+    /* ---- fluency vs repetition --------------------------------------- */
+
+    function mountScatter(fig, d) {
+      var svg = fig.querySelector("svg"), readout = fig.querySelector(".dllm-readout");
+      var sq = d.steps_vs_quality, refs = d.references;
+      // label every confidence point; random's crowd together, so only a few
+      var LABELS = { confidence: STEPS, random: [256, 16, 4, 1] };
+      var hint = "Hover or tab to a point for its numbers.";
+      function reset() { readout.textContent = hint; }
+
+      function focusable(node, label, html) {
+        node.setAttribute("tabindex", "0");
+        node.setAttribute("role", "img");
+        node.setAttribute("aria-label", label);
+        function show() { readout.innerHTML = html; }
+        node.addEventListener("pointerenter", show);
+        node.addEventListener("focus", show);
+        node.addEventListener("pointerleave", reset);
+        node.addEventListener("blur", reset);
+      }
+
+      sized(svg, function (w) { return w < 520 ? Math.round(w * 1.15) : 420; }, function (W, H) {
+        var L = 40, R = 14, T = 26, B = 40;
+        var XMIN = 0.45, XMAX = 1, YMIN = 1, YMAX = 8;
+        var X = function (v) { return L + (v - XMIN) / (XMAX - XMIN) * (W - L - R); };
+        var Y = function (v) { return T + Math.log(v / YMIN) / Math.log(YMAX / YMIN) * (H - T - B); };
+
+        el("rect", { x: X(XMIN), y: Y(1), width: X(0.8) - X(XMIN), height: Y(2) - Y(1), "class": "dllm-zone" }, svg);
+        [1, 1.5, 2, 3, 4, 6, 8].forEach(function (v) {
+          el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), "class": "dllm-grid" }, svg);
+          el("text", { x: L - 8, y: Y(v) + 4, "class": "dllm-label dllm-label-y" }, svg, v);
+        });
+        [0.5, 0.6, 0.7, 0.8, 0.9, 1].forEach(function (v) {
+          el("line", { x1: X(v), x2: X(v), y1: T, y2: H - B, "class": "dllm-grid" }, svg);
+          el("text", { x: X(v), y: H - B + 18, "class": "dllm-label dllm-label-x" }, svg, v.toFixed(1));
+        });
+        el("text", { x: (L + W - R) / 2, y: H - 4, "class": "dllm-label dllm-label-x" }, svg, "distinct words (less repetitive →)");
+        el("text", { x: 0, y: 12, "class": "dllm-label" }, svg, "GPT loss (↑ more predictable)");
+
+        ["confidence", "random"].forEach(function (o) {
+          var pts = sq[o].map(function (e) { return [X(e.distinct_words.mean), Y(e.mean)]; });
+          el("polyline", { points: pts.join(" "), "class": "dllm-line dllm-" + o }, svg);
+          sq[o].forEach(function (e, i) {
+            if (LABELS[o].indexOf(e.steps) >= 0) {
+              el("text", { x: pts[i][0] + (o === "confidence" ? -8 : 9), y: pts[i][1] + (o === "confidence" ? -7 : 4),
+                           "class": "dllm-label" + (o === "confidence" ? " dllm-label-y" : "") }, svg, e.steps);
+            }
+            var c = el("circle", { cx: pts[i][0], cy: pts[i][1], r: 5, "class": "dllm-pt dllm-" + o }, svg);
+            focusable(c, o + " order, " + e.steps + " steps",
+              "<b>" + o + " order, " + e.steps + " steps</b> · GPT loss <b>" + fmt(e.mean) +
+              "</b> · distinct words <b>" + fmt(e.distinct_words.mean) + "</b> · doubled words <b>" +
+              pct(e.doubled_words.mean) + "</b>");
+          });
+        });
+
+        [["real_val_text", "real text"], ["gpt_own_samples", "GPT's samples"]].forEach(function (r, i) {
+          var e = refs[r[0]], x = X(e.distinct_words.mean), y = Y(e.mean);
+          var m = i === 0 ? el("circle", { cx: x, cy: y, r: 6, "class": "dllm-ref dllm-ref-ring" }, svg)
+                          : el("rect", { x: x - 5, y: y - 5, width: 10, height: 10, "class": "dllm-ref" }, svg);
+          el("text", { x: x, y: y + 20, "class": "dllm-label dllm-label-x dllm-ref-label" }, svg, r[1]);
+          focusable(m, r[1], "<b>" + r[1] + "</b> · GPT loss <b>" + fmt(e.mean) + "</b> · distinct words <b>" +
+            fmt(e.distinct_words.mean) + "</b> · doubled words <b>" + pct(e.doubled_words.mean) + "</b>");
+        });
+      });
+      reset();
+    }
+
+    /* ---- steps vs GPT loss ------------------------------------------- */
+
+    function mountSteps(fig, d) {
+      var svg = fig.querySelector("svg"), readout = fig.querySelector(".dllm-readout");
+      var sq = d.steps_vs_quality, refs = d.references;
+      var sel = 3, X, guide, L = 40, R = 14, W = 0;
+
+      function say() {
+        var c = sq.confidence[sel], r = sq.random[sel];
+        readout.innerHTML = "<b>" + STEPS[sel] + " steps</b> · confidence <b>" + fmt(c.mean) + "</b> ± " +
+          fmt(c.std) + " · random <b>" + fmt(r.mean) + "</b> ± " + fmt(r.std);
+        if (guide) { guide.setAttribute("x1", X(sel)); guide.setAttribute("x2", X(sel)); }
+      }
+
+      sized(svg, function (w) { return w < 520 ? Math.round(w * 1.0) : 360; }, function (w, H) {
+        W = w;
+        var T = 24, B = 40;
+        X = function (i) { return L + (i + 0.5) / STEPS.length * (W - L - R); };
+        var Y = function (v) { return T + (1 - v / 8) * (H - T - B); };
+        [0, 2, 4, 6, 8].forEach(function (v) {
+          el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), "class": "dllm-grid" }, svg);
+          el("text", { x: L - 8, y: Y(v) + 4, "class": "dllm-label dllm-label-y" }, svg, v);
+        });
+        STEPS.forEach(function (s, i) {
+          el("text", { x: X(i), y: H - B + 18, "class": "dllm-label dllm-label-x" }, svg, s);
+        });
+        el("text", { x: (L + W - R) / 2, y: H - 4, "class": "dllm-label dllm-label-x" }, svg, "sampling steps (fewer →)");
+        el("text", { x: 0, y: 12, "class": "dllm-label" }, svg, "GPT loss");
+        guide = el("line", { x1: X(sel), x2: X(sel), y1: T, y2: H - B, "class": "dllm-guide" }, svg);
+
+        ["confidence", "random"].forEach(function (o, oi) {
+          var off = oi ? 7 : -7, top = [], bot = [], mid = [];
+          sq[o].forEach(function (e, i) {
+            var x = X(i) + off;
+            top.push([x, Y(e.mean + e.std)]);
+            bot.unshift([x, Y(Math.max(0, e.mean - e.std))]);
+            mid.push([x, Y(e.mean)]);
+          });
+          el("polygon", { points: top.concat(bot).join(" "), "class": "dllm-band dllm-" + o }, svg);
+          var g = el("g", { "class": "dllm-dots dllm-" + o }, svg);
+          sq[o].forEach(function (e, i) {
+            e.scores.forEach(function (s, k) {
+              el("circle", { cx: X(i) + off + ((k * 37) % 11 - 5) * 0.7, cy: Y(Math.min(8, s)), r: 1.5 }, g);
+            });
+          });
+          el("polyline", { points: mid.join(" "), "class": "dllm-line dllm-" + o }, svg);
+        });
+
+        [[refs.real_val_text.mean, "real text", -5], [refs.gpt_own_samples.mean, "GPT's samples", 13],
+         [Math.log(65), "uniform guess (ln 65)", -5]].forEach(function (r, i) {
+          el("line", { x1: L, x2: W - R, y1: Y(r[0]), y2: Y(r[0]), "class": i === 2 ? "dllm-ref-line dllm-ref-dot" : "dllm-ref-line" }, svg);
+          el("text", { x: W - R, y: Y(r[0]) + r[2], "class": "dllm-label dllm-label-y" }, svg, r[1]);
+        });
+        say();
+      });
+
+      function pickAt(ev) {
+        var r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) * W / r.width;
+        var i = Math.round((x - L) / (W - L - R) * STEPS.length - 0.5);
+        sel = Math.max(0, Math.min(STEPS.length - 1, i));
+        say();
+      }
+      svg.addEventListener("pointermove", pickAt);
+      svg.addEventListener("pointerdown", pickAt);
+      svg.addEventListener("keydown", function (ev) {
+        var k = { ArrowLeft: -1, ArrowRight: 1 }[ev.key];
+        if (!k) return;
+        ev.preventDefault();
+        sel = Math.max(0, Math.min(STEPS.length - 1, sel + k));
+        say();
+      });
+    }
+
+    /* ---- reveal order -------------------------------------------------- */
+
+    function mountReveal(fig, d) {
+      var ro = d.reveal_order, svg = fig.querySelector("svg");
+      var types = TYPES.slice().sort(function (a, b) { return ro.by_type[a[0]].mean - ro.by_type[b[0]].mean; });
+      var pos = ro.mean_by_position;
+      var lo = Math.min.apply(null, pos), hi = Math.max.apply(null, pos);
+
+      sized(svg, function () { return 262; }, function (W, H) {
+        var L = 112, R = 14, T = 6, ROW = 28;
+        var X = function (v) { return L + v * (W - L - R); };
+        var axisY = T + types.length * ROW + 4;
+        [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
+          el("line", { x1: X(v), x2: X(v), y1: T, y2: axisY, "class": "dllm-grid" }, svg);
+          el("text", { x: X(v), y: axisY + 16, "class": "dllm-label dllm-label-x" }, svg, v);
+        });
+        el("text", { x: X(0.5), y: axisY + 32, "class": "dllm-label dllm-label-x" }, svg, "share of the run when revealed");
+        types.forEach(function (t, i) {
+          var s = ro.by_type[t[0]], y = T + i * ROW + ROW / 2;
+          var a = X(Math.max(0, s.mean - s.std)), b = X(Math.min(1, s.mean + s.std));
+          el("line", { x1: a, x2: b, y1: y, y2: y, "class": "dllm-whisker" }, svg);
+          el("line", { x1: a, x2: a, y1: y - 5, y2: y + 5, "class": "dllm-whisker" }, svg);
+          el("line", { x1: b, x2: b, y1: y - 5, y2: y + 5, "class": "dllm-whisker" }, svg);
+          el("circle", { cx: X(s.mean), cy: y, r: 5, "class": "dllm-pt dllm-confidence" }, svg);
+          el("text", { x: L - 10, y: y + 4, "class": "dllm-label dllm-label-y" }, svg, t[1] + " " + s.mean.toFixed(2));
+        });
+
+        var sy = axisY + 48, cw = (W - L - R) / pos.length;
+        el("text", { x: L - 10, y: sy + 15, "class": "dllm-label dllm-label-y" }, svg, "by position");
+        pos.forEach(function (v, i) {
+          // earlier on average = darker
+          el("rect", { x: L + i * cw, y: sy, width: cw + 0.3, height: 22, "class": "dllm-cell",
+                       "fill-opacity": (0.1 + 0.9 * (hi - v) / (hi - lo)).toFixed(3) }, svg);
+        });
+        el("text", { x: L, y: sy + 38, "class": "dllm-label" }, svg, "1");
+        el("text", { x: W - R, y: sy + 38, "class": "dllm-label dllm-label-y" }, svg, "256");
+        el("text", { x: X(0.5), y: sy + 38, "class": "dllm-label dllm-label-x" }, svg, "darker = revealed earlier");
+      });
+
+      // one real 256-step run filling in, with a running tally per type
+      var watch = fig.querySelector(".dllm-watch"), trace = d.traces.confidence["256"][0];
+      var live = watch.querySelector(".dllm-live"), tally = watch.querySelector(".dllm-tally");
+      watch.querySelector(".dllm-ghost").textContent = trace.text;
+      var kinds = trace.text.split("").map(charType), total = {};
+      kinds.forEach(function (k) { total[k] = (total[k] || 0) + 1; });
+      tally.innerHTML = types.map(function (t) {
+        return '<p data-type="' + t[0] + '"><span>' + t[1] + '</span><span class="dllm-meter"><i></i></span><b></b></p>';
+      }).join("");
+
+      function render(t) {
+        live.innerHTML = textHTML(trace.text, function (i) {
+          var r = trace.reveal_step[i];
+          return r > t ? 0 : r === t && t < 256 ? 2 : 1;
+        });
+        var done = {};
+        kinds.forEach(function (k, i) { if (trace.reveal_step[i] <= t) done[k] = (done[k] || 0) + 1; });
+        types.forEach(function (ty) {
+          var row = tally.querySelector('[data-type="' + ty[0] + '"]'), n = done[ty[0]] || 0, of = total[ty[0]] || 0;
+          row.querySelector("i").style.width = (of ? 100 * n / of : 0) + "%";
+          row.querySelector("b").textContent = n + " / " + of;
+        });
+      }
+      var p = player(watch, 256, render);
+      p.set(0);
+    }
+
+    /* ---- training curves ------------------------------------------------ */
+
+    function mountCurves(fig, d) {
+      var svg = fig.querySelector("svg");
+      sized(svg, function (w) { return w < 520 ? 210 : 240; }, function (W, H) {
+        var gap = 18, pw = (W - gap) / 2, T = 22, B = 30, L = 30;
+        var Y = function (v) { return T + (4.5 - v) / 3.5 * (H - T - B); };
+        [["GPT", d.gpt_curve, 5000, "5k", 0], ["dLLM", d.dllm_curve, 50001, "50k", pw + gap]].forEach(function (m) {
+          var curve = m[1], x0 = m[4] + L, x1 = m[4] + pw - 6;
+          var X = function (s) { return x0 + s / m[2] * (x1 - x0); };
+          [1, 2, 3, 4].forEach(function (v) {
+            el("line", { x1: x0, x2: x1, y1: Y(v), y2: Y(v), "class": "dllm-grid" }, svg);
+            el("text", { x: x0 - 6, y: Y(v) + 4, "class": "dllm-label dllm-label-y" }, svg, v);
+          });
+          el("text", { x: x0, y: 12, "class": "dllm-label dllm-name-label" }, svg, m[0]);
+          el("text", { x: x0, y: H - B + 16, "class": "dllm-label" }, svg, "0");
+          el("text", { x: x1, y: H - B + 16, "class": "dllm-label dllm-label-y" }, svg, m[3] + " steps");
+          ["train", "val"].forEach(function (k) {
+            el("polyline", { points: curve.map(function (e) { return [X(e.step), Y(e[k])]; }).join(" "),
+                             "class": "dllm-curve dllm-curve-" + k }, svg);
+          });
+          var best = curve.reduce(function (a, e) { return e.val < a.val ? e : a; });
+          el("circle", { cx: X(best.step), cy: Y(best.val), r: 3.5, "class": "dllm-ref" }, svg);
+          el("text", { x: X(best.step) - 6, y: Y(best.val) - 9, "class": "dllm-label dllm-label-y" }, svg, "best " + best.val.toFixed(2));
+          if (m[0] === "dLLM") {
+            // resumed from the best checkpoint: labels past here run ~1,000 high
+            var rs = 47002;
+            el("line", { x1: X(rs), x2: X(rs), y1: T, y2: Y(2.3), "class": "dllm-guide" }, svg);
+            el("text", { x: X(rs), y: T - 4, "class": "dllm-label dllm-label-x" }, svg, "*");
+          }
+        });
+      });
+    }
+
+    [[".dllm-replay", mountReplay], [".dllm-scatter", mountScatter], [".dllm-steps", mountSteps],
+     [".dllm-reveal", mountReveal], [".dllm-curves", mountCurves]].forEach(function (m) {
+      document.querySelectorAll(m[0]).forEach(function (fig) {
+        whenNear(fig, function () {
+          load(fig.dataset.src).then(function (d) { ready(fig); m[1](fig, d); }).catch(function () {});  // a failed fetch leaves the figure hidden
+        });
+      });
+    });
+  });
 })();
 
 (function () {

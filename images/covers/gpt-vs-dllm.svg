@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <!-- Tiny Shakespeare's first lines, part way through a masked-diffusion
+       run: the masked characters are blocks, the revealed ones letters. When
+       the cover comes alive, every cell starts masked and the letters resolve
+       out of order (each at its own delay), the line drawing through its letters as
+       they land. -->
+  <g fill="#17150f" opacity=".14">
+    <rect x="178" y="178" width="16" height="24"/>
+    <rect x="246" y="178" width="16" height="24"/>
+    <rect x="280" y="178" width="16" height="24"/>
+    <rect x="416" y="178" width="16" height="24"/>
+    <rect x="518" y="178" width="16" height="24"/>
+    <rect x="552" y="178" width="16" height="24"/>
+    <rect x="586" y="178" width="16" height="24"/>
+    <rect x="144" y="270" width="16" height="24"/>
+    <rect x="178" y="270" width="16" height="24"/>
+    <rect x="246" y="270" width="16" height="24"/>
+    <rect x="280" y="270" width="16" height="24"/>
+    <rect x="314" y="270" width="16" height="24"/>
+    <rect x="382" y="270" width="16" height="24"/>
+    <rect x="416" y="270" width="16" height="24"/>
+    <rect x="518" y="270" width="16" height="24"/>
+    <rect x="552" y="270" width="16" height="24"/>
+    <rect x="654" y="270" width="16" height="24"/>
+    <rect x="688" y="270" width="16" height="24"/>
+    <rect x="756" y="270" width="16" height="24"/>
+    <rect x="790" y="270" width="16" height="24"/>
+    <rect x="824" y="270" width="16" height="24"/>
+    <rect x="144" y="362" width="16" height="24"/>
+    <rect x="178" y="362" width="16" height="24"/>
+    <rect x="212" y="362" width="16" height="24"/>
+    <rect x="246" y="362" width="16" height="24"/>
+    <rect x="280" y="362" width="16" height="24"/>
+    <rect x="314" y="362" width="16" height="24"/>
+    <rect x="484" y="362" width="16" height="24"/>
+    <rect x="518" y="362" width="16" height="24"/>
+    <rect x="552" y="362" width="16" height="24"/>
+    <rect x="654" y="362" width="16" height="24"/>
+    <rect x="722" y="362" width="16" height="24"/>
+    <rect x="790" y="362" width="16" height="24"/>
+    <rect x="824" y="362" width="16" height="24"/>
+    <rect x="858" y="362" width="16" height="24"/>
+    <rect x="892" y="362" width="16" height="24"/>
+  </g>
+
+  <g class="cv-letters" fill="#17150f" font-family="monospace" font-size="30">
+    <g class="cv-r" style="--d:129ms"><rect x="144" y="178" width="16" height="24" opacity="0"/><text x="140" y="200">F</text></g>
+    <g class="cv-r" style="--d:1550ms"><rect x="212" y="178" width="16" height="24" opacity="0"/><text x="208" y="200">R</text></g>
+    <g class="cv-r" style="--d:987ms"><rect x="348" y="178" width="16" height="24" opacity="0"/><text x="344" y="200">C</text></g>
+    <g class="cv-r" style="--d:250ms"><rect x="382" y="178" width="16" height="24" opacity="0"/><text x="378" y="200">I</text></g>
+    <g class="cv-r" style="--d:1308ms"><rect x="450" y="178" width="16" height="24" opacity="0"/><text x="446" y="200">I</text></g>
+    <g class="cv-r" style="--d:990ms"><rect x="484" y="178" width="16" height="24" opacity="0"/><text x="480" y="200">Z</text></g>
+    <g class="cv-r" style="--d:972ms"><rect x="212" y="270" width="16" height="24" opacity="0"/><text x="208" y="292">F</text></g>
+    <g class="cv-r" style="--d:765ms"><rect x="484" y="270" width="16" height="24" opacity="0"/><text x="480" y="292">P</text></g>
+    <g class="cv-r" style="--d:1257ms"><rect x="586" y="270" width="16" height="24" opacity="0"/><text x="582" y="292">C</text></g>
+    <g class="cv-r" style="--d:181ms"><rect x="620" y="270" width="16" height="24" opacity="0"/><text x="616" y="292">E</text></g>
+    <g class="cv-r" style="--d:704ms"><rect x="348" y="362" width="16" height="24" opacity="0"/><text x="344" y="384">R</text></g>
+    <g class="cv-r" style="--d:660ms"><rect x="382" y="362" width="16" height="24" opacity="0"/><text x="378" y="384">,</text></g>
+    <g class="cv-r" style="--d:608ms"><rect x="450" y="362" width="16" height="24" opacity="0"/><text x="446" y="384">H</text></g>
+    <g class="cv-r" style="--d:479ms"><rect x="620" y="362" width="16" height="24" opacity="0"/><text x="616" y="384">M</text></g>
+    <g class="cv-r" style="--d:1639ms"><rect x="756" y="362" width="16" height="24" opacity="0"/><text x="752" y="384">P</text></g>
+  </g>
+
+  <!-- The order the characters came in: not left to right. -->
+  <path
+    class="draw-path"
+    d="M389 190 L627 374 L457 374 L389 374 L491 282 L219 282 L593 282 L219 190"
+    stroke="#17150f"
+    stroke-width="1.2"
+    stroke-dasharray="5000" stroke-dashoffset="5000"/>
+
+  <rect x="144" y="544" width="16" height="22" fill="#17150f" opacity=".14"/>
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="172" y="560">= [MASK]</text>
+    <text x="640" y="560">NOT LEFT TO RIGHT</text>
+  </g>
+</svg>

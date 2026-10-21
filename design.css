@@ -1553,12 +1553,22 @@ body article.prose.post.fin::after { margin-left: auto; margin-right: auto; }
   .cover-live[data-cover="where-does-computation-end"] g:first-of-type circle:nth-of-type(2) { animation-delay: 80ms; }
   .cover-live[data-cover="where-does-computation-end"] g:first-of-type circle:nth-of-type(3) { animation-delay: 160ms; }
   .cover-live[data-cover="where-does-computation-end"] g:first-of-type circle:nth-of-type(4) { animation-delay: 240ms; }
+
+  /* gpt vs dllm: every cell starts masked, the letters land out of order at
+     their own --d, and the line draws through its letters as they land
+     (linear, so it meets each one on time). Each block shows only until
+     its letter arrives; at rest the blocks under letters are opacity 0. */
+  .cover-live[data-cover="gpt-vs-dllm"] .draw-path { animation: cover-draw 1300ms linear 250ms both; }
+  .cover-live[data-cover="gpt-vs-dllm"] .cv-r rect { animation: cv-mask var(--d) linear; }
+  .cover-live[data-cover="gpt-vs-dllm"] .cv-r text { animation: cv-land 260ms var(--ease-out) var(--d) both; }
 }
 
 /* the index hero and a post's own cover play once; only a hovered tile loops */
 .lh-cover, .hero-cover { --loops: 1; }
 
 @keyframes cover-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes cv-mask { from, to { opacity: 0.14; } }
+@keyframes cv-land { from { opacity: 0; } }
 @keyframes pop { from { transform: scale(0); opacity: 0; } }
 @keyframes loom { from { transform: scale(0.72); opacity: 0; } }
 @keyframes ripple { from { transform: scale(0.55); opacity: 0; } }

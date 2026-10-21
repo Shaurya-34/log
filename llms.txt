@@ -16,6 +16,7 @@ Use it for questions of the form: does this idea actually work once you build it
 
 These run in the page and need JavaScript. The Markdown copies carry the prose and captions but not the running figure.
 
+- [One transformer, two ways to write](https://shauryasharma.tech/gpt-vs-dllm.html): a GPT and a masked diffusion model writing Tiny Shakespeare side by side on one forward-pass clock, with reveal order, step count and sample controls; a scatter of GPT loss against word repetition; GPT loss against sampling steps; and the order in which the diffusion model reveals each type of character
 - [How many stars does it take to find a cluster?](https://shauryasharma.tech/how-many-stars.html): real Gaia DR3 stars around the Pleiades and alpha Persei switching between sky position and proper motion, with a button that runs the shuffle null; every injection trial plotted against the fitted detection model; and a draggable CST threshold showing the false-positive rate live
 - [A fly's escape reflex, flying a drone](https://shauryasharma.tech/fly-circuit-vs-cnn.html): two simulated drones, one steered by a fruit fly's looming-escape circuit and one by a CNN, flying the same corridor in WebGL from the same 64x48 camera, with motion opponency and escape threshold controls
 - [Understanding AlphaFold's pLDDT, PAE, and pTM](https://shauryasharma.tech/understanding-alphafolds-plddt-pae-and-ptm.html): rotatable 3D AlphaFold structures of GFP and beta-casein coloured by pLDDT, with their predicted aligned error maps
@@ -36,6 +37,7 @@ These run in the page and need JavaScript. The Markdown copies carry the prose a
 
 ## Articles
 
+- [One transformer, two ways to write](https://shauryasharma.tech/gpt-vs-dllm.html) — I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare. The diffusion model's usual sampling trick makes it look fluent by making it repeat itself.
 - [How many stars does it take to find a cluster?](https://shauryasharma.tech/how-many-stars.html) — A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.
 - [A fly's escape reflex, flying a drone](https://shauryasharma.tech/fly-circuit-vs-cnn.html) — A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera. With no training the fly cuts collisions by about a quarter, a CNN trained on two demonstration flights already beats it, and the circuit's weak point turns out to be reacting too late.
 - [Understanding AlphaFold's pLDDT, PAE, and pTM](https://shauryasharma.tech/understanding-alphafolds-plddt-pae-and-ptm.html) — AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer. What GFP's one real dip and beta-casein's disorder actually show, and what the ranking formula does when a protein has no fixed shape to find.

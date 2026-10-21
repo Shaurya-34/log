@@ -4,6 +4,7 @@
 
 ## Articles
 
+- [One transformer, two ways to write](https://shauryasharma.tech/gpt-vs-dllm.html) — I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare. The diffusion model's usual sampling trick makes it look fluent by making it repeat itself.
 - [How many stars does it take to find a cluster?](https://shauryasharma.tech/how-many-stars.html) — A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.
 - [A fly's escape reflex, flying a drone](https://shauryasharma.tech/fly-circuit-vs-cnn.html) — A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera. With no training the fly cuts collisions by about a quarter, a CNN trained on two demonstration flights already beats it, and the circuit's weak point turns out to be reacting too late.
 - [Understanding AlphaFold's pLDDT, PAE, and pTM](https://shauryasharma.tech/understanding-alphafolds-plddt-pae-and-ptm.html) — AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer. What GFP's one real dip and beta-casein's disorder actually show, and what the ranking formula does when a protein has no fixed shape to find.

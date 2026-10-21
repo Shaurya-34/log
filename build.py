@@ -187,6 +187,10 @@ PULLS = {
 # What each post's live figure lets a reader do, for llms.txt. A post with
 # no figure has no entry. Every key must be a real post slug.
 INTERACTIVE = {
+    "gpt-vs-dllm": "a GPT and a masked diffusion model writing Tiny Shakespeare side by side on one "
+                   "forward-pass clock, with reveal order, step count and sample controls; a scatter of "
+                   "GPT loss against word repetition; GPT loss against sampling steps; and the order "
+                   "in which the diffusion model reveals each type of character",
     "how-many-stars": "real Gaia DR3 stars around the Pleiades and alpha Persei switching between sky "
                       "position and proper motion, with a button that runs the shuffle null; every "
                       "injection trial plotted against the fitted detection model; and a draggable CST "
