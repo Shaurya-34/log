@@ -15,7 +15,7 @@
 <meta property="og:description" content="Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://shauryasharma.tech/">
-<meta property="og:image" content="https://shauryasharma.tech/images/og/gpt-vs-dllm-0fd138a93f.png">
+<meta property="og:image" content="https://shauryasharma.tech/images/og/pbt-grokking-d49c364599.png">
 <meta property="og:image:width" content="2400">
 <meta property="og:image:height" content="1260">
 <meta property="og:image:alt" content="Cover drawing for Shaurya · Log">
@@ -24,7 +24,7 @@
 <link rel="alternate" type="application/rss+xml" title="Shaurya · Log" href="feed.xml">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 40 40'%3E%3Cstyle%3E.w%7Bfill:%23134e6f%7D.d%7Bfill:%23a9dcd9%7D.n%7Bfill:%235b5bd6%7D%40media(prefers-color-scheme:dark)%7B.w%7Bfill:%236fb8d9%7D.n%7Bfill:%239a9cff%7D%7D%3C/style%3E%3Crect class='w' x='1' y='1' width='22' height='22'/%3E%3Crect class='d' x='13' y='13' width='22' height='22'/%3E%3Crect class='n' x='13' y='13' width='10' height='10'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="design.css?v=45ce3e40">
-<link rel="stylesheet" href="widgets.css?v=61a20c49">
+<link rel="stylesheet" href="widgets.css?v=e3aea1ba">
 <link rel="stylesheet" href="transitions.css?v=c2694236">
 <script src="chrome.js?v=64d6d10a"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Shaurya · Log","description":"Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.","url":"https://shauryasharma.tech","author":{"@type":"Person","name":"Shaurya","url":"https://shauryasharma.tech"}}</script>
@@ -58,11 +58,74 @@
   </div>
 
   <div class="lh-entry" id="lh-entry" aria-live="polite">
-    <p class="label kicker"><span data-f="state">Latest</span> · <span data-f="date">21.10.26</span> · <span data-f="tag">Machine learning</span></p>
-    <h1><a data-f="title" href="gpt-vs-dllm.html">One transformer, two ways to write</a></h1>
-    <p class="standfirst" data-f="desc">I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare.</p>
-    <a class="lh-read label" data-f="read" href="gpt-vs-dllm.html">Read →</a>
-    <div class="lh-cover" aria-hidden="true"><span class="cover" data-cover="gpt-vs-dllm" data-i="0" data-href="gpt-vs-dllm.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+    <p class="label kicker"><span data-f="state">Latest</span> · <span data-f="date">26.10.26</span> · <span data-f="tag">Machine learning</span></p>
+    <h1><a data-f="title" href="pbt-grokking.html">PBT can't make a model grok faster, but it can find the way out</a></h1>
+    <p class="standfirst" data-f="desc">Population Based Training over learning rate and weight decay, on the same grokking task as before.</p>
+    <a class="lh-read label" data-f="read" href="pbt-grokking.html">Read →</a>
+    <div class="lh-cover" aria-hidden="true"><span class="cover" data-cover="pbt-grokking" data-i="0" data-href="pbt-grokking.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g>
+    <rect x="342" y="409" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="342" y="297" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="342" y="184" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="342" y="72" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="418" y="409" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="418" y="297" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="418" y="184" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="418" y="72" width="75" height="112" fill="currentColor" opacity=".07"/>
+    <rect x="492" y="409" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="492" y="297" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="492" y="184" width="75" height="112" fill="currentColor" opacity=".07"/>
+    <rect x="492" y="72" width="75" height="112" fill="currentColor" opacity=".07"/>
+    <rect x="568" y="409" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="568" y="297" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="568" y="184" width="75" height="112" fill="currentColor" opacity=".07"/>
+    <rect x="568" y="72" width="75" height="112" fill="currentColor" opacity=".07"/>
+    <rect x="642" y="409" width="75" height="112" stroke="currentColor" opacity=".12"/>
+    <rect x="642" y="297" width="75" height="112" fill="currentColor" opacity=".07"/>
+    <rect x="642" y="184" width="75" height="112" fill="currentColor" opacity=".07"/>
+    <rect x="642" y="72" width="75" height="112" fill="currentColor" opacity=".07"/>
+  </g>
+
+  <rect x="230" y="90" width="600" height="500" stroke="currentColor" opacity=".3"/>
+
+  <g fill="currentColor" opacity=".45">
+    <circle cx="458" cy="355" r="4"/>
+    <circle cx="471" cy="448" r="4"/>
+    <circle cx="451" cy="386" r="4"/>
+    <circle cx="410" cy="415" r="4"/>
+    <circle cx="459" cy="463" r="4"/>
+    <circle cx="409" cy="432" r="4"/>
+    <circle cx="422" cy="422" r="4"/>
+    <circle cx="493" cy="429" r="4"/>
+    <circle cx="463" cy="359" r="4"/>
+    <circle cx="510" cy="386" r="4"/>
+    <circle cx="501" cy="450" r="4"/>
+    <circle cx="417" cy="426" r="4"/>
+    <circle cx="408" cy="373" r="4"/>
+    <circle cx="528" cy="448" r="4"/>
+    <circle cx="480" cy="458" r="4"/>
+    <circle cx="422" cy="430" r="4"/>
+    <circle cx="411" cy="418" r="4"/>
+    <circle cx="474" cy="374" r="4"/>
+    <circle cx="478" cy="464" r="4"/>
+    <circle cx="515" cy="414" r="4"/>
+  </g>
+
+  <path
+    class="draw-path" pathLength="1"
+    d="M411 418 L365 455 L320 418 L275 380 L230 342 L230 305 L230 267 L230 229 L230 192 L230 154 L275 117 L320 90 L365 90 L411 90 L456 90 L501 90 L546 90 L591 90 L546 128 L591 165 L636 203 L682 241 L727 203 L682 241 L727 278 L772 316 L727 353 L772 391 L817 429 L830 466 L785 504 L830 542 L830 579 L830 590 L785 590 L740 552 L785 590"
+    stroke="currentColor"
+    stroke-width="1.4"/>
+  <circle cx="546" cy="128" r="7" fill="currentColor"/>
+
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="560" y="133">GROKS</text>
+    <text x="250" y="80">WD CEILING</text>
+    <text x="230" y="620">LR FLOOR</text>
+    <text x="700" y="620">LR →</text>
+    <text x="400" y="535">DEAD ZONE</text>
+  </g>
+</svg></span><span class="cover" data-cover="gpt-vs-dllm" data-i="1" data-href="gpt-vs-dllm.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="currentColor" opacity=".14">
     <rect x="178" y="178" width="16" height="24"/>
     <rect x="246" y="178" width="16" height="24"/>
@@ -131,7 +194,7 @@
     <text x="172" y="560">= [MASK]</text>
     <text x="640" y="560">NOT LEFT TO RIGHT</text>
   </g>
-</svg></span><span class="cover" data-cover="how-many-stars" data-i="1" data-href="how-many-stars.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="how-many-stars" data-i="2" data-href="how-many-stars.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="currentColor" opacity=".22">
     <circle cx="348" cy="140" r="2.2"/>
     <circle cx="112" cy="495" r="1.4"/>
@@ -331,7 +394,7 @@
     <text x="790" y="110">FOUND</text>
     <text x="110" y="610">MISSED</text>
   </g>
-</svg></span><span class="cover" data-cover="fly-circuit-vs-cnn" data-i="2" data-href="fly-circuit-vs-cnn.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="fly-circuit-vs-cnn" data-i="3" data-href="fly-circuit-vs-cnn.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M500 250L60 600"/>
     <path d="M500 250L940 600"/>
@@ -368,7 +431,7 @@
     <text x="770" y="364">NOT ON COURSE</text>
     <text x="90" y="600">ESCAPE ANYWAY</text>
   </g>
-</svg></span><span class="cover" data-cover="understanding-alphafolds-plddt-pae-and-ptm" data-i="3" data-href="understanding-alphafolds-plddt-pae-and-ptm.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="understanding-alphafolds-plddt-pae-and-ptm" data-i="4" data-href="understanding-alphafolds-plddt-pae-and-ptm.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".15">
     <path d="M120 110H880"/>
     <path d="M120 580H880"/>
@@ -417,7 +480,7 @@
     <text x="712" y="458" opacity=".55">i</text>
     <text x="120" y="620">CONFIDENT, NOT THE SAME AS CORRECT</text>
   </g>
-</svg></span><span class="cover" data-cover="programming-an-attention-kernel-in-triton" data-i="4" data-href="programming-an-attention-kernel-in-triton.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="programming-an-attention-kernel-in-triton" data-i="5" data-href="programming-an-attention-kernel-in-triton.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M120 540H880"/>
     <path d="M120 460H880"/>
@@ -469,7 +532,7 @@
     <text x="655" y="145">← NOT YET CLIMBED</text>
     <text x="120" y="620">FOUR RUNGS UP, ONE WALL</text>
   </g>
-</svg></span><span class="cover" data-cover="birthday-attack" data-i="5" data-href="birthday-attack.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="birthday-attack" data-i="6" data-href="birthday-attack.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M90 500H910"/>
     <path d="M500 80V600"/>
@@ -517,7 +580,7 @@
     <text x="605" y="300">← SAME BUCKET</text>
     <text x="90" y="600">√N DRAWS, NOT N</text>
   </g>
-</svg></span><span class="cover" data-cover="where-does-computation-end" data-i="6" data-href="where-does-computation-end.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="where-does-computation-end" data-i="7" data-href="where-does-computation-end.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" stroke-width="1.4">
     <path opacity=".18" d="M120 80H880M120 185H880M120 290H880M120 395H880M120 500H880M120 570H880"/>
     <path opacity=".18" d="M180 55V595M340 55V595M500 55V595M660 55V595M820 55V595"/>
@@ -555,7 +618,7 @@
     <text x="650" y="329">BOUNDED</text>
     <text x="820" y="55">ESCAPES →</text>
   </g>
-</svg></span><span class="cover" data-cover="self-rewriting-mandelbrot" data-i="7" data-href="self-rewriting-mandelbrot.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="self-rewriting-mandelbrot" data-i="8" data-href="self-rewriting-mandelbrot.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" stroke-width="1" opacity=".22">
     <path d="M90 100H910M90 190H910M90 280H910M90 370H910M90 460H910M90 550H910"/>
     <path d="M160 70V580M250 70V580M340 70V580M430 70V580M520 70V580M610 70V580M700 70V580M790 70V580M880 70V580"/>
@@ -598,7 +661,7 @@
     <text x="610" y="311">SELF-SIMILAR</text>
     <text x="120" y="440">REWRITES →</text>
   </g>
-</svg></span><span class="cover" data-cover="never-repeating-never-leaving" data-i="8" data-href="never-repeating-never-leaving.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="never-repeating-never-leaving" data-i="9" data-href="never-repeating-never-leaving.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" opacity=".16">
     <path d="M90 520H910"/>
     <path d="M500 70V580"/>
@@ -660,7 +723,7 @@
     <text x="615" y="324">ATTRACTOR</text>
     <text x="100" y="440">NEVER CLOSES →</text>
   </g>
-</svg></span><span class="cover" data-cover="marching-with-rays" data-i="9" data-href="marching-with-rays.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="marching-with-rays" data-i="10" data-href="marching-with-rays.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g stroke="currentColor" stroke-width="1.3">
     <circle cx="720" cy="325" r="55"/>
     <circle cx="720" cy="325" r="105"/>
@@ -710,7 +773,7 @@
     <text x="350" y="304">RAY</text>
     <text x="790" y="329">STEP</text>
   </g>
-</svg></span><span class="cover" data-cover="grok-grok" data-i="10" data-href="grok-grok.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+</svg></span><span class="cover" data-cover="grok-grok" data-i="11" data-href="grok-grok.html"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="currentColor">
     <circle cx="120" cy="120" r="2"/>
     <circle cx="150" cy="165" r="1.5"/>
@@ -780,31 +843,107 @@
 </svg></span></div>
   </div>
 
-  <div class="lh-strip" style="--days: 94">
+  <div class="lh-strip" style="--days: 99">
     <div class="lh-scroll">
-      <div class="lh-months" aria-hidden="true"><span class="lh-month" style="grid-column: 1 / span 12">Jul</span><span class="lh-month" style="grid-column: 13 / span 31">Aug</span><span class="lh-month" style="grid-column: 44 / span 30">Sep</span><span class="lh-month" style="grid-column: 74 / span 21">Oct</span></div>
-      <div class="lh-cells"><a class="cell is-entry" href="grok-grok.html" data-i="10" aria-label="20.07.26: grok.....grok ?"></a><a class="cell is-entry" href="marching-with-rays.html" data-i="9" aria-label="21.07.26: Marching with rays"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="never-repeating-never-leaving.html" data-i="8" aria-label="24.07.26: Never repeating, never leaving"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="self-rewriting-mandelbrot.html" data-i="7" aria-label="06.08.26: A renderer that keeps notes on itself"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="where-does-computation-end.html" data-i="6" aria-label="18.08.26: Where Does Computation End?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="birthday-attack.html" data-i="5" aria-label="02.09.26: Twenty-three people, 256 bits"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="programming-an-attention-kernel-in-triton.html" data-i="4" aria-label="08.09.26: Programming an attention kernel in Triton"></a><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="understanding-alphafolds-plddt-pae-and-ptm.html" data-i="3" aria-label="10.09.26: Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="fly-circuit-vs-cnn.html" data-i="2" aria-label="16.09.26: A fly&#x27;s escape reflex, flying a drone"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="how-many-stars.html" data-i="1" aria-label="16.10.26: How many stars does it take to find a cluster?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry is-current" href="gpt-vs-dllm.html" data-i="0" aria-label="21.10.26: One transformer, two ways to write"></a></div>
+      <div class="lh-months" aria-hidden="true"><span class="lh-month" style="grid-column: 1 / span 12">Jul</span><span class="lh-month" style="grid-column: 13 / span 31">Aug</span><span class="lh-month" style="grid-column: 44 / span 30">Sep</span><span class="lh-month" style="grid-column: 74 / span 26">Oct</span></div>
+      <div class="lh-cells"><a class="cell is-entry" href="grok-grok.html" data-i="11" aria-label="20.07.26: grok.....grok ?"></a><a class="cell is-entry" href="marching-with-rays.html" data-i="10" aria-label="21.07.26: Marching with rays"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="never-repeating-never-leaving.html" data-i="9" aria-label="24.07.26: Never repeating, never leaving"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="self-rewriting-mandelbrot.html" data-i="8" aria-label="06.08.26: A renderer that keeps notes on itself"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="where-does-computation-end.html" data-i="7" aria-label="18.08.26: Where Does Computation End?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="birthday-attack.html" data-i="6" aria-label="02.09.26: Twenty-three people, 256 bits"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="programming-an-attention-kernel-in-triton.html" data-i="5" aria-label="08.09.26: Programming an attention kernel in Triton"></a><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="understanding-alphafolds-plddt-pae-and-ptm.html" data-i="4" aria-label="10.09.26: Understanding AlphaFold&#x27;s pLDDT, PAE, and pTM"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="fly-circuit-vs-cnn.html" data-i="3" aria-label="16.09.26: A fly&#x27;s escape reflex, flying a drone"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="how-many-stars.html" data-i="2" aria-label="16.10.26: How many stars does it take to find a cluster?"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry" href="gpt-vs-dllm.html" data-i="1" aria-label="21.10.26: One transformer, two ways to write"></a><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><a class="cell is-entry is-current" href="pbt-grokking.html" data-i="0" aria-label="26.10.26: PBT can&#x27;t make a model grok faster, but it can find the way out"></a></div>
     </div>
     <div class="lh-ends">
       <span class="label">20.07.26</span>
-      <span class="label">Today · 21.10.26</span>
+      <span class="label">Today · 26.10.26</span>
     </div>
   </div>
 
   <div class="lh-foot">
     <p>I think of this less as a blog and more as a log: a running record of what I'm building, reading, and puzzling over. If it's useful to anyone else, that's a bonus.</p>
-    <span class="label">11 entries · 94 days · <a href="feed.xml">RSS ↗</a></span>
+    <span class="label">12 entries · 99 days · <a href="feed.xml">RSS ↗</a></span>
   </div>
-  <script type="application/json" id="log-data">[{"t": "One transformer, two ways to write", "d": "21.10.26", "tag": "Machine learning", "desc": "I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare.", "href": "gpt-vs-dllm.html", "state": "Latest"}, {"t": "How many stars does it take to find a cluster?", "d": "16.10.26", "tag": "Astronomy", "desc": "A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.", "href": "how-many-stars.html", "state": "10 of 11"}, {"t": "A fly's escape reflex, flying a drone", "d": "16.09.26", "tag": "Machine learning", "desc": "A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera.", "href": "fly-circuit-vs-cnn.html", "state": "09 of 11"}, {"t": "Understanding AlphaFold's pLDDT, PAE, and pTM", "d": "10.09.26", "tag": "Machine learning", "desc": "AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.", "href": "understanding-alphafolds-plddt-pae-and-ptm.html", "state": "08 of 11"}, {"t": "Programming an attention kernel in Triton", "d": "08.09.26", "tag": "GPU programming", "desc": "Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.", "href": "programming-an-attention-kernel-in-triton.html", "state": "07 of 11"}, {"t": "Twenty-three people, 256 bits", "d": "02.09.26", "tag": "Cryptography", "desc": "A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.", "href": "birthday-attack.html", "state": "06 of 11"}, {"t": "Where Does Computation End?", "d": "18.08.26", "tag": "Computation", "desc": "A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.", "href": "where-does-computation-end.html", "state": "05 of 11"}, {"t": "A renderer that keeps notes on itself", "d": "06.08.26", "tag": "Python", "desc": "A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.", "href": "self-rewriting-mandelbrot.html", "state": "04 of 11"}, {"t": "Never repeating, never leaving", "d": "24.07.26", "tag": "Chaos", "desc": "Four chaotic systems, one Python framework, and the one that refused to fit it.", "href": "never-repeating-never-leaving.html", "state": "03 of 11"}, {"t": "Marching with rays", "d": "21.07.26", "tag": "Graphics", "desc": "Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.", "href": "marching-with-rays.html", "state": "02 of 11"}, {"t": "grok.....grok ?", "d": "20.07.26", "tag": "Research", "desc": "What happens when you push a model past generalization? Does it know the rule, or just the data?", "href": "grok-grok.html", "state": "01 of 11"}]</script>
+  <script type="application/json" id="log-data">[{"t": "PBT can't make a model grok faster, but it can find the way out", "d": "26.10.26", "tag": "Machine learning", "desc": "Population Based Training over learning rate and weight decay, on the same grokking task as before.", "href": "pbt-grokking.html", "state": "Latest"}, {"t": "One transformer, two ways to write", "d": "21.10.26", "tag": "Machine learning", "desc": "I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare.", "href": "gpt-vs-dllm.html", "state": "11 of 12"}, {"t": "How many stars does it take to find a cluster?", "d": "16.10.26", "tag": "Astronomy", "desc": "A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.", "href": "how-many-stars.html", "state": "10 of 12"}, {"t": "A fly's escape reflex, flying a drone", "d": "16.09.26", "tag": "Machine learning", "desc": "A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera.", "href": "fly-circuit-vs-cnn.html", "state": "09 of 12"}, {"t": "Understanding AlphaFold's pLDDT, PAE, and pTM", "d": "10.09.26", "tag": "Machine learning", "desc": "AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.", "href": "understanding-alphafolds-plddt-pae-and-ptm.html", "state": "08 of 12"}, {"t": "Programming an attention kernel in Triton", "d": "08.09.26", "tag": "GPU programming", "desc": "Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.", "href": "programming-an-attention-kernel-in-triton.html", "state": "07 of 12"}, {"t": "Twenty-three people, 256 bits", "d": "02.09.26", "tag": "Cryptography", "desc": "A purely combinatorial fact about shared birthdays forces a real engineering decision made decades later, why cryptographic hashes are 256 bits, not 128.", "href": "birthday-attack.html", "state": "06 of 12"}, {"t": "Where Does Computation End?", "d": "18.08.26", "tag": "Computation", "desc": "A journey from the Halting Problem and Turing machines to hypercomputation, physical computation, and the question of whether reality can compute beyond Turing.", "href": "where-does-computation-end.html", "state": "05 of 12"}, {"t": "A renderer that keeps notes on itself", "d": "06.08.26", "tag": "Python", "desc": "A Mandelbrot renderer that doesn't cache to disk or a database - it rewrites its own source file to remember what it's already drawn.", "href": "self-rewriting-mandelbrot.html", "state": "04 of 12"}, {"t": "Never repeating, never leaving", "d": "24.07.26", "tag": "Chaos", "desc": "Four chaotic systems, one Python framework, and the one that refused to fit it.", "href": "never-repeating-never-leaving.html", "state": "03 of 12"}, {"t": "Marching with rays", "d": "21.07.26", "tag": "Graphics", "desc": "Build a raymarcher/raytracer with anti-aliasing, from scratch, within 168 lines of Java.", "href": "marching-with-rays.html", "state": "02 of 12"}, {"t": "grok.....grok ?", "d": "20.07.26", "tag": "Research", "desc": "What happens when you push a model past generalization? Does it know the rule, or just the data?", "href": "grok-grok.html", "state": "01 of 12"}]</script>
 </section>
 
 <section class="mosaic-wrap">
   <div class="mosaic-head">
     <h2>Before that</h2>
-    <a class="label" href="#archive">All 11 in the archive ↓</a>
+    <a class="label" href="#archive">All 12 in the archive ↓</a>
   </div>
 
   <div class="mosaic" id="mosaic">
+    <a class="tile-post" href="gpt-vs-dllm.html">
+      <span class="tile-cover" data-cover="gpt-vs-dllm"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <g fill="currentColor" opacity=".14">
+    <rect x="178" y="178" width="16" height="24"/>
+    <rect x="246" y="178" width="16" height="24"/>
+    <rect x="280" y="178" width="16" height="24"/>
+    <rect x="416" y="178" width="16" height="24"/>
+    <rect x="518" y="178" width="16" height="24"/>
+    <rect x="552" y="178" width="16" height="24"/>
+    <rect x="586" y="178" width="16" height="24"/>
+    <rect x="144" y="270" width="16" height="24"/>
+    <rect x="178" y="270" width="16" height="24"/>
+    <rect x="246" y="270" width="16" height="24"/>
+    <rect x="280" y="270" width="16" height="24"/>
+    <rect x="314" y="270" width="16" height="24"/>
+    <rect x="382" y="270" width="16" height="24"/>
+    <rect x="416" y="270" width="16" height="24"/>
+    <rect x="518" y="270" width="16" height="24"/>
+    <rect x="552" y="270" width="16" height="24"/>
+    <rect x="654" y="270" width="16" height="24"/>
+    <rect x="688" y="270" width="16" height="24"/>
+    <rect x="756" y="270" width="16" height="24"/>
+    <rect x="790" y="270" width="16" height="24"/>
+    <rect x="824" y="270" width="16" height="24"/>
+    <rect x="144" y="362" width="16" height="24"/>
+    <rect x="178" y="362" width="16" height="24"/>
+    <rect x="212" y="362" width="16" height="24"/>
+    <rect x="246" y="362" width="16" height="24"/>
+    <rect x="280" y="362" width="16" height="24"/>
+    <rect x="314" y="362" width="16" height="24"/>
+    <rect x="484" y="362" width="16" height="24"/>
+    <rect x="518" y="362" width="16" height="24"/>
+    <rect x="552" y="362" width="16" height="24"/>
+    <rect x="654" y="362" width="16" height="24"/>
+    <rect x="722" y="362" width="16" height="24"/>
+    <rect x="790" y="362" width="16" height="24"/>
+    <rect x="824" y="362" width="16" height="24"/>
+    <rect x="858" y="362" width="16" height="24"/>
+    <rect x="892" y="362" width="16" height="24"/>
+  </g>
+
+  <g class="cv-letters" fill="currentColor" font-family="monospace" font-size="30">
+    <g class="cv-r" style="--d:129ms"><rect x="144" y="178" width="16" height="24" opacity="0"/><text x="140" y="200">F</text></g>
+    <g class="cv-r" style="--d:1550ms"><rect x="212" y="178" width="16" height="24" opacity="0"/><text x="208" y="200">R</text></g>
+    <g class="cv-r" style="--d:987ms"><rect x="348" y="178" width="16" height="24" opacity="0"/><text x="344" y="200">C</text></g>
+    <g class="cv-r" style="--d:250ms"><rect x="382" y="178" width="16" height="24" opacity="0"/><text x="378" y="200">I</text></g>
+    <g class="cv-r" style="--d:1308ms"><rect x="450" y="178" width="16" height="24" opacity="0"/><text x="446" y="200">I</text></g>
+    <g class="cv-r" style="--d:990ms"><rect x="484" y="178" width="16" height="24" opacity="0"/><text x="480" y="200">Z</text></g>
+    <g class="cv-r" style="--d:972ms"><rect x="212" y="270" width="16" height="24" opacity="0"/><text x="208" y="292">F</text></g>
+    <g class="cv-r" style="--d:765ms"><rect x="484" y="270" width="16" height="24" opacity="0"/><text x="480" y="292">P</text></g>
+    <g class="cv-r" style="--d:1257ms"><rect x="586" y="270" width="16" height="24" opacity="0"/><text x="582" y="292">C</text></g>
+    <g class="cv-r" style="--d:181ms"><rect x="620" y="270" width="16" height="24" opacity="0"/><text x="616" y="292">E</text></g>
+    <g class="cv-r" style="--d:704ms"><rect x="348" y="362" width="16" height="24" opacity="0"/><text x="344" y="384">R</text></g>
+    <g class="cv-r" style="--d:660ms"><rect x="382" y="362" width="16" height="24" opacity="0"/><text x="378" y="384">,</text></g>
+    <g class="cv-r" style="--d:608ms"><rect x="450" y="362" width="16" height="24" opacity="0"/><text x="446" y="384">H</text></g>
+    <g class="cv-r" style="--d:479ms"><rect x="620" y="362" width="16" height="24" opacity="0"/><text x="616" y="384">M</text></g>
+    <g class="cv-r" style="--d:1639ms"><rect x="756" y="362" width="16" height="24" opacity="0"/><text x="752" y="384">P</text></g>
+  </g>
+
+  <path
+    class="draw-path" pathLength="1"
+    d="M389 190 L627 374 L457 374 L389 374 L491 282 L219 282 L593 282 L219 190"
+    stroke="currentColor"
+    stroke-width="1.2"/>
+
+  <rect x="144" y="544" width="16" height="22" fill="currentColor" opacity=".14"/>
+  <g fill="currentColor" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="172" y="560">= [MASK]</text>
+    <text x="640" y="560">NOT LEFT TO RIGHT</text>
+  </g>
+</svg></span>
+      <span class="label">Machine learning</span>
+      <h3>One transformer, two ways to write</h3>
+      <p>I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare.</p>
+      <span class="meta label">21.10.26</span>
+    </a>
     <a class="tile-post" href="how-many-stars.html">
       <span class="tile-cover" data-cover="how-many-stars"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
   <g fill="currentColor" opacity=".22">
@@ -1112,65 +1251,6 @@
       <p>AlphaFold hands back a structure and a confidence score, but pLDDT and PAE are the network grading its own homework, not a measurement against a real answer.</p>
       <span class="meta label">10.09.26</span>
     </a>
-    <a class="tile-post" href="programming-an-attention-kernel-in-triton.html">
-      <span class="tile-cover" data-cover="programming-an-attention-kernel-in-triton"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
-  <g stroke="currentColor" opacity=".16">
-    <path d="M120 540H880"/>
-    <path d="M120 460H880"/>
-    <path d="M120 380H880"/>
-    <path d="M120 300H880"/>
-  </g>
-
-  <g stroke="currentColor" stroke-width="1.4">
-    <path d="M430 580V150"/>
-    <path d="M570 580V150"/>
-    <path d="M430 540H570"/>
-    <path d="M430 460H570"/>
-    <path d="M430 380H570"/>
-    <path d="M430 300H570"/>
-  </g>
-  <path d="M430 220H570" stroke="currentColor" stroke-width="1.4" stroke-dasharray="6 8" opacity=".4"/>
-
-  <path d="M370 150H630" stroke="currentColor" stroke-width="2"/>
-  <g stroke="currentColor" stroke-width="1.2" opacity=".55">
-    <path d="M385 150L370 130"/>
-    <path d="M425 150L410 130"/>
-    <path d="M465 150L450 130"/>
-    <path d="M505 150L490 130"/>
-    <path d="M545 150L530 130"/>
-    <path d="M585 150L570 130"/>
-    <path d="M625 150L610 130"/>
-  </g>
-
-  <path
-    d="M500 580 L462 540 L538 460 L462 380 L538 300"
-    class="draw-path" pathLength="1"
-    stroke="currentColor"
-    stroke-width="1.6"/>
-
-  <g fill="currentColor">
-    <circle cx="500" cy="580" r="3"/>
-    <circle cx="462" cy="540" r="3"/>
-    <circle cx="538" cy="460" r="3"/>
-    <circle cx="462" cy="380" r="3"/>
-    <circle cx="538" cy="300" r="3.5"/>
-  </g>
-
-  <g fill="currentColor" font-family="monospace" font-size="15" letter-spacing=".05em">
-    <text x="600" y="545">1</text>
-    <text x="600" y="465">2</text>
-    <text x="600" y="385">3</text>
-    <text x="600" y="305">4</text>
-    <text x="600" y="225" opacity=".45">5</text>
-    <text x="655" y="145">← NOT YET CLIMBED</text>
-    <text x="120" y="620">FOUR RUNGS UP, ONE WALL</text>
-  </g>
-</svg></span>
-      <span class="label">GPU programming</span>
-      <h3>Programming an attention kernel in Triton</h3>
-      <p>Building Triton GPU kernels from vector addition up to naive self-attention, finding and fixing one real correctness bug along the way, and naming honestly the wall that separates this from real FlashAttention.</p>
-      <span class="meta label">08.09.26</span>
-    </a>
   </div>
 </section>
 
@@ -1178,15 +1258,17 @@
   <div class="archive-head">
     <h2>Archive</h2>
     <div class="filters" role="group" aria-label="Filter by topic">
-      <button type="button" data-tag="" aria-pressed="true">All<span>11</span></button>
-      <button type="button" data-tag="machine learning" aria-pressed="false">Machine learning<span>6</span></button>
+      <button type="button" data-tag="" aria-pressed="true">All<span>12</span></button>
+      <button type="button" data-tag="machine learning" aria-pressed="false">Machine learning<span>7</span></button>
       <button type="button" data-tag="python" aria-pressed="false">Python<span>3</span></button>
       <button type="button" data-tag="physics" aria-pressed="false">Physics<span>2</span></button>
+      <button type="button" data-tag="research" aria-pressed="false">Research<span>2</span></button>
     </div>
   </div>
   <div class="year">
     <h3 class="year-label">2026</h3>
     <ol class="rows">
+      <li data-tags="machine learning|research"><a href="pbt-grokking.html"><time class="d" datetime="2026-10-26">26.10</time><span class="t">PBT can't make a model grok faster, but it can find the way out</span><span class="tags label">Machine learning · Research</span></a></li>
       <li data-tags="machine learning|diffusion"><a href="gpt-vs-dllm.html"><time class="d" datetime="2026-10-21">21.10</time><span class="t">One transformer, two ways to write</span><span class="tags label">Machine learning · Diffusion</span></a></li>
       <li data-tags="astronomy|machine learning"><a href="how-many-stars.html"><time class="d" datetime="2026-10-16">16.10</time><span class="t">How many stars does it take to find a cluster?</span><span class="tags label">Astronomy · Machine learning</span></a></li>
       <li data-tags="machine learning|neuroscience"><a href="fly-circuit-vs-cnn.html"><time class="d" datetime="2026-09-16">16.09</time><span class="t">A fly's escape reflex, flying a drone</span><span class="tags label">Machine learning · Neuroscience</span></a></li>

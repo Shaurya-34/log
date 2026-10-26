@@ -6,6 +6,14 @@
     <description>Hands-on experiments with live, in-browser figures: machine learning, neuroscience, structural biology, GPU kernels, cryptography, graphics and computation.</description>
     <language>en</language>
     <item>
+      <title>PBT can&#x27;t make a model grok faster, but it can find the way out</title>
+      <link>https://shauryasharma.tech/pbt-grokking.html</link>
+      <guid>https://shauryasharma.tech/pbt-grokking.html</guid>
+      <pubDate>Mon, 26 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Population Based Training over learning rate and weight decay, on the same grokking task as before. It never beat a good fixed setting, but from a range where nothing groks it found a way out, and the path it found works on its own.</description>
+      <category>machine learning, research</category>
+    </item>
+    <item>
       <title>One transformer, two ways to write</title>
       <link>https://shauryasharma.tech/gpt-vs-dllm.html</link>
       <guid>https://shauryasharma.tech/gpt-vs-dllm.html</guid>

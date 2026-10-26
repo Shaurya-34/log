@@ -4,6 +4,7 @@
 
 ## Articles
 
+- [PBT can't make a model grok faster, but it can find the way out](https://shauryasharma.tech/pbt-grokking.html) — Population Based Training over learning rate and weight decay, on the same grokking task as before. It never beat a good fixed setting, but from a range where nothing groks it found a way out, and the path it found works on its own.
 - [One transformer, two ways to write](https://shauryasharma.tech/gpt-vs-dllm.html) — I trained the same small transformer as a GPT and as a masked diffusion model on Tiny Shakespeare. The diffusion model's usual sampling trick makes it look fluent by making it repeat itself.
 - [How many stars does it take to find a cluster?](https://shauryasharma.tech/how-many-stars.html) — A pre-registered search for co-moving stars in Gaia DR3, and an honest measure of what it can and cannot see.
 - [A fly's escape reflex, flying a drone](https://shauryasharma.tech/fly-circuit-vs-cnn.html) — A hardwired model of the fruit fly's looming-escape circuit against a small trained CNN, both steering a simulated drone from the same 64x48 camera. With no training the fly cuts collisions by about a quarter, a CNN trained on two demonstration flights already beats it, and the circuit's weak point turns out to be reacting too late.

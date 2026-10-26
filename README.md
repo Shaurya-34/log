@@ -8,6 +8,7 @@ experiment in your browser.
 ## Posts
 
 <!-- posts -->
+- [PBT can't make a model grok faster, but it can find the way out](https://shauryasharma.tech/pbt-grokking.html) · 26 Oct 2026
 - [One transformer, two ways to write](https://shauryasharma.tech/gpt-vs-dllm.html) · 21 Oct 2026
 - [How many stars does it take to find a cluster?](https://shauryasharma.tech/how-many-stars.html) · 16 Oct 2026
 - [A fly's escape reflex, flying a drone](https://shauryasharma.tech/fly-circuit-vs-cnn.html) · 16 Sep 2026

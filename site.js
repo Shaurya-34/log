@@ -2812,6 +2812,449 @@
       });
     });
   });
+
+  /* ------------------------------------------------------------
+     PBT grokking post: the population swarm over (lr, wd), the
+     selection signal, steps to 95% per seed and the schedule
+     replays. One data file (data/grok-pbt.json) and the swarm's
+     byte array (assets/grok-pbt-swarm.bin), both cut from
+     D:/grok-pbt by dev/grokpbt/prep.py, fetched once a figure
+     comes near the screen.
+     ------------------------------------------------------------ */
+
+  run(function () {
+    var SVGNS = "http://www.w3.org/2000/svg";
+    var COND_NAMES = { A: "PBT", C: "random donor", E: "no selection", D: "fixed", B: "slow PBT",
+                       AW: "PBT, wide start", W: "random search, wide" };
+    var dataPromise = null;
+
+    function load(src) {
+      if (!dataPromise) {
+        dataPromise = fetch(src).then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          return r.json();
+        });
+      }
+      return dataPromise;
+    }
+
+    function whenNear(fig, fn) {
+      if (!("IntersectionObserver" in window)) return fn();
+      var io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { io.disconnect(); fn(); }
+      }, { rootMargin: "600px 0px" });
+      io.observe(fig);
+    }
+
+    function el(tag, attrs, parent, text) {
+      var e = document.createElementNS(SVGNS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (text !== undefined) e.textContent = text;
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+
+    function pressOne(group, btn) {
+      group.querySelectorAll("button").forEach(function (b) {
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      });
+      if (group.place) group.place();
+    }
+
+    function ready(fig) {
+      fig.classList.add("is-ready");
+      fig.querySelectorAll(".gpb-switch").forEach(function (g) {
+        g.place = mountSwitchIndicator(g);
+        g.place();
+      });
+    }
+
+    // plots are drawn at their real width, so 11px labels stay 11px on a phone
+    function sized(svg, height, draw) {
+      var w = 0;
+      function check() {
+        var now = Math.round(svg.getBoundingClientRect().width);
+        if (!now || now === w) return;
+        w = now;
+        var h = height(w);
+        svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+        svg.textContent = "";
+        draw(w, h);
+      }
+      check();
+      addEventListener("resize", check);
+    }
+
+    function fmtStep(n) { return n.toLocaleString("en-US"); }
+    function pow10(e) { return e >= 0 ? String(Math.pow(10, e)) : "1e" + e; }
+
+    /* ---- the swarm: 20 members over (lr, wd), with the winning lineage ---- */
+
+    function mountSwarm(fig, d, buf) {
+      var bytes = new Uint8Array(buf);
+      var canvas = fig.querySelector("canvas"), ctx = canvas.getContext("2d");
+      var readout = fig.querySelector(".gpb-readout");
+      var btn = fig.querySelector("[data-play]"), input = fig.querySelector('input[type="range"]');
+      var st = { cond: "A", seed: 0 }, t = 0, raf = 0, last = 0, RATE = 20, colors = {};
+      var N = 20, T = 200;
+
+      function base() { return ((d.conds.indexOf(st.cond) * 3) + st.seed) * T * N * 3; }
+      function at(i, m, k) { return bytes[base() + (i * N + m) * 3 + k]; }
+
+      function readColors() {
+        var cs = getComputedStyle(fig);
+        ["--ink", "--blue", "--red", "--faint", "--hairline", "--paper"].forEach(function (k) {
+          colors[k] = cs.getPropertyValue(k).trim();
+        });
+        colors.mono = cs.getPropertyValue("--mono");
+      }
+
+      function size() {
+        var dpr = Math.min(devicePixelRatio || 1, 2), w = canvas.clientWidth || 560;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(w * dpr);
+      }
+
+      function draw(i) {
+        // k = device pixels per CSS pixel, so labels stay 11px at any width
+        var W = canvas.width, H = canvas.height, k = W / (canvas.clientWidth || 560);
+        var L = 46 * k, R = 22 * k, Tp = 10 * k, B = 40 * k;
+        var X = function (b) { return L + b / 255 * (W - L - R); };
+        var Y = function (b) { return H - B - b / 255 * (H - Tp - B); };
+        var Xl = function (e) { return X((e + 5) / 4 * 255); };    // log10 lr
+        var Yw = function (e) { return Y((e + 3) / 4 * 255); };    // log10 wd
+        ctx.clearRect(0, 0, W, H);
+        ctx.font = 11 * k + "px " + colors.mono;
+        ctx.lineWidth = 1 * k;
+
+        // the first experiment's fixed grid: darker where a fixed setting grokked sooner
+        d.grid.forEach(function (g) {
+          var lx = Math.log10(g.lr), wy = Math.log10(g.wd);
+          // kept inside the plot: the top row of cells reaches past wd 10
+          var x0 = Xl(lx - 0.25), x1 = Xl(lx + 0.25), y0 = Yw(Math.min(1, wy + 0.45)), y1 = Yw(wy - 0.45);
+          if (g.reached) {
+            ctx.globalAlpha = 0.07 + 0.3 * (1 - Math.log(g.steps / 300) / Math.log(20000 / 300));
+            ctx.fillStyle = colors["--blue"];
+            ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+          }
+          ctx.globalAlpha = 0.6;
+          ctx.strokeStyle = colors["--hairline"];
+          ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+        });
+        ctx.globalAlpha = 1;
+
+        // axes: the plot's edges are the clip limits
+        ctx.strokeStyle = colors["--hairline"];
+        ctx.strokeRect(L, Tp, W - L - R, H - Tp - B);
+        ctx.fillStyle = colors["--faint"];
+        ctx.textAlign = "center";
+        for (var e = -5; e <= -1; e++) ctx.fillText(pow10(e), Xl(e), H - B + 16 * k);
+        ctx.fillText("learning rate \u2192", (L + W - R) / 2, H - 6 * k);
+        ctx.textAlign = "right";
+        for (e = -3; e <= 1; e++) ctx.fillText(pow10(e), L - 6 * k, Yw(e) + 4 * k);
+        ctx.save();
+        ctx.translate(12 * k, (Tp + H - B) / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = "center";
+        ctx.fillText("weight decay \u2192", 0, 0);
+        ctx.restore();
+
+        // the winning lineage's path so far
+        var lin = d.lineages[st.cond + st.seed];
+        ctx.strokeStyle = colors["--red"];
+        ctx.globalAlpha = 0.7;
+        ctx.lineWidth = 1.5 * k;
+        ctx.beginPath();
+        for (var j = 0; j <= i; j++) {
+          var lx2 = X(at(j, lin[j], 0)), ly2 = Y(at(j, lin[j], 1));
+          if (j) ctx.lineTo(lx2, ly2); else ctx.moveTo(lx2, ly2);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // the members now: a hollow ring, filled blue once it reaches 95% val accuracy
+        var best = 0, good = 0;
+        for (var m = 0; m < N; m++) {
+          var acc = at(i, m, 2) / 255, x = X(at(i, m, 0)), y = Y(at(i, m, 1));
+          best = Math.max(best, acc);
+          ctx.beginPath();
+          ctx.arc(x, y, 4.5 * k, 0, 2 * Math.PI);
+          if (acc >= 0.95) {
+            good++;
+            ctx.fillStyle = colors["--blue"];
+            ctx.fill();
+          } else {
+            ctx.globalAlpha = 0.6;
+            ctx.strokeStyle = colors["--ink"];
+            ctx.lineWidth = 1.2 * k;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = colors["--red"];
+        ctx.lineWidth = 2 * k;
+        ctx.beginPath();
+        ctx.arc(X(at(i, lin[i], 0)), Y(at(i, lin[i], 1)), 8 * k, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        readout.innerHTML = COND_NAMES[st.cond] + " · step <b>" + fmtStep((i + 1) * 100) +
+          "</b> · best val accuracy <b>" + (100 * best).toFixed(0) + "%</b> · <b>" + good +
+          "</b> of 20 members at 95% or more";
+      }
+
+      function set(v) {
+        t = Math.max(0, Math.min(T - 1, v));
+        input.value = Math.floor(t);
+        draw(Math.floor(t));
+        btn.textContent = raf ? "pause" : t >= T - 1 ? "replay" : "play";
+      }
+      function frame(now) {
+        // capped, so a tab returning from the background resumes, not skips
+        t += Math.min(now - last, 50) / 1000 * RATE;
+        last = now;
+        if (t >= T - 1) { raf = 0; set(T - 1); return; }
+        raf = requestAnimationFrame(frame);
+        set(t);
+      }
+      function play() {
+        if (t >= T - 1) t = 0;
+        last = performance.now();
+        raf = requestAnimationFrame(frame);
+        set(t);
+      }
+      function pause() { cancelAnimationFrame(raf); raf = 0; set(t); }
+      btn.addEventListener("click", function () { if (raf) pause(); else play(); });
+      input.addEventListener("input", function () {
+        var v = +input.value;  // read first: pause() redraws the slider at the old t
+        pause();
+        set(v);
+      });
+      fig.querySelectorAll("[data-cond]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); st.cond = b.dataset.cond; set(t); });
+      });
+      fig.querySelectorAll("[data-seed]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); st.seed = +b.dataset.seed; set(t); });
+      });
+      addEventListener("resize", function () { size(); set(t); });
+      new MutationObserver(function () { readColors(); set(t); })
+        .observe(doc, { attributes: true, attributeFilter: ["data-theme"] });
+      readColors();
+      size();
+      set(0);
+      if (!reduced && "IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (es) {
+          if (es[0].isIntersecting) { io.disconnect(); play(); }
+        }, { threshold: 0.35 });
+        io.observe(fig);
+      }
+    }
+
+    /* ---- the selection signal over training --------------------------- */
+
+    function mountSignal(fig, d) {
+      var svg = fig.querySelector("svg"), readout = fig.querySelector(".gpb-readout");
+      // A and D were logged every 100 steps, slow PBT (B) every 500, so
+      // everything is placed by step, not by index
+      var series = ["A", "B", "D"], steps = d.rho_steps, sel = 5000, W = 0, L = 40, R = 14, X, guide;
+      var mean = {};
+      series.forEach(function (c) {
+        mean[c] = d.rho[c][0].map(function (_, i) {
+          return d.rho[c].reduce(function (a, s) { return a + s[i]; }, 0) / d.rho[c].length;
+        });
+      });
+      // the series' mean at the logged step nearest to `step`
+      function valueAt(c, step) {
+        var st2 = steps[c], best = 0;
+        for (var i = 1; i < st2.length; i++) if (Math.abs(st2[i] - step) < Math.abs(st2[best] - step)) best = i;
+        return mean[c][best];
+      }
+
+      function say() {
+        readout.innerHTML = "step <b>" + fmtStep(sel) + "</b> · " + series.map(function (c) {
+          var v = valueAt(c, sel);
+          return COND_NAMES[c] + " <b>" + (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + "</b>";
+        }).join(" · ");
+        if (guide) { guide.setAttribute("x1", X(sel)); guide.setAttribute("x2", X(sel)); }
+      }
+
+      sized(svg, function (w) { return w < 520 ? Math.round(w * 0.8) : 300; }, function (w, H) {
+        W = w;
+        var T = 18, B = 34;
+        X = function (step) { return L + step / 20000 * (W - L - R); };
+        var Y = function (v) { return T + (1 - v) / 2 * (H - T - B); };
+        [-1, -0.5, 0, 0.5, 1].forEach(function (v) {
+          el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), "class": v === 0 ? "gpb-zero" : "gpb-grid" }, svg);
+          el("text", { x: L - 8, y: Y(v) + 4, "class": "gpb-label gpb-label-y" }, svg, v > 0 ? "+" + v : v < 0 ? "−" + -v : "0");
+        });
+        [0, 5000, 10000, 15000, 20000].forEach(function (s) {
+          el("text", { x: X(s), y: H - B + 18, "class": "gpb-label gpb-label-x" }, svg, s ? fmtStep(s) : "0");
+        });
+        el("text", { x: (L + W - R) / 2, y: H - 2, "class": "gpb-label gpb-label-x" }, svg, "step");
+        el("text", { x: L, y: 11, "class": "gpb-label" }, svg, "\u2191 less regularization looks better");
+        guide = el("line", { x1: X(sel), x2: X(sel), y1: T, y2: H - B, "class": "gpb-guide" }, svg);
+        series.forEach(function (c) {
+          d.rho[c].forEach(function (s) {
+            el("polyline", { points: s.map(function (v, i) { return X(steps[c][i]) + "," + Y(v); }).join(" "),
+                             "class": "gpb-line gpb-thin gpb-" + c }, svg);
+          });
+          el("polyline", { points: mean[c].map(function (v, i) { return X(steps[c][i]) + "," + Y(v); }).join(" "),
+                           "class": "gpb-line gpb-" + c }, svg);
+        });
+        say();
+      });
+
+      function pickAt(ev) {
+        var r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) * W / r.width;
+        sel = Math.max(100, Math.min(20000, Math.round((x - L) / (W - L - R) * 200) * 100));
+        say();
+      }
+      svg.addEventListener("pointermove", pickAt);
+      svg.addEventListener("pointerdown", pickAt);
+      svg.addEventListener("keydown", function (ev) {
+        var k = { ArrowLeft: -1, ArrowRight: 1 }[ev.key];
+        if (!k) return;
+        ev.preventDefault();
+        sel = Math.max(100, Math.min(20000, sel + k * 500));
+        say();
+      });
+    }
+
+    /* ---- steps to 95% for every seed ------------------------------------ */
+
+    function mountSteps(fig, d) {
+      var svg = fig.querySelector("svg"), readout = fig.querySelector(".gpb-readout");
+      // [condition, first line, second line, second line when the columns are narrow]
+      var cols = [["A", "PBT", "dead start", "dead"], ["C", "random", "donor", "donor"],
+                  ["E", "no", "selection", "select"], ["AW", "PBT", "wide start", "wide"],
+                  ["W", "random", "search, wide", "search"]];
+      var hint = "Hover or tab to a dot for its seed.";
+      function reset() { readout.textContent = hint; }
+
+      sized(svg, function (w) { return w < 520 ? 320 : 340; }, function (W, H) {
+        var L = 46, R = 10, T = 20, B = 52, MIN = 100, MAX = 20000;
+        var colW = (W - L - R) / cols.length;
+        var Y = function (v) { return T + (1 - Math.log(v / MIN) / Math.log(MAX / MIN)) * (H - T - B); };
+        [100, 300, 1000, 3000, 10000].forEach(function (v) {
+          el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), "class": "gpb-grid" }, svg);
+          el("text", { x: L - 8, y: Y(v) + 4, "class": "gpb-label gpb-label-y" }, svg, fmtStep(v));
+        });
+        el("line", { x1: L, x2: W - R, y1: Y(MAX), y2: Y(MAX), "class": "gpb-guide" }, svg);
+        el("text", { x: L - 8, y: Y(MAX) + 4, "class": "gpb-label gpb-label-y" }, svg, "never");
+        el("text", { x: 0, y: 11, "class": "gpb-label" }, svg, "steps to 95% (log scale)");
+        cols.forEach(function (c, ci) {
+          var cx = L + (ci + 0.5) * colW, vals = d.steps95[c[0]];
+          var full = vals.map(function (v) { return v === null ? MAX : v; }).sort(function (a, b) { return a - b; });
+          var med = (full[4] + full[5]) / 2;
+          el("text", { x: cx, y: H - B + 18, "class": "gpb-label gpb-label-x gpb-name" }, svg, c[1]);
+          el("text", { x: cx, y: H - B + 32, "class": "gpb-label gpb-label-x gpb-name" }, svg, colW < 90 ? c[3] : c[2]);
+          el("line", { x1: cx - colW * 0.32, x2: cx + colW * 0.32, y1: Y(med), y2: Y(med), "class": "gpb-median" }, svg);
+          vals.forEach(function (v, s) {
+            var x = cx + (s - 4.5) * Math.min(5, colW / 14), y = Y(v === null ? MAX : v);
+            var dot = el("circle", { cx: x, cy: y, r: 4.5, tabindex: 0, role: "img",
+                                     "class": "gpb-dot gpb-" + c[0] + (v === null ? " gpb-nr" : ""),
+                                     "aria-label": COND_NAMES[c[0]] + ", seed " + (s + 1) + ": " + (v === null ? "never reached 95%" : v + " steps") }, svg);
+            function show() {
+              readout.innerHTML = "<b>" + COND_NAMES[c[0]] + "</b>, seed " + (s + 1) + ": " +
+                (v === null ? "<b>never</b> reached 95% in 20,000 steps" : "95% at step <b>" + fmtStep(v) + "</b>") +
+                " · median of the 10 seeds <b>" + fmtStep(med) + "</b>";
+            }
+            dot.addEventListener("pointerenter", show);
+            dot.addEventListener("focus", show);
+            dot.addEventListener("pointerleave", reset);
+            dot.addEventListener("blur", reset);
+          });
+        });
+      });
+      reset();
+    }
+
+    /* ---- the schedule replays -------------------------------------------- */
+
+    function mountReplay(fig, d) {
+      var svg = fig.querySelector("svg"), readout = fig.querySelector(".gpb-readout");
+      var st = { kind: "lineage", seed: 0 }, redraw = function () {};
+      var KIND = { lineage: "PBT's schedule", const: "constant knobs", phased: "my 3 phases" };
+
+      function say() {
+        var r = d.replay[st.kind + st.seed];
+        readout.innerHTML = KIND[st.kind] + ", seed " + (st.seed + 1) + ": <b>" + r.reached + "</b> of 20 fresh models reached 95%";
+      }
+
+      sized(svg, function (w) { return w < 520 ? 460 : 420; }, function (W, H) {
+        var L = 46, R = 10, T = 24, B = 34, gap = 30;
+        var hs = [0.28, 0.28, 0.44].map(function (f) { return (H - T - B - 2 * gap) * f; });
+        var tops = [T, T + hs[0] + gap, T + hs[0] + hs[1] + 2 * gap];
+        var X = function (s) { return L + s / 20000 * (W - L - R); };
+        var layer = el("g", {}, svg);
+        // frames, ticks and labels for the three panels
+        var panels = [
+          { lo: -5, hi: -1, ticks: [-5, -3, -1], name: "learning rate", log: true },
+          { lo: -3, hi: 1, ticks: [-3, -1, 1], name: "weight decay", log: true },
+          { lo: 0, hi: 1, ticks: [0, 0.5, 1], name: "val accuracy", log: false }];
+        panels.forEach(function (p, pi) {
+          p.Y = function (v) {
+            var u = p.log ? Math.log10(v) : v;
+            return tops[pi] + (1 - (u - p.lo) / (p.hi - p.lo)) * hs[pi];
+          };
+          p.ticks.forEach(function (tv) {
+            var y = tops[pi] + (1 - (tv - p.lo) / (p.hi - p.lo)) * hs[pi];
+            el("line", { x1: L, x2: W - R, y1: y, y2: y, "class": "gpb-grid" }, svg);
+            el("text", { x: L - 6, y: y + 4, "class": "gpb-label gpb-label-y" }, svg, p.log ? pow10(tv) : String(tv));
+          });
+          // above its panel, clear of the curves and the 95% line
+          el("text", { x: L, y: tops[pi] - 10, "class": "gpb-label gpb-panel-name" }, svg, p.name);
+        });
+        el("line", { x1: L, x2: W - R, y1: panels[2].Y(0.95), y2: panels[2].Y(0.95), "class": "gpb-guide" }, svg);
+        [0, 5000, 10000, 15000, 20000].forEach(function (s) {
+          el("text", { x: X(s), y: H - B + 18, "class": "gpb-label gpb-label-x" }, svg, s ? fmtStep(s) : "0");
+        });
+        el("text", { x: (L + W - R) / 2, y: H - 2, "class": "gpb-label gpb-label-x" }, svg, "step");
+
+        redraw = function () {
+          layer.parentNode.appendChild(layer);  // keep the curves above the grid
+          layer.textContent = "";
+          var r = d.replay[st.kind + st.seed], prev = 0, lr = [], wd = [];
+          r.sched.forEach(function (row) {
+            lr.push([X(prev), panels[0].Y(row[1])], [X(row[0]), panels[0].Y(row[1])]);
+            wd.push([X(prev), panels[1].Y(row[2])], [X(row[0]), panels[1].Y(row[2])]);
+            prev = row[0];
+          });
+          el("polyline", { points: lr.join(" "), "class": "gpb-line gpb-A" }, layer);
+          el("polyline", { points: wd.join(" "), "class": "gpb-line gpb-A" }, layer);
+          ["best", "median"].forEach(function (k) {
+            el("polyline", { points: r[k].map(function (v, i) { return X((i + 1) * 50) + "," + panels[2].Y(v); }).join(" "),
+                             "class": "gpb-line gpb-W" + (k === "median" ? " gpb-dashed" : "") }, layer);
+          });
+          say();
+        };
+        redraw();
+      });
+
+      fig.querySelectorAll("[data-kind]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); st.kind = b.dataset.kind; redraw(); });
+      });
+      fig.querySelectorAll("[data-seed]").forEach(function (b) {
+        b.addEventListener("click", function () { pressOne(b.parentNode, b); st.seed = +b.dataset.seed; redraw(); });
+      });
+    }
+
+    [[".gpb-swarm", mountSwarm], [".gpb-signal", mountSignal], [".gpb-steps", mountSteps],
+     [".gpb-replay", mountReplay]].forEach(function (m) {
+      document.querySelectorAll(m[0]).forEach(function (fig) {
+        whenNear(fig, function () {
+          var extra = fig.dataset.swarm ? fetch(fig.dataset.swarm).then(function (r) {
+            if (!r.ok) throw new Error(r.status);
+            return r.arrayBuffer();
+          }) : Promise.resolve(null);
+          Promise.all([load(fig.dataset.src), extra]).then(function (res) {
+            ready(fig);
+            m[1](fig, res[0], res[1]);
+          }).catch(function () {});  // a failed fetch leaves the figure hidden
+        });
+      });
+    });
+  });
 })();
 
 (function () {

@@ -187,6 +187,10 @@ PULLS = {
 # What each post's live figure lets a reader do, for llms.txt. A post with
 # no figure has no entry. Every key must be a real post slug.
 INTERACTIVE = {
+    "pbt-grokking": "a population of 20 models moving through learning rate and weight decay over "
+                    "training under PBT, a random donor, no selection or fixed settings, with the "
+                    "winning lineage traced; the selection signal's sign flip; steps to 95% for every "
+                    "seed; and the discovered schedule replayed on fresh models",
     "gpt-vs-dllm": "a GPT and a masked diffusion model writing Tiny Shakespeare side by side on one "
                    "forward-pass clock, with reveal order, step count and sample controls; a scatter of "
                    "GPT loss against word repetition; GPT loss against sampling steps; and the order "

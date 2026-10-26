@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" fill="none">
+  <!-- The first experiment's grid of fixed settings: filled where it grokked. -->
+  <g>
+    <rect x="342" y="409" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="342" y="297" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="342" y="184" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="342" y="72" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="418" y="409" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="418" y="297" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="418" y="184" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="418" y="72" width="75" height="112" fill="#17150f" opacity=".07"/>
+    <rect x="492" y="409" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="492" y="297" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="492" y="184" width="75" height="112" fill="#17150f" opacity=".07"/>
+    <rect x="492" y="72" width="75" height="112" fill="#17150f" opacity=".07"/>
+    <rect x="568" y="409" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="568" y="297" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="568" y="184" width="75" height="112" fill="#17150f" opacity=".07"/>
+    <rect x="568" y="72" width="75" height="112" fill="#17150f" opacity=".07"/>
+    <rect x="642" y="409" width="75" height="112" stroke="#17150f" opacity=".12"/>
+    <rect x="642" y="297" width="75" height="112" fill="#17150f" opacity=".07"/>
+    <rect x="642" y="184" width="75" height="112" fill="#17150f" opacity=".07"/>
+    <rect x="642" y="72" width="75" height="112" fill="#17150f" opacity=".07"/>
+  </g>
+
+  <!-- The plane is the clip box: learning rate across, weight decay up. -->
+  <rect x="230" y="90" width="600" height="500" stroke="#17150f" opacity=".3"/>
+
+  <!-- The 20 members at the start, all in the dead zone. -->
+  <g fill="#17150f" opacity=".45">
+    <circle cx="458" cy="355" r="4"/>
+    <circle cx="471" cy="448" r="4"/>
+    <circle cx="451" cy="386" r="4"/>
+    <circle cx="410" cy="415" r="4"/>
+    <circle cx="459" cy="463" r="4"/>
+    <circle cx="409" cy="432" r="4"/>
+    <circle cx="422" cy="422" r="4"/>
+    <circle cx="493" cy="429" r="4"/>
+    <circle cx="463" cy="359" r="4"/>
+    <circle cx="510" cy="386" r="4"/>
+    <circle cx="501" cy="450" r="4"/>
+    <circle cx="417" cy="426" r="4"/>
+    <circle cx="408" cy="373" r="4"/>
+    <circle cx="528" cy="448" r="4"/>
+    <circle cx="480" cy="458" r="4"/>
+    <circle cx="422" cy="430" r="4"/>
+    <circle cx="411" cy="418" r="4"/>
+    <circle cx="474" cy="374" r="4"/>
+    <circle cx="478" cy="464" r="4"/>
+    <circle cx="515" cy="414" r="4"/>
+  </g>
+
+  <!-- The winning lineage of seed 0, every 100 steps: down to the lr floor,
+       up to the wd ceiling, then out to the corner after grokking. -->
+  <path
+    class="draw-path"
+    d="M411 418 L365 455 L320 418 L275 380 L230 342 L230 305 L230 267 L230 229 L230 192 L230 154 L275 117 L320 90 L365 90 L411 90 L456 90 L501 90 L546 90 L591 90 L546 128 L591 165 L636 203 L682 241 L727 203 L682 241 L727 278 L772 316 L727 353 L772 391 L817 429 L830 466 L785 504 L830 542 L830 579 L830 590 L785 590 L740 552 L785 590"
+    stroke="#17150f"
+    stroke-width="1.4"
+    stroke-dasharray="5000" stroke-dashoffset="5000"/>
+  <circle cx="546" cy="128" r="7" fill="#17150f"/>
+
+  <g fill="#17150f" font-family="monospace" font-size="16" letter-spacing=".05em">
+    <text x="560" y="133">GROKS</text>
+    <text x="250" y="80">WD CEILING</text>
+    <text x="230" y="620">LR FLOOR</text>
+    <text x="700" y="620">LR →</text>
+    <text x="400" y="535">DEAD ZONE</text>
+  </g>
+</svg>

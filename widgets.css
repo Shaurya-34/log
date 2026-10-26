@@ -76,7 +76,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .birthday-switch,
 .blocksize-switch,
 .gaia-switch,
-.dllm-switch {
+.dllm-switch,
+.gpb-switch {
   position: relative;
 }
 
@@ -85,7 +86,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .birthday-switch button,
 .blocksize-switch button,
 .gaia-switch button,
-.dllm-switch button {
+.dllm-switch button,
+.gpb-switch button {
   position: relative;
   z-index: 1;
 }
@@ -107,7 +109,8 @@ article.post .grok-demo { margin: 2.75rem 0 3rem; }
 .birthday-switch:has(.switch-indicator) button[aria-pressed="true"],
 .blocksize-switch:has(.switch-indicator) button[aria-pressed="true"],
 .gaia-switch:has(.switch-indicator) button[aria-pressed="true"],
-.dllm-switch:has(.switch-indicator) button[aria-pressed="true"] {
+.dllm-switch:has(.switch-indicator) button[aria-pressed="true"],
+.gpb-switch:has(.switch-indicator) button[aria-pressed="true"] {
   background: none;
 }
 
@@ -1131,4 +1134,160 @@ article.post .dllm-curves figcaption {
 
 @media (prefers-reduced-motion: reduce) {
   .dllm-switch button, .dllm-btn { transition: none; }
+}
+
+/* ---- PBT grokking figures ------------------------------------------------ */
+/* The swarm over (lr, wd), the selection signal, steps to 95% per seed and
+   the schedule replays. Hidden until site.js adds .is-ready. PBT is violet
+   (--red), slow PBT and the random donor blue, the fixed runs grey, random
+   search ink. */
+
+article.post .gpb-swarm,
+article.post .gpb-signal,
+article.post .gpb-steps,
+article.post .gpb-replay { margin: 2.75rem 0 3rem; }
+
+.gpb-swarm > :not(figcaption):not(noscript),
+.gpb-signal > :not(figcaption),
+.gpb-steps > :not(figcaption),
+.gpb-replay > :not(figcaption) { display: none; }
+.gpb-swarm.is-ready > .gpb-head,
+.gpb-swarm.is-ready > .gpb-transport,
+.gpb-replay.is-ready > .gpb-head,
+.gpb-signal.is-ready > .gpb-legend { display: flex; }
+.gpb-swarm.is-ready > canvas,
+.gpb-swarm.is-ready > .gpb-readout,
+.gpb-signal.is-ready > svg,
+.gpb-signal.is-ready > .gpb-readout,
+.gpb-steps.is-ready > *,
+.gpb-replay.is-ready > svg { display: block; }
+
+.gpb-head {
+  flex-wrap: wrap;
+  gap: 0.75rem 1.1rem;
+  align-items: center;
+  margin-bottom: 1.1rem;
+}
+
+.gpb-switch { display: flex; gap: 0; }
+
+.gpb-switch button,
+.gpb-btn {
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  background: none;
+  color: var(--grey);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.gpb-switch button + button { border-left: 0; }
+.gpb-switch button:hover,
+.gpb-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+.gpb-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.gpb-canvas {
+  width: 100%;
+  max-width: 35rem;
+  height: auto;
+  aspect-ratio: 1;
+  touch-action: pan-y;
+}
+
+.gpb-transport {
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 0.75rem;
+  max-width: 35rem;
+}
+
+.gpb-btn { min-width: 4.6rem; }
+.gpb-scrub { flex: 1; display: flex; }
+.gpb-scrub input { width: 100%; accent-color: var(--ink); cursor: pointer; }
+
+.gpb-readout,
+.gpb-legend {
+  margin: 0.6rem 0 0;
+  min-height: 1.2em;
+  font: 0.7rem var(--mono);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.gpb-readout b { font-weight: 400; color: var(--ink); }
+.gpb-legend { margin: 0 0 0.75rem; flex-wrap: wrap; gap: 0.4rem 1.1rem; }
+
+.gpb-key::before {
+  content: "";
+  display: inline-block;
+  width: 0.9rem;
+  height: 2px;
+  margin-right: 0.4rem;
+  vertical-align: 0.2rem;
+}
+
+.gpb-key-a::before { background: var(--red); }
+.gpb-key-b::before { background: var(--blue); }
+.gpb-key-d::before { background: var(--grey); }
+
+.gpb-plot { width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.gpb-plot:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+
+.gpb-plot .gpb-grid { stroke: var(--hairline); stroke-width: 1; }
+.gpb-plot .gpb-zero { stroke: var(--grey); stroke-width: 1; }
+.gpb-plot .gpb-guide { stroke: var(--grey); stroke-width: 1; stroke-dasharray: 2 3; }
+.gpb-plot .gpb-label {
+  fill: var(--faint);
+  font-family: var(--mono);
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.gpb-plot .gpb-label-y { text-anchor: end; }
+.gpb-plot .gpb-label-x { text-anchor: middle; }
+.gpb-plot .gpb-name,
+.gpb-plot .gpb-panel-name { fill: var(--ink); }
+
+.gpb-plot .gpb-line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.gpb-plot .gpb-thin { stroke-width: 1; opacity: 0.3; }
+.gpb-plot .gpb-dashed { stroke-dasharray: 4 3; stroke-width: 1.5; }
+.gpb-plot .gpb-line.gpb-A { stroke: var(--red); }
+.gpb-plot .gpb-line.gpb-B { stroke: var(--blue); }
+.gpb-plot .gpb-line.gpb-D { stroke: var(--grey); }
+.gpb-plot .gpb-line.gpb-W { stroke: var(--ink); }
+
+.gpb-plot .gpb-median { stroke: var(--ink); stroke-width: 2; }
+.gpb-plot .gpb-dot { stroke: var(--paper); stroke-width: 1; }
+.gpb-plot .gpb-dot.gpb-A,
+.gpb-plot .gpb-dot.gpb-AW { fill: var(--red); }
+.gpb-plot .gpb-dot.gpb-C { fill: var(--blue); }
+.gpb-plot .gpb-dot.gpb-E { fill: var(--grey); }
+.gpb-plot .gpb-dot.gpb-W { fill: var(--ink); }
+.gpb-plot .gpb-dot.gpb-nr { fill: var(--paper); stroke-width: 1.5; }
+.gpb-plot .gpb-dot.gpb-nr.gpb-A,
+.gpb-plot .gpb-dot.gpb-nr.gpb-AW { stroke: var(--red); }
+.gpb-plot .gpb-dot.gpb-nr.gpb-E { stroke: var(--grey); }
+.gpb-plot .gpb-dot:focus { outline: none; stroke: var(--ink); stroke-width: 2; }
+
+article.post .gpb-swarm figcaption,
+article.post .gpb-signal figcaption,
+article.post .gpb-steps figcaption,
+article.post .gpb-replay figcaption {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gpb-switch button, .gpb-btn { transition: none; }
 }
